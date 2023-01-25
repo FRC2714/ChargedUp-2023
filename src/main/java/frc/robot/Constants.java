@@ -134,4 +134,24 @@ public final class Constants {
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
+
+  public static final class ArmConstants {
+    public static final int kLeftBaseJointMotorCanId = 9;
+    public static final int kRightBaseJointMotorCanId = 10;
+
+    public static final int kSecondJointMotorCanId = 11;
+
+    public static final double kBaseJointLength = Units.inchesToMeters(31);
+    public static final double kSecondJointLength = Units.inchesToMeters(27);
+
+    public static final double kBaseJointMaxVelocity = 0;
+    public static final double kBaseJointMaxAcceleration = 0;
+
+    public static final double kSecondJointMaxVelocity = 0;
+    public static final double kSecondJointMaxAcceleration = 0;
+
+    public static final double kBaseJointP = 0;
+
+    public static final double kSecondJointP = 0;
+  }
 }

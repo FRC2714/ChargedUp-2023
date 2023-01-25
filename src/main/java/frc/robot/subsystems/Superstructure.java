@@ -7,12 +7,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import frc.robot.Constants.ArmConstants;
+
 public class Superstructure extends SubsystemBase {
   private BaseJoint basejoint = new BaseJoint();
   private BaseJoint secondjoint = new BaseJoint();//should be SecondJoint Class
 
-  private double a1 = 31;//inches
-  private double a2 = 31;
+  private double a1 = ArmConstants.kBaseJointLength;//meters
+  private double a2 = ArmConstants.kSecondJointLength;
 
   private double q1; //units are wrong, convert to radians?? need to make them relative to ground
   private double q2;
@@ -66,8 +68,8 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("a1", a1);
-    SmartDashboard.putNumber("a2", a2);
+    SmartDashboard.putNumber("q1", q1);
+    SmartDashboard.putNumber("q2", q2);
 
 
   }
