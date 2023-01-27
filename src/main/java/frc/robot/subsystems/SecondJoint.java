@@ -7,34 +7,38 @@ package frc.robot.subsystems;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
-public class SecondJoint extends ProfiledPIDSubsystem {
+public class SecondJoint extends SubsystemBase {
   private CANSparkMax SecondJointMotor;
 
   private AbsoluteEncoder SecondJointEncoder;
+
+  private SparkMaxPIDController SecondJointPID;
   //ticks per rev: 8192
-  //need to convert
-  private double conversionFactor = 1/8192;
-  /** Creates a new BaseJoint. */
+  //BaseEncoder.setPositionConversionFactor(2*Math.PI); ???
+  private double conversionFactor = 1/8192 * 360;
+
+  private double targetPosition;
+  
+  /** Creates a new SecondJoint. */
   public SecondJoint() {
-    super(
-        // The ProfiledPIDController used by the subsystem
-        new ProfiledPIDController(
-            ArmConstants.kSecondJointP,
-            0,
-            0,
-            // The motion profile constraints
-            new TrapezoidProfile.Constraints(ArmConstants.kSecondJointMaxVelocity, ArmConstants.kSecondJointMaxAcceleration))
-    );
     SecondJointMotor = new CANSparkMax(ArmConstants.kSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     SecondJointEncoder = SecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
+
+    SecondJointPID = SecondJointMotor.getPIDController();
+    SecondJointPID.setFF(ArmConstants.kSecondJointFF);
+    SecondJointPID.setP(ArmConstants.kSecondJointP, 0);
+    SecondJointPID.setI(ArmConstants.kSecondJointI, 0);
+    SecondJointPID.setD(ArmConstants.kSecondJointD, 0);
+    SecondJointPID.setSmartMotionMaxVelocity(ArmConstants.kSecondJointMaxVelocity, 0);
+    SecondJointPID.setSmartMotionMaxAccel(ArmConstants.kSecondJointMaxAcceleration, 0);
+    SecondJointPID.setSmartMotionAllowedClosedLoopError(ArmConstants.kSecondJointTolerance, 0);
 
   }
 
@@ -42,21 +46,22 @@ public class SecondJoint extends ProfiledPIDSubsystem {
     return SecondJointEncoder.getPosition() * conversionFactor;
   }
 
-  @Override
-  public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    // Use the output (and optionally the setpoint) here
-    //baseMotor1.setVoltage(output);
+  public void setTarget(double targetPosition) {
+    this.targetPosition = targetPosition;
+    SecondJointPID.setReference(-targetPosition, CANSparkMax.ControlType.kSmartMotion, 0);
+  }
+
+  public boolean atSetpoint() {
+    return Math.abs(targetPosition + getAngle()) < ArmConstants.kSecondJointTolerance;
+  }
+
+  public void disable() {
+    SecondJointMotor.set(0);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Base Joint Encoder", SecondJointEncoder.getPosition());
-    SmartDashboard.putNumber("Base Joint Angle", getAngle());
-  }
-
-  @Override
-  public double getMeasurement() {
-    // Return the process variable measurement here
-    return getAngle();
+    SmartDashboard.putNumber("Second Joint Encoder", SecondJointEncoder.getPosition());
+    SmartDashboard.putNumber("Second Joint Angle", getAngle());
   }
 }

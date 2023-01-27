@@ -23,9 +23,8 @@ public class Superstructure extends SubsystemBase {
   private double targetY;
 
   /** Creates a new Superstructure. */
-  public Superstructure(double targetX, double targetY) {
-    this.targetX = targetX;
-    this.targetY = targetY;
+  public Superstructure() {
+
   }
 
   public void setTargetPosition(double X, double Y) {
@@ -61,8 +60,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void moveJoints() {
-    basejoint.setGoal(q1);
-    secondjoint.setGoal(q2);
+    basejoint.setTarget(q1);
+    secondjoint.setTarget(q2);
   }
 
   @Override

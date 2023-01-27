@@ -138,7 +138,6 @@ public final class Constants {
   public static final class ArmConstants {
     public static final int kLeftBaseJointMotorCanId = 9;
     public static final int kRightBaseJointMotorCanId = 10;
-
     public static final int kSecondJointMotorCanId = 11;
 
     public static final double kBaseJointLength = Units.inchesToMeters(31);
@@ -146,12 +145,21 @@ public final class Constants {
 
     public static final double kBaseJointMaxVelocity = 0;
     public static final double kBaseJointMaxAcceleration = 0;
+    public static final double kBaseJointTolerance = 0;
+    public static final double kBaseJointFF = 0;
+    public static final double kBaseJointP = 0;
+    public static final double kBaseJointI = 0;
+    public static final double kBaseJointD = 0;
 
     public static final double kSecondJointMaxVelocity = 0;
     public static final double kSecondJointMaxAcceleration = 0;
-
-    public static final double kBaseJointP = 0;
-
+    public static final double kSecondJointTolerance = 0;
+    public static final double kSecondJointFF = 0;
     public static final double kSecondJointP = 0;
+    public static final double kSecondJointI = 0;
+    public static final double kSecondJointD = 0;
+
+    public static final int kBaseJointMotorCurrentLimit = 50; //amps
+    public static final int kSecondJintMotorCurrentLimit = 40; //amps
   }
 }
