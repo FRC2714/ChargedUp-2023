@@ -9,7 +9,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
+import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
@@ -22,8 +24,9 @@ public class SecondJoint extends SubsystemBase {
   private SparkMaxPIDController SecondJointPID;
   //ticks per rev: 8192
   //BaseEncoder.setPositionConversionFactor(2*Math.PI); ???
-  private double conversionFactor = 1/8192 * 360;
+  private double conversionFactor = 1/8192 * 2*Math.PI;
 
+  private double targetAngle;
   private double targetPosition;
   
   /** Creates a new SecondJoint. */
@@ -31,8 +34,15 @@ public class SecondJoint extends SubsystemBase {
     SecondJointMotor = new CANSparkMax(ArmConstants.kSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     SecondJointEncoder = SecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
+    //SecondJointMotor.setIdleMode(IdleMode.kCoast);
+
     SecondJointPID = SecondJointMotor.getPIDController();
-    SecondJointPID.setFF(ArmConstants.kSecondJointFF);
+    SecondJointPID.setPositionPIDWrappingEnabled(false);
+    SecondJointPID.setPositionPIDWrappingMinInput(0);
+    SecondJointPID.setPositionPIDWrappingMinInput(Math.PI);
+
+    SecondJointPID.setFeedbackDevice(SecondJointEncoder);
+    SecondJointPID.setFF(ArmConstants.kSecondJointFF, 0);
     SecondJointPID.setP(ArmConstants.kSecondJointP, 0);
     SecondJointPID.setI(ArmConstants.kSecondJointI, 0);
     SecondJointPID.setD(ArmConstants.kSecondJointD, 0);
@@ -43,12 +53,16 @@ public class SecondJoint extends SubsystemBase {
   }
 
   public double getAngle() {
-    return SecondJointEncoder.getPosition() * conversionFactor;
+    if ((SecondJointEncoder.getPosition() * 2*Math.PI)> Math.PI) {
+      return (SecondJointEncoder.getPosition() * 2*Math.PI)- (2*Math.PI);
+    } else {
+      return SecondJointEncoder.getPosition() * 2*Math.PI;
+    }
   }
 
-  public void setTarget(double targetPosition) {
-    this.targetPosition = targetPosition;
-    SecondJointPID.setReference(-targetPosition, CANSparkMax.ControlType.kSmartMotion, 0);
+  public void setTarget(double targetAngle) {
+    this.targetAngle = targetAngle /(2*Math.PI);
+    SecondJointPID.setReference(targetAngle * 2*Math.PI, CANSparkMax.ControlType.kSmartMotion, 0);
   }
 
   public boolean atSetpoint() {
@@ -61,7 +75,9 @@ public class SecondJoint extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Second Joint Encoder", SecondJointEncoder.getPosition());
-    SmartDashboard.putNumber("Second Joint Angle", getAngle());
+    SmartDashboard.putNumber("SecondJoint Encoder", SecondJointEncoder.getPosition());
+    SmartDashboard.putNumber("SecondJoint Current Angle", Units.radiansToDegrees(getAngle()));
+
+    SmartDashboard.putNumber("SecondJoint Target Position", targetPosition);
   }
 }

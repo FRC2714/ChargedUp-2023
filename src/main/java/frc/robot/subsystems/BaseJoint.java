@@ -8,8 +8,10 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
@@ -23,8 +25,9 @@ public class BaseJoint extends SubsystemBase {
   private SparkMaxPIDController BaseJointPID;
   //ticks per rev: 8192
   //BaseEncoder.setPositionConversionFactor(2*Math.PI); ???
-  private double conversionFactor = 1/8192 * 360;
+  private double conversionFactor = 1/8192 * 2*Math.PI;
 
+  private double targetAngle;
   private double targetPosition;
   
   /** Creates a new BaseJoint. */
@@ -33,13 +36,21 @@ public class BaseJoint extends SubsystemBase {
     RightBaseMotor = new CANSparkMax(ArmConstants.kRightBaseJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     BaseEncoder = RightBaseMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
-    LeftBaseMotor.follow(RightBaseMotor, false);
-    
+    LeftBaseMotor.follow(RightBaseMotor, true);
+
     RightBaseMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
     LeftBaseMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
 
+    //RightBaseMotor.setIdleMode(IdleMode.kCoast);
+    //LeftBaseMotor.setIdleMode(IdleMode.kCoast);
+
     BaseJointPID = RightBaseMotor.getPIDController();
-    BaseJointPID.setFF(ArmConstants.kBaseJointFF);
+    BaseJointPID.setPositionPIDWrappingEnabled(false);
+    BaseJointPID.setPositionPIDWrappingMinInput(0);
+    BaseJointPID.setPositionPIDWrappingMinInput(Math.PI);
+    BaseJointPID.setFeedbackDevice(BaseEncoder);
+
+    BaseJointPID.setFF(ArmConstants.kBaseJointFF, 0);
     BaseJointPID.setP(ArmConstants.kBaseJointP, 0);
     BaseJointPID.setI(ArmConstants.kBaseJointI, 0);
     BaseJointPID.setD(ArmConstants.kBaseJointD, 0);
@@ -50,12 +61,17 @@ public class BaseJoint extends SubsystemBase {
   }
 
   public double getAngle() {
-    return BaseEncoder.getPosition() * conversionFactor;
+    if ((BaseEncoder.getPosition() * 2*Math.PI) > Math.PI) {
+      return (BaseEncoder.getPosition() * 2*Math.PI)-(2*Math.PI);
+    } else {
+      return BaseEncoder.getPosition() * 2*Math.PI;
+    }
+    
   }
 
-  public void setTarget(double targetPosition) {
-    this.targetPosition = targetPosition;
-    BaseJointPID.setReference(-targetPosition, CANSparkMax.ControlType.kSmartMotion, 0);
+  public void setTarget(double targetAngle) {
+    this.targetAngle = targetAngle/(2*Math.PI);
+    BaseJointPID.setReference(-targetAngle * 2*Math.PI, CANSparkMax.ControlType.kSmartMotion, 0);
   }
 
   public boolean atSetpoint() {
@@ -68,7 +84,9 @@ public class BaseJoint extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Base Joint Encoder", BaseEncoder.getPosition());
-    SmartDashboard.putNumber("Base Joint Angle", getAngle());
+    SmartDashboard.putNumber("BaseJoint Encoder", BaseEncoder.getPosition());
+    SmartDashboard.putNumber("BaseJoint Current Angle", Units.radiansToDegrees(getAngle()));
+
+    SmartDashboard.putNumber("BaseJoint Target Position", targetPosition);
   }
 }

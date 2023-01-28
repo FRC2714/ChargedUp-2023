@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
@@ -77,7 +78,7 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, Button.kSquare.value).whileTrue(new InstantCommand(() -> armSubsystem.setTargetPosition(10,10)));
+    new JoystickButton(m_driverController, Button.kSquare.value).whileTrue(new InstantCommand(() -> armSubsystem.setTargetAngles(Units.degreesToRadians(90),Units.degreesToRadians(70))));
   }
 
   /**
