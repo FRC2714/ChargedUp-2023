@@ -19,16 +19,10 @@ import frc.robot.Constants.ArmConstants;
 public class BaseJoint extends SubsystemBase {
   private CANSparkMax RightBaseMotor;
   private CANSparkMax LeftBaseMotor;
-
   private AbsoluteEncoder BaseEncoder;
-
   private SparkMaxPIDController BaseJointPID;
-  //ticks per rev: 8192
-  //BaseEncoder.setPositionConversionFactor(2*Math.PI); ???
-  private double conversionFactor = 1/8192 * 2*Math.PI;
 
   private double targetAngle;
-  private double targetPosition;
   
   /** Creates a new BaseJoint. */
   public BaseJoint() {
@@ -43,6 +37,7 @@ public class BaseJoint extends SubsystemBase {
 
     //RightBaseMotor.setIdleMode(IdleMode.kCoast);
     //LeftBaseMotor.setIdleMode(IdleMode.kCoast);
+    BaseEncoder.setPositionConversionFactor(2*Math.PI);
 
     BaseJointPID = RightBaseMotor.getPIDController();
     BaseJointPID.setPositionPIDWrappingEnabled(false);
@@ -60,22 +55,25 @@ public class BaseJoint extends SubsystemBase {
 
   }
 
-  public double getAngle() {
-    if ((BaseEncoder.getPosition() * 2*Math.PI) > Math.PI) {
-      return (BaseEncoder.getPosition() * 2*Math.PI)-(2*Math.PI);
+  public double convertAngle(double angle) {
+    if ((angle)> Math.PI) {
+      return (angle) - (2*Math.PI);
     } else {
-      return BaseEncoder.getPosition() * 2*Math.PI;
+      return angle;
     }
-    
   }
 
-  public void setTarget(double targetAngle) {
-    this.targetAngle = targetAngle/(2*Math.PI);
-    BaseJointPID.setReference(-targetAngle * 2*Math.PI, CANSparkMax.ControlType.kSmartMotion, 0);
+  public double getAngle() {
+    return convertAngle(BaseEncoder.getPosition());
+  }
+
+  public void setTarget(double target) {
+    this.targetAngle = convertAngle(target);
+    BaseJointPID.setReference(targetAngle, CANSparkMax.ControlType.kSmartMotion, 0);
   }
 
   public boolean atSetpoint() {
-    return Math.abs(targetPosition + getAngle()) < ArmConstants.kBaseJointTolerance;
+    return Math.abs(targetAngle + getAngle()) < ArmConstants.kBaseJointTolerance;
   }
 
   public void disable() {
@@ -87,6 +85,6 @@ public class BaseJoint extends SubsystemBase {
     SmartDashboard.putNumber("BaseJoint Encoder", BaseEncoder.getPosition());
     SmartDashboard.putNumber("BaseJoint Current Angle", Units.radiansToDegrees(getAngle()));
 
-    SmartDashboard.putNumber("BaseJoint Target Position", targetPosition);
+    SmartDashboard.putNumber("BaseJoint Target Position", targetAngle);
   }
 }

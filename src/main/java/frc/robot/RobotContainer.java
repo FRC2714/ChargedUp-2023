@@ -78,7 +78,8 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, Button.kSquare.value).whileTrue(new InstantCommand(() -> armSubsystem.setTargetAngles(Units.degreesToRadians(90),Units.degreesToRadians(70))));
+    new JoystickButton(m_driverController, Button.kSquare.value).whileTrue(
+      new InstantCommand(() -> armSubsystem.setTargetAngles(Units.degreesToRadians(90),Units.degreesToRadians(70))));
   }
 
   /**

@@ -18,16 +18,10 @@ import frc.robot.Constants.ArmConstants;
 
 public class SecondJoint extends SubsystemBase {
   private CANSparkMax SecondJointMotor;
-
   private AbsoluteEncoder SecondJointEncoder;
-
   private SparkMaxPIDController SecondJointPID;
-  //ticks per rev: 8192
-  //BaseEncoder.setPositionConversionFactor(2*Math.PI); ???
-  private double conversionFactor = 1/8192 * 2*Math.PI;
 
   private double targetAngle;
-  private double targetPosition;
   
   /** Creates a new SecondJoint. */
   public SecondJoint() {
@@ -35,6 +29,7 @@ public class SecondJoint extends SubsystemBase {
     SecondJointEncoder = SecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
     //SecondJointMotor.setIdleMode(IdleMode.kCoast);
+    SecondJointEncoder.setPositionConversionFactor(2*Math.PI);
 
     SecondJointPID = SecondJointMotor.getPIDController();
     SecondJointPID.setPositionPIDWrappingEnabled(false);
@@ -52,21 +47,25 @@ public class SecondJoint extends SubsystemBase {
 
   }
 
-  public double getAngle() {
-    if ((SecondJointEncoder.getPosition() * 2*Math.PI)> Math.PI) {
-      return (SecondJointEncoder.getPosition() * 2*Math.PI)- (2*Math.PI);
+  public double convertAngle(double angle) {
+    if ((angle)> Math.PI) {
+      return (angle) - (2*Math.PI);
     } else {
-      return SecondJointEncoder.getPosition() * 2*Math.PI;
+      return angle;
     }
   }
 
+  public double getAngle() {
+    return convertAngle(SecondJointEncoder.getPosition());
+  }
+
   public void setTarget(double targetAngle) {
-    this.targetAngle = targetAngle /(2*Math.PI);
-    SecondJointPID.setReference(targetAngle * 2*Math.PI, CANSparkMax.ControlType.kSmartMotion, 0);
+    this.targetAngle = targetAngle;
+    SecondJointPID.setReference(targetAngle, CANSparkMax.ControlType.kSmartMotion, 0);
   }
 
   public boolean atSetpoint() {
-    return Math.abs(targetPosition + getAngle()) < ArmConstants.kSecondJointTolerance;
+    return Math.abs(targetAngle + getAngle()) < ArmConstants.kSecondJointTolerance;
   }
 
   public void disable() {
@@ -78,6 +77,6 @@ public class SecondJoint extends SubsystemBase {
     SmartDashboard.putNumber("SecondJoint Encoder", SecondJointEncoder.getPosition());
     SmartDashboard.putNumber("SecondJoint Current Angle", Units.radiansToDegrees(getAngle()));
 
-    SmartDashboard.putNumber("SecondJoint Target Position", targetPosition);
+    SmartDashboard.putNumber("SecondJoint Target Position", targetAngle);
   }
 }
