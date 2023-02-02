@@ -52,7 +52,6 @@ public class BaseJoint extends SubsystemBase {
     BaseJointPID.setSmartMotionMaxVelocity(ArmConstants.kBaseJointMaxVelocity, 0);
     BaseJointPID.setSmartMotionMaxAccel(ArmConstants.kBaseJointMaxAcceleration, 0);
     BaseJointPID.setSmartMotionAllowedClosedLoopError(ArmConstants.kBaseJointTolerance, 0);
-
   }
 
   public double convertAngle(double angle) {
@@ -84,7 +83,6 @@ public class BaseJoint extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("BaseJoint Encoder", BaseEncoder.getPosition());
     SmartDashboard.putNumber("BaseJoint Current Angle", Units.radiansToDegrees(getAngle()));
-
     SmartDashboard.putNumber("BaseJoint Target Position", targetAngle);
   }
 }

@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -13,7 +12,7 @@ import frc.robot.Constants.ArmConstants;
 
 public class Superstructure extends SubsystemBase {
   private BaseJoint basejoint = new BaseJoint();
-  private SecondJoint secondjoint = new SecondJoint();//should be SecondJoint Class
+  private SecondJoint secondjoint = new SecondJoint();
 
   private double a1 = ArmConstants.kBaseJointLength;//meters
   private double a2 = ArmConstants.kSecondJointLength;
@@ -32,27 +31,24 @@ public class Superstructure extends SubsystemBase {
 
   }
 
+  public void setFowardKinematics(double baseAngle, double secondAngle) {
+    basejoint.setTarget(baseAngle);
+    secondjoint.setTarget(secondAngle);
+  }
+
   public void setTargetPosition(double X, double Y) {
     targetX = X;
     targetY = Y;
   }
 
-  public void setTargetAngles(double baseAngle, double secondAngle) {
-    basejoint.setTarget(baseAngle);
-    secondjoint.setTarget(secondAngle);
-  }
-
-  //calcuate second joint angle 
   public void calculateQ2() {
     q2 = -Math.abs(Math.acos(
         ((targetX*targetX)+(targetY*targetY)-(a1*a1)-(a2*a2))
         /
         (2*a1*a2)
-      )
-    );
+      ));
   }
 
-  //calculate base joint angle
   public void calculateQ1() {
     q1 = Math.abs(
       Math.atan(targetX/targetY) +
@@ -60,16 +56,15 @@ public class Superstructure extends SubsystemBase {
         (a2*Math.sin(q2))
         /
         (a1+a2*Math.sin(q2))
-      )
-    );
+      ));
   }
 
-  public void calclulateAngles() {
+  public void calculateInverseKinematics() {
     calculateQ1();
     calculateQ2();
   }
 
-  public void moveJoints() {
+  public void setInverseKinematics() {
     basejoint.setTarget(q1);
     secondjoint.setTarget(q2);
   }
@@ -86,7 +81,7 @@ public class Superstructure extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("BaseJoint Target Angle", Units.radiansToDegrees(q1));
     SmartDashboard.putNumber("SecondJoint Target Angle", Units.radiansToDegrees(q2));
-    calclulateAngles();
+    calculateInverseKinematics();
     estimateCurrentXY();
   }
 }

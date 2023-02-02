@@ -44,7 +44,6 @@ public class SecondJoint extends SubsystemBase {
     SecondJointPID.setSmartMotionMaxVelocity(ArmConstants.kSecondJointMaxVelocity, 0);
     SecondJointPID.setSmartMotionMaxAccel(ArmConstants.kSecondJointMaxAcceleration, 0);
     SecondJointPID.setSmartMotionAllowedClosedLoopError(ArmConstants.kSecondJointTolerance, 0);
-
   }
 
   public double convertAngle(double angle) {
@@ -76,7 +75,6 @@ public class SecondJoint extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("SecondJoint Encoder", SecondJointEncoder.getPosition());
     SmartDashboard.putNumber("SecondJoint Current Angle", Units.radiansToDegrees(getAngle()));
-
     SmartDashboard.putNumber("SecondJoint Target Position", targetAngle);
   }
 }
