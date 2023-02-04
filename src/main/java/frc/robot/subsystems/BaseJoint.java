@@ -41,8 +41,6 @@ public class BaseJoint extends SubsystemBase {
 
     BaseJointPID = RightBaseMotor.getPIDController();
     BaseJointPID.setPositionPIDWrappingEnabled(false);
-    BaseJointPID.setPositionPIDWrappingMinInput(0);
-    BaseJointPID.setPositionPIDWrappingMinInput(Math.PI);
     BaseJointPID.setFeedbackDevice(BaseEncoder);
 
     BaseJointPID.setFF(ArmConstants.kBaseJointFF, 0);

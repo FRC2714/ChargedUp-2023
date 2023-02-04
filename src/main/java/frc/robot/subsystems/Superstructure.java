@@ -32,8 +32,10 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void setFowardKinematics(double baseAngle, double secondAngle) {
-    basejoint.setTarget(baseAngle);
+    //basejoint.setTarget(baseAngle);
     secondjoint.setTarget(secondAngle);
+    //SmartDashboard.putNumber("BaseJoint Target Angle", Units.radiansToDegrees(baseAngle));
+    SmartDashboard.putNumber("SecondJoint Target Angle", Units.radiansToDegrees(secondAngle));
   }
 
   public void setTargetPosition(double X, double Y) {
@@ -79,8 +81,7 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("BaseJoint Target Angle", Units.radiansToDegrees(q1));
-    SmartDashboard.putNumber("SecondJoint Target Angle", Units.radiansToDegrees(q2));
+    
     calculateInverseKinematics();
     estimateCurrentXY();
   }

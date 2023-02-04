@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+
+import java.time.Instant;
 import java.util.List;
 import frc.robot.commands.auto.*;
 
@@ -51,6 +53,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure default commands
+    //armSubsystem.setDefaultCommand(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90), Units.degreesToRadians(-45))));
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -79,7 +82,10 @@ public class RobotContainer {
             m_robotDrive));
 
     new JoystickButton(m_driverController, Button.kSquare.value)
-      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90),Units.degreesToRadians(70))));
+      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90),Units.degreesToRadians(120))));
+    
+      new JoystickButton(m_driverController, Button.kTriangle.value)
+      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90),Units.degreesToRadians(-90))));
   }
 
   /**
