@@ -28,14 +28,16 @@ public class SecondJoint extends SubsystemBase {
   /** Creates a new SecondJoint. */
   public SecondJoint() {
     SecondJointMotor = new CANSparkMax(ArmConstants.kSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    SecondJointEncoder = SecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    SecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
 
-    //todo motor should not be inverted
-    SecondJointMotor.setInverted(false);
-    //need to 
-    //SecondJointMotor.setIdleMode(IdleMode.kCoast);
-    SecondJointEncoder.setPositionConversionFactor(2*Math.PI *125); //multiply by gear ratio?
+    SecondJointMotor.setInverted(false); //must not be inverted
+    SecondJointMotor.setIdleMode(IdleMode.kBrake);
+
+    SecondJointEncoder = SecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    SecondJointEncoder.setPositionConversionFactor(ArmConstants.kSecondJointPositionConversionFactor);
+    SecondJointEncoder.setInverted(false); //must not be inverted
     //todo set velocity conversion factor
+
     SecondJointPID = SecondJointMotor.getPIDController();
     SecondJointPID.setPositionPIDWrappingEnabled(false);
     SecondJointPID.setFeedbackDevice(SecondJointEncoder);
@@ -49,20 +51,18 @@ public class SecondJoint extends SubsystemBase {
   }
 
   public double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
-    //todo set second joint encoder to inverted
-    sparkAngle -= 350;//350 = difference from kinematic 0 to sparkmax 0 approx 160deg
-    sparkAngle /= 125; //divide by gear ratio
+    sparkAngle -= ArmConstants.kSecondJointKinematicOffset; //subtract kinematic offset
+    sparkAngle /= ArmConstants.kSecondJointGearRatio; //divide by gear ratio
     //convert 0,360 to -180,180
     if ((sparkAngle) > Math.PI) { //when angle > 180, convert to -, then negate
       sparkAngle = -((sparkAngle) - (2*Math.PI));
       currentKinematicAngle = sparkAngle;
-      //SmartDashboard.putNumber("SecondJoint Kinematic Angle > 180", Units.radiansToDegrees(currentKinematicAngle));
-      return currentKinematicAngle;
+      SmartDashboard.putNumber("SecondJoint Calculated Kinematic Angle > 180", Units.radiansToDegrees(currentKinematicAngle));
     } else { //when angle < 180, convert to +, then negate
       currentKinematicAngle = -sparkAngle;
-      //SmartDashboard.putNumber("SecondJoint Kinematic Angle < 180", Units.radiansToDegrees(currentKinematicAngle));
-      return currentKinematicAngle;
+      SmartDashboard.putNumber("SecondJoint Calculated Kinematic Angle < 180", Units.radiansToDegrees(currentKinematicAngle));
     }
+    return currentKinematicAngle;
   }
 
   public double convertAngleFromKinematicToSparkMax(double kinematicAngle) {
@@ -70,13 +70,13 @@ public class SecondJoint extends SubsystemBase {
     kinematicAngle += Math.PI;
     if (kinematicAngle < 0) { //when angle is -, convert to 180,360 then negate
       kinematicAngle = -(kinematicAngle + (Math.PI));
-      //SmartDashboard.putNumber("SecondJoint Calculated SparkMax Angle < 0", Units.radiansToDegrees(currentSparkAngle));
+      SmartDashboard.putNumber("SecondJoint Calculated SparkMax Position < 0", Units.radiansToDegrees(currentSparkAngle));
     } else { //when angle is +, convert to 0,180 then negate
-      kinematicAngle = -(kinematicAngle- Math.PI);
-      //SmartDashboard.putNumber("SecondJoint Calculated SparkMax Angle > 0", Units.radiansToDegrees(currentSparkAngle));
+      kinematicAngle = -(kinematicAngle - Math.PI);
+      SmartDashboard.putNumber("SecondJoint Calculated SparkMax Position > 0", Units.radiansToDegrees(currentSparkAngle));
     }
-    kinematicAngle *=125; //multiply by gear ratio
-    kinematicAngle += 350; //add kinematic offset
+    kinematicAngle *= ArmConstants.kSecondJointGearRatio; //multiply by gear ratio
+    kinematicAngle += ArmConstants.kSecondJointKinematicOffset; //add kinematic offset
     currentSparkAngle = kinematicAngle;
     return currentSparkAngle;
   }
@@ -85,8 +85,9 @@ public class SecondJoint extends SubsystemBase {
     return convertAngleFromSparkMaxToKinematic(SecondJointEncoder.getPosition());
   }
 
-  public void setTarget(double targetAngle) {
-    this.targetAngle = targetAngle;
+  public void setTargetKinematicAngle(double targetAngle) {
+    SmartDashboard.putNumber("SecondJoint Target Kinematic Angle", targetAngle);
+    SmartDashboard.putNumber("SecondJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
     SecondJointPID.setReference(convertAngleFromKinematicToSparkMax(targetAngle), CANSparkMax.ControlType.kSmartMotion, 0);
   }
 
@@ -101,6 +102,5 @@ public class SecondJoint extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("SecondJoint Encoder", SecondJointEncoder.getPosition());
-    SmartDashboard.putNumber("SecondJoint Target Position", targetAngle);
   }
 }

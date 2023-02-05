@@ -32,10 +32,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void setFowardKinematics(double baseAngle, double secondAngle) {
-    basejoint.setTarget(baseAngle);
-    secondjoint.setTarget(secondAngle);
-    SmartDashboard.putNumber("BaseJoint Target Angle", Units.radiansToDegrees(baseAngle));
-    SmartDashboard.putNumber("SecondJoint Target Angle", Units.radiansToDegrees(secondAngle));
+    basejoint.setTargetKinematicAngle(baseAngle);
+    secondjoint.setTargetKinematicAngle(secondAngle);
   }
 
   public void setTargetPosition(double X, double Y) {
@@ -67,8 +65,8 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void setInverseKinematics() {
-    basejoint.setTarget(q1);
-    secondjoint.setTarget(q2);
+    basejoint.setTargetKinematicAngle(q1);
+    secondjoint.setTargetKinematicAngle(q2);
   }
 
   public void estimateCurrentXY() {
