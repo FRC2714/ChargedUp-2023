@@ -23,6 +23,8 @@ public class BaseJoint extends SubsystemBase {
   private SparkMaxPIDController BaseJointPID;
 
   private double targetAngle;
+  private double currentSparkAngle;
+  private double currentKinematicAngle;
   
   /** Creates a new BaseJoint. */
   public BaseJoint() {
@@ -35,14 +37,14 @@ public class BaseJoint extends SubsystemBase {
     RightBaseMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
     LeftBaseMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
 
+    RightBaseMotor.setInverted(true);
     //RightBaseMotor.setIdleMode(IdleMode.kCoast);
     //LeftBaseMotor.setIdleMode(IdleMode.kCoast);
-    BaseEncoder.setPositionConversionFactor(2*Math.PI);
-
+    BaseEncoder.setPositionConversionFactor(2*Math.PI * 240);
+    BaseEncoder.setInverted(true);
     BaseJointPID = RightBaseMotor.getPIDController();
     BaseJointPID.setPositionPIDWrappingEnabled(false);
     BaseJointPID.setFeedbackDevice(BaseEncoder);
-
     BaseJointPID.setFF(ArmConstants.kBaseJointFF, 0);
     BaseJointPID.setP(ArmConstants.kBaseJointP, 0);
     BaseJointPID.setI(ArmConstants.kBaseJointI, 0);
@@ -52,25 +54,49 @@ public class BaseJoint extends SubsystemBase {
     BaseJointPID.setSmartMotionAllowedClosedLoopError(ArmConstants.kBaseJointTolerance, 0);
   }
 
-  public double convertAngle(double angle) {
-    if ((angle)> Math.PI) {
-      return (angle) - (2*Math.PI);
-    } else {
-      return angle;
+  public double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
+    sparkAngle -= 200;//350 = difference from kinematic 0 to sparkmax 0 approx 160deg
+    sparkAngle /= 240; //divide by gear ratio
+    //convert 0,360 to -180,180
+    if ((sparkAngle) > Math.PI) { //when angle > 180, convert to -, then negate
+      sparkAngle = ((sparkAngle) - (2*Math.PI));
+      currentKinematicAngle = sparkAngle;
+      SmartDashboard.putNumber("BaseJoint Kinematic Angle > 180", Units.radiansToDegrees(currentKinematicAngle));
+      return currentKinematicAngle;
+    } else { //when angle < 180, convert to +, then negate
+      currentKinematicAngle = sparkAngle;
+      SmartDashboard.putNumber("BaseJoint Kinematic Angle < 180", Units.radiansToDegrees(currentKinematicAngle));
+      return currentKinematicAngle;
     }
   }
 
-  public double getAngle() {
-    return convertAngle(BaseEncoder.getPosition());
+  public double convertAngleFromKinematicToSparkMax(double kinematicAngle) {
+    //convert -180,180 to 0,360
+    kinematicAngle += Math.PI;
+    if (kinematicAngle < 0) { //when angle is -, convert to 180,360 then negate
+      kinematicAngle = (kinematicAngle + (Math.PI));
+      SmartDashboard.putNumber("BaseJoint Calculated SparkMax Angle < 0", Units.radiansToDegrees(currentSparkAngle));
+    } else { //when angle is +, convert to 0,180 then negate
+      kinematicAngle = (kinematicAngle - Math.PI);
+      SmartDashboard.putNumber("BaseJoint Calculated SparkMax Angle > 0", Units.radiansToDegrees(currentSparkAngle));
+    }
+    kinematicAngle *=240; //multiply by gear ratio
+    kinematicAngle += 200; //add kinematic offset
+    currentSparkAngle = kinematicAngle;
+    return currentSparkAngle;
+  }
+
+  public double getKinematicAngle() {
+    return convertAngleFromSparkMaxToKinematic(BaseEncoder.getPosition());
   }
 
   public void setTarget(double target) {
-    this.targetAngle = convertAngle(target);
-    BaseJointPID.setReference(targetAngle, CANSparkMax.ControlType.kSmartMotion, 0);
+    this.targetAngle = targetAngle;
+    BaseJointPID.setReference(convertAngleFromKinematicToSparkMax(target), CANSparkMax.ControlType.kSmartMotion, 0);
   }
 
   public boolean atSetpoint() {
-    return Math.abs(targetAngle + getAngle()) < ArmConstants.kBaseJointTolerance;
+    return Math.abs(targetAngle + getKinematicAngle()) < ArmConstants.kBaseJointTolerance;
   }
 
   public void disable() {
@@ -80,7 +106,6 @@ public class BaseJoint extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("BaseJoint Encoder", BaseEncoder.getPosition());
-    SmartDashboard.putNumber("BaseJoint Current Angle", Units.radiansToDegrees(getAngle()));
     SmartDashboard.putNumber("BaseJoint Target Position", targetAngle);
   }
 }
