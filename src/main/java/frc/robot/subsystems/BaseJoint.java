@@ -36,13 +36,13 @@ public class BaseJoint extends SubsystemBase {
     RightBaseMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
     LeftBaseMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
 
-    RightBaseMotor.setInverted(true);//must be inverted
+    RightBaseMotor.setInverted(ArmConstants.kBaseJointInverted); //must be inverted
     RightBaseMotor.setIdleMode(IdleMode.kBrake);
     LeftBaseMotor.setIdleMode(IdleMode.kBrake);
 
     BaseEncoder = RightBaseMotor.getAbsoluteEncoder(Type.kDutyCycle);
     BaseEncoder.setPositionConversionFactor(ArmConstants.kBaseJointPositionConversionFactor);
-    BaseEncoder.setInverted(true); //must be inverted
+    BaseEncoder.setInverted(ArmConstants.kBaseJointInverted); //must be inverted
     //todo set velocity conversion factor
 
     BaseJointPID = RightBaseMotor.getPIDController();
@@ -61,10 +61,10 @@ public class BaseJoint extends SubsystemBase {
     sparkAngle -= ArmConstants.kBaseJointKinematicOffset; //subtract kinematic offset
     sparkAngle /= ArmConstants.kBaseJointGearRatio; //divide by gear ratio
     //convert 0,360 to -180,180
-    if ((sparkAngle) > Math.PI) { //when angle > 180, convert to -, then negate
+    if ((sparkAngle) > Math.PI) { //when angle > 180, convert to -
       sparkAngle = ((sparkAngle) - (2*Math.PI));
       SmartDashboard.putNumber("BaseJoint Calculated Kinematic Angle > 180", Units.radiansToDegrees(currentKinematicAngle));
-    } else { //when angle < 180, convert to +, then negate
+    } else { //when angle < 180, convert to +
       SmartDashboard.putNumber("BaseJoint Calculated Kinematic Angle < 180", Units.radiansToDegrees(currentKinematicAngle));
     }
     currentKinematicAngle = sparkAngle;
@@ -73,11 +73,11 @@ public class BaseJoint extends SubsystemBase {
 
   public double convertAngleFromKinematicToSparkMax(double kinematicAngle) {
     //convert -180,180 to 0,360
-    kinematicAngle += Math.PI;
-    if (kinematicAngle < 0) { //when angle is -, convert to 180,360 then negate
+    kinematicAngle += Math.PI; //add 180
+    if (kinematicAngle < 0) { //when angle is -, convert to 180,360
       kinematicAngle = (kinematicAngle + (Math.PI));
       SmartDashboard.putNumber("BaseJoint Calculated SparkMax Position < 0", Units.radiansToDegrees(currentSparkAngle));
-    } else { //when angle is +, convert to 0,180 then negate
+    } else { //when angle is +, convert to 0,180
       kinematicAngle = (kinematicAngle - Math.PI);
       SmartDashboard.putNumber("BaseJoint Calculated SparkMax Position > 0", Units.radiansToDegrees(currentSparkAngle));
     }

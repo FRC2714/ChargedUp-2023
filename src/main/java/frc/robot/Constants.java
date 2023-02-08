@@ -155,20 +155,23 @@ public final class Constants {
     public static final double kBaseJointKinematicOffset = 200; //difference from kinematic 0 to sparkmax 0 approx 45 deg
     public static final double kSecondJointKinematicOffset = 350; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
+    public static final boolean kBaseJointInverted = true; //both base joint motor and encoder are inverted
+    public static final boolean kSecondJointInverted = false; //econd joint motor and encoder are NOT inverted
+
     //Controller Constants
-    public static final double kBaseJointMaxVelocity = 5000;
+    public static final double kBaseJointMaxVelocity = 5000; //todo tune this
     public static final double kBaseJointMaxAcceleration = 5000;
     public static final double kBaseJointTolerance = 20;
     public static final double kBaseJointFF = 0.00; //0.025
     public static final double kBaseJointP = 0.00005;
     public static final double kBaseJointI = 0;
-    public static final double kBaseJointD = 0.001;
+    public static final double kBaseJointD = 0.001; //todo tune this
 
     public static final double kSecondJointMaxVelocity = 5000;
     public static final double kSecondJointMaxAcceleration = 5000;
     public static final double kSecondJointTolerance = 10;
     public static final double kSecondJointFF = 0; //0.025
-    public static final double kSecondJointP = 0.00007;//0.00013 works but violent bounce
+    public static final double kSecondJointP = 0.00007; //0.00013 works but violent bounce
     public static final double kSecondJointI = 0;
     public static final double kSecondJointD = 0;
 
