@@ -35,7 +35,8 @@ public class Robot extends TimedRobot {
     autoChooser = new SendableChooser<>();
 
     autoChooser.setDefaultOption("Nothing Auto", m_robotContainer.getNothingAuto());
-    autoChooser.addOption("Helper S Curve", m_robotContainer.getTestAuto());
+    autoChooser.addOption("S Curve", m_robotContainer.getTestAuto());
+    autoChooser.addOption("PathPlanner Test", m_robotContainer.getPPTestAuto());
 
     SmartDashboard.putData("Auton Selection", autoChooser);
   }

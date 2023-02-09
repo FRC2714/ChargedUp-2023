@@ -19,7 +19,6 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Superstructure;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -41,7 +40,6 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final Superstructure armSubsystem = new Superstructure();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -80,8 +78,6 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
-
-    new JoystickButton(m_driverController, Button.kSquare.value).whileTrue(new InstantCommand(() -> armSubsystem.setTargetPosition(10,10)));
   }
 
   /**
@@ -107,19 +103,12 @@ public class RobotContainer {
         new Pose2d(3, 0, new Rotation2d(0)),
         config);
 
-    List<PathPlannerTrajectory> autoPaths = 
-    PathPlanner.loadPathGroup(
-      "2CargoAuto",
-      new PathConstraints(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared));
-
     var thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        autoPaths.get(0), //exampleTrajectory
+      exampleTrajectory, //exampleTrajectory
         m_robotDrive::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 
@@ -139,5 +128,9 @@ public class RobotContainer {
 
   public Command getNothingAuto() {
     return new NothingAuto();
+  }
+
+  public Command getPPTestAuto() {
+    return new PPTestAuto();
   }
 }

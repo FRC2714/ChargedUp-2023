@@ -26,10 +26,8 @@ import frc.robot.subsystems.DriveSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TestAuto extends SequentialCommandGroup {
-  
+public class PPTestAuto extends SequentialCommandGroup {
   DriveSubsystem drivetrain = new DriveSubsystem();
-
   List<PathPlannerTrajectory> autoPaths = 
     PathPlanner.loadPathGroup(
       "2CargoAuto",
@@ -37,12 +35,11 @@ public class TestAuto extends SequentialCommandGroup {
         AutoConstants.kMaxSpeedMetersPerSecond,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
-  ProfiledPIDController thetaController = new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-  //thetaController.enableContinuousInput(-Math.PI, Math.PI); fix this??
-
-
   /** Creates a new TestAuto. */
-  public TestAuto() {
+  public PPTestAuto() {
+    ProfiledPIDController thetaController = new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
@@ -57,8 +54,9 @@ public class TestAuto extends SequentialCommandGroup {
           thetaController,
           drivetrain::setModuleStates,
           drivetrain),
+      new InstantCommand(drivetrain::setX, drivetrain),
       new WaitCommand(2),
-      new InstantCommand(drivetrain::setX, drivetrain)
+      new InstantCommand(drivetrain::resetModules, drivetrain)
       
     );
 
