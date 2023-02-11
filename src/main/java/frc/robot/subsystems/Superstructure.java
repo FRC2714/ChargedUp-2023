@@ -72,19 +72,25 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void estimateCurrentXY() {
-    estimatedX = a1*Math.cos(basejoint.getKinematicAngle()) + a2*Math.cos(basejoint.getKinematicAngle()+(secondjoint.getKinematicAngle()));
-    estimatedY = a2*Math.sin(secondjoint.getKinematicAngle()) + a2*Math.sin(basejoint.getKinematicAngle()+(secondjoint.getKinematicAngle()));
+    estimatedX = a1*Math.cos(basejoint.getKinematicAngle()) + a2*Math.cos(basejoint.getKinematicAngle()+secondjoint.getKinematicAngle());
+    estimatedY = a2*Math.sin(secondjoint.getKinematicAngle()) + a2*Math.sin(basejoint.getKinematicAngle()+secondjoint.getKinematicAngle());
     SmartDashboard.putNumber("Estimated X", Units.metersToInches(estimatedX));
     SmartDashboard.putNumber("Estimated Y", Units.metersToInches(estimatedY));
   }
 
   //create position commands
-  public Command loadCube() {
-    return new InstantCommand(() -> setFowardKinematics(90, 0));
+  //base joint swing out position 60
+  //level 2 base joint 90., second joint -102
+  public Command swingOut() {
+    return new InstantCommand(() -> basejoint.setTargetKinematicAngle(60));
   }
 
-  public Command scoreLevelThree() {
-    return new InstantCommand(() -> setFowardKinematics(90, 0));
+  public Command scoreConeLevelTwo() {
+    return new InstantCommand(() -> setFowardKinematics(90, -102));
+  }
+
+  public Command scoreConeLevelThree() {
+    return new InstantCommand(() -> setFowardKinematics(51, -30));
   }
 
   @Override

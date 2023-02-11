@@ -171,7 +171,7 @@ public final class Constants {
     public static final double kSecondJointMaxAcceleration = 5000;
     public static final double kSecondJointTolerance = 10;
     public static final double kSecondJointFF = 0; //0.025
-    public static final double kSecondJointP = 0.00007; //0.00013 works but violent bounce
+    public static final double kSecondJointP = 0.00009; //0.00013 works but violent bounce
     public static final double kSecondJointI = 0;
     public static final double kSecondJointD = 0;
 
