@@ -131,6 +131,35 @@ public final class Constants {
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
+  public static final class ClawConstants {
+    public static final int kClawMotorCanId = 0;
+
+    public static final int kLeftClawSolenoidForwardChannel = 0;
+    public static final int kLeftClawSolenoidReverseChannel = 0;
+
+    public static final int kRightClawSolenoidForwardChannel = 0;
+    public static final int kRightClawSolenoidReverseChannel = 0;
+
+    public static final int kClawMotorCurrentLimit = 20; //amps 
+  }
+
+  public static final class IntakeConstants {
+    public static final int kTopMotorCanId = 0;
+    public static final int kBottomMotorCanId = 0;
+
+    public static final int kRetractionSolenoidForwardChannel = 0;
+    public static final int kRetractionSolenoidReverseChannel = 0;
+
+    public static final int kLeftSolenoidForwardChannel = 0;
+    public static final int kLeftSolenoidReverseChannel = 0;
+
+    public static final int kRightSolenoidForwardChannel = 0;
+    public static final int kRightSolenoidReverseChannel = 0;
+
+    public static final int kTopMotorCurrentLimit = 30;
+    public static final int kBottomMotorCurrentLimit = 30;
+  }
+
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
