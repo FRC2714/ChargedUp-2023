@@ -8,8 +8,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ArmConstants;
 
 public class Superstructure extends SubsystemBase {
@@ -81,8 +82,12 @@ public class Superstructure extends SubsystemBase {
   //create position commands
   //base joint swing out position 60
   //level 2 base joint 90., second joint -102
-  public Command swingOut() {
-    return new InstantCommand(() -> basejoint.setTargetKinematicAngle(60));
+  public SequentialCommandGroup swingOutAndScore() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> setFowardKinematics(60, 0)),
+      new WaitCommand(0.5),
+      new InstantCommand(() -> setFowardKinematics(90, -102))
+    );
   }
 
   public Command scoreConeLevelTwo() {
@@ -96,7 +101,6 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
     calculateInverseKinematics();
     estimateCurrentXY();
   }

@@ -79,11 +79,13 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    new JoystickButton(m_driverController, Button.kSquare.value)
-      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(70),Units.degreesToRadians(120))));
+    //Swing to level 2 on Y
+    new JoystickButton(m_driverController, Button.kTriangle.value)
+      .whileTrue(armSubsystem.swingOutAndScore());
     
-      new JoystickButton(m_driverController, Button.kTriangle.value)
-      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(30),Units.degreesToRadians(-30))));
+    //Go back on B
+      new JoystickButton(m_driverController, Button.kSquare.value)
+      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90),Units.degreesToRadians(120))));
   }
 
   /**
