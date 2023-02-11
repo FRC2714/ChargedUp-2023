@@ -114,7 +114,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
-    public static final int kOperatorControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
   }
 
   public static final class AutoConstants {
@@ -133,10 +133,10 @@ public final class Constants {
   }
 
   public static final class ClawConstants {
-    public static final int kClawMotorCanId = 0;
+    public static final int kClawMotorCanId = 14;
 
-    public static final int kLeftClawSolenoidForwardChannel = 0;
-    public static final int kLeftClawSolenoidReverseChannel = 0;
+    public static final int kLeftClawSolenoidForwardChannel = 15;
+    public static final int kLeftClawSolenoidReverseChannel = 14;
 
     public static final int kRightClawSolenoidForwardChannel = 0;
     public static final int kRightClawSolenoidReverseChannel = 0;
@@ -145,17 +145,17 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int kTopMotorCanId = 0;
-    public static final int kBottomMotorCanId = 0;
+    public static final int kTopMotorCanId = 13;
+    public static final int kBottomMotorCanId = 15;
 
-    public static final int kRetractionSolenoidForwardChannel = 0;
-    public static final int kRetractionSolenoidReverseChannel = 0;
+    public static final int kLeftRetractionSolenoidForwardChannel = 10;
+    public static final int kLeftRetractionSolenoidReverseChannel = 11;
 
-    public static final int kLeftSolenoidForwardChannel = 0;
-    public static final int kLeftSolenoidReverseChannel = 0;
+    public static final int kRightRetractionSolenoidForwardChannel = 13;
+    public static final int kRightRetractionSolenoidReverseChannel = 12;
 
-    public static final int kRightSolenoidForwardChannel = 0;
-    public static final int kRightSolenoidReverseChannel = 0;
+    public static final int kIntakeSolenoidForwardChannel = 8;
+    public static final int kIntakeSolenoidReverseChannel = 9;
 
     public static final int kTopMotorCurrentLimit = 30;
     public static final int kBottomMotorCurrentLimit = 30;

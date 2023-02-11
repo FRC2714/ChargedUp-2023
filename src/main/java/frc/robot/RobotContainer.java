@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+
 import java.util.List;
 
 /*
@@ -74,23 +76,42 @@ public class RobotContainer {
    * passing it to a
    * {@link JoystickButton}.
    */
-  private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+    private void configureButtonBindings() {
+//     new JoystickButton(m_driverController, Button.kR1.value)
+//         .whileTrue(new RunCommand(
+//             () -> m_robotDrive.setX(),
+//             m_robotDrive));
     
+    //Run Intake on Y
+    new JoystickButton(m_driverController, Button.kTriangle.value)
+    .whileTrue(new InstantCommand(() -> m_intake.intake(), m_intake));
+    //Stop Intake on B
+    new JoystickButton(m_driverController, Button.kCross.value)
+    .whileTrue(new InstantCommand(() -> m_intake.stop(), m_intake));
+    //Outtake on A
+    //new JoystickButton(m_driverController, Button.kSquare.value)
+    //.whileTrue(new InstantCommand(() -> m_intake.outtake(), m_intake));
+
+    //Up on Right Bumper
+    new JoystickButton(m_driverController, Button.kR1.value)
+    .whileTrue(new InstantCommand(() -> m_intake.up(), m_intake));
+    //Down on Left Bumper
+    new JoystickButton(m_driverController, Button.kL1.value)
+    .whileTrue(new InstantCommand(() -> m_intake.down(), m_intake));
+
+
+
     //Open Claw on Y
     new JoystickButton(m_operatorController, Button.kTriangle.value)
         .whileTrue(new InstantCommand(() -> m_claw.open(), m_claw));
     //Close Claw on B
-    new JoystickButton(m_operatorController, Button.kCircle.value)
+    new JoystickButton(m_operatorController, Button.kCross.value)
         .whileTrue(new InstantCommand(() -> m_claw.close(), m_claw));
     //Deploy Intake on X
-    new JoystickButton(m_operatorController, Button.kSquare.value)
+    new JoystickButton(m_driverController, Button.kCircle.value)
         .whileTrue(new InstantCommand(() -> m_intake.deploy(), m_claw));
     //Retract Intake on A
-    new JoystickButton(m_operatorController, Button.kCross.value)
+    new JoystickButton(m_driverController, Button.kSquare.value)
         .whileTrue(new InstantCommand(() -> m_intake.retract(), m_claw));
   }
 

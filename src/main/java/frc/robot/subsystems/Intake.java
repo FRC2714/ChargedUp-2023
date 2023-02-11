@@ -8,8 +8,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -20,9 +23,11 @@ public class Intake extends SubsystemBase {
   private CANSparkMax topMotor;
   private CANSparkMax bottomMotor;
     
-  private DoubleSolenoid retractionSolenoid;
-  private DoubleSolenoid leftSolenoid;
-  private DoubleSolenoid rightSolenoid;
+  private DoubleSolenoid leftRetractionSolenoid;
+  private DoubleSolenoid rightRetractionSolenoid;
+  private DoubleSolenoid intakeSolenoid;
+
+  private PneumaticHub pneumaticHub;
 
   private boolean isDeployed;
   private boolean isDown;
@@ -38,17 +43,20 @@ public class Intake extends SubsystemBase {
     topMotor.setSmartCurrentLimit(IntakeConstants.kTopMotorCurrentLimit);
     bottomMotor.setSmartCurrentLimit(IntakeConstants.kBottomMotorCurrentLimit);
 
-    retractionSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kRetractionSolenoidForwardChannel, IntakeConstants.kRetractionSolenoidReverseChannel);
-    leftSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kLeftSolenoidForwardChannel, IntakeConstants.kLeftSolenoidReverseChannel);
-    rightSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kRightSolenoidForwardChannel, IntakeConstants.kRightSolenoidReverseChannel);
+    pneumaticHub = new PneumaticHub(1);
+    pneumaticHub.enableCompressorAnalog(90, 120);
+
+    leftRetractionSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kLeftRetractionSolenoidForwardChannel, IntakeConstants.kLeftRetractionSolenoidReverseChannel);
+    rightRetractionSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kRightRetractionSolenoidForwardChannel, IntakeConstants.kRightRetractionSolenoidReverseChannel);
+    intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kIntakeSolenoidForwardChannel, IntakeConstants.kIntakeSolenoidReverseChannel);
   }
 
   public void intake() {
-    topMotor.set(1);
+    topMotor.set(-0.5);
   }
 
   public void outtake() {
-    topMotor.set(-1);
+    topMotor.set(0.5);
   }
 
   public void stop() {
@@ -56,24 +64,24 @@ public class Intake extends SubsystemBase {
   }
 
   public void deploy() {
-    retractionSolenoid.set(Value.kForward);
+    leftRetractionSolenoid.set(Value.kForward);
+    rightRetractionSolenoid.set(Value.kForward);
     isDeployed = true;
   }
 
   public void retract() {
-    retractionSolenoid.set(Value.kReverse);
+    leftRetractionSolenoid.set(Value.kReverse);
+    rightRetractionSolenoid.set(Value.kReverse);
     isDeployed = false;
   }
 
   public void up() {
-    leftSolenoid.set(Value.kReverse);
-    rightSolenoid.set(Value.kReverse);
+    intakeSolenoid.set(Value.kForward);
     isDown = false;
   }
 
   public void down() {
-    leftSolenoid.set(Value.kForward);
-    rightSolenoid.set(Value.kForward);
+    intakeSolenoid.set(Value.kReverse);
     isDown = true;
   }
 

@@ -18,19 +18,16 @@ import frc.robot.Constants.ClawConstants;
 public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
 
-  private DoubleSolenoid leftClawSolenoid;
-  private DoubleSolenoid rightClawSolenoid;
+  private DoubleSolenoid clawSolenoid;
 
   private boolean isOpen;
 
   /** Creates a new Claw. */
   public Claw() {
     clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-
     clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
 
-    leftClawSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kLeftClawSolenoidForwardChannel, ClawConstants.kLeftClawSolenoidReverseChannel);
-    rightClawSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kRightClawSolenoidForwardChannel, ClawConstants.kRightClawSolenoidReverseChannel);
+    clawSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kLeftClawSolenoidForwardChannel, ClawConstants.kLeftClawSolenoidReverseChannel);
   }
 
   public void intake() {
@@ -46,14 +43,12 @@ public class Claw extends SubsystemBase {
   }
 
   public void close() {
-    leftClawSolenoid.set(Value.kForward);
-    rightClawSolenoid.set(Value.kForward);
+    clawSolenoid.set(Value.kForward);
     isOpen = false;
   }
   
   public void open() {
-    leftClawSolenoid.set(Value.kReverse);
-    rightClawSolenoid.set(Value.kReverse);
+    clawSolenoid.set(Value.kReverse);
     isOpen = true;
   }
 
