@@ -51,6 +51,10 @@ public class Intake extends SubsystemBase {
     topMotor.set(-1);
   }
 
+  public void stop() {
+    topMotor.set(0);
+  }
+
   public void deploy() {
     retractionSolenoid.set(Value.kForward);
     isDeployed = true;

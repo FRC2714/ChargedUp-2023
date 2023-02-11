@@ -18,8 +18,11 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Intake;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -35,8 +38,12 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 
+  private final Intake m_intake = new Intake();
+  private final Claw m_claw = new Claw();
+
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -72,6 +79,19 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
+    
+    //Open Claw on Y
+    new JoystickButton(m_operatorController, Button.kTriangle.value)
+        .whileTrue(new InstantCommand(() -> m_claw.open(), m_claw));
+    //Close Claw on B
+    new JoystickButton(m_operatorController, Button.kCircle.value)
+        .whileTrue(new InstantCommand(() -> m_claw.close(), m_claw));
+    //Deploy Intake on X
+    new JoystickButton(m_operatorController, Button.kSquare.value)
+        .whileTrue(new InstantCommand(() -> m_intake.deploy(), m_claw));
+    //Retract Intake on A
+    new JoystickButton(m_operatorController, Button.kCross.value)
+        .whileTrue(new InstantCommand(() -> m_intake.retract(), m_claw));
   }
 
   /**

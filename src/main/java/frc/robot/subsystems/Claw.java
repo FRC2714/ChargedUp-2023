@@ -41,6 +41,10 @@ public class Claw extends SubsystemBase {
     clawMotor.set(-1);
   }
 
+  public void stop() {
+    clawMotor.set(0);
+  }
+
   public void close() {
     leftClawSolenoid.set(Value.kForward);
     rightClawSolenoid.set(Value.kForward);
