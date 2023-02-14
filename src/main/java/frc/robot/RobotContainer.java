@@ -92,12 +92,12 @@ public class RobotContainer {
     //new JoystickButton(m_driverController, Button.kSquare.value)
     //.whileTrue(new InstantCommand(() -> m_intake.outtake(), m_intake));
 
-    //Up on Right Bumper
+    //Open on Right Bumper
     new JoystickButton(m_driverController, Button.kR1.value)
-    .whileTrue(new InstantCommand(() -> m_intake.up(), m_intake));
-    //Down on Left Bumper
+    .whileTrue(new InstantCommand(() -> m_intake.open(), m_intake));
+    //Close on Left Bumper
     new JoystickButton(m_driverController, Button.kL1.value)
-    .whileTrue(new InstantCommand(() -> m_intake.down(), m_intake));
+    .whileTrue(new InstantCommand(() -> m_intake.close(), m_intake));
 
 
 
