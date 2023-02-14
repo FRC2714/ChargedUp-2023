@@ -135,11 +135,8 @@ public final class Constants {
   public static final class ClawConstants {
     public static final int kClawMotorCanId = 14;
 
-    public static final int kLeftClawSolenoidForwardChannel = 15;
-    public static final int kLeftClawSolenoidReverseChannel = 14;
-
-    public static final int kRightClawSolenoidForwardChannel = 0;
-    public static final int kRightClawSolenoidReverseChannel = 0;
+    public static final int kClawSolenoidForwardChannel = 15;
+    public static final int kClawSolenoidReverseChannel = 14;
 
     public static final int kClawMotorCurrentLimit = 20; //amps 
   }

@@ -19,6 +19,7 @@ public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
 
   private DoubleSolenoid clawSolenoid;
+  
 
   private boolean isOpen;
 
@@ -27,7 +28,7 @@ public class Claw extends SubsystemBase {
     clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
 
-    clawSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kLeftClawSolenoidForwardChannel, ClawConstants.kLeftClawSolenoidReverseChannel);
+    clawSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kClawSolenoidForwardChannel, ClawConstants.kClawSolenoidReverseChannel);
   }
 
   public void intake() {

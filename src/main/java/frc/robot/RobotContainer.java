@@ -88,25 +88,21 @@ public class RobotContainer {
     //Stop Intake on B
     new JoystickButton(m_driverController, Button.kCross.value)
     .whileTrue(new InstantCommand(() -> m_intake.stop(), m_intake));
-    //Outtake on A
-    //new JoystickButton(m_driverController, Button.kSquare.value)
-    //.whileTrue(new InstantCommand(() -> m_intake.outtake(), m_intake));
 
     //Open on Right Bumper
+    // new JoystickButton(m_driverController, Button.kR1.value)
+    // .whileTrue(new InstantCommand(() -> m_intake.open(), m_intake));
+    // //Close on Left Bumper
+    // new JoystickButton(m_driverController, Button.kL1.value)
+    // .whileTrue(new InstantCommand(() -> m_intake.close(), m_intake));
+
+    //Open Claw on A
     new JoystickButton(m_driverController, Button.kR1.value)
-    .whileTrue(new InstantCommand(() -> m_intake.open(), m_intake));
-    //Close on Left Bumper
+    .whileTrue(new InstantCommand(() -> m_claw.open(), m_intake));
+    //Close Claw on X
     new JoystickButton(m_driverController, Button.kL1.value)
-    .whileTrue(new InstantCommand(() -> m_intake.close(), m_intake));
+    .whileTrue(new InstantCommand(() -> m_claw.close(), m_intake));
 
-
-
-    //Open Claw on Y
-    new JoystickButton(m_operatorController, Button.kTriangle.value)
-        .whileTrue(new InstantCommand(() -> m_claw.open(), m_claw));
-    //Close Claw on B
-    new JoystickButton(m_operatorController, Button.kCross.value)
-        .whileTrue(new InstantCommand(() -> m_claw.close(), m_claw));
     //Deploy Intake on X
     new JoystickButton(m_driverController, Button.kCircle.value)
         .whileTrue(new InstantCommand(() -> m_intake.deploy(), m_claw));
