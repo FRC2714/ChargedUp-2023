@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -13,26 +15,22 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
-import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Superstructure;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-
-import java.util.List;
-import frc.robot.commands.auto.*;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
+import frc.robot.commands.auto.NothingAuto;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Intake;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -43,8 +41,7 @@ import frc.robot.commands.auto.*;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-  private final Superstructure armSubsystem = new Superstructure();
-
+  private final Arm m_arm = new Arm();
   private final Intake m_intake = new Intake();
   private final Claw m_claw = new Claw();
 
@@ -83,33 +80,39 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
     private void configureButtonBindings() {
-//     new JoystickButton(m_driverController, Button.kR1.value)
-//         .whileTrue(new RunCommand(
-//             () -> m_robotDrive.setX(),
-//             m_robotDrive));
-    
-    //Run Intake on Y
-    new JoystickButton(m_driverController, Button.kTriangle.value)
-    .whileTrue(new InstantCommand(() -> m_intake.intake(), m_intake));
-    //Stop Intake on B
-    new JoystickButton(m_driverController, Button.kCross.value)
-    .whileTrue(new InstantCommand(() -> m_intake.stop(), m_intake));
-
-    //Open on Right Bumper
-    // new JoystickButton(m_driverController, Button.kR1.value)
-    // .whileTrue(new InstantCommand(() -> m_intake.open(), m_intake));
-    // //Close on Left Bumper
-    // new JoystickButton(m_driverController, Button.kL1.value)
-    // .whileTrue(new InstantCommand(() -> m_intake.close(), m_intake));
-    //Swing out and score on Y
-    new JoystickButton(m_driverController, Button.kTriangle.value)
-      .whileTrue(armSubsystem.swingOut());
-    //Go to level 2 on A
-    new JoystickButton(m_driverController, Button.kSquare.value)
-      .whileTrue(armSubsystem.scoreConeLevelTwo());
-    //Go back on B
-      new JoystickButton(m_driverController, Button.kCross.value)
-      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90),Units.degreesToRadians(110))));
+      //swing out and score
+      // new JoystickButton(m_driverController, Button.kY.value)
+      //   .onTrue(m_arm.swingOutLevelTwo());
+      
+      //level 3 on y
+      new JoystickButton(m_driverController, Button.kY.value)
+        .whileTrue(m_arm.scoreConeLevelThree());
+      //level 2 on b
+      new JoystickButton(m_driverController, Button.kB.value)
+        .whileTrue(m_arm.scoreConeLevelTwo());
+      //swing out on a
+      new JoystickButton(m_driverController, Button.kA.value)
+        .whileTrue(m_arm.swingOut());
+      //transfer out on x
+      new JoystickButton(m_driverController, Button.kX.value)
+        .whileTrue(m_arm.transfer());
+      
+      //deploy and intake on right bumper
+      new JoystickButton(m_driverController, Button.kRightBumper.value)
+        .whileTrue(m_intake.deployAndIntake());
+      //retract and stop on left bumper
+      new JoystickButton(m_driverController, Button.kLeftBumper.value)
+        .whileTrue(m_intake.deployAndIntake());
+        
+      //claw intake cone on 90
+      new POVButton(m_driverController, 90)
+        .whileTrue(m_claw.intakeCone());
+      //claw intake cube on 270
+      new POVButton(m_driverController, 270)
+        .whileTrue(m_claw.intakeCube());
+      //stop claw
+      new POVButton(m_driverController, 180)
+        .whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));   
   }
 
   /**

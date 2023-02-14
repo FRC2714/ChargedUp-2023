@@ -91,16 +91,16 @@ public class Intake extends SubsystemBase {
     return isDown;
   }
 
-  public Command deployAll() {
+  public Command deployAndIntake() {
     return (
-      new InstantCommand(() -> deploy())).andThen(
-      new InstantCommand(() -> close()));
+      new InstantCommand(() -> deploy()))
+        .andThen(new InstantCommand(() -> intake()));
   }
 
-  public Command retractAll() {
+  public Command retractAndStop() {
     return (
-      new InstantCommand(() -> retract())).andThen(
-      new InstantCommand(() -> open()));
+      new InstantCommand(() -> retract()))
+        .andThen(new InstantCommand(() -> stop()));
   }
 
 
