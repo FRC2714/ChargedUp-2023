@@ -84,18 +84,22 @@ public class Superstructure extends SubsystemBase {
   //level 2 base joint 90., second joint -102
   public SequentialCommandGroup swingOutAndScore() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setFowardKinematics(60, 0)),
-      new WaitCommand(0.5),
-      new InstantCommand(() -> setFowardKinematics(90, -102))
+      new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(60), Units.degreesToRadians(10)))
+      .withTimeout(1),
+      scoreConeLevelTwo()
     );
   }
 
+  public Command swingOut() {
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(60), Units.degreesToRadians(10)));
+  }
+
   public Command scoreConeLevelTwo() {
-    return new InstantCommand(() -> setFowardKinematics(90, -102));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(90), Units.degreesToRadians(-102)));
   }
 
   public Command scoreConeLevelThree() {
-    return new InstantCommand(() -> setFowardKinematics(51, -30));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(51), Units.degreesToRadians(-31)));
   }
 
   @Override

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 import frc.robot.commands.auto.*;
@@ -79,13 +80,15 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-    //Swing to level 2 on Y
+    //Swing out and score on Y
     new JoystickButton(m_driverController, Button.kTriangle.value)
-      .whileTrue(armSubsystem.swingOutAndScore());
-    
+      .whileTrue(armSubsystem.swingOut());
+    //Go to level 2 on A
+    new JoystickButton(m_driverController, Button.kSquare.value)
+      .whileTrue(armSubsystem.scoreConeLevelTwo());
     //Go back on B
-      new JoystickButton(m_driverController, Button.kSquare.value)
-      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90),Units.degreesToRadians(120))));
+      new JoystickButton(m_driverController, Button.kCross.value)
+      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90),Units.degreesToRadians(110))));
   }
 
   /**
