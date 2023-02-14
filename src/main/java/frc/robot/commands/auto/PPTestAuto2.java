@@ -11,6 +11,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -25,7 +26,7 @@ import frc.robot.subsystems.DriveSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PPTestAuto extends SequentialCommandGroup {
+public class PPTestAuto2 extends SequentialCommandGroup {
   DriveSubsystem drivetrain = new DriveSubsystem();
 
   List<PathPlannerTrajectory> autoPaths = 
@@ -36,27 +37,43 @@ public class PPTestAuto extends SequentialCommandGroup {
         AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
   /** Creates a new TestAuto. */
-  public PPTestAuto() {
-    ProfiledPIDController thetaController = new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+  public PPTestAuto2() {
+    ProfiledPIDController thetaController = 
+      new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+    HolonomicDriveController autoController = 
+      new HolonomicDriveController(
+        new PIDController(AutoConstants.kPXController, 0, 0), 
+        new PIDController(AutoConstants.kPYController, 0, 0), 
+        thetaController);
     
+    SwerveControllerCommand firstPathCommand = 
+      new SwerveControllerCommand(
+        autoPaths.get(0), 
+        drivetrain::getPose, 
+        DriveConstants.kDriveKinematics, 
+        autoController, 
+        drivetrain::setModuleStates, 
+        drivetrain);
+
+    SwerveControllerCommand secondPathCommand = 
+      new SwerveControllerCommand(
+        autoPaths.get(1), 
+        drivetrain::getPose, 
+        DriveConstants.kDriveKinematics, 
+        autoController, 
+        drivetrain::setModuleStates, 
+        drivetrain);
+
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new SwerveControllerCommand(
-          autoPaths.get(0),
-          drivetrain::getPose, // Functional interface to feed supplier
-          DriveConstants.kDriveKinematics,
-
-          // Position controllers
-          new PIDController(AutoConstants.kPXController, 0, 0),
-          new PIDController(AutoConstants.kPYController, 0, 0),
-          thetaController,
-          drivetrain::setModuleStates,
-          drivetrain),
+      firstPathCommand,
       new InstantCommand(drivetrain::setX, drivetrain),
       new WaitCommand(2),
-      new InstantCommand(drivetrain::resetModules, drivetrain)
+      new InstantCommand(drivetrain::resetModules, drivetrain),
+      secondPathCommand
       
     );
 
