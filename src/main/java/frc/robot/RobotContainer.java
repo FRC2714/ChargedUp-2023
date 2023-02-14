@@ -13,17 +13,22 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Superstructure;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
+import frc.robot.commands.auto.*;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -34,6 +39,7 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final Superstructure armSubsystem = new Superstructure();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -46,6 +52,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure default commands
+    //armSubsystem.setDefaultCommand(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90), Units.degreesToRadians(-45))));
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -72,6 +79,16 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
+
+    //Swing out and score on Y
+    new JoystickButton(m_driverController, Button.kTriangle.value)
+      .whileTrue(armSubsystem.swingOut());
+    //Go to level 2 on A
+    new JoystickButton(m_driverController, Button.kSquare.value)
+      .whileTrue(armSubsystem.scoreConeLevelTwo());
+    //Go back on B
+      new JoystickButton(m_driverController, Button.kCross.value)
+      .whileTrue(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90),Units.degreesToRadians(110))));
   }
 
   /**
@@ -79,7 +96,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public Command getTestAuto() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
@@ -118,5 +135,9 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
     return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+  }
+
+  public Command getNothingAuto() {
+    return new NothingAuto();
   }
 }
