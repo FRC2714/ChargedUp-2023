@@ -114,6 +114,7 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
   }
 
   public static final class AutoConstants {
@@ -129,6 +130,32 @@ public final class Constants {
     // Constraint for the motion profiled robot angle controller
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
+  }
+
+  public static final class ClawConstants {
+    public static final int kClawMotorCanId = 14;
+
+    public static final int kClawSolenoidForwardChannel = 15;
+    public static final int kClawSolenoidReverseChannel = 14;
+
+    public static final int kClawMotorCurrentLimit = 20; //amps 
+  }
+
+  public static final class IntakeConstants {
+    public static final int kTopMotorCanId = 13;
+    public static final int kBottomMotorCanId = 15;
+
+    public static final int kLeftRetractionSolenoidForwardChannel = 10;
+    public static final int kLeftRetractionSolenoidReverseChannel = 11;
+
+    public static final int kRightRetractionSolenoidForwardChannel = 13;
+    public static final int kRightRetractionSolenoidReverseChannel = 12;
+
+    public static final int kIntakeSolenoidForwardChannel = 8;
+    public static final int kIntakeSolenoidReverseChannel = 9;
+
+    public static final int kTopMotorCurrentLimit = 30;
+    public static final int kBottomMotorCurrentLimit = 30;
   }
 
   public static final class NeoMotorConstants {

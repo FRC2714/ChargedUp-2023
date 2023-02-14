@@ -19,7 +19,9 @@ import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Superstructure;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -27,6 +29,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+
 import java.util.List;
 import frc.robot.commands.auto.*;
 
@@ -41,8 +45,12 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final Superstructure armSubsystem = new Superstructure();
 
+  private final Intake m_intake = new Intake();
+  private final Claw m_claw = new Claw();
+
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -74,12 +82,25 @@ public class RobotContainer {
    * passing it to a
    * {@link JoystickButton}.
    */
-  private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+    private void configureButtonBindings() {
+//     new JoystickButton(m_driverController, Button.kR1.value)
+//         .whileTrue(new RunCommand(
+//             () -> m_robotDrive.setX(),
+//             m_robotDrive));
+    
+    //Run Intake on Y
+    new JoystickButton(m_driverController, Button.kTriangle.value)
+    .whileTrue(new InstantCommand(() -> m_intake.intake(), m_intake));
+    //Stop Intake on B
+    new JoystickButton(m_driverController, Button.kCross.value)
+    .whileTrue(new InstantCommand(() -> m_intake.stop(), m_intake));
 
+    //Open on Right Bumper
+    // new JoystickButton(m_driverController, Button.kR1.value)
+    // .whileTrue(new InstantCommand(() -> m_intake.open(), m_intake));
+    // //Close on Left Bumper
+    // new JoystickButton(m_driverController, Button.kL1.value)
+    // .whileTrue(new InstantCommand(() -> m_intake.close(), m_intake));
     //Swing out and score on Y
     new JoystickButton(m_driverController, Button.kTriangle.value)
       .whileTrue(armSubsystem.swingOut());
