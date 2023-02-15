@@ -44,12 +44,12 @@ public class Claw extends SubsystemBase {
   }
 
   public void close() {
-    clawSolenoid.set(Value.kForward);
+    clawSolenoid.set(Value.kReverse);
     isOpen = false;
   }
   
   public void open() {
-    clawSolenoid.set(Value.kReverse);
+    clawSolenoid.set(Value.kForward);
     isOpen = true;
   }
 

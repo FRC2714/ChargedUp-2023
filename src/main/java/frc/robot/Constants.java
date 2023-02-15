@@ -188,19 +188,19 @@ public final class Constants {
     //Controller Constants
     public static final double kBaseJointMaxVelocity = 5000; //todo tune this
     public static final double kBaseJointMaxAcceleration = 5000;
-    public static final double kBaseJointTolerance = 20;
+    public static final double kBaseJointTolerance = 30;
     public static final double kBaseJointFF = 0.00; //0.025
-    public static final double kBaseJointP = 0.00005;
+    public static final double kBaseJointP = 0.00006;
     public static final double kBaseJointI = 0;
-    public static final double kBaseJointD = 0.001; //todo tune this
+    public static final double kBaseJointD = 0.005; //todo tune this
 
     public static final double kSecondJointMaxVelocity = 5000;
     public static final double kSecondJointMaxAcceleration = 5000;
-    public static final double kSecondJointTolerance = 10;
+    public static final double kSecondJointTolerance = 20;
     public static final double kSecondJointFF = 0; //0.025
     public static final double kSecondJointP = 0.00007; //0.00013 works but violent bounce
     public static final double kSecondJointI = 0;
-    public static final double kSecondJointD = 0;
+    public static final double kSecondJointD = 0.01;
 
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 50; //amps

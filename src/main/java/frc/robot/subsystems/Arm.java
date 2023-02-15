@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ArmConstants;
 
-public class Superstructure extends SubsystemBase {
+public class Arm extends SubsystemBase {
   private BaseJoint basejoint = new BaseJoint();
   private SecondJoint secondjoint = new SecondJoint();
 
@@ -30,7 +30,7 @@ public class Superstructure extends SubsystemBase {
   private double estimatedY;
 
   /** Creates a new Superstructure. */
-  public Superstructure() {
+  public Arm() {
 
   }
 
@@ -79,19 +79,12 @@ public class Superstructure extends SubsystemBase {
     SmartDashboard.putNumber("Estimated Y", Units.metersToInches(estimatedY));
   }
 
-  //create position commands
-  //base joint swing out position 60
-  //level 2 base joint 90., second joint -102
-  public SequentialCommandGroup swingOutAndScore() {
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(60), Units.degreesToRadians(10)))
-      .withTimeout(1),
-      scoreConeLevelTwo()
-    );
-  }
-
   public Command swingOut() {
     return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(60), Units.degreesToRadians(10)));
+  }
+
+  public Command transfer() {
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(80), Units.degreesToRadians(120)));
   }
 
   public Command scoreConeLevelTwo() {
@@ -100,6 +93,14 @@ public class Superstructure extends SubsystemBase {
 
   public Command scoreConeLevelThree() {
     return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(51), Units.degreesToRadians(-31)));
+  }
+
+  public SequentialCommandGroup swingOutLevelTwo() {
+    return 
+      new SequentialCommandGroup(
+        swingOut(),
+        new WaitCommand(1),
+        scoreConeLevelTwo());
   }
 
   @Override
