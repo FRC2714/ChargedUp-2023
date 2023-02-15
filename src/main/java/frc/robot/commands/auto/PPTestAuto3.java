@@ -12,6 +12,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -29,8 +30,8 @@ public class PPTestAuto3 extends AutoBase {
 			new PathConstraints(
 			AutoConstants.kMaxSpeedMetersPerSecond,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
-
-    SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+    
+	SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
         drivetrain::getPose, // Pose2d supplier
         drivetrain::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
         DriveConstants.kDriveKinematics, // SwerveDriveKinematics
@@ -45,6 +46,8 @@ public class PPTestAuto3 extends AutoBase {
 	/** Creates a new TestAuto. */
 	public PPTestAuto3(DriveSubsystem drivetrain) {
 		super(drivetrain);
+		AutoConstants.EventMap.put("setX", new InstantCommand(drivetrain::setX, drivetrain));
+
 		addCommands(
 			autoBuilder.fullAuto(autoPathGroup)
 		);
