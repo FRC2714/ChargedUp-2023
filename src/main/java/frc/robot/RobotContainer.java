@@ -102,7 +102,7 @@ public class RobotContainer {
         .whileTrue(m_intake.deployAndIntake());
       //retract and stop on left bumper
       new JoystickButton(m_driverController, Button.kLeftBumper.value)
-        .whileTrue(m_intake.deployAndIntake());
+        .whileTrue(m_intake.retractAndStop());
         
       //claw intake cone on 90
       new POVButton(m_driverController, 90)
@@ -112,7 +112,27 @@ public class RobotContainer {
         .whileTrue(m_claw.intakeCube());
       //stop claw
       new POVButton(m_driverController, 180)
-        .whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));   
+        .whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));
+
+      //open on y
+      new JoystickButton(m_operatorController, Button.kY.value)
+        .whileTrue(new InstantCommand(() -> m_intake.open(), m_intake));
+      //close on b
+      new JoystickButton(m_operatorController, Button.kB.value)
+        .whileTrue(new InstantCommand(() -> m_intake.close(), m_intake));
+      //retract on x
+      new JoystickButton(m_operatorController, Button.kX.value)
+        .whileTrue(new InstantCommand(() -> m_intake.retract(), m_intake));
+      //deploy on a
+      new JoystickButton(m_operatorController, Button.kA.value)
+        .whileTrue(new InstantCommand(() -> m_intake.deploy(), m_intake));
+      //intake on right bumper
+      new JoystickButton(m_operatorController, Button.kRightBumper.value)
+        .whileTrue(new InstantCommand(() -> m_intake.intake(), m_intake));
+        //stop on left bumper
+      new JoystickButton(m_operatorController, Button.kLeftBumper.value)
+      .whileTrue(new InstantCommand(() -> m_intake.stop(), m_intake));
+
   }
 
   /**

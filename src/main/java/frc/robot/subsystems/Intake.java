@@ -50,11 +50,11 @@ public class Intake extends SubsystemBase {
   }
 
   public void intake() {
-    topMotor.set(-0.5);
+    topMotor.set(-1);
   }
 
   public void outtake() {
-    topMotor.set(0.5);
+    topMotor.set(1);
   }
 
   public void stop() {
@@ -74,12 +74,12 @@ public class Intake extends SubsystemBase {
   }
 
   public void open() {
-    intakeSolenoid.set(Value.kForward);
+    intakeSolenoid.set(Value.kReverse);
     isDown = false;
   }
 
   public void close() {
-    intakeSolenoid.set(Value.kReverse);
+    intakeSolenoid.set(Value.kForward);
     isDown = true;
   }
 
@@ -94,13 +94,15 @@ public class Intake extends SubsystemBase {
   public Command deployAndIntake() {
     return (
       new InstantCommand(() -> deploy()))
-        .andThen(new InstantCommand(() -> intake()));
+        .andThen(new InstantCommand(() -> close())
+        .andThen(new InstantCommand(() -> intake())));
   }
 
   public Command retractAndStop() {
     return (
       new InstantCommand(() -> retract()))
-        .andThen(new InstantCommand(() -> stop()));
+        .andThen(new InstantCommand(() -> open())
+        .andThen(new InstantCommand(() -> stop())));
   }
 
 
