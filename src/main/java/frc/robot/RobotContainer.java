@@ -132,4 +132,8 @@ public class RobotContainer {
   public Command getPPTestAuto2() {
     return new PPTestAuto2(m_robotDrive);
   }
+
+  public Command getPPTestAuto3() {
+    return new PPTestAuto3(m_robotDrive);
+  }
 }

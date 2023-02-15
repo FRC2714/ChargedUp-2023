@@ -5,77 +5,47 @@
 package frc.robot.commands.auto;
 
 import java.util.List;
-import java.lang.Math;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 
-import edu.wpi.first.math.controller.HolonomicDriveController;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class PPTestAuto2 extends SequentialCommandGroup {
+public class PPTestAuto2 extends AutoBase {
   DriveSubsystem drivetrain;
 
-  List<PathPlannerTrajectory> autoPaths = 
+  PathConstraints autoPathConstraints = 
+    new PathConstraints(
+      AutoConstants.kMaxSpeedMetersPerSecond,
+      AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+
+  List<PathPlannerTrajectory> autoPathGroup = 
     PathPlanner.loadPathGroup(
       "SCurve",
-      new PathConstraints(
-        AutoConstants.kMaxSpeedMetersPerSecond,
-        AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+      autoPathConstraints);
+  
+  PathPlannerTrajectory firstTrajectory = PathPlanner.loadPath("SCurve", autoPathConstraints);
+  PathPlannerTrajectory secondTrajectory = PathPlanner.loadPath("SCurve", autoPathConstraints);
   
   /** Creates a new TestAuto. */
   public PPTestAuto2(DriveSubsystem drivetrain) {
-    this.drivetrain = drivetrain;
-    ProfiledPIDController thetaController = 
-      new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    super(drivetrain);
 
-    HolonomicDriveController autoController = 
-      new HolonomicDriveController(
-        new PIDController(AutoConstants.kPXController, 0, 0), 
-        new PIDController(AutoConstants.kPYController, 0, 0), 
-        thetaController);
-    
-    SwerveControllerCommand firstPathCommand = 
-      new SwerveControllerCommand(
-        autoPaths.get(0), 
-        drivetrain::getPose, 
-        DriveConstants.kDriveKinematics, 
-        autoController, 
-        drivetrain::setModuleStates, 
-        drivetrain);
-
-    SwerveControllerCommand secondPathCommand = 
-      new SwerveControllerCommand(
-        autoPaths.get(0), 
-        drivetrain::getPose, 
-        DriveConstants.kDriveKinematics, 
-        autoController, 
-        drivetrain::setModuleStates, 
-        drivetrain);
-
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+    drivetrain.resetOdometry(firstTrajectory.getInitialHolonomicPose()); //getIntialPose
     addCommands(
-      firstPathCommand,
+      CustomPathControllerCommand(firstTrajectory),
       new InstantCommand(drivetrain::setX, drivetrain),
       new WaitCommand(2),
       new InstantCommand(drivetrain::resetModules, drivetrain),
-      secondPathCommand
-      
+      CustomPathControllerCommand(secondTrajectory)
     );
 
   }

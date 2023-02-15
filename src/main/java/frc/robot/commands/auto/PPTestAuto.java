@@ -28,7 +28,7 @@ import frc.robot.subsystems.DriveSubsystem;
 public class PPTestAuto extends SequentialCommandGroup {
   DriveSubsystem drivetrain;
 
-  List<PathPlannerTrajectory> autoPaths = 
+  List<PathPlannerTrajectory> autoPathGroup = 
     PathPlanner.loadPathGroup(
       "SCurve",
       new PathConstraints(
@@ -46,7 +46,7 @@ public class PPTestAuto extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new SwerveControllerCommand(
-          autoPaths.get(0),
+          autoPathGroup.get(0),
           drivetrain::getPose, // Functional interface to feed supplier
           DriveConstants.kDriveKinematics,
 
