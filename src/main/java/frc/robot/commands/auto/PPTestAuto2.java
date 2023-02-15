@@ -27,7 +27,7 @@ import frc.robot.subsystems.DriveSubsystem;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PPTestAuto2 extends SequentialCommandGroup {
-  DriveSubsystem drivetrain = new DriveSubsystem();
+  DriveSubsystem drivetrain;
 
   List<PathPlannerTrajectory> autoPaths = 
     PathPlanner.loadPathGroup(
@@ -35,9 +35,10 @@ public class PPTestAuto2 extends SequentialCommandGroup {
       new PathConstraints(
         AutoConstants.kMaxSpeedMetersPerSecond,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared));
-
+  
   /** Creates a new TestAuto. */
-  public PPTestAuto2() {
+  public PPTestAuto2(DriveSubsystem drivetrain) {
+    this.drivetrain = drivetrain;
     ProfiledPIDController thetaController = 
       new ProfiledPIDController(AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -59,7 +60,7 @@ public class PPTestAuto2 extends SequentialCommandGroup {
 
     SwerveControllerCommand secondPathCommand = 
       new SwerveControllerCommand(
-        autoPaths.get(1), 
+        autoPaths.get(0), 
         drivetrain::getPose, 
         DriveConstants.kDriveKinematics, 
         autoController, 
