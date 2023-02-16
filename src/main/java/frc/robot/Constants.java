@@ -145,6 +145,10 @@ public final class Constants {
     public static final int kTopMotorCanId = 13;
     public static final int kBottomMotorCanId = 15;
 
+    public static final int kPneumaticHubCanId = 1;
+    public static final double kCompressorMinPressure = 90;
+    public static final double kCompressorMaxPressure = 120;
+
     public static final int kLeftRetractionSolenoidForwardChannel = 10;
     public static final int kLeftRetractionSolenoidReverseChannel = 11;
 

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 
 public class Arm extends SubsystemBase {
@@ -46,20 +47,14 @@ public class Arm extends SubsystemBase {
 
   public void calculateQ2() {
     q2 = -Math.abs(Math.acos(
-        ((targetX*targetX)+(targetY*targetY)-(a1*a1)-(a2*a2))
-        /
-        (2*a1*a2)
-      ));
+        ((targetX*targetX)+(targetY*targetY)-(a1*a1)-(a2*a2)) /
+        (2*a1*a2)));
   }
 
   public void calculateQ1() {
     q1 = Math.abs(
       Math.atan(targetX/targetY) +
-      Math.atan(
-        (a2*Math.sin(q2))
-        /
-        (a1+a2*Math.sin(q2))
-      ));
+      Math.atan((a2*Math.sin(q2)) / (a1+a2*Math.sin(q2))));
   }
 
   public void calculateInverseKinematics() {
@@ -95,13 +90,20 @@ public class Arm extends SubsystemBase {
     return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(51), Units.degreesToRadians(-31)));
   }
 
-  public SequentialCommandGroup swingOutLevelTwo() {
+  // public SequentialCommandGroup swingOutLevelTwo() {
+  //   return 
+  //     new SequentialCommandGroup(
+  //       swingOut(),
+  //       new WaitCommand(1),
+  //       scoreConeLevelTwo());
+  // }
+
+  public Command swingOutLevelTwo() {
     return 
-      new SequentialCommandGroup(
-        swingOut(),
-        new WaitCommand(1),
-        scoreConeLevelTwo());
+      new WaitUntilCommand(() -> basejoint.atSetpoint()).deadlineWith(swingOut())
+      .andThen(scoreConeLevelTwo());
   }
+  
 
   @Override
   public void periodic() {

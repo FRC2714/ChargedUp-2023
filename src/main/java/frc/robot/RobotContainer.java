@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -83,13 +84,14 @@ public class RobotContainer {
       //swing out and score
       // new JoystickButton(m_driverController, Button.kY.value)
       //   .onTrue(m_arm.swingOutLevelTwo());
+      DriverStation.silenceJoystickConnectionWarning(true);
       
       //level 3 on y
       new JoystickButton(m_driverController, Button.kY.value)
         .whileTrue(m_arm.scoreConeLevelThree());
-      //level 2 on b
+      //swing out level 2 on b
       new JoystickButton(m_driverController, Button.kB.value)
-        .whileTrue(m_arm.scoreConeLevelTwo());
+        .whileTrue(m_arm.swingOutLevelTwo());
       //swing out on a
       new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(m_arm.swingOut());
@@ -97,9 +99,9 @@ public class RobotContainer {
       new JoystickButton(m_driverController, Button.kX.value)
         .whileTrue(m_arm.transfer());
       
-      //deploy and intake on right bumper
+      //deploy and intake cone on right bumper
       new JoystickButton(m_driverController, Button.kRightBumper.value)
-        .whileTrue(m_intake.deployAndIntake());
+        .whileTrue(m_intake.intakeCone());
       //retract and stop on left bumper
       new JoystickButton(m_driverController, Button.kLeftBumper.value)
         .whileTrue(m_intake.retractAndStop());

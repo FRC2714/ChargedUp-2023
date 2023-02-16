@@ -41,8 +41,11 @@ public class Intake extends SubsystemBase {
     topMotor.setSmartCurrentLimit(IntakeConstants.kTopMotorCurrentLimit);
     bottomMotor.setSmartCurrentLimit(IntakeConstants.kBottomMotorCurrentLimit);
 
-    pneumaticHub = new PneumaticHub(1);
-    pneumaticHub.enableCompressorAnalog(90, 120);
+    topMotor.enableVoltageCompensation(12);
+    bottomMotor.enableVoltageCompensation(12);
+
+    pneumaticHub = new PneumaticHub(IntakeConstants.kPneumaticHubCanId);
+    pneumaticHub.enableCompressorAnalog(IntakeConstants.kCompressorMinPressure, IntakeConstants.kCompressorMaxPressure);
 
     leftRetractionSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kLeftRetractionSolenoidForwardChannel, IntakeConstants.kLeftRetractionSolenoidReverseChannel);
     rightRetractionSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kRightRetractionSolenoidForwardChannel, IntakeConstants.kRightRetractionSolenoidReverseChannel);
@@ -91,18 +94,24 @@ public class Intake extends SubsystemBase {
     return isDown;
   }
 
-  public Command deployAndIntake() {
+  public Command intakeCone() {
     return (
       new InstantCommand(() -> deploy()))
         .andThen(new InstantCommand(() -> close())
         .andThen(new InstantCommand(() -> intake())));
   }
 
+  public Command intakeCube() {
+    return (
+      new InstantCommand(() -> deploy()))
+        .andThen(new InstantCommand(() -> open())
+        .andThen(new InstantCommand(() -> intake())));
+  }
+
   public Command retractAndStop() {
     return (
       new InstantCommand(() -> retract()))
-        .andThen(new InstantCommand(() -> open())
-        .andThen(new InstantCommand(() -> stop())));
+        .andThen(new InstantCommand(() -> stop()));
   }
 
 
