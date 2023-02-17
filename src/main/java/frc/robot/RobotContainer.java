@@ -29,6 +29,8 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.auto.NothingAuto;
+import frc.robot.commands.auto.ComplexAuto;
+import frc.robot.commands.auto.MarkerAuto;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
@@ -190,15 +192,11 @@ public class RobotContainer {
     return new NothingAuto();
   }
 
-  public Command getPPTestAuto() {
-    return new PPTestAuto(m_robotDrive);
+  public Command ComplexAuto() {
+    return new ComplexAuto(m_robotDrive);
   }
 
-  public Command getPPTestAuto2() {
-    return new PPTestAuto2(m_robotDrive);
-  }
-
-  public Command getPPTestAuto3() {
-    return new PPTestAuto3(m_robotDrive);
+  public Command MarkerAuto() {
+    return new MarkerAuto(m_robotDrive, m_intake);
   }
 }

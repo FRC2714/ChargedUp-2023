@@ -9,45 +9,35 @@ import java.util.List;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Intake;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class PPTestAuto3 extends AutoBase {
-	DriveSubsystem drivetrain;
+public class MarkerAuto extends AutoBase {
+    DriveSubsystem m_robotDrive;
 
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"SCurve",
+			"MarkerAuto",
 			new PathConstraints(
 			AutoConstants.kMaxSpeedMetersPerSecond,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
-	public PPTestAuto3(DriveSubsystem drivetrain) {
-		super(drivetrain);
-		AutoConstants.EventMap.put("setX", new InstantCommand(drivetrain::setX, drivetrain));
+	public MarkerAuto(DriveSubsystem m_robotDrive, Intake m_intake) {
+		super(m_robotDrive);
 
-		SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-        drivetrain::getPose, // pose2d supplier
-        drivetrain::resetOdometry, // reset odometry at the beginning of auto
-        DriveConstants.kDriveKinematics, // swerve kinematics
-        new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // x y controller
-        new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // theta controller
-        drivetrain::setModuleStates,
-        AutoConstants.EventMap,
-        true,
-        drivetrain);
+		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
+        AutoConstants.EventMap.put("deployintake", m_intake.intakeCone());
+
 
 		addCommands(
-			autoBuilder.fullAuto(autoPathGroup)
+			autoBuilder.followPathGroupWithEvents(autoPathGroup)
 		);
 
 	}
