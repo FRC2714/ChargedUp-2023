@@ -93,7 +93,7 @@ public class SecondJoint extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return Math.abs(convertAngleFromKinematicToSparkMax(targetAngle) + SecondJointEncoder.getPosition()) < ArmConstants.kSecondJointTolerance;
+    return Math.abs(getKinematicAngle() - targetAngle) < convertAngleFromSparkMaxToKinematic(ArmConstants.kBaseJointTolerance);
   }
 
   public void disable() {

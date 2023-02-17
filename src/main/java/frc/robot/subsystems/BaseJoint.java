@@ -99,7 +99,7 @@ public class BaseJoint extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return Math.abs(convertAngleFromKinematicToSparkMax(currentKinematicAngle) + BaseEncoder.getPosition()) < ArmConstants.kBaseJointTolerance;
+    return Math.abs(getKinematicAngle() - targetAngle) < convertAngleFromSparkMaxToKinematic(ArmConstants.kBaseJointTolerance);
   }
 
   public void disable() {
