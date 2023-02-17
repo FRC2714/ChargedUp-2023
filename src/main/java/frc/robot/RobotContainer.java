@@ -168,7 +168,7 @@ public class RobotContainer {
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
+      exampleTrajectory, //exampleTrajectory
         m_robotDrive::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
 
@@ -188,5 +188,17 @@ public class RobotContainer {
 
   public Command getNothingAuto() {
     return new NothingAuto();
+  }
+
+  public Command getPPTestAuto() {
+    return new PPTestAuto(m_robotDrive);
+  }
+
+  public Command getPPTestAuto2() {
+    return new PPTestAuto2(m_robotDrive);
+  }
+
+  public Command getPPTestAuto3() {
+    return new PPTestAuto3(m_robotDrive);
   }
 }
