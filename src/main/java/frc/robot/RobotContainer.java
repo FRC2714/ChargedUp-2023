@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -58,7 +59,6 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure default commands
-    //armSubsystem.setDefaultCommand(new InstantCommand(() -> armSubsystem.setFowardKinematics(Units.degreesToRadians(90), Units.degreesToRadians(-45))));
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
@@ -69,6 +69,9 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
+    
+    m_arm.setDefaultCommand(
+      m_arm.transfer());
   }
 
   /**
