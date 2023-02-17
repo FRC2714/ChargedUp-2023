@@ -30,23 +30,21 @@ public class PPTestAuto3 extends AutoBase {
 			new PathConstraints(
 			AutoConstants.kMaxSpeedMetersPerSecond,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
-    
-	SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
-        drivetrain::getPose, // Pose2d supplier
-        drivetrain::resetOdometry, // Pose2d consumer, used to reset odometry at the beginning of auto
-        DriveConstants.kDriveKinematics, // SwerveDriveKinematics
-        new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // PID constants to correct for translation error (used to create the X and Y PID controllers)
-        new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // PID constants to correct for rotation error (used to create the rotation controller)
-        drivetrain::setModuleStates,
-        AutoConstants.EventMap,
-        true,
-        drivetrain
-    );
 
-	/** Creates a new TestAuto. */
 	public PPTestAuto3(DriveSubsystem drivetrain) {
 		super(drivetrain);
 		AutoConstants.EventMap.put("setX", new InstantCommand(drivetrain::setX, drivetrain));
+
+		SwerveAutoBuilder autoBuilder = new SwerveAutoBuilder(
+        drivetrain::getPose, // pose2d supplier
+        drivetrain::resetOdometry, // reset odometry at the beginning of auto
+        DriveConstants.kDriveKinematics, // swerve kinematics
+        new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // x y controller
+        new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // theta controller
+        drivetrain::setModuleStates,
+        AutoConstants.EventMap,
+        true,
+        drivetrain);
 
 		addCommands(
 			autoBuilder.fullAuto(autoPathGroup)
