@@ -79,7 +79,7 @@ public class Arm extends SubsystemBase {
   }
 
   public Command transfer() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(80), Units.degreesToRadians(120)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(80), Units.degreesToRadians(150)));
   }
 
   public Command scoreConeLevelTwo() {

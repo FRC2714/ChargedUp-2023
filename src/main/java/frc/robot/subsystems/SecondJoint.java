@@ -86,13 +86,14 @@ public class SecondJoint extends SubsystemBase {
   }
 
   public void setTargetKinematicAngle(double targetAngle) {
+    this.targetAngle = targetAngle;
     SmartDashboard.putNumber("SecondJoint Target Kinematic Angle", targetAngle);
     SmartDashboard.putNumber("SecondJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
     SecondJointPID.setReference(convertAngleFromKinematicToSparkMax(targetAngle), CANSparkMax.ControlType.kSmartMotion, 0);
   }
 
   public boolean atSetpoint() {
-    return Math.abs(targetAngle + getKinematicAngle()) < ArmConstants.kSecondJointTolerance;
+    return Math.abs(convertAngleFromKinematicToSparkMax(targetAngle) + SecondJointEncoder.getPosition()) < ArmConstants.kSecondJointTolerance;
   }
 
   public void disable() {
@@ -102,5 +103,6 @@ public class SecondJoint extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("SecondJoint Encoder", SecondJointEncoder.getPosition());
+    SmartDashboard.putBoolean("SecondJoint atSetpoint", atSetpoint());
   }
 }

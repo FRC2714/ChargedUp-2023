@@ -91,14 +91,15 @@ public class BaseJoint extends SubsystemBase {
     return convertAngleFromSparkMaxToKinematic(BaseEncoder.getPosition());
   }
 
-  public void setTargetKinematicAngle(double target) {
+  public void setTargetKinematicAngle(double targetAngle) {
+    this.targetAngle = targetAngle;
     SmartDashboard.putNumber("BaseJoint Target Kinematic Angle", targetAngle);
     SmartDashboard.putNumber("BaseJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
-    BaseJointPID.setReference(convertAngleFromKinematicToSparkMax(target), CANSparkMax.ControlType.kSmartMotion, 0);
+    BaseJointPID.setReference(convertAngleFromKinematicToSparkMax(targetAngle), CANSparkMax.ControlType.kSmartMotion, 0);
   }
 
   public boolean atSetpoint() {
-    return Math.abs(targetAngle + getKinematicAngle()) < ArmConstants.kBaseJointTolerance;
+    return Math.abs(convertAngleFromKinematicToSparkMax(currentKinematicAngle) + BaseEncoder.getPosition()) < ArmConstants.kBaseJointTolerance;
   }
 
   public void disable() {
@@ -108,6 +109,6 @@ public class BaseJoint extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("BaseJoint Encoder", BaseEncoder.getPosition());
-    
+    SmartDashboard.putBoolean("BaseJoint atSetpoint", atSetpoint());
   }
 }
