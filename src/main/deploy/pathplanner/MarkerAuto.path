@@ -55,18 +55,20 @@
         "y": 2.0
       },
       "prevControl": {
-        "x": 7.993817284017758,
+        "x": 8.210899572720365,
         "y": 2.0
       },
       "nextControl": null,
-      "holonomicAngle": 0.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "setX"
+        ],
+        "executionBehavior": "parallelDeadline",
         "waitBehavior": "none",
         "waitTime": 0
       }

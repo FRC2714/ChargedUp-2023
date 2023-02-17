@@ -16,7 +16,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -71,9 +70,6 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
-    
-    m_arm.setDefaultCommand(
-      m_arm.transfer());
   }
 
   /**
@@ -192,11 +188,11 @@ public class RobotContainer {
     return new NothingAuto();
   }
 
-  public Command ComplexAuto() {
+  public Command getComplexAuto() {
     return new ComplexAuto(m_robotDrive);
   }
 
-  public Command MarkerAuto() {
+  public Command getMarkerAuto() {
     return new MarkerAuto(m_robotDrive, m_intake);
   }
 }

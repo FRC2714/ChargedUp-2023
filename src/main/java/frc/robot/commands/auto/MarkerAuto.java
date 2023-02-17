@@ -11,6 +11,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
@@ -34,7 +35,7 @@ public class MarkerAuto extends AutoBase {
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
         AutoConstants.EventMap.put("deployintake", m_intake.intakeCone());
-
+		AutoConstants.EventMap.put("setX", new InstantCommand(() -> m_robotDrive.setX(), m_robotDrive));
 
 		addCommands(
 			autoBuilder.followPathGroupWithEvents(autoPathGroup)
