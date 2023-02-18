@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.AutoConstants;
@@ -69,9 +70,6 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
-    
-    m_arm.setDefaultCommand(
-      m_arm.transfer());
   }
 
   /**
@@ -89,18 +87,26 @@ public class RobotContainer {
       //   .onTrue(m_arm.swingOutLevelTwo());
       DriverStation.silenceJoystickConnectionWarning(true);
       
-      //level 3 on y
+      //swing to 3 on y
       new JoystickButton(m_driverController, Button.kY.value)
-        .whileTrue(m_arm.scoreConeLevelThree());
-      //swing out level 2 on b
+        .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut())
+        .andThen(m_arm.scoreConeLevelThree()));
+      
+      //swing to level 2 on b
       new JoystickButton(m_driverController, Button.kB.value)
-        .whileTrue(m_arm.swingOutLevelTwo());
+        .whileTrue(
+          new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut())
+          .andThen(m_arm.scoreConeLevelTwo()));
+      
       //swing out on a
       new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(m_arm.swingOut());
-      //transfer out on x
+
+      //swing in and transfer on x
       new JoystickButton(m_driverController, Button.kX.value)
-        .whileTrue(m_arm.transfer());
+        .whileTrue(
+          new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut())
+          .andThen(m_arm.transfer()));
       
       //deploy and intake cone on right bumper
       new JoystickButton(m_driverController, Button.kRightBumper.value)
@@ -109,13 +115,16 @@ public class RobotContainer {
       new JoystickButton(m_driverController, Button.kLeftBumper.value)
         .whileTrue(m_intake.retractAndStop());
         
-      //claw intake cone on 90
+      //score element on up
+      new POVButton(m_driverController, 0)
+        .whileTrue(m_claw.score());
+      //claw intake cone on right
       new POVButton(m_driverController, 90)
         .whileTrue(m_claw.intakeCone());
-      //claw intake cube on 270
+      //claw intake cube on left
       new POVButton(m_driverController, 270)
         .whileTrue(m_claw.intakeCube());
-      //stop claw
+      //stop claw on down
       new POVButton(m_driverController, 180)
         .whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));
 

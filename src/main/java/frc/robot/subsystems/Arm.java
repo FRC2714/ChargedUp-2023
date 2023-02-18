@@ -74,12 +74,20 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Estimated Y", Units.metersToInches(estimatedY));
   }
 
+  public boolean baseJointAtSetpoint() {
+    return basejoint.atSetpoint();
+  }
+
+  public boolean secondJointAtSetpoint() {
+    return secondjoint.atSetpoint();
+  }
+
   public Command swingOut() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(60), Units.degreesToRadians(10)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(45), Units.degreesToRadians(135)));
   }
 
   public Command transfer() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(80), Units.degreesToRadians(150)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(80), Units.degreesToRadians(155)));
   }
 
   public Command scoreConeLevelTwo() {
@@ -87,7 +95,7 @@ public class Arm extends SubsystemBase {
   }
 
   public Command scoreConeLevelThree() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(51), Units.degreesToRadians(-31)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(52), Units.degreesToRadians(-31)));
   }
 
   // public SequentialCommandGroup swingOutLevelTwo() {
@@ -100,7 +108,8 @@ public class Arm extends SubsystemBase {
 
   public Command swingOutLevelTwo() {
     return 
-      new WaitUntilCommand(() -> basejoint.atSetpoint()).deadlineWith(swingOut())
+      new WaitUntilCommand(() -> basejoint.atSetpoint())
+      .deadlineWith(swingOut())
       .andThen(scoreConeLevelTwo());
   }
   

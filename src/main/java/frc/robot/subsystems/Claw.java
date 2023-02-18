@@ -36,7 +36,7 @@ public class Claw extends SubsystemBase {
   }
 
   public void outtake() {
-    clawMotor.set(-1);
+    clawMotor.set(-0.1);
   }
 
   public void stop() {
@@ -67,6 +67,12 @@ public class Claw extends SubsystemBase {
     return (
       new InstantCommand(() -> open())).andThen(
       new InstantCommand(() -> intake()));
+  }
+
+  public Command score() {
+    return (
+      new InstantCommand(() -> open())).andThen(
+      new InstantCommand(() -> outtake()));
   }
 
   @Override
