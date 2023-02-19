@@ -44,7 +44,7 @@
         "names": [
           "deployintake"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "parallelDeadline",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -58,21 +58,58 @@
         "x": 8.210899572720365,
         "y": 2.0
       },
-      "nextControl": null,
+      "nextControl": {
+        "x": 9.789100427279635,
+        "y": 2.0
+      },
       "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "armUp"
+        ],
+        "executionBehavior": "parallelDeadline",
+        "waitBehavior": "after",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.0,
+        "y": 3.0
+      },
+      "prevControl": {
+        "x": 6.279633393779772,
+        "y": 3.0
+      },
+      "nextControl": null,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "setX"
+          "retractIntake"
         ],
-        "executionBehavior": "parallelDeadline",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "markers": []
+  "maxVelocity": 3.0,
+  "maxAcceleration": null,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 0.0,
+      "names": [
+        "event"
+      ]
+    }
+  ]
 }

@@ -193,6 +193,6 @@ public class RobotContainer {
   }
 
   public Command getMarkerAuto() {
-    return new MarkerAuto(m_robotDrive, m_intake);
+    return new MarkerAuto(m_robotDrive, m_intake, m_arm);
   }
 }
