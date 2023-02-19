@@ -82,9 +82,6 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
     private void configureButtonBindings() {
-      //swing out and score
-      // new JoystickButton(m_driverController, Button.kY.value)
-      //   .onTrue(m_arm.swingOutLevelTwo());
       DriverStation.silenceJoystickConnectionWarning(true);
       
       //swing to 3 on y
@@ -94,19 +91,18 @@ public class RobotContainer {
       
       //swing to level 2 on b
       new JoystickButton(m_driverController, Button.kB.value)
-        .whileTrue(
-          new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut())
-          .andThen(m_arm.scoreConeLevelTwo()));
+        .whileTrue(m_arm.swingOutLevelTwo());
       
       //swing out on a
       new JoystickButton(m_driverController, Button.kA.value)
-        .whileTrue(m_arm.swingOut());
+        .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
+        .andThen(m_arm.transfer()));
 
-      //swing in and transfer on x
+      //swing in
       new JoystickButton(m_driverController, Button.kX.value)
         .whileTrue(
           new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut())
-          .andThen(m_arm.transfer()));
+          .andThen(m_arm.swingOut2()));
       
       //deploy and intake cone on right bumper
       new JoystickButton(m_driverController, Button.kRightBumper.value)

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
+import frc.utils.CommandUtils;
 
 public class Arm extends SubsystemBase {
   private BaseJoint basejoint = new BaseJoint();
@@ -83,11 +84,15 @@ public class Arm extends SubsystemBase {
   }
 
   public Command swingOut() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(45), Units.degreesToRadians(135)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(53), Units.degreesToRadians(155)));
+  }
+
+  public Command swingOut2() {
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(80), Units.degreesToRadians(145)));
   }
 
   public Command transfer() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(80), Units.degreesToRadians(155)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(90), Units.degreesToRadians(150)));
   }
 
   public Command scoreConeLevelTwo() {
@@ -98,19 +103,15 @@ public class Arm extends SubsystemBase {
     return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(52), Units.degreesToRadians(-31)));
   }
 
-  // public SequentialCommandGroup swingOutLevelTwo() {
-  //   return 
-  //     new SequentialCommandGroup(
-  //       swingOut(),
-  //       new WaitCommand(1),
-  //       scoreConeLevelTwo());
-  // }
-
   public Command swingOutLevelTwo() {
     return 
       new WaitUntilCommand(() -> basejoint.atSetpoint())
       .deadlineWith(swingOut())
       .andThen(scoreConeLevelTwo());
+  }
+
+  public Command swingOutLevelThree() {
+    return new CommandUtils().CustomChainCommand(basejoint.atSetpoint(), swingOut(), scoreConeLevelTwo());
   }
   
 
