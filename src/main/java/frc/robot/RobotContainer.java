@@ -20,16 +20,19 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.auto.NothingAuto;
+import frc.robot.commands.auto.cleanTransfer;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
@@ -86,8 +89,7 @@ public class RobotContainer {
       
       //swing to 3 on y
       new JoystickButton(m_driverController, Button.kY.value)
-        .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut())
-        .andThen(m_arm.scoreConeLevelThree()));
+        .onTrue(new cleanTransfer(m_arm).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
       
       //swing to level 2 on b
       new JoystickButton(m_driverController, Button.kB.value)

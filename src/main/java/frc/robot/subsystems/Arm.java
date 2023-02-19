@@ -7,8 +7,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -105,7 +107,7 @@ public class Arm extends SubsystemBase {
 
   public Command swingOutLevelTwo() {
     return 
-      new WaitUntilCommand(() -> basejoint.atSetpoint())
+      Commands.waitUntil(() -> basejoint.atSetpoint())
       .deadlineWith(swingOut())
       .andThen(scoreConeLevelTwo());
   }
@@ -114,6 +116,13 @@ public class Arm extends SubsystemBase {
     return new CommandUtils().CustomChainCommand(basejoint.atSetpoint(), swingOut(), scoreConeLevelTwo());
   }
   
+  public Command cleanTransfer() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(swingOut2()),
+      new WaitUntilCommand(() -> secondJointAtSetpoint()).deadlineWith(transfer())
+    );
+  }
 
   @Override
   public void periodic() {
