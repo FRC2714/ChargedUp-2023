@@ -20,10 +20,12 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.Constants.AutoConstants;
@@ -84,25 +86,21 @@ public class RobotContainer {
     private void configureButtonBindings() {
       DriverStation.silenceJoystickConnectionWarning(true);
       
-      //swing to 3 on y
+      //reverse transfer on y
       new JoystickButton(m_driverController, Button.kY.value)
-        .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut())
-        .andThen(m_arm.scoreConeLevelThree()));
-      
+        .onTrue(m_arm.transferToLevelThree().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
       //swing to level 2 on b
       new JoystickButton(m_driverController, Button.kB.value)
-        .whileTrue(m_arm.swingOutLevelTwo());
+        .onTrue(m_arm.transferToLevelTwo().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
       
       //swing out on a
       new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
         .andThen(m_arm.transfer()));
 
-      //swing in
+      //clean transfer on x
       new JoystickButton(m_driverController, Button.kX.value)
-        .whileTrue(
-          new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut())
-          .andThen(m_arm.swingOut2()));
+        .onTrue(m_arm.cleanTransfer().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
       
       //deploy and intake cone on right bumper
       new JoystickButton(m_driverController, Button.kRightBumper.value)

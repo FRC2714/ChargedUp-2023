@@ -7,8 +7,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -84,15 +86,19 @@ public class Arm extends SubsystemBase {
   }
 
   public Command swingOut() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(53), Units.degreesToRadians(155)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(50), Units.degreesToRadians(155)));
   }
 
   public Command swingOut2() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(80), Units.degreesToRadians(145)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(62), Units.degreesToRadians(160)));
   }
 
   public Command transfer() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(90), Units.degreesToRadians(150)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(100), Units.degreesToRadians(150)));
+  }
+
+  public Command intermediatePosition() {
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(120), Units.degreesToRadians(-90)));
   }
 
   public Command scoreConeLevelTwo() {
@@ -105,7 +111,7 @@ public class Arm extends SubsystemBase {
 
   public Command swingOutLevelTwo() {
     return 
-      new WaitUntilCommand(() -> basejoint.atSetpoint())
+      Commands.waitUntil(() -> basejoint.atSetpoint())
       .deadlineWith(swingOut())
       .andThen(scoreConeLevelTwo());
   }
@@ -113,6 +119,33 @@ public class Arm extends SubsystemBase {
   public Command swingOutLevelThree() {
     return new CommandUtils().CustomChainCommand(basejoint.atSetpoint(), swingOut(), scoreConeLevelTwo());
   }
+  
+  public Command cleanTransfer() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(swingOut2()),
+      new WaitUntilCommand(() -> secondJointAtSetpoint()).deadlineWith(transfer())
+    );
+  }
+  
+  public Command transferToLevelThree() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(transfer()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(intermediatePosition()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(scoreConeLevelThree())
+    );
+  }
+
+  public Command transferToLevelTwo() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(transfer()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(intermediatePosition()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(scoreConeLevelTwo())
+    );
+  }
+
   
 
   @Override
