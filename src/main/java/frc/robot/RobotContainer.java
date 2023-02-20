@@ -32,7 +32,6 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.auto.NothingAuto;
-import frc.robot.commands.auto.cleanTransfer;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
@@ -87,24 +86,21 @@ public class RobotContainer {
     private void configureButtonBindings() {
       DriverStation.silenceJoystickConnectionWarning(true);
       
-      //swing to 3 on y
+      //reverse transfer on y
       new JoystickButton(m_driverController, Button.kY.value)
-        .onTrue(new cleanTransfer(m_arm).withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-      
+        .onTrue(m_arm.transferToLevelThree().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
       //swing to level 2 on b
       new JoystickButton(m_driverController, Button.kB.value)
-        .whileTrue(m_arm.swingOutLevelTwo());
+        .onTrue(m_arm.transferToLevelTwo().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
       
       //swing out on a
       new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
         .andThen(m_arm.transfer()));
 
-      //swing in
+      //clean transfer on x
       new JoystickButton(m_driverController, Button.kX.value)
-        .whileTrue(
-          new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut())
-          .andThen(m_arm.swingOut2()));
+        .onTrue(m_arm.cleanTransfer().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
       
       //deploy and intake cone on right bumper
       new JoystickButton(m_driverController, Button.kRightBumper.value)

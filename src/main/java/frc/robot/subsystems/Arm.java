@@ -86,15 +86,19 @@ public class Arm extends SubsystemBase {
   }
 
   public Command swingOut() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(53), Units.degreesToRadians(155)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(50), Units.degreesToRadians(155)));
   }
 
   public Command swingOut2() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(80), Units.degreesToRadians(145)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(62), Units.degreesToRadians(160)));
   }
 
   public Command transfer() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(90), Units.degreesToRadians(150)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(100), Units.degreesToRadians(150)));
+  }
+
+  public Command intermediatePosition() {
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(120), Units.degreesToRadians(-90)));
   }
 
   public Command scoreConeLevelTwo() {
@@ -118,11 +122,31 @@ public class Arm extends SubsystemBase {
   
   public Command cleanTransfer() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
       new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(swingOut2()),
       new WaitUntilCommand(() -> secondJointAtSetpoint()).deadlineWith(transfer())
     );
   }
+  
+  public Command transferToLevelThree() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(transfer()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(intermediatePosition()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(scoreConeLevelThree())
+    );
+  }
+
+  public Command transferToLevelTwo() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(transfer()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(intermediatePosition()),
+      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(scoreConeLevelTwo())
+    );
+  }
+
+  
 
   @Override
   public void periodic() {
