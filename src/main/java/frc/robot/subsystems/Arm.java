@@ -10,12 +10,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
-import frc.utils.CommandUtils;
 
 public class Arm extends SubsystemBase {
   private BaseJoint basejoint = new BaseJoint();
@@ -86,15 +83,15 @@ public class Arm extends SubsystemBase {
   }
 
   public Command swingOut() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(50), Units.degreesToRadians(155)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(53), Units.degreesToRadians(150)));
   }
 
   public Command swingOut2() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(62), Units.degreesToRadians(160)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(75), Units.degreesToRadians(145)));
   }
 
   public Command transfer() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(100), Units.degreesToRadians(150)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(93), Units.degreesToRadians(150)));
   }
 
   public Command intermediatePosition() {
@@ -115,12 +112,8 @@ public class Arm extends SubsystemBase {
       .deadlineWith(swingOut())
       .andThen(scoreConeLevelTwo());
   }
-
-  public Command swingOutLevelThree() {
-    return new CommandUtils().CustomChainCommand(basejoint.atSetpoint(), swingOut(), scoreConeLevelTwo());
-  }
   
-  public Command cleanTransfer() {
+  public Command scoreToTransfer() {
     return new SequentialCommandGroup(
       new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
       new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(swingOut2()),

@@ -86,60 +86,51 @@ public class RobotContainer {
     private void configureButtonBindings() {
       DriverStation.silenceJoystickConnectionWarning(true);
       
-      //reverse transfer on y
-      new JoystickButton(m_driverController, Button.kY.value)
-        .onTrue(m_arm.transferToLevelThree().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-      //swing to level 2 on b
-      new JoystickButton(m_driverController, Button.kB.value)
-        .onTrue(m_arm.transferToLevelTwo().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-      
-      //swing out on a
-      new JoystickButton(m_driverController, Button.kA.value)
-        .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
-        .andThen(m_arm.transfer()));
-
-      //clean transfer on x
-      new JoystickButton(m_driverController, Button.kX.value)
-        .onTrue(m_arm.cleanTransfer().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-      
-      //deploy and intake cone on right bumper
-      new JoystickButton(m_driverController, Button.kRightBumper.value)
-        .whileTrue(m_intake.intakeCone());
-      //retract and stop on left bumper
-      new JoystickButton(m_driverController, Button.kLeftBumper.value)
-        .whileTrue(m_intake.retractAndStop());
-        
-      //score element on up
-      new POVButton(m_driverController, 0)
-        .whileTrue(m_claw.score());
-      //claw intake cone on right
-      new POVButton(m_driverController, 90)
-        .whileTrue(m_claw.intakeCone());
-      //claw intake cube on left
-      new POVButton(m_driverController, 270)
-        .whileTrue(m_claw.intakeCube());
-      //stop claw on down
-      new POVButton(m_driverController, 180)
-        .whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));
-
       //open on y
-      new JoystickButton(m_operatorController, Button.kY.value)
+      new JoystickButton(m_driverController, Button.kY.value)
         .whileTrue(new InstantCommand(() -> m_intake.open(), m_intake));
       //close on b
-      new JoystickButton(m_operatorController, Button.kB.value)
+      new JoystickButton(m_driverController, Button.kB.value)
         .whileTrue(new InstantCommand(() -> m_intake.close(), m_intake));
       //retract on x
-      new JoystickButton(m_operatorController, Button.kX.value)
+      new JoystickButton(m_driverController, Button.kX.value)
         .whileTrue(new InstantCommand(() -> m_intake.retract(), m_intake));
       //deploy on a
-      new JoystickButton(m_operatorController, Button.kA.value)
+      new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(new InstantCommand(() -> m_intake.deploy(), m_intake));
       //intake on right bumper
-      new JoystickButton(m_operatorController, Button.kRightBumper.value)
+      new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new InstantCommand(() -> m_intake.intake(), m_intake));
         //stop on left bumper
-      new JoystickButton(m_operatorController, Button.kLeftBumper.value)
+      new JoystickButton(m_driverController, Button.kLeftBumper.value)
       .whileTrue(new InstantCommand(() -> m_intake.stop(), m_intake));
+        
+      //score element on up
+      new POVButton(m_operatorController, 0)
+        .whileTrue(m_claw.score());
+      //claw intake cone on right
+      new POVButton(m_operatorController, 90)
+        .whileTrue(m_claw.intakeCone());
+      //claw intake cube on left
+      new POVButton(m_operatorController, 270)
+        .whileTrue(m_claw.intakeCube());
+      //stop claw on down
+      new POVButton(m_operatorController, 180)
+        .whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));
+
+      //transfer to level 3 on y
+      new JoystickButton(m_operatorController, Button.kY.value)
+        .onTrue(m_arm.transferToLevelThree().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+      //transfer to level 2 on b
+      new JoystickButton(m_operatorController, Button.kB.value)
+        .onTrue(m_arm.transferToLevelTwo().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+      //score to transfer on x
+      new JoystickButton(m_operatorController, Button.kX.value)
+        .onTrue(m_arm.scoreToTransfer().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+      //swing out on a
+      new JoystickButton(m_operatorController, Button.kA.value)
+        .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
+        .andThen(m_arm.transfer()));
 
   }
 
