@@ -176,6 +176,15 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
+
+  public static final class FieldConstants {
+    public static final double kGoalHeight = Units.inchesToMeters(0); //todo
+  }
+
+  public static final class CameraConstants {
+    public static final double kMountingAngle = 0; //todo
+    public static double kCameraHeight = Units.inchesToMeters(0); //todo
+  }
   public static final class ArmConstants {
     //Spark IDs
     public static final int kLeftBaseJointMotorCanId = 9;
@@ -201,20 +210,20 @@ public final class Constants {
 
     //Controller Constants
     public static final double kBaseJointMaxVelocity = 5000; //todo tune this
-    public static final double kBaseJointMaxAcceleration = 3000;
-    public static final double kBaseJointTolerance = 25;
+    public static final double kBaseJointMaxAcceleration = 3500;
+    public static final double kBaseJointTolerance = 20;
     public static final double kBaseJointFF = 0; //0.025
-    public static final double kBaseJointP = 0.00006;
+    public static final double kBaseJointP = 0.00007;
     public static final double kBaseJointI = 0;
     public static final double kBaseJointD = 0.01; //todo tune this
 
-    public static final double kSecondJointMaxVelocity = 5000;
-    public static final double kSecondJointMaxAcceleration = 3000;
-    public static final double kSecondJointTolerance = 20;
+    public static final double kSecondJointMaxVelocity = 4000;
+    public static final double kSecondJointMaxAcceleration = 2500;
+    public static final double kSecondJointTolerance = 15;
     public static final double kSecondJointFF = 0; //0.025
     public static final double kSecondJointP = 0.00013; //0.00013 works but violent bounce
     public static final double kSecondJointI = 0;
-    public static final double kSecondJointD = 0;
+    public static final double kSecondJointD = 0.03;
 
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 50; //amps
