@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -13,6 +15,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
@@ -22,10 +26,22 @@ import frc.robot.commands.Autoalign;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import java.util.List;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
+import frc.robot.commands.auto.NothingAuto;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Intake;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -37,9 +53,13 @@ public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final Limelight m_limelight = new Limelight();
+  private final Arm m_arm = new Arm();
+  private final Intake m_intake = new Intake();
+  private final Claw m_claw = new Claw();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
+  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -54,10 +74,10 @@ public class RobotContainer {
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                MathUtil.applyDeadband(-m_driverController.getLeftY(), 0.06),
-                MathUtil.applyDeadband(-m_driverController.getLeftX(), 0.06),
-                MathUtil.applyDeadband(-m_driverController.getRightX(), 0.06),
-                true),
+                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                true, true),
             m_robotDrive));
   }
 
@@ -70,9 +90,59 @@ public class RobotContainer {
    * passing it to a
    * {@link JoystickButton}.
    */
+
   private void configureButtonBindings() {
     new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new Autoalign(m_robotDrive, m_limelight));
+
+    private void configureButtonBindings() {
+      DriverStation.silenceJoystickConnectionWarning(true);
+      
+      //open on y
+      new JoystickButton(m_driverController, Button.kY.value)
+        .whileTrue(new InstantCommand(() -> m_intake.open(), m_intake));
+      //close on b
+      new JoystickButton(m_driverController, Button.kB.value)
+        .whileTrue(new InstantCommand(() -> m_intake.close(), m_intake));
+      //retract on x
+      new JoystickButton(m_driverController, Button.kX.value)
+        .whileTrue(new InstantCommand(() -> m_intake.retract(), m_intake));
+      //deploy on a
+      new JoystickButton(m_driverController, Button.kA.value)
+        .whileTrue(new InstantCommand(() -> m_intake.deploy(), m_intake));
+      //intake on right bumper
+      new JoystickButton(m_driverController, Button.kBack.value)
+        .whileTrue(new InstantCommand(() -> m_intake.intake(), m_intake));
+        //stop on left bumper
+      new JoystickButton(m_driverController, Button.kStart.value)
+      .whileTrue(new InstantCommand(() -> m_intake.stop(), m_intake));
+        
+      //score element on up
+      new POVButton(m_operatorController, 0)
+        .whileTrue(m_claw.score());
+      //claw intake cone on right
+      new POVButton(m_operatorController, 90)
+        .whileTrue(m_claw.intakeCone());
+      //claw intake cube on left
+      new POVButton(m_operatorController, 270)
+        .whileTrue(m_claw.intakeCube());
+      //stop claw on down
+      new POVButton(m_operatorController, 180)
+        .whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));
+
+      //transfer to level 3 on y
+      new JoystickButton(m_operatorController, Button.kY.value)
+        .onTrue(m_arm.transferToLevelThree().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+      //transfer to level 2 on b
+      new JoystickButton(m_operatorController, Button.kB.value)
+        .onTrue(m_arm.transferToLevelTwo().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+      //score to transfer on x
+      new JoystickButton(m_operatorController, Button.kX.value)
+        .onTrue(m_arm.scoreToTransfer().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+      //swing out on a
+      new JoystickButton(m_operatorController, Button.kA.value)
+        .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
+        .andThen(m_arm.transfer()));
   }
 
   /**
@@ -80,7 +150,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand() {
+  public Command getTestAuto() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
         AutoConstants.kMaxSpeedMetersPerSecond,
@@ -118,6 +188,10 @@ public class RobotContainer {
     m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false));
+    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+  }
+
+  public Command getNothingAuto() {
+    return new NothingAuto();
   }
 }
