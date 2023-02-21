@@ -33,6 +33,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.Autoalign;
 import frc.robot.commands.auto.NothingAuto;
+import frc.robot.commands.auto.ComplexAuto;
+import frc.robot.commands.auto.MarkerAuto;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
@@ -152,7 +154,6 @@ public class RobotContainer {
 	 *
 	 * @return the command to run in autonomous
 	 */
-
 	public Command getTestAuto() {
 		// Create config for trajectory
 		TrajectoryConfig config = new TrajectoryConfig(
@@ -194,6 +195,14 @@ public class RobotContainer {
 	}
 
 	public Command getNothingAuto() {
-		return new NothingAuto();
-	}
+    return new NothingAuto();
+  }
+
+  public Command getComplexAuto() {
+    return new ComplexAuto(m_robotDrive);
+  }
+
+  public Command getMarkerAuto() {
+    return new MarkerAuto(m_robotDrive, m_intake, m_arm);
+  }
 }
