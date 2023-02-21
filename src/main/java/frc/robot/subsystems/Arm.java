@@ -75,7 +75,7 @@ public class Arm extends SubsystemBase {
   }
 
   public Command swingOut() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(60), Units.degreesToRadians(10)));
+    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(53), Units.degreesToRadians(150)));
   }
 
   public Command transfer() {

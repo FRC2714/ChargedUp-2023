@@ -28,7 +28,7 @@ public class MarkerAuto extends AutoBase {
 
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"MarkerAuto",
+			"2CargoAuto",
 			new PathConstraints(
 			AutoConstants.kMaxSpeedMetersPerSecond,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
@@ -39,7 +39,7 @@ public class MarkerAuto extends AutoBase {
 		this.m_arm = m_arm;
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
-        AutoConstants.EventMap.put("deployintake", m_intake.intakeCone());
+        AutoConstants.EventMap.put("deployIntake", m_intake.intakeCone());
 		AutoConstants.EventMap.put("armUp", m_arm.swingOut());
 		AutoConstants.EventMap.put("retractIntake", m_intake.retractAndStop());
 
