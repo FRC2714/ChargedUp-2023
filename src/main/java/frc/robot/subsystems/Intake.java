@@ -53,11 +53,11 @@ public class Intake extends SubsystemBase {
   }
 
   public void intake() {
-    topMotor.set(-1);
+    topMotor.set(-0.75);
   }
 
   public void outtake() {
-    topMotor.set(1);
+    topMotor.set(0.75);
   }
 
   public void stop() {
