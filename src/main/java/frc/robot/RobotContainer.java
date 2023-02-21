@@ -99,10 +99,10 @@ public class RobotContainer {
       new JoystickButton(m_driverController, Button.kA.value)
         .whileTrue(new InstantCommand(() -> m_intake.deploy(), m_intake));
       //intake on right bumper
-      new JoystickButton(m_driverController, Button.kRightBumper.value)
+      new JoystickButton(m_driverController, Button.kBack.value)
         .whileTrue(new InstantCommand(() -> m_intake.intake(), m_intake));
         //stop on left bumper
-      new JoystickButton(m_driverController, Button.kLeftBumper.value)
+      new JoystickButton(m_driverController, Button.kStart.value)
       .whileTrue(new InstantCommand(() -> m_intake.stop(), m_intake));
         
       //score element on up
