@@ -171,6 +171,15 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
+
+  public static final class FieldConstants {
+    public static final double kGoalHeight = Units.inchesToMeters(0); //todo
+  }
+
+  public static final class CameraConstants {
+    public static final double kMountingAngle = 0; //todo
+    public static double kCameraHeight = Units.inchesToMeters(0); //todo
+  }
   public static final class ArmConstants {
     //Spark IDs
     public static final int kLeftBaseJointMotorCanId = 9;

@@ -19,6 +19,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.OIConstants;
+import frc.robot.commands.Autoalign;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -46,6 +52,7 @@ import frc.robot.subsystems.Intake;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final Limelight m_limelight = new Limelight();
   private final Arm m_arm = new Arm();
   private final Intake m_intake = new Intake();
   private final Claw m_claw = new Claw();
@@ -83,6 +90,11 @@ public class RobotContainer {
    * passing it to a
    * {@link JoystickButton}.
    */
+
+  private void configureButtonBindings() {
+    new JoystickButton(m_driverController, Button.kRightBumper.value)
+        .whileTrue(new Autoalign(m_robotDrive, m_limelight));
+
     private void configureButtonBindings() {
       DriverStation.silenceJoystickConnectionWarning(true);
       
@@ -131,7 +143,6 @@ public class RobotContainer {
       new JoystickButton(m_operatorController, Button.kA.value)
         .whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
         .andThen(m_arm.transfer()));
-
   }
 
   /**
