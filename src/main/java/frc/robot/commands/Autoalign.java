@@ -36,7 +36,7 @@ public class Autoalign extends ProfiledPIDCommand {
         // This should return the goal (can also be a constant)
         () -> 0,
         // This uses the output
-        (output, setpoint) -> drivetrain.drive(0, output, 0, true) //could be y
+        (output, setpoint) -> drivetrain.drive(0, output, 0, true, false)
           // Use the output (and setpoint, if desired) here
         );
         addRequirements(drivetrain);
@@ -59,6 +59,6 @@ public class Autoalign extends ProfiledPIDCommand {
 
   @Override
   public void end(boolean interrupted) {
-    drivetrain.drive(0,0,0, true);
+    drivetrain.drive(0,0,0, true, false);
   }
 }

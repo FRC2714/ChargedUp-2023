@@ -16,7 +16,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.Constants.AutoConstants;
@@ -26,7 +25,6 @@ import frc.robot.commands.Autoalign;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -34,13 +32,9 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.OIConstants;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 
 /*
@@ -92,11 +86,10 @@ public class RobotContainer {
    */
 
   private void configureButtonBindings() {
+      DriverStation.silenceJoystickConnectionWarning(true);
+
     new JoystickButton(m_driverController, Button.kRightBumper.value)
         .whileTrue(new Autoalign(m_robotDrive, m_limelight));
-
-    private void configureButtonBindings() {
-      DriverStation.silenceJoystickConnectionWarning(true);
       
       //open on y
       new JoystickButton(m_driverController, Button.kY.value)
