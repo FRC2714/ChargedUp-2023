@@ -39,6 +39,9 @@ import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.statemachine.ArmStateMachine;
+import frc.robot.subsystems.statemachine.ArmStateMachine.ArmState;
+import frc.robot.subsystems.statemachine.ArmStateMachine.ScoreLevel;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -54,6 +57,8 @@ public class RobotContainer {
 	private final Arm m_arm = new Arm();
 	private final Intake m_intake = new Intake();
 	private final Claw m_claw = new Claw();
+	
+	private final ArmStateMachine m_statemachine = new ArmStateMachine(m_arm);
 
 	// The driver's controller
 	XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -135,19 +140,20 @@ public class RobotContainer {
 		new POVButton(m_operatorController, 180)
 			.whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));
 
-		//transfer to level 3 on y
+		//score level 3 on Y
 		new JoystickButton(m_operatorController, Button.kY.value)
-			.onTrue(m_arm.transferToLevelThree().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-		//transfer to level 2 on b
+			.onTrue(new InstantCommand(() -> m_statemachine.setTargetState(ArmState.SCORE, ScoreLevel.THREE), m_statemachine)
+			.andThen(m_statemachine.getArmCommand()));
+
+		//score level 2 on B
 		new JoystickButton(m_operatorController, Button.kB.value)
-			.onTrue(m_arm.transferToLevelTwo().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-		//score to transfer on x
+			.onTrue(new InstantCommand(() -> m_statemachine.setTargetState(ArmState.SCORE, ScoreLevel.TWO), m_statemachine)
+			.andThen(m_statemachine.getArmCommand()));
+
+		//transfer on X
 		new JoystickButton(m_operatorController, Button.kX.value)
-			.onTrue(m_arm.scoreToTransfer().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-		//swing out on a
-		// new JoystickButton(m_operatorController, Button.kA.value)
-		// 	.whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
-		// 		.andThen(m_arm.transfer()));
+			.onTrue(new InstantCommand(() -> m_statemachine.setTargetArmState(ArmState.TRANSFER), m_statemachine)
+			.andThen(m_statemachine.getArmCommand()));
 	}
 
 	/**
