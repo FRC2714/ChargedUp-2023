@@ -80,11 +80,10 @@ public class RobotContainer {
 					true, true),
 				m_robotDrive));
 
-		//set default states
-		m_arm.scoreToTransfer();
-		m_intake.retractAndStop();
-		m_claw.open();
-		m_claw.stop();
+	}
+
+	public void setDefaultStates() {
+		new InstantCommand(() -> m_intake.close(), m_intake).schedule();
 	}
 
 	/**
@@ -104,9 +103,12 @@ public class RobotContainer {
 		new JoystickButton(m_driverController, Button.kRightBumper.value)
 			.whileTrue(new Autoalign(m_robotDrive, m_limelight));
 
-		//toggle intake on right trigger
-		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
+		//toggle intake on left trigger
+		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
 			.toggleOnTrue(Commands.startEnd(m_intake::intake, m_intake::stop, m_intake));
+		//toggle outtake on right trigger
+		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
+		.toggleOnTrue(Commands.startEnd(m_intake::outtake, m_intake::stop, m_intake));
 
 		//open on y
 		new JoystickButton(m_driverController, Button.kY.value)

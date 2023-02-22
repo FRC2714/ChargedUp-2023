@@ -166,8 +166,8 @@ public final class Constants {
     public static final int kRightRetractionSolenoidForwardChannel = 13;
     public static final int kRightRetractionSolenoidReverseChannel = 12;
 
-    public static final int kIntakeSolenoidForwardChannel = 8;
-    public static final int kIntakeSolenoidReverseChannel = 9;
+    public static final int kIntakeSolenoidForwardChannel = 9;
+    public static final int kIntakeSolenoidReverseChannel = 8;
 
     public static final int kTopMotorCurrentLimit = 30;
     public static final int kBottomMotorCurrentLimit = 30;

@@ -40,6 +40,8 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Marker Auto", m_robotContainer.getMarkerAuto());
 
     SmartDashboard.putData("Auton Selection", autoChooser);
+
+    m_robotContainer.setDefaultStates();
   }
 
   /**

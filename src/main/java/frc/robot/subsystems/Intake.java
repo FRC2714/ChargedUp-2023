@@ -6,15 +6,20 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
@@ -27,8 +32,9 @@ public class Intake extends SubsystemBase {
 
   private PneumaticHub pneumaticHub;
 
-  private boolean isDeployed;
-  private boolean isDown;
+  private IntakeState intakeState = IntakeState.STOPPED;
+
+  private Timer intakeRunningTimer = new Timer();
 
   /** Creates a new Intake. */
   public Intake() {
@@ -52,46 +58,64 @@ public class Intake extends SubsystemBase {
     intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kIntakeSolenoidForwardChannel, IntakeConstants.kIntakeSolenoidReverseChannel);
   }
 
+  public enum IntakeState {
+    INTAKING, OUTTAKING, STOPPED
+  }
+
   public void intake() {
-    topMotor.setVoltage(-0.7*IntakeConstants.kNominalVoltage);
+    topMotor.setVoltage(-0.85*IntakeConstants.kNominalVoltage);
+    if (intakeState != IntakeState.INTAKING) {
+      intakeRunningTimer.reset();
+      intakeRunningTimer.start();
+      intakeState = IntakeState.INTAKING;
+    }
   }
 
   public void outtake() {
-    topMotor.setVoltage(0.7*IntakeConstants.kNominalVoltage);
+    topMotor.setVoltage(0.85*IntakeConstants.kNominalVoltage);
+    if (intakeState != IntakeState.OUTTAKING) {
+      intakeRunningTimer.reset();
+      intakeRunningTimer.start();
+      intakeState = IntakeState.OUTTAKING;
+    }
   }
 
   public void stop() {
+    intakeState = IntakeState.STOPPED;
     topMotor.set(0);
   }
 
   public void deploy() {
     leftRetractionSolenoid.set(Value.kForward);
     rightRetractionSolenoid.set(Value.kForward);
-    isDeployed = true;
   }
 
   public void retract() {
     leftRetractionSolenoid.set(Value.kReverse);
     rightRetractionSolenoid.set(Value.kReverse);
-    isDeployed = false;
   }
 
   public void open() {
     intakeSolenoid.set(Value.kReverse);
-    isDown = false;
   }
 
   public void close() {
     intakeSolenoid.set(Value.kForward);
-    isDown = true;
   }
 
-  public boolean getDeployedState() {
-    return isDeployed;
+  public boolean getDeployed() {
+    return leftRetractionSolenoid.get() == Value.kForward;
   }
 
-  public boolean getDownState() {
-    return isDown;
+  public boolean getClosed() {
+    return intakeSolenoid.get() == Value.kForward;
+  }
+
+  public boolean isConeDetected() {
+    return (intakeRunningTimer.get() > 0.1) && //excludes current spike when motor first starts
+      (topMotor.getOutputCurrent() > 18) && //cone intake current threshold
+      (intakeState == IntakeState.INTAKING) && 
+      getClosed();
   }
 
   public Command intakeCone() {
@@ -114,9 +138,24 @@ public class Intake extends SubsystemBase {
         .andThen(new InstantCommand(() -> stop()));
   }
 
+  public Command autoIntake() {
+    return new SequentialCommandGroup(
+      new WaitCommand(0.25),
+      new InstantCommand(() -> retract()),
+      new WaitCommand(1),
+      new InstantCommand(() -> stop()));
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if(isConeDetected()) {autoIntake().schedule();}
+
+    SmartDashboard.putNumber("top motor output current", topMotor.getOutputCurrent());
+    SmartDashboard.putNumber("bootom motor output current", bottomMotor.getOutputCurrent());
+    SmartDashboard.putBoolean("cone detected?", isConeDetected());
+    SmartDashboard.putNumber("intake running timer", intakeRunningTimer.get());
+    SmartDashboard.putBoolean("is closed?", getClosed());
+    SmartDashboard.putString("intake state", intakeState.toString());
   }
 }
