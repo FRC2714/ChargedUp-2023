@@ -41,8 +41,8 @@ public class Intake extends SubsystemBase {
     topMotor.setSmartCurrentLimit(IntakeConstants.kTopMotorCurrentLimit);
     bottomMotor.setSmartCurrentLimit(IntakeConstants.kBottomMotorCurrentLimit);
 
-    topMotor.enableVoltageCompensation(12);
-    bottomMotor.enableVoltageCompensation(12);
+    topMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
+    bottomMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
 
     pneumaticHub = new PneumaticHub(IntakeConstants.kPneumaticHubCanId);
     pneumaticHub.enableCompressorAnalog(IntakeConstants.kCompressorMinPressure, IntakeConstants.kCompressorMaxPressure);
@@ -53,11 +53,11 @@ public class Intake extends SubsystemBase {
   }
 
   public void intake() {
-    topMotor.set(-0.75);
+    topMotor.setVoltage(-0.7*IntakeConstants.kNominalVoltage);
   }
 
   public void outtake() {
-    topMotor.set(0.75);
+    topMotor.setVoltage(0.7*IntakeConstants.kNominalVoltage);
   }
 
   public void stop() {

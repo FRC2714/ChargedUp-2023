@@ -13,10 +13,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
+import frc.utils.ArmForwardKinematicPosition;
 
 public class Arm extends SubsystemBase {
-  private BaseJoint basejoint = new BaseJoint();
-  private SecondJoint secondjoint = new SecondJoint();
+  private BaseJoint baseJoint = new BaseJoint();
+  private SecondJoint secondJoint = new SecondJoint();
 
   private double a1 = ArmConstants.kBaseJointLength;//meters
   private double a2 = ArmConstants.kSecondJointLength;
@@ -36,8 +37,13 @@ public class Arm extends SubsystemBase {
   }
 
   public void setFowardKinematics(double baseAngle, double secondAngle) {
-    basejoint.setTargetKinematicAngle(baseAngle);
-    secondjoint.setTargetKinematicAngle(secondAngle);
+    baseJoint.setTargetKinematicAngle(baseAngle);
+    secondJoint.setTargetKinematicAngle(secondAngle);
+  }
+
+  public void setFowardKinematics(ArmForwardKinematicPosition forwardKinematicsPosition) {
+    baseJoint.setTargetKinematicAngle(forwardKinematicsPosition.getBaseAngleRadians());
+    secondJoint.setTargetKinematicAngle(forwardKinematicsPosition.getSecondAngleRadians());
   }
 
   public void setTargetPosition(double X, double Y) {
@@ -63,79 +69,64 @@ public class Arm extends SubsystemBase {
   }
 
   public void setInverseKinematics() {
-    basejoint.setTargetKinematicAngle(q1);
-    secondjoint.setTargetKinematicAngle(q2);
+    baseJoint.setTargetKinematicAngle(q1);
+    secondJoint.setTargetKinematicAngle(q2);
   }
 
   public void estimateCurrentXY() {
-    estimatedX = a1*Math.cos(basejoint.getKinematicAngle()) + a2*Math.cos(basejoint.getKinematicAngle()+secondjoint.getKinematicAngle());
-    estimatedY = a2*Math.sin(secondjoint.getKinematicAngle()) + a2*Math.sin(basejoint.getKinematicAngle()+secondjoint.getKinematicAngle());
+    estimatedX = a1*Math.cos(baseJoint.getKinematicAngle()) + a2*Math.cos(baseJoint.getKinematicAngle()+secondJoint.getKinematicAngle());
+    estimatedY = a2*Math.sin(secondJoint.getKinematicAngle()) + a2*Math.sin(baseJoint.getKinematicAngle()+secondJoint.getKinematicAngle());
     SmartDashboard.putNumber("Estimated X", Units.metersToInches(estimatedX));
     SmartDashboard.putNumber("Estimated Y", Units.metersToInches(estimatedY));
   }
 
-  public boolean baseJointAtSetpoint() {
-    return basejoint.atSetpoint();
-  }
-
-  public boolean secondJointAtSetpoint() {
-    return secondjoint.atSetpoint();
-  }
-
   public Command swingOut() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(53), Units.degreesToRadians(150)));
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kSwingOutPosition));
   }
 
   public Command swingOut2() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(75), Units.degreesToRadians(145)));
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kSwingOut2Position));
   }
 
   public Command transfer() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(93), Units.degreesToRadians(150)));
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferPosition));
   }
 
   public Command intermediatePosition() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(120), Units.degreesToRadians(-90)));
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kIntermediatePosition));
   }
 
   public Command scoreConeLevelTwo() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(90), Units.degreesToRadians(-102)));
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kScoreConeLevelTwoPosition));
   }
 
   public Command scoreConeLevelThree() {
-    return new InstantCommand(() -> setFowardKinematics(Units.degreesToRadians(52), Units.degreesToRadians(-31)));
-  }
-
-  public Command swingOutLevelTwo() {
-    return 
-      Commands.waitUntil(() -> basejoint.atSetpoint())
-      .deadlineWith(swingOut())
-      .andThen(scoreConeLevelTwo());
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kScoreConeLevelThreePosition));
   }
   
   public Command scoreToTransfer() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
-      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(swingOut2()),
-      new WaitUntilCommand(() -> secondJointAtSetpoint()).deadlineWith(transfer())
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(swingOut2()),
+      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(transfer())
     );
   }
   
   public Command transferToLevelThree() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(transfer()),
-      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
-      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(intermediatePosition()),
-      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(scoreConeLevelThree())
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(transfer()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(intermediatePosition()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreConeLevelThree())
     );
   }
 
   public Command transferToLevelTwo() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(transfer()),
-      new WaitUntilCommand(() -> baseJointAtSetpoint() && secondJointAtSetpoint()).deadlineWith(swingOut()),
-      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(intermediatePosition()),
-      new WaitUntilCommand(() -> baseJointAtSetpoint()).deadlineWith(scoreConeLevelTwo())
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(transfer()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(swingOut()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(intermediatePosition()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreConeLevelTwo())
     );
   }
 

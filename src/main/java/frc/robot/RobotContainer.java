@@ -144,9 +144,9 @@ public class RobotContainer {
 		new JoystickButton(m_operatorController, Button.kX.value)
 			.onTrue(m_arm.scoreToTransfer().withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 		//swing out on a
-		new JoystickButton(m_operatorController, Button.kA.value)
-			.whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
-				.andThen(m_arm.transfer()));
+		// new JoystickButton(m_operatorController, Button.kA.value)
+		// 	.whileTrue(new WaitUntilCommand(() -> m_arm.baseJointAtSetpoint()).deadlineWith(m_arm.swingOut2())
+		// 		.andThen(m_arm.transfer()));
 	}
 
 	/**

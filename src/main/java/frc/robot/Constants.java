@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.utils.ArmForwardKinematicPosition;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -170,6 +171,8 @@ public final class Constants {
 
     public static final int kTopMotorCurrentLimit = 30;
     public static final int kBottomMotorCurrentLimit = 30;
+
+    public static final int kNominalVoltage = 10;
   }
 
   public static final class NeoMotorConstants {
@@ -228,5 +231,27 @@ public final class Constants {
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 50; //amps
     public static final int kSecondJointMotorCurrentLimit = 40; //amps
+
+    public static final ArmForwardKinematicPosition kTestPosition = 
+      new ArmForwardKinematicPosition(90,60);
+
+    public static final ArmForwardKinematicPosition kSwingOutPosition = 
+      new ArmForwardKinematicPosition(53,150);
+
+    public static final ArmForwardKinematicPosition kSwingOut2Position = 
+      new ArmForwardKinematicPosition(75,145);
+
+    public static final ArmForwardKinematicPosition kTransferPosition = 
+      new ArmForwardKinematicPosition(93,150);
+    
+    public static final ArmForwardKinematicPosition kIntermediatePosition = 
+      new ArmForwardKinematicPosition(120, -90);
+
+    public static final ArmForwardKinematicPosition kScoreConeLevelTwoPosition = 
+      new ArmForwardKinematicPosition(90, -102);
+
+    public static final ArmForwardKinematicPosition kScoreConeLevelThreePosition = 
+      new ArmForwardKinematicPosition(52, -31);
+    
   }
 }
