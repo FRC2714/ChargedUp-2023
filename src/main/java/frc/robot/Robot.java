@@ -40,8 +40,6 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Marker Auto", m_robotContainer.getMarkerAuto());
 
     SmartDashboard.putData("Auton Selection", autoChooser);
-
-    m_robotContainer.setDefaultStates();
   }
 
   /**
@@ -70,6 +68,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.setDefaultStates();
     m_autonomousCommand = autoChooser.getSelected();
     m_autonomousCommand.initialize();
 
@@ -99,6 +98,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    m_robotContainer.setDefaultStates();
   }
 
   /** This function is called periodically during operator control. */

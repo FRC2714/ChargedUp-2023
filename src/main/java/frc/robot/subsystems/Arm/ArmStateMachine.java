@@ -39,14 +39,14 @@ public class ArmStateMachine extends SubsystemBase {
     this.m_arm = m_arm;
   }
   
-  public void setTargetArmState(ArmState targetArmState) {
+  private void setTargetArmState(ArmState targetArmState) {
     armStateChanges = this.targetArmState != targetArmState;
 
     currentArmState = this.targetArmState;
     this.targetArmState = targetArmState;
   }
 
-  public void setTargetScoreLevel(ScoreLevel targetScoreLevel) {
+  private void setTargetScoreLevel(ScoreLevel targetScoreLevel) {
     scoreLevelChanges = this.targetScoreLevel != targetScoreLevel;
 
     currentScoreLevel = this.targetScoreLevel;

@@ -87,7 +87,7 @@ public class RobotContainer {
 	}
 
 	public void setDefaultStates() { //Todo
-		new InstantCommand(() -> m_intake.close(), m_intake).schedule();
+		m_arm.backToTransfer().schedule();;
 	}
 
 	/**
