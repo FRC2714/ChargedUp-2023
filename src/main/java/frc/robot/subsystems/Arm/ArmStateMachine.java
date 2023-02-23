@@ -40,29 +40,30 @@ public class ArmStateMachine extends SubsystemBase {
   }
   
   public void setTargetArmState(ArmState targetArmState) {
-    armStateChanges = targetArmState == currentArmState;
+    armStateChanges = this.targetArmState != targetArmState;
 
     currentArmState = this.targetArmState;
     this.targetArmState = targetArmState;
   }
 
   public void setTargetScoreLevel(ScoreLevel targetScoreLevel) {
-    scoreLevelChanges = targetScoreLevel == currentScoreLevel;
+    scoreLevelChanges = this.targetScoreLevel != targetScoreLevel;
 
     currentScoreLevel = this.targetScoreLevel;
     this.targetScoreLevel = targetScoreLevel;
   }
 
-  public void setTargetState(ArmState targetArmState, ScoreLevel targetScoreLevel) {
-    setTargetArmState(targetArmState);
-    setTargetScoreLevel(targetScoreLevel);
-  }
   public Command setTargetStateCommand(ArmState targetArmState, ScoreLevel targetScoreLevel) {
-    return new InstantCommand(() -> setTargetState(targetArmState, targetScoreLevel));
+    return new InstantCommand(() -> setTargetArmState(targetArmState)).alongWith(
+      new InstantCommand(() -> setTargetScoreLevel(targetScoreLevel)));
   }
 
   public Command setTargetStateCommand(ArmState targetArmState) {
     return new InstantCommand(() -> setTargetArmState(targetArmState));
+  }
+
+  public Command setTargetStateCommand(ScoreLevel targetScoreLevel) {
+    return new InstantCommand(() -> setTargetScoreLevel(targetScoreLevel));
   }
 
   public Command getArmCommand() {
