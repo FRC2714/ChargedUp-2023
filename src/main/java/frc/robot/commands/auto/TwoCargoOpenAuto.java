@@ -12,15 +12,17 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import frc.robot.Constants.AutoConstants;
+import frc.robot.commands.Autoalign;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Limelight;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class MarkerAuto extends AutoBase {
+public class TwoCargoOpenAuto extends AutoBase {
     DriveSubsystem m_robotDrive;
 	Intake m_intake;
 	Arm m_arm;
@@ -32,17 +34,18 @@ public class MarkerAuto extends AutoBase {
 			AutoConstants.kMaxSpeedMetersPerSecond,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
-	public MarkerAuto(DriveSubsystem m_robotDrive, Intake m_intake, Arm m_arm) {
+	public TwoCargoOpenAuto(DriveSubsystem m_robotDrive, Intake m_intake, Arm m_arm, Limelight m_limelight) {
 		super(m_robotDrive);
 		this.m_intake = m_intake;
 		this.m_arm = m_arm;
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
-        AutoConstants.EventMap.put("deployIntake", m_intake.intakeCone());
-		AutoConstants.EventMap.put("armUp", m_arm.swingOut());
-		AutoConstants.EventMap.put("retractIntake", m_intake.retractAndStop());
+        AutoConstants.EventMap.put("auto align", new Autoalign(m_robotDrive, m_limelight));
+		AutoConstants.EventMap.put("intake cone", m_intake.intakeCone());
+		//AutoConstants.EventMap.put("handoff cone", transfer command); //todo
 
 		addCommands(
+
 			autoBuilder.fullAuto(autoPathGroup)
 		);
 
