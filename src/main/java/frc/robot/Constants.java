@@ -241,10 +241,10 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kTestPosition = 
       new ArmForwardKinematicPosition(90,60);
 
-    public static final ArmForwardKinematicPosition kSwingOutPosition = 
+    public static final ArmForwardKinematicPosition kBackToTransferIntermediatePosition = 
       new ArmForwardKinematicPosition(53,150);
 
-    public static final ArmForwardKinematicPosition kSwingOut2Position = 
+    public static final ArmForwardKinematicPosition kBackToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(75,145);
 
     public static final ArmForwardKinematicPosition kTransferPosition = 
@@ -253,10 +253,10 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
       new ArmForwardKinematicPosition(120, -90);
 
-    public static final ArmForwardKinematicPosition kBackLevelTwoPosition = 
+    public static final ArmForwardKinematicPosition kLevelTwoPosition = 
       new ArmForwardKinematicPosition(90, -102);
 
-    public static final ArmForwardKinematicPosition kBackLevelThreePosition = 
+    public static final ArmForwardKinematicPosition kLevelThreePosition = 
       new ArmForwardKinematicPosition(52, -31);
     
   }

@@ -77,8 +77,8 @@ public class ArmStateMachine extends SubsystemBase {
           switch(currentArmState) {
             case TRANSFER:
               switch(targetScoreLevel) {
-                case THREE: return m_arm.transferToBack(m_arm.backLevelThreeCommand());
-                case TWO: return m_arm.transferToBack(m_arm.backLevelTwoCommand());
+                case THREE: return m_arm.transferToBack(m_arm.levelThreeCommand());
+                case TWO: return m_arm.transferToBack(m_arm.levelTwoCommand());
                 //case ONE: return m_arm.transferToBack(m_arm.backLevelOneCommand());
                 //case INTAKE: return m_arm.transferToBack(m_arm.backIntakeCommand());
               }
@@ -96,8 +96,8 @@ public class ArmStateMachine extends SubsystemBase {
       }
     } else if(currentArmState == ArmState.BACK && !armStateChanges && scoreLevelChanges) { // when arm state = BACK does not change + score level changes
       switch(targetScoreLevel) {
-        case THREE: return m_arm.backLevelThreeCommand();
-        case TWO: return m_arm.backLevelTwoCommand();
+        case THREE: return m_arm.levelThreeCommand();
+        case TWO: return m_arm.levelTwoCommand();
         // case ONE: return m_arm.backLevelOne();
         //case INTAKE: return m_arm.backIntake();
       }
