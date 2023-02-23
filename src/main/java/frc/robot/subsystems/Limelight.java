@@ -19,43 +19,46 @@ public class Limelight extends SubsystemBase {
 	}
 
 	private double internalGetDistanceToGoal() {
-		if (getYAngleOffset() == -1) return -1;
-		return kCameraToGoalHeight / Math.tan(Math.toRadians(Constants.CameraConstants.kMountingAngle + getYAngleOffset()));
+		if (getYAngleOffsetDegrees() == -1) return -1;
+		return kCameraToGoalHeight / Math.tan(Math.toRadians(Constants.CameraConstants.kMountingAngle + getYAngleOffsetDegrees()));
 	}
 
-	public double getDistanceToGoal() {
+	public double getDistanceToGoalDegrees() {
 		return distance;
 	}
 
-	public double getYAngleOffset() {
+	public double getYAngleOffsetDegrees() {
 		return ty;
 	}
 
-	public double getXAngleOffset() {
-		return -1 * tx;
+	public double getXAngleOffsetDegrees() {
+		return -tx; //must be negative
 	}
 
-	public double getXRadianOffset() {
-		return Units.degreesToRadians(getXAngleOffset());
+	public double getXOffsetRadians() {
+		return Units.degreesToRadians(getXAngleOffsetDegrees());
 	}
 
 	public boolean targetVisible() {
-		double tv = limelight.getEntry("tv").getDouble(0.0);
-		return tv != 0.0;
+		return limelight.getEntry("tv").getDouble(0.0) != 0.0;
 	}
 
 	public void setPipeline(double numPipeline) {
 		limelight.getEntry("pipeline").setDouble(numPipeline);
 	}
 
+	public void setLED(boolean lightOn) {
+        if (lightOn) limelight.getEntry("ledMode").setDouble(3); // LED force on
+        else limelight.getEntry("ledMode").setDouble(1); // LED force off
+    }
+
 	@Override
 	public void periodic() {
-		SmartDashboard.putNumber("X Angle Offset Degrees", getXAngleOffset());
+		SmartDashboard.putNumber("X Angle Offset Degrees", getXAngleOffsetDegrees());
 
 		tx = limelight.getEntry("tx").getDouble(-1);
 		ty = limelight.getEntry("ty").getDouble(-1);
 		tv = limelight.getEntry("tz").getDouble(0);
 		distance = internalGetDistanceToGoal();
-
 	}
 }

@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxRelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -40,6 +39,7 @@ public class Intake extends SubsystemBase {
   public Intake() {
     topMotor = new CANSparkMax(IntakeConstants.kTopMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomMotor = new CANSparkMax(IntakeConstants.kBottomMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    topMotor.setInverted(true);
     bottomMotor.follow(topMotor, false);
 
     topMotor.setIdleMode(IdleMode.kBrake);
@@ -63,7 +63,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void intake() {
-    topMotor.setVoltage(-0.85*IntakeConstants.kNominalVoltage);
+    topMotor.setVoltage(IntakeConstants.kIntakeMotorSpeed*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.INTAKING) {
       intakeRunningTimer.reset();
       intakeRunningTimer.start();
@@ -72,7 +72,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void outtake() {
-    topMotor.setVoltage(0.85*IntakeConstants.kNominalVoltage);
+    topMotor.setVoltage(IntakeConstants.kOuttakeMotorSpeed*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.OUTTAKING) {
       intakeRunningTimer.reset();
       intakeRunningTimer.start();

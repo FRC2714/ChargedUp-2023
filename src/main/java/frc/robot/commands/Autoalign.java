@@ -8,7 +8,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 
@@ -32,7 +31,7 @@ public class Autoalign extends ProfiledPIDCommand {
             // The motion profile constraints
             new TrapezoidProfile.Constraints(AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared)),
         // This should return the measurement
-        limelight::getXRadianOffset,
+        limelight::getXOffsetRadians,
         // This should return the goal (can also be a constant)
         () -> 0,
         // This uses the output
@@ -48,6 +47,7 @@ public class Autoalign extends ProfiledPIDCommand {
 
   public void initialize() {
     atSetpoint = false;
+    limelight.setLED(true);
   }
 
 
@@ -59,6 +59,7 @@ public class Autoalign extends ProfiledPIDCommand {
 
   @Override
   public void end(boolean interrupted) {
+    limelight.setLED(false);
     drivetrain.drive(0,0,0, true, false);
   }
 }

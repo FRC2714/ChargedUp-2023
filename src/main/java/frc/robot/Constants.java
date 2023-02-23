@@ -150,6 +150,10 @@ public final class Constants {
     public static final int kClawSolenoidReverseChannel = 14;
 
     public static final int kClawMotorCurrentLimit = 20; //amps 
+
+    public static final double kNominalVoltage = 11.0;
+    public static final double kIntakeMotorSpeed = 1;
+    public static final double kOuttakeMotorSpeed = -0.1;
   }
 
   public static final class IntakeConstants {
@@ -172,7 +176,9 @@ public final class Constants {
     public static final int kTopMotorCurrentLimit = 30;
     public static final int kBottomMotorCurrentLimit = 30;
 
-    public static final int kNominalVoltage = 10;
+    public static final double kNominalVoltage = 11.0;
+    public static final double kIntakeMotorSpeed = 0.85;
+    public static final double kOuttakeMotorSpeed = -0.85;
   }
 
   public static final class NeoMotorConstants {

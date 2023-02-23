@@ -28,15 +28,17 @@ public class Claw extends SubsystemBase {
     clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
 
+    clawMotor.enableVoltageCompensation(ClawConstants.kNominalVoltage);
+
     clawSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kClawSolenoidForwardChannel, ClawConstants.kClawSolenoidReverseChannel);
   }
 
   public void intake() {
-    clawMotor.set(1);
+    clawMotor.set(ClawConstants.kIntakeMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
   public void outtake() {
-    clawMotor.set(-0.1);
+    clawMotor.set(ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
   public void stop() {
