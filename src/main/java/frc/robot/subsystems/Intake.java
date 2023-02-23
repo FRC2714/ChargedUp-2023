@@ -151,11 +151,11 @@ public class Intake extends SubsystemBase {
     // This method will be called once per scheduler run
     if(isConeDetected()) {autoIntake().schedule();}
 
-    SmartDashboard.putNumber("top motor output current", topMotor.getOutputCurrent());
-    SmartDashboard.putNumber("bootom motor output current", bottomMotor.getOutputCurrent());
-    SmartDashboard.putBoolean("cone detected?", isConeDetected());
-    SmartDashboard.putNumber("intake running timer", intakeRunningTimer.get());
-    SmartDashboard.putBoolean("is closed?", getClosed());
-    SmartDashboard.putString("intake state", intakeState.toString());
+    // SmartDashboard.putNumber("top motor output current", topMotor.getOutputCurrent());
+    // SmartDashboard.putNumber("bootom motor output current", bottomMotor.getOutputCurrent());
+    // SmartDashboard.putBoolean("cone detected?", isConeDetected());
+    // SmartDashboard.putNumber("intake running timer", intakeRunningTimer.get());
+    // SmartDashboard.putBoolean("is closed?", getClosed());
+    // SmartDashboard.putString("intake state", intakeState.toString());
   }
 }

@@ -250,13 +250,13 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kTransferPosition = 
       new ArmForwardKinematicPosition(93,150);
     
-    public static final ArmForwardKinematicPosition kIntermediatePosition = 
+    public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
       new ArmForwardKinematicPosition(120, -90);
 
-    public static final ArmForwardKinematicPosition kScoreConeLevelTwoPosition = 
+    public static final ArmForwardKinematicPosition kBackLevelTwoPosition = 
       new ArmForwardKinematicPosition(90, -102);
 
-    public static final ArmForwardKinematicPosition kScoreConeLevelThreePosition = 
+    public static final ArmForwardKinematicPosition kBackLevelThreePosition = 
       new ArmForwardKinematicPosition(52, -31);
     
   }
