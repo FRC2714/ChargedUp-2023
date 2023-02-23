@@ -12,9 +12,9 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import frc.robot.Constants.AutoConstants;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Arm.Arm;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -39,7 +39,7 @@ public class MarkerAuto extends AutoBase {
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
         AutoConstants.EventMap.put("deployIntake", m_intake.intakeCone());
-		AutoConstants.EventMap.put("armUp", m_arm.swingOut());
+		AutoConstants.EventMap.put("armUp", m_arm.swingOutCommand());
 		AutoConstants.EventMap.put("retractIntake", m_intake.retractAndStop());
 
 		addCommands(

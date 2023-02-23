@@ -34,14 +34,14 @@ import frc.robot.commands.Autoalign;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.ComplexAuto;
 import frc.robot.commands.auto.MarkerAuto;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.statemachine.ArmStateMachine;
-import frc.robot.subsystems.statemachine.ArmStateMachine.ArmState;
-import frc.robot.subsystems.statemachine.ArmStateMachine.ScoreLevel;
+import frc.robot.subsystems.Arm.Arm;
+import frc.robot.subsystems.Arm.ArmStateMachine;
+import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
+import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -86,7 +86,7 @@ public class RobotContainer {
 
 	}
 
-	public void setDefaultStates() {
+	public void setDefaultStates() { //Todo
 		new InstantCommand(() -> m_intake.close(), m_intake).schedule();
 	}
 
@@ -142,18 +142,18 @@ public class RobotContainer {
 
 		//score level 3 on Y
 		new JoystickButton(m_operatorController, Button.kY.value)
-			.onTrue(new InstantCommand(() -> m_statemachine.setTargetState(ArmState.SCORE, ScoreLevel.THREE), m_statemachine)
-			.andThen(m_statemachine.getArmCommand()));
+			.onTrue(m_statemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.THREE)
+			.andThen(m_statemachine::getArmCommand));
 
 		//score level 2 on B
 		new JoystickButton(m_operatorController, Button.kB.value)
-			.onTrue(new InstantCommand(() -> m_statemachine.setTargetState(ArmState.SCORE, ScoreLevel.TWO), m_statemachine)
-			.andThen(m_statemachine.getArmCommand()));
+			.onTrue(m_statemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.TWO)
+			.andThen(m_statemachine::getArmCommand));
 
 		//transfer on X
 		new JoystickButton(m_operatorController, Button.kX.value)
-			.onTrue(new InstantCommand(() -> m_statemachine.setTargetArmState(ArmState.TRANSFER), m_statemachine)
-			.andThen(m_statemachine.getArmCommand()));
+			.onTrue(m_statemachine.setTargetStateCommand(ArmState.TRANSFER)
+			.andThen(m_statemachine::getArmCommand));
 	}
 
 	/**
