@@ -58,7 +58,7 @@ public class RobotContainer {
 	private final Intake m_intake = new Intake();
 	private final Claw m_claw = new Claw();
 	
-	private final ArmStateMachine m_statemachine = new ArmStateMachine(m_arm);
+	private final ArmStateMachine m_armStatemachine = new ArmStateMachine(m_arm);
 
 	// The driver's controller
 	XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -142,18 +142,18 @@ public class RobotContainer {
 
 		//score level 3 on Y
 		new JoystickButton(m_operatorController, Button.kY.value)
-			.onTrue(m_statemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.THREE)
-			.andThen(m_statemachine::getArmCommand));
+			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.THREE)
+			.andThen(m_armStatemachine::getArmCommand));
 
 		//score level 2 on B
 		new JoystickButton(m_operatorController, Button.kB.value)
-			.onTrue(m_statemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.TWO)
-			.andThen(m_statemachine::getArmCommand));
+			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.TWO)
+			.andThen(m_armStatemachine::getArmCommand));
 
 		//transfer on X
 		new JoystickButton(m_operatorController, Button.kX.value)
-			.onTrue(m_statemachine.setTargetStateCommand(ArmState.TRANSFER)
-			.andThen(m_statemachine::getArmCommand));
+			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER)
+			.andThen(m_armStatemachine::getArmCommand));
 	}
 
 	/**
