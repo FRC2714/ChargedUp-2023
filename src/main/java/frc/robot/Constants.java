@@ -218,19 +218,19 @@ public final class Constants {
     public static final boolean kSecondJointInverted = false; //econd joint motor and encoder are NOT inverted
 
     //Controller Constants
-    public static final double kBaseJointMaxVelocity = 5000; //todo tune this
-    public static final double kBaseJointMaxAcceleration = 3500;
-    public static final double kBaseJointTolerance = 20;
-    public static final double kBaseJointFF = 0; //0.025
-    public static final double kBaseJointP = 0.00007;
+    public static final double kBaseJointMaxVelocity = 4000; //todo tune this
+    public static final double kBaseJointMaxAcceleration = 3000;
+    public static final double kBaseJointTolerance = 8;
+    public static final double kBaseJointFF = 0.00007;
+    public static final double kBaseJointP = 0.00002;
     public static final double kBaseJointI = 0;
-    public static final double kBaseJointD = 0.01; //todo tune this
+    public static final double kBaseJointD = 0.03; //todo tune this
 
     public static final double kSecondJointMaxVelocity = 4000;
     public static final double kSecondJointMaxAcceleration = 2500;
-    public static final double kSecondJointTolerance = 15;
-    public static final double kSecondJointFF = 0; //0.025
-    public static final double kSecondJointP = 0.00013; //0.00013 works but violent bounce
+    public static final double kSecondJointTolerance = 8;
+    public static final double kSecondJointFF = 0.00006;
+    public static final double kSecondJointP = 0.00004;
     public static final double kSecondJointI = 0;
     public static final double kSecondJointD = 0.03;
 
@@ -251,13 +251,19 @@ public final class Constants {
       new ArmForwardKinematicPosition(93,150);
     
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(120, -90);
+      new ArmForwardKinematicPosition(120, -10);
+      
+    public static final ArmForwardKinematicPosition kTransferToBackIntermediate2Position = 
+      new ArmForwardKinematicPosition(90, 20);
+
+    public static final ArmForwardKinematicPosition kLevelOnePosition = 
+      new ArmForwardKinematicPosition(130, -124);
 
     public static final ArmForwardKinematicPosition kLevelTwoPosition = 
-      new ArmForwardKinematicPosition(90, -102);
+      new ArmForwardKinematicPosition(90, -77);
 
     public static final ArmForwardKinematicPosition kLevelThreePosition = 
-      new ArmForwardKinematicPosition(52, -31);
+      new ArmForwardKinematicPosition(48, -8);
     
   }
 }

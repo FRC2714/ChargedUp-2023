@@ -140,20 +140,26 @@ public class RobotContainer {
 		new POVButton(m_operatorController, 180)
 			.whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));
 
-		//score level 3 on Y
+		// level 3 on Y
 		new JoystickButton(m_operatorController, Button.kY.value)
 			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.THREE)
-			.andThen(m_armStatemachine::getArmCommand));
+			.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
 
-		//score level 2 on B
+		// level 2 on B
 		new JoystickButton(m_operatorController, Button.kB.value)
 			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.TWO)
-			.andThen(m_armStatemachine::getArmCommand));
-
-		//transfer on X
+			.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+		
+		// level 1 on A
+		new JoystickButton(m_operatorController, Button.kA.value)
+			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.ONE)
+			.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+	
+		// transfer on X
 		new JoystickButton(m_operatorController, Button.kX.value)
-			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER)
-			.andThen(m_armStatemachine::getArmCommand));
+			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER, ScoreLevel.INTAKE)
+			.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
+	
 	}
 
 	/**

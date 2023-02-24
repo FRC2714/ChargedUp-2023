@@ -7,7 +7,9 @@ package frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 
 public class ArmStateMachine extends SubsystemBase {
   private Arm m_arm;
@@ -38,35 +40,25 @@ public class ArmStateMachine extends SubsystemBase {
   public ArmStateMachine(Arm m_arm) {
     this.m_arm = m_arm;
   }
-  
-  private void setTargetArmState(ArmState targetArmState) {
-    armStateChanges = this.targetArmState != targetArmState;
 
+  private void setTargetState(ArmState targetArmState, ScoreLevel targetScoreLevel) {
+    armStateChanges = this.targetArmState != targetArmState;
     currentArmState = this.targetArmState;
     this.targetArmState = targetArmState;
-  }
-
-  private void setTargetScoreLevel(ScoreLevel targetScoreLevel) {
+    
     scoreLevelChanges = this.targetScoreLevel != targetScoreLevel;
-
     currentScoreLevel = this.targetScoreLevel;
     this.targetScoreLevel = targetScoreLevel;
+
+    getArmCommand().withInterruptBehavior(InterruptionBehavior.kCancelIncoming).schedule();
   }
 
   public Command setTargetStateCommand(ArmState targetArmState, ScoreLevel targetScoreLevel) {
-    return new InstantCommand(() -> setTargetArmState(targetArmState)).alongWith(
-      new InstantCommand(() -> setTargetScoreLevel(targetScoreLevel)));
-  }
-
-  public Command setTargetStateCommand(ArmState targetArmState) {
-    return new InstantCommand(() -> setTargetArmState(targetArmState));
-  }
-
-  public Command setTargetStateCommand(ScoreLevel targetScoreLevel) {
-    return new InstantCommand(() -> setTargetScoreLevel(targetScoreLevel));
+    return new InstantCommand(() -> setTargetState(targetArmState, targetScoreLevel));
   }
 
   public Command getArmCommand() {
+    //return new PrintCommand("arm state changes "+ armStateChanges);
     if(armStateChanges) { // if arm state changes
       switch(targetArmState) {
         case TRANSFER: // when target arm state = TRANSFER
@@ -80,7 +72,7 @@ public class ArmStateMachine extends SubsystemBase {
               switch(targetScoreLevel) {
                 case THREE: return m_arm.transferToBack(m_arm.levelThreeCommand());
                 case TWO: return m_arm.transferToBack(m_arm.levelTwoCommand());
-                //case ONE: return m_arm.transferToBack(m_arm.backLevelOneCommand());
+                case ONE: return m_arm.transferToBack(m_arm.levelOneCommand());
                 //case INTAKE: return m_arm.transferToBack(m_arm.backIntakeCommand());
               }
             case FRONT:
@@ -99,16 +91,16 @@ public class ArmStateMachine extends SubsystemBase {
       switch(targetScoreLevel) {
         case THREE: return m_arm.levelThreeCommand();
         case TWO: return m_arm.levelTwoCommand();
-        // case ONE: return m_arm.backLevelOne();
+        case ONE: return m_arm.levelOneCommand();
         //case INTAKE: return m_arm.backIntake();
       }
     }
-    return null; // if neither arm state or score level change, do nothing
+    return new PrintCommand("nothing"); // if neither arm state or score level change, do nothing
   }
   
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    //This method will be called once per scheduler run
     SmartDashboard.putString("Target Arm State", targetArmState.toString());
     SmartDashboard.putString("Current Arm State", currentArmState.toString());
     
