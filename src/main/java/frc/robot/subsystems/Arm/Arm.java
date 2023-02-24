@@ -8,7 +8,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -87,74 +86,156 @@ public class Arm extends SubsystemBase {
     else {return ArmState.FRONT;}
   }
 
-  //define position commands
-  public Command backToTransferIntermediateCommand() {
+  //back to transfer transition
+  public Command BackToTransferIntermediateCommand() {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToTransferIntermediatePosition));
   }
-
-  public Command backToTransferIntermediate2Command() {
+  public Command BackToTransferIntermediate2Command() {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToTransferIntermediate2Position));
   }
 
-  public Command transferCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferPosition));
-  }
-
-  public Command transferToBackIntermediateCommand() {
+  //transfer to back transition
+  public Command TransferToBackIntermediateCommand() {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToBackIntermediatePosition));
   }
-
-  public Command transferToBackIntermediate2Command() {
+  public Command TransferToBackIntermediate2Command() {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToBackIntermediate2Position));
   }
 
-  public Command levelOneCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kLevelOnePosition));
+  //back to back transition
+  public Command BackToBackIntermediateCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToBackIntermediatePosition));
   }
 
-  public Command levelTwoCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kLevelTwoPosition));
+  //Front to transfer transition
+  public Command FrontToTransferIntermediateCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontToTransferIntermediatePosition));
+  }
+  public Command FrontToTransferIntermediate2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontToTransferIntermediate2Position));
   }
 
-  public Command levelThreeCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kLevelThreePosition));
+  //Transfer to front
+  public Command TransferToFrontIntermediateCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToFrontIntermediatePosition));
   }
+
+  //Front to back
+  public Command FrontToBackIntermediateCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontToBackIntermediatePosition));
+  }
+  public Command FrontToBackIntermediate2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontToBackIntermediate2Position));
+  }
+
+  //Back to front
+  public Command BackToFrontIntermediateCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToFrontIntermediatePosition));
+  }
+  public Command BackToFrontIntermediate2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToFrontIntermediate2Position));
+  }
+
+    //Transfer position
+    public static final ArmForwardKinematicPosition kTransferPosition = 
+      new ArmForwardKinematicPosition(93,150);
+
+  //transfer position
+  public Command TransferCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferPosition));
+  }
+
+  //back cone score levels
+  public Command ConeL1Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kConeL1Position));
+  }
+  public Command ConeL2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kConeL2Position));
+  }
+  public Command ConeL3Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kConeL3Position));
+  }
+
+  //back cube score levels
+  public Command CubeL1Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kCubeL1Position));
+  }
+  public Command CubeL2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kCubeL2Position));
+  }
+  public Command CubeL3Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kCubeL3Position));
+  }
+
+  //arm intake 
+  public Command BackIntakeCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackIntakePosition));
+  }
+  public Command FrontIntakeCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontIntakePosition));
+  }
+
+
+
   
-  //define position sequences
-  public Command backToTransfer() {
-    return new SequentialCommandGroup(
-      new PrintCommand("back to transfer"),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(backToTransferIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(backToTransferIntermediate2Command()),
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(transferCommand()));
-  }
-
-  /* 
-  public Command transferToBackLevelTwo() {
-    return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(transferCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(swingOutCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(transferToBackIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(backLevelTwoCommand()));
-  }
   
-  public Command transferToBackLevelThree() {
+  //Back to Transfer
+  public Command BackToTransfer() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(transferCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(swingOutCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(transferToBackIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(backLevelThreeCommand()));
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToTransferIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToTransferIntermediate2Command()),
+      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferCommand()));
   }
-  */
 
-  public Command transferToBack(Command scoreLevelCommand) {
+  //Front to transfer transition
+  public Command FrontToTransfer() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(transferCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(backToTransferIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(transferToBackIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(transferToBackIntermediate2Command()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToTransferIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontToTransferIntermediate2Command()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TransferCommand()));
+  }
+
+  //Transfer to Back
+  public Command TransferToBack(Command scoreLevelCommand) {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToTransferIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TransferToBackIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(TransferToBackIntermediate2Command()),
       new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreLevelCommand));
   }
+
+  //Back to Back
+  public Command BackToBack(Command scoreLevelCommand) {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToBackIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreLevelCommand));
+  }
+  
+  //Front to back
+  public Command FrontToBack(Command scoreLevelCommand) {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToBackIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToBackIntermediate2Command()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreLevelCommand));
+  }
+
+  //Transfer to front
+  public Command TransferToFront() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(TransferToFrontIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontIntakeCommand()));
+  }
+
+  //Back to front
+  public Command BackToFront() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToFrontIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToFrontIntermediate2Command()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontIntakeCommand()));
+  }
+
+
+
 
   @Override
   public void periodic() {

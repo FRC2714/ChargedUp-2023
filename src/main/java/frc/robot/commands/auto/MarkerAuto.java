@@ -39,7 +39,7 @@ public class MarkerAuto extends AutoBase {
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
         AutoConstants.EventMap.put("deployIntake", m_intake.intakeCone());
-		AutoConstants.EventMap.put("armUp", m_arm.backToTransferIntermediateCommand());
+		AutoConstants.EventMap.put("armUp", m_arm.BackToTransferIntermediateCommand());
 		AutoConstants.EventMap.put("retractIntake", m_intake.retractAndStop());
 
 		addCommands(
