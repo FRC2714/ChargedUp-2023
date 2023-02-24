@@ -181,10 +181,16 @@ public final class Constants {
     public static final double kOuttakeMotorSpeed = -0.85;
   }
 
+  public static final class LEDConstants {
+    public static final int kLEDPort = 0;//todo
+
+    public static final double kPurple = 0;//todo
+    public static final double kYellow = 0;//todo
+  }
+
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
-
 
   public static final class FieldConstants {
     public static final double kGoalHeight = Units.inchesToMeters(0); //todo
