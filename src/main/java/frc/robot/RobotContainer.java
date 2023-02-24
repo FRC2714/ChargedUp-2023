@@ -20,10 +20,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -41,6 +39,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
+import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
 
 /*
@@ -87,7 +86,7 @@ public class RobotContainer {
 	}
 
 	public void setDefaultStates() { //Todo
-		m_arm.backToTransfer().schedule();;
+		m_arm.BackToTransfer().schedule();
 	}
 
 	/**
@@ -103,63 +102,70 @@ public class RobotContainer {
 	private void configureButtonBindings() {
 		DriverStation.silenceJoystickConnectionWarning(true);
 
+		/////////////////////////////DRIVER CONTROLS/////////////////////////////////////////////////////////////
+
         //autoalign on right bumper
 		new JoystickButton(m_driverController, Button.kRightBumper.value)
 			.whileTrue(new Autoalign(m_robotDrive, m_limelight));
+		//toggle open close on left bumper
+		new JoystickButton(m_driverController, Button.kLeftBumper.value)
+			.toggleOnTrue(Commands.startEnd(m_intake::open, m_intake::close, m_intake));
 
-		//toggle intake on left trigger
-		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
+		//toggle intake on right trigger
+		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
 			.toggleOnTrue(Commands.startEnd(m_intake::intake, m_intake::stop, m_intake));
-		//toggle outtake on right trigger
-		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
-		.toggleOnTrue(Commands.startEnd(m_intake::outtake, m_intake::stop, m_intake));
+		//toggle outtake on left trigger
+		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.2)
+			.toggleOnTrue(Commands.startEnd(m_intake::outtake, m_intake::stop, m_intake));
 
-		//open on y
-		new JoystickButton(m_driverController, Button.kY.value)
-			.whileTrue(new InstantCommand(() -> m_intake.open(), m_intake));
-		//close on b
-		new JoystickButton(m_driverController, Button.kB.value)
-			.whileTrue(new InstantCommand(() -> m_intake.close(), m_intake));
-		//retract on x
-		new JoystickButton(m_driverController, Button.kX.value)
-			.whileTrue(new InstantCommand(() -> m_intake.retract(), m_intake));
-		//deploy on a
+		//toggle deploy on a
 		new JoystickButton(m_driverController, Button.kA.value)
-			.whileTrue(new InstantCommand(() -> m_intake.deploy(), m_intake));
+			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
 
-		//score element on up
-		new POVButton(m_operatorController, 0)
-			.whileTrue(m_claw.score());
-		//claw intake cone on right
+		//reset gyro on y
+		new JoystickButton(m_driverController, Button.kY.value)
+			.onTrue(Commands.run(m_robotDrive::zeroHeading, m_robotDrive));
+
+
+		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
+
+		//left trigger toggle intake cone or cube
+		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
+			.toggleOnTrue(Commands.startEnd(m_claw::intakeCone, m_claw::intakeCube, m_claw));
+
+		//right trigger toggle outtake or stop
+		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
+			.toggleOnTrue(Commands.startEnd(m_claw::outtake, m_claw::stop, m_claw));
+
+		
+		// back on right
 		new POVButton(m_operatorController, 90)
-			.whileTrue(m_claw.intakeCone());
-		//claw intake cube on left
-		new POVButton(m_operatorController, 270)
-			.whileTrue(m_claw.intakeCube());
-		//stop claw on down
+			.whileTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.INTAKE));
+		// transfer on down
 		new POVButton(m_operatorController, 180)
-			.whileTrue(new InstantCommand(() -> m_claw.stop(), m_claw));
+			.whileTrue(m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER, ScoreLevel.INTAKE));
+		// front on left
+		new POVButton(m_operatorController, 90)
+			.whileTrue(m_armStatemachine.setTargetStateCommand(ArmState.FRONT, ScoreLevel.INTAKE));
 
+		// cone on right bumper
+		new JoystickButton(m_operatorController, Button.kRightBumper.value)
+			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CONE));
+		// cube on left bumper
+		new JoystickButton(m_operatorController, Button.kLeftBumper.value)
+			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CUBE));
 		// level 3 on Y
 		new JoystickButton(m_operatorController, Button.kY.value)
-			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.THREE)
-			.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-
+			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.THREE));
 		// level 2 on B
 		new JoystickButton(m_operatorController, Button.kB.value)
-			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.TWO)
-			.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-		
+			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.TWO));
 		// level 1 on A
 		new JoystickButton(m_operatorController, Button.kA.value)
-			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.ONE)
-			.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-	
-		// transfer on X
+			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.ONE));
+		// back intake on X
 		new JoystickButton(m_operatorController, Button.kX.value)
-			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER, ScoreLevel.INTAKE)
-			.withInterruptBehavior(InterruptionBehavior.kCancelIncoming));
-	
+			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.INTAKE));
 	}
 
 	/**

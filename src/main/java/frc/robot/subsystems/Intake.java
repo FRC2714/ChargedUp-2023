@@ -138,7 +138,7 @@ public class Intake extends SubsystemBase {
         .andThen(new InstantCommand(() -> stop()));
   }
 
-  public Command autoIntake() {
+  public Command AutoConeIntake() {
     return new SequentialCommandGroup(
       new WaitCommand(0.25),
       new InstantCommand(() -> retract()),
@@ -149,7 +149,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(isConeDetected()) {autoIntake().schedule();}
+    if(isConeDetected()) {AutoConeIntake().schedule();}
 
     // SmartDashboard.putNumber("top motor output current", topMotor.getOutputCurrent());
     // SmartDashboard.putNumber("bootom motor output current", bottomMotor.getOutputCurrent());
