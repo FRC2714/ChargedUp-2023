@@ -235,7 +235,7 @@ public final class Constants {
     public static final double kSecondJointMaxVelocity = 4000;
     public static final double kSecondJointMaxAcceleration = 2500;
     public static final double kSecondJointTolerance = 8;
-    public static final double kSecondJointFF = 0.00006;
+    public static final double kSecondJointFF = 0.00007;
     public static final double kSecondJointP = 0.00004;
     public static final double kSecondJointI = 0;
     public static final double kSecondJointD = 0.03;
@@ -246,49 +246,55 @@ public final class Constants {
 
     //Back to Transfer transitions
     public static final ArmForwardKinematicPosition kBackToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(53,150);
+      new ArmForwardKinematicPosition(50,150);
     public static final ArmForwardKinematicPosition kBackToTransferIntermediate2Position = 
-      new ArmForwardKinematicPosition(75,145);
+      new ArmForwardKinematicPosition(80,150);
     
     //Transfer to back transitions
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(120, -10);
+      new ArmForwardKinematicPosition(50, 150);
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate2Position = 
-      new ArmForwardKinematicPosition(90, 20);
+      new ArmForwardKinematicPosition(50, 90);
+    public static final ArmForwardKinematicPosition kTransferToBackIntermediate3Position = 
+      new ArmForwardKinematicPosition(120, -10);
+    public static final ArmForwardKinematicPosition kTransferToBackIntermediate4Position = 
+      new ArmForwardKinematicPosition(90, -45);
 
     //Back to back transition
     public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(0, 0);//todo
+      new ArmForwardKinematicPosition(120, -60);
 
     //Front to transfer transition
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(0, 0);//todo
+      new ArmForwardKinematicPosition(50, 150);
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediate2Position = 
-      new ArmForwardKinematicPosition(0, 0);//todo
+      new ArmForwardKinematicPosition(80, 150);
 
     //Transfer to front
     public static final ArmForwardKinematicPosition kTransferToFrontIntermediatePosition = 
-      new ArmForwardKinematicPosition(0, 0);//todo
+      new ArmForwardKinematicPosition(50, 150);
+    public static final ArmForwardKinematicPosition kTransferToFrontIntermediate2Position = 
+      new ArmForwardKinematicPosition(80, 80);
 
     //Front to back
     public static final ArmForwardKinematicPosition kFrontToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(0, 0);//todo
+      new ArmForwardKinematicPosition(130, -65);
     public static final ArmForwardKinematicPosition kFrontToBackIntermediate2Position = 
-      new ArmForwardKinematicPosition(0, 0);//todo
+      new ArmForwardKinematicPosition(90, -45);
 
     //Back to front
     public static final ArmForwardKinematicPosition kBackToFrontIntermediatePosition = 
-      new ArmForwardKinematicPosition(0, 0);//todo
+      new ArmForwardKinematicPosition(110, 0);
     public static final ArmForwardKinematicPosition kBackToFrontIntermediate2Position = 
-      new ArmForwardKinematicPosition(0, 0);//todo
+      new ArmForwardKinematicPosition(80, 45);//todo
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferPosition = 
-      new ArmForwardKinematicPosition(93,150);
+      new ArmForwardKinematicPosition(98,150);
 
     //Cone Score positions
     public static final ArmForwardKinematicPosition kConeL1Position = 
-      new ArmForwardKinematicPosition(130, -124);
+      new ArmForwardKinematicPosition(130, -120);
     public static final ArmForwardKinematicPosition kConeL2Position = 
       new ArmForwardKinematicPosition(90, -77);
     public static final ArmForwardKinematicPosition kConeL3Position = 
@@ -296,7 +302,7 @@ public final class Constants {
 
     //Cube Score positions
     public static final ArmForwardKinematicPosition kCubeL1Position = 
-      new ArmForwardKinematicPosition(130, -124);
+      new ArmForwardKinematicPosition(130, -120);//130, 124
     public static final ArmForwardKinematicPosition kCubeL2Position = 
       new ArmForwardKinematicPosition(108, -118);
     public static final ArmForwardKinematicPosition kCubeL3Position = 
@@ -304,9 +310,9 @@ public final class Constants {
 
     //Arm Intake positions
     public static final ArmForwardKinematicPosition kBackIntakePosition = 
-      new ArmForwardKinematicPosition(0, 0); //todo
+      new ArmForwardKinematicPosition(90, -80);
     public static final ArmForwardKinematicPosition kFrontIntakePosition = 
-      new ArmForwardKinematicPosition(0, 0); //todo
+      new ArmForwardKinematicPosition(104, 68);
     
   }
 }

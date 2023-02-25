@@ -86,7 +86,7 @@ public class RobotContainer {
 	}
 
 	public void setDefaultStates() { //Todo
-		m_arm.BackToTransfer().schedule();
+		m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER, ScoreLevel.THREE).schedule();
 	}
 
 	/**
@@ -129,12 +129,12 @@ public class RobotContainer {
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
-		//left trigger toggle intake cone or cube
-		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
-			.toggleOnTrue(Commands.startEnd(m_claw::intakeCone, m_claw::intakeCube, m_claw));
+		// //left trigger toggle intake cone or cube
+		// new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.2)
+		// 	.onTrue(m_claw.intakeCone());
 
 		//right trigger toggle outtake or stop
-		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
+		new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.2)
 			.toggleOnTrue(Commands.startEnd(m_claw::outtake, m_claw::stop, m_claw));
 
 		
@@ -145,7 +145,7 @@ public class RobotContainer {
 		new POVButton(m_operatorController, 180)
 			.whileTrue(m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER, ScoreLevel.INTAKE));
 		// front on left
-		new POVButton(m_operatorController, 90)
+		new POVButton(m_operatorController, 270)
 			.whileTrue(m_armStatemachine.setTargetStateCommand(ArmState.FRONT, ScoreLevel.INTAKE));
 
 		// cone on right bumper
