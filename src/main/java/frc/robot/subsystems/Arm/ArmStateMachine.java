@@ -6,13 +6,17 @@ package frc.robot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.robot.subsystems.LEDs;
 
 public class ArmStateMachine extends SubsystemBase {
   private Arm m_arm;
+  private LEDs m_leds;
   
   public enum ArmState {
     BACK, TRANSFER, FRONT
@@ -39,8 +43,9 @@ public class ArmStateMachine extends SubsystemBase {
   private boolean scoreLevelChanges = false; //default to false
 
   /** Creates a new StateMachine. */
-  public ArmStateMachine(Arm m_arm) {
+  public ArmStateMachine(Arm m_arm, LEDs m_leds) {
     this.m_arm = m_arm;
+    this.m_leds = m_leds;
   }
 
   private void setTargetState(ArmState targetArmState, ScoreLevel targetScoreLevel) {
@@ -68,7 +73,8 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   public Command setCargoTypeCommand(CargoType cargoType) {
-    return new InstantCommand(() -> setCargoType(cargoType));
+    return new InstantCommand(() -> setCargoType(cargoType))
+    .andThen(m_leds.setColorCargoType(cargoType));
   }
 
   public Command getArmCommand() {
