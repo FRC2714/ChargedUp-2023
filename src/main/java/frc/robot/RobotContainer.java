@@ -91,7 +91,7 @@ public class RobotContainer {
 
 	public void setTeleopDefaultStates() {
 		m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER, ScoreLevel.THREE).schedule();
-		m_armStatemachine.setCargoTypeCommand(CargoType.CONE);
+		m_armStatemachine.setCargoTypeCommand(CargoType.CONE).schedule();;
 		m_limelight.setLEDCommand(false).schedule();
 	}
 
@@ -143,15 +143,11 @@ public class RobotContainer {
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
-		// //left trigger toggle intake cone or cube
-		// new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.2)
-		// 	.onTrue(m_claw.intakeCone());
-
-		//right trigger toggle outtake or stop
+		//hold to score on right trigger
 		new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.2)
-			.toggleOnTrue(Commands.startEnd(m_claw::outtake, m_claw::stop, m_claw));
+			.onTrue(m_claw.score())
+			.onFalse(m_claw.stopOpen());
 
-		
 		// back on right
 		new POVButton(m_operatorController, 90)
 			.whileTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.INTAKE));
@@ -174,12 +170,13 @@ public class RobotContainer {
 		// level 2 on B
 		new JoystickButton(m_operatorController, Button.kB.value)
 			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.TWO));
-		// level 1 on A
+
+		//close claw on a
 		new JoystickButton(m_operatorController, Button.kA.value)
-			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.ONE));
-		// back intake on X
+			.onTrue(m_claw.intakeCone());
+		//intake cone on x
 		new JoystickButton(m_operatorController, Button.kX.value)
-			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.INTAKE));
+			.onTrue(m_claw.intakeCube());
 	}
 
 	/**

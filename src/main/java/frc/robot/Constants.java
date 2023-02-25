@@ -151,7 +151,7 @@ public final class Constants {
 
     public static final int kClawMotorCurrentLimit = 20; //amps 
 
-    public static final double kNominalVoltage = 11.0;
+    public static final double kNominalVoltage = 10.5;
     public static final double kIntakeMotorSpeed = 1;
     public static final double kOuttakeMotorSpeed = -0.1;
   }
@@ -182,7 +182,7 @@ public final class Constants {
   }
 
   public static final class LEDConstants {
-    public static final int kBlinkinPort = 0;//todo
+    public static final int kBlinkinPort = 0;
 
     public static final double kPurple = 0.91;
     public static final double kYellow = 0.69;
@@ -233,10 +233,10 @@ public final class Constants {
     public static final double kBaseJointD = 0.03; //todo tune this
 
     public static final double kSecondJointMaxVelocity = 4000;
-    public static final double kSecondJointMaxAcceleration = 2500;
+    public static final double kSecondJointMaxAcceleration = 3000;
     public static final double kSecondJointTolerance = 8;
     public static final double kSecondJointFF = 0.00007;
-    public static final double kSecondJointP = 0.00004;
+    public static final double kSecondJointP = 0.00005;
     public static final double kSecondJointI = 0;
     public static final double kSecondJointD = 0.03;
 
@@ -246,8 +246,10 @@ public final class Constants {
 
     //Back to Transfer transition
     public static final ArmForwardKinematicPosition kBackToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(50,150);
-    public static final ArmForwardKinematicPosition kBackToTransferIntermediate2Position = 
+      new ArmForwardKinematicPosition(80,30);
+      public static final ArmForwardKinematicPosition kBackToTransferIntermediate2Position = 
+      new ArmForwardKinematicPosition(60,150);
+    public static final ArmForwardKinematicPosition kBackToTransferIntermediate3Position = 
       new ArmForwardKinematicPosition(80,150);
 
     //Back to front transition
@@ -306,9 +308,9 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kCubeL1Position = 
       new ArmForwardKinematicPosition(130, -120);//130, 124
     public static final ArmForwardKinematicPosition kCubeL2Position = 
-      new ArmForwardKinematicPosition(108, -118);
+      new ArmForwardKinematicPosition(108, -108);
     public static final ArmForwardKinematicPosition kCubeL3Position = 
-      new ArmForwardKinematicPosition(62, -52);
+      new ArmForwardKinematicPosition(62, -45);
 
     //Arm Intake positions
     public static final ArmForwardKinematicPosition kBackIntakePosition = 
