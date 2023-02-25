@@ -94,6 +94,9 @@ public class Arm extends SubsystemBase {
   public Command BackToTransferIntermediate2Command() {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToTransferIntermediate2Position));
   }
+  public Command BackToTransferIntermediate3Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToTransferIntermediate3Position));
+  }
 
   //back to back transition
   public Command BackToBackIntermediateCommand() {
@@ -182,15 +185,14 @@ public class Arm extends SubsystemBase {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontIntakePosition));
   }
 
-
-
   
   
   //Back to Transfer
   public Command BackToTransfer() {
     return new SequentialCommandGroup(
       new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToTransferIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToTransferIntermediate2Command()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToTransferIntermediate2Command()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToTransferIntermediate3Command()),
       new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferCommand()));
   }
 
@@ -204,8 +206,8 @@ public class Arm extends SubsystemBase {
   //Back to front
   public Command BackToFront() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToFrontIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToFrontIntermediate2Command()),
+      //new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToFrontIntermediateCommand()),
+      //new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToFrontIntermediate2Command()),
       new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontIntakeCommand()));
   }
 
@@ -240,7 +242,7 @@ public class Arm extends SubsystemBase {
   public Command FrontToBack(Command scoreLevelCommand) {
     return new SequentialCommandGroup(
       new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToBackIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToBackIntermediate2Command()),
+      //new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontToBackIntermediate2Command()),
       new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreLevelCommand));
   }
 

@@ -34,11 +34,11 @@ public class Claw extends SubsystemBase {
   }
 
   public void intake() {
-    clawMotor.set(ClawConstants.kIntakeMotorSpeed*ClawConstants.kNominalVoltage);
+    clawMotor.setVoltage(ClawConstants.kIntakeMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
   public void outtake() {
-    clawMotor.set(ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
+    clawMotor.setVoltage(ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
   public void stop() {
@@ -75,6 +75,12 @@ public class Claw extends SubsystemBase {
     return (
       new InstantCommand(() -> open())).andThen(
       new InstantCommand(() -> outtake()));
+  }
+
+  public Command stopOpen() {
+    return (
+      new InstantCommand(() -> open())).andThen(
+      new InstantCommand(() -> stop()));
   }
 
   @Override

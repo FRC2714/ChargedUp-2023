@@ -25,7 +25,7 @@ public class Autoalign extends ProfiledPIDCommand {
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
             // The PID gains
-            1, //todo
+            3,
             0,
             0,
             // The motion profile constraints
