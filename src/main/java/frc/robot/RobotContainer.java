@@ -123,12 +123,14 @@ public class RobotContainer {
 		new JoystickButton(m_driverController, Button.kLeftBumper.value)
 			.toggleOnTrue(Commands.startEnd(m_intake::open, m_intake::close, m_intake));
 
-		//toggle intake on right trigger
+		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
-			.toggleOnTrue(Commands.startEnd(m_intake::intake, m_intake::stop, m_intake));
-		//toggle outtake on left trigger
+			.whileTrue(m_intake.intakeCommand())
+			.whileFalse(m_intake.stopCommand());
+		//outtake on left trigger while held
 		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.2)
-			.toggleOnTrue(Commands.startEnd(m_intake::outtake, m_intake::stop, m_intake));
+			.whileTrue(m_intake.outtakeCommand())
+			.whileFalse(m_intake.stopCommand());
 
 		//toggle deploy on a
 		new JoystickButton(m_driverController, Button.kA.value)
@@ -136,7 +138,7 @@ public class RobotContainer {
 
 		//reset gyro on y
 		new JoystickButton(m_driverController, Button.kY.value)
-			.onTrue(Commands.run(m_robotDrive::zeroHeading, m_robotDrive));
+			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////

@@ -118,32 +118,60 @@ public class Intake extends SubsystemBase {
       getClosed();
   }
 
+  public Command intakeCommand() {
+    return new InstantCommand(() -> intake());
+  }
+
+  public Command outtakeCommand() {
+    return new InstantCommand(() -> outtake());
+  }
+
+  public Command stopCommand() {
+    return new InstantCommand(() -> stop());
+  }
+
+  public Command deployCommand() {
+    return new InstantCommand(() -> deploy());
+  }
+
+  public Command retractCommand() {
+    return new InstantCommand(() -> retract());
+  }
+
+  public Command openCommand() {
+    return new InstantCommand(() -> open());
+  }
+
+  public Command closeCommand() {
+    return new InstantCommand(() -> close());
+  }
+
   public Command intakeCone() {
-    return (
-      new InstantCommand(() -> deploy()))
-        .andThen(new InstantCommand(() -> close())
-        .andThen(new InstantCommand(() -> intake())));
+    return 
+      deployCommand()
+      .andThen(closeCommand())
+      .andThen(intakeCommand());
   }
 
   public Command intakeCube() {
-    return (
-      new InstantCommand(() -> deploy()))
-        .andThen(new InstantCommand(() -> open())
-        .andThen(new InstantCommand(() -> intake())));
+    return 
+      deployCommand()
+      .andThen(openCommand())
+      .andThen(intakeCommand());
   }
 
   public Command retractAndStop() {
-    return (
-      new InstantCommand(() -> retract()))
-        .andThen(new InstantCommand(() -> stop()));
+    return 
+      retractCommand()
+      .andThen(stopCommand());
   }
 
   public Command AutoConeIntake() {
     return new SequentialCommandGroup(
       new WaitCommand(0.25),
-      new InstantCommand(() -> retract()),
+      retractCommand(),
       new WaitCommand(1),
-      new InstantCommand(() -> stop()));
+      stopCommand());
   }
 
   @Override
