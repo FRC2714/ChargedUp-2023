@@ -13,7 +13,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.Autoalign;
-import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
