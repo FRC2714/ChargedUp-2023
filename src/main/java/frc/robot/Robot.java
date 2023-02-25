@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_robotContainer.setDefaultStates();
+    m_robotContainer.setAutoDefaultStates();
     m_autonomousCommand = autoChooser.getSelected();
     m_autonomousCommand.initialize();
 
@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
 
-    m_robotContainer.setDefaultStates();
+    m_robotContainer.setTeleopDefaultStates();
   }
 
   /** This function is called periodically during operator control. */

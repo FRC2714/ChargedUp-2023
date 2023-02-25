@@ -244,13 +244,23 @@ public final class Constants {
     public static final int kBaseJointMotorCurrentLimit = 50; //amps
     public static final int kSecondJointMotorCurrentLimit = 40; //amps
 
-    //Back to Transfer transitions
+    //Back to Transfer transition
     public static final ArmForwardKinematicPosition kBackToTransferIntermediatePosition = 
       new ArmForwardKinematicPosition(50,150);
     public static final ArmForwardKinematicPosition kBackToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(80,150);
+
+    //Back to front transition
+    public static final ArmForwardKinematicPosition kBackToFrontIntermediatePosition = 
+      new ArmForwardKinematicPosition(110, 0);
+    public static final ArmForwardKinematicPosition kBackToFrontIntermediate2Position = 
+      new ArmForwardKinematicPosition(80, 45);
+
+    //Back to back transition
+    public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
+      new ArmForwardKinematicPosition(110, -60);
     
-    //Transfer to back transitions
+    //Transfer to back transition
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
       new ArmForwardKinematicPosition(50, 150);
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate2Position = 
@@ -260,33 +270,25 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate4Position = 
       new ArmForwardKinematicPosition(90, -45);
 
-    //Back to back transition
-    public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(120, -60);
+    //Transfer to front transition
+    public static final ArmForwardKinematicPosition kTransferToFrontIntermediatePosition = 
+      new ArmForwardKinematicPosition(50, 150);
+    public static final ArmForwardKinematicPosition kTransferToFrontIntermediate2Position = 
+      new ArmForwardKinematicPosition(80, 80);
 
     //Front to transfer transition
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediatePosition = 
       new ArmForwardKinematicPosition(50, 150);
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(80, 150);
-
-    //Transfer to front
-    public static final ArmForwardKinematicPosition kTransferToFrontIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 150);
-    public static final ArmForwardKinematicPosition kTransferToFrontIntermediate2Position = 
-      new ArmForwardKinematicPosition(80, 80);
-
+      
     //Front to back
     public static final ArmForwardKinematicPosition kFrontToBackIntermediatePosition = 
       new ArmForwardKinematicPosition(130, -65);
     public static final ArmForwardKinematicPosition kFrontToBackIntermediate2Position = 
       new ArmForwardKinematicPosition(90, -45);
 
-    //Back to front
-    public static final ArmForwardKinematicPosition kBackToFrontIntermediatePosition = 
-      new ArmForwardKinematicPosition(110, 0);
-    public static final ArmForwardKinematicPosition kBackToFrontIntermediate2Position = 
-      new ArmForwardKinematicPosition(80, 45);//todo
+    
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferPosition = 

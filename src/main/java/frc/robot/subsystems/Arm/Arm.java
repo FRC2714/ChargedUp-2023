@@ -95,6 +95,19 @@ public class Arm extends SubsystemBase {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToTransferIntermediate2Position));
   }
 
+  //back to back transition
+  public Command BackToBackIntermediateCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToBackIntermediatePosition));
+  }
+
+  //Back to front
+  public Command BackToFrontIntermediateCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToFrontIntermediatePosition));
+  }
+  public Command BackToFrontIntermediate2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToFrontIntermediate2Position));
+  }
+
   //transfer to back transition
   public Command TransferToBackIntermediateCommand() {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToBackIntermediatePosition));
@@ -109,9 +122,12 @@ public class Arm extends SubsystemBase {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToBackIntermediate4Position));
   }
 
-  //back to back transition
-  public Command BackToBackIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToBackIntermediatePosition));
+  //Transfer to front
+  public Command TransferToFrontIntermediateCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToFrontIntermediatePosition));
+  }
+  public Command TransferToFrontIntermediate2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToFrontIntermediate2Position));
   }
 
   //Front to transfer transition
@@ -122,14 +138,6 @@ public class Arm extends SubsystemBase {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontToTransferIntermediate2Position));
   }
 
-  //Transfer to front
-  public Command TransferToFrontIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToFrontIntermediatePosition));
-  }
-  public Command TransferToFrontIntermediate2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToFrontIntermediate2Position));
-  }
-
   //Front to back
   public Command FrontToBackIntermediateCommand() {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontToBackIntermediatePosition));
@@ -137,14 +145,7 @@ public class Arm extends SubsystemBase {
   public Command FrontToBackIntermediate2Command() {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontToBackIntermediate2Position));
   }
-
-  //Back to front
-  public Command BackToFrontIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToFrontIntermediatePosition));
-  }
-  public Command BackToFrontIntermediate2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToFrontIntermediate2Position));
-  }
+  
 
   //transfer position
   public Command TransferCommand() {
@@ -193,12 +194,19 @@ public class Arm extends SubsystemBase {
       new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferCommand()));
   }
 
-  //Front to transfer transition
-  public Command FrontToTransfer() {
+  //Back to Back
+  public Command BackToBack(Command scoreLevelCommand) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToTransferIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontToTransferIntermediate2Command()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TransferCommand()));
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToBackIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreLevelCommand));
+  }
+
+  //Back to front
+  public Command BackToFront() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToFrontIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToFrontIntermediate2Command()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontIntakeCommand()));
   }
 
   //Transfer to Back
@@ -211,11 +219,21 @@ public class Arm extends SubsystemBase {
       new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreLevelCommand));
   }
 
-  //Back to Back
-  public Command BackToBack(Command scoreLevelCommand) {
+  //Transfer to front
+  public Command TransferToFront() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToBackIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreLevelCommand));
+
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(TransferToFrontIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(TransferToFrontIntermediate2Command()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontIntakeCommand()));
+  }
+
+  //Front to transfer transition
+  public Command FrontToTransfer() {
+    return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToTransferIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontToTransferIntermediate2Command()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TransferCommand()));
   }
   
   //Front to back
@@ -226,22 +244,9 @@ public class Arm extends SubsystemBase {
       new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreLevelCommand));
   }
 
-  //Transfer to front
-  public Command TransferToFront() {
-    return new SequentialCommandGroup(
+  
 
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(TransferToFrontIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(TransferToFrontIntermediate2Command()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontIntakeCommand()));
-  }
-
-  //Back to front
-  public Command BackToFront() {
-    return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToFrontIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToFrontIntermediate2Command()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontIntakeCommand()));
-  }
+  
 
 
 
