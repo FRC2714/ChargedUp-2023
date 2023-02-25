@@ -23,17 +23,17 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   public enum CargoType {
-    CONE, CUBE
+    CONE, CUBE, NONE
   }
 
-  public ArmState currentArmState = ArmState.TRANSFER; //will default to TRANSFER 
+  public ArmState currentArmState = ArmState.BACK; //will default to TRANSFER 
   //m_arm.estimateCurrentArmState()??
   public ScoreLevel currentScoreLevel = ScoreLevel.THREE; //default to THREE
 
-  public ArmState targetArmState = ArmState.TRANSFER; // default to TRANSFER 
+  public ArmState targetArmState = ArmState.BACK; // default to TRANSFER 
   public ScoreLevel targetScoreLevel = ScoreLevel.THREE; // default to THREE
 
-  public CargoType cargoType;
+  public CargoType cargoType = CargoType.CONE; // default of cube
 
   private boolean armStateChanges = false; //default to false
   private boolean scoreLevelChanges = false; //default to false
@@ -82,7 +82,7 @@ public class ArmStateMachine extends SubsystemBase {
         }
         case BACK: // when target arm state = BACK
           switch(currentArmState) {
-            case TRANSFER: {
+            case TRANSFER: { // When current is TRANSFER
               switch (cargoType) {
                 case CONE: switch(targetScoreLevel) {
                   case THREE: return m_arm.TransferToBack(m_arm.ConeL3Command());
@@ -98,7 +98,7 @@ public class ArmStateMachine extends SubsystemBase {
                 }
               }
             }
-            case FRONT: {
+            case FRONT: { //when current is FRONT
               switch (cargoType) {
                 case CONE: switch(targetScoreLevel) {
                   case THREE: return m_arm.FrontToBack(m_arm.ConeL3Command());
@@ -153,6 +153,8 @@ public class ArmStateMachine extends SubsystemBase {
     
     SmartDashboard.putString("Target Score Level", targetScoreLevel.toString());
     SmartDashboard.putString("Current Score Level", currentScoreLevel.toString());
+
+    SmartDashboard.putString("CargoType", cargoType.toString());
 
     SmartDashboard.putBoolean("Arm State Changes?", armStateChanges);
     SmartDashboard.putBoolean("Score Level Changes?", scoreLevelChanges);
