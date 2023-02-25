@@ -35,6 +35,7 @@ import frc.robot.commands.auto.MarkerAuto;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
@@ -56,8 +57,9 @@ public class RobotContainer {
 	private final Arm m_arm = new Arm();
 	private final Intake m_intake = new Intake();
 	private final Claw m_claw = new Claw();
+	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStatemachine = new ArmStateMachine(m_arm);
+	private final ArmStateMachine m_armStatemachine = new ArmStateMachine(m_arm, m_leds);
 
 	// The driver's controller
 	XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);

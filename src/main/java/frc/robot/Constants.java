@@ -182,10 +182,10 @@ public final class Constants {
   }
 
   public static final class LEDConstants {
-    public static final int kLEDPort = 0;//todo
+    public static final int kBlinkinPort = 0;//todo
 
-    public static final double kPurple = 0;//todo
-    public static final double kYellow = 0;//todo
+    public static final double kPurple = 0.91;
+    public static final double kYellow = 0.69;
   }
 
   public static final class NeoMotorConstants {
