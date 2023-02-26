@@ -263,11 +263,11 @@ public final class Constants {
 
     //Back to back transition
     public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(110, -60);
+      new ArmForwardKinematicPosition(110, -70);
     
     //Transfer to back transition
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 150);
+      new ArmForwardKinematicPosition(60, 150);
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate2Position = 
       new ArmForwardKinematicPosition(50, 90);
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate3Position = 
@@ -277,13 +277,13 @@ public final class Constants {
 
     //Transfer to front transition
     public static final ArmForwardKinematicPosition kTransferToFrontIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 150);
+      new ArmForwardKinematicPosition(60, 150);
     public static final ArmForwardKinematicPosition kTransferToFrontIntermediate2Position = 
       new ArmForwardKinematicPosition(80, 80);
 
     //Front to transfer transition
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 150);
+      new ArmForwardKinematicPosition(60, 150);
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(80, 150);
       

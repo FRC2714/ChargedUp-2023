@@ -7,8 +7,8 @@ package frc.robot.subsystems.Arm;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.subsystems.LEDs;
 
@@ -100,116 +100,195 @@ public class ArmStateMachine extends SubsystemBase {
     return new InstantCommand(() -> setIntakeMode(intakeMode));
   }
 
+  public Command nothingCommand() {
+    return new WaitCommand(0);
+  }
+
   public Command getArmCommand() {
-    switch(intakeMode) {
-      case FLOOR: {
-        if(armStateChanges) { // if arm state changes
-          switch(targetArmState) {
-            case TRANSFER: {// when target arm state = TRANSFER
-              switch(currentArmState) {
-                case BACK: return m_arm.BackToTransfer();
-                case FRONT: return m_arm.FrontToTransfer();
-              }
+    switch (intakeMode) {
+      case FLOOR: { // floor mode
+        switch (targetArmState) {
+          case TRANSFER: { // when target arm state = TRANSFER
+            switch (currentArmState) {
+              case BACK:
+                return m_arm.BackToTransfer();
+              case FRONT:
+                return m_arm.FrontToTransfer();
+              case TRANSFER:
+                return nothingCommand();
             }
-            case BACK: // when target arm state = BACK
-              switch(currentArmState) {
-                case TRANSFER: { // When current is TRANSFER
-                  switch (cargoType) {
-                    case CONE: switch(targetScoreLevel) {
-                      case THREE: return m_arm.TransferToBack(m_arm.BackConeL3Command());
-                      case TWO: return m_arm.TransferToBack(m_arm.BackConeL2Command());
-                      case ONE: return m_arm.TransferToBack(m_arm.BackConeL1Command());
-                      case INTAKE: return m_arm.TransferToBack(m_arm.BackIntakeCommand());
+          }
+          case BACK: // when target arm state = BACK
+            switch (currentArmState) {
+              case TRANSFER: { // When current is TRANSFER
+                switch (cargoType) {
+                  case CONE:
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return m_arm.TransferToBack(m_arm.BackConeL3Command());
+                      case TWO:
+                        return m_arm.TransferToBack(m_arm.BackConeL2Command());
+                      case ONE:
+                        return m_arm.TransferToBack(m_arm.BackConeL1Command());
+                      case INTAKE:
+                        return m_arm.TransferToBack(m_arm.BackIntakeCommand());
                     }
-                    case CUBE: switch(targetScoreLevel) {
-                      case THREE: return m_arm.TransferToBack(m_arm.BackCubeL3Command());
-                      case TWO: return m_arm.TransferToBack(m_arm.BackCubeL2Command());
-                      case ONE: return m_arm.TransferToBack(m_arm.BackCubeL1Command());
-                      case INTAKE: return m_arm.TransferToBack(m_arm.BackIntakeCommand());
+                  case CUBE:
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return m_arm.TransferToBack(m_arm.BackCubeL3Command());
+                      case TWO:
+                        return m_arm.TransferToBack(m_arm.BackCubeL2Command());
+                      case ONE:
+                        return m_arm.TransferToBack(m_arm.BackCubeL1Command());
+                      case INTAKE:
+                        return m_arm.TransferToBack(m_arm.BackIntakeCommand());
+                    }
+                }
+              }
+              case FRONT: { // when current is FRONT
+                switch (cargoType) {
+                  case CONE:
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return m_arm.FrontToBack(m_arm.BackConeL3Command());
+                      case TWO:
+                        return m_arm.FrontToBack(m_arm.BackConeL2Command());
+                      case ONE:
+                        return m_arm.FrontToBack(m_arm.BackConeL1Command());
+                      case INTAKE:
+                        return m_arm.FrontToBack(m_arm.BackIntakeCommand());
+                    }
+                  case CUBE:
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return m_arm.FrontToBack(m_arm.BackCubeL3Command());
+                      case TWO:
+                        return m_arm.FrontToBack(m_arm.BackCubeL2Command());
+                      case ONE:
+                        return m_arm.FrontToBack(m_arm.BackCubeL1Command());
+                      case INTAKE:
+                        return m_arm.FrontToBack(m_arm.BackIntakeCommand());
+                    }
+                }
+              }
+              case BACK: {
+                switch (cargoType) {
+                  case CONE: {
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return m_arm.BackToBack(m_arm.BackConeL3Command());
+                      case TWO:
+                        return m_arm.BackToBack(m_arm.BackConeL2Command());
+                      case ONE:
+                        return m_arm.BackToBack(m_arm.BackConeL1Command());
+                      case INTAKE:
+                        return m_arm.BackToBack(m_arm.BackIntakeCommand());
+                    }
+                  }
+                  case CUBE: {
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return m_arm.BackToBack(m_arm.BackCubeL3Command());
+                      case TWO:
+                        return m_arm.BackToBack(m_arm.BackCubeL2Command());
+                      case ONE:
+                        return m_arm.BackToBack(m_arm.BackCubeL1Command());
+                      case INTAKE:
+                        return m_arm.BackToBack(m_arm.BackIntakeCommand());
                     }
                   }
                 }
-                case FRONT: { //when current is FRONT
-                  switch (cargoType) {
-                    case CONE: switch(targetScoreLevel) {
-                      case THREE: return m_arm.FrontToBack(m_arm.BackConeL3Command());
-                      case TWO: return m_arm.FrontToBack(m_arm.BackConeL2Command());
-                      case ONE: return m_arm.FrontToBack(m_arm.BackConeL1Command());
-                      case INTAKE: return m_arm.FrontToBack(m_arm.BackIntakeCommand());
+              }
+            }
+          case FRONT: { // when target arm state = FRONT
+            switch (currentArmState) {
+              case BACK: {
+                switch (cargoType) {
+                  case CONE: {
+                    switch (targetScoreLevel) {
+                      case TWO:
+                        return m_arm.BackToFront(m_arm.FrontConeL2Command());
+                      case INTAKE:
+                        return m_arm.BackToFront(m_arm.FrontIntakeCommand());
                     }
-                    case CUBE: switch(targetScoreLevel) {
-                      case THREE: return m_arm.FrontToBack(m_arm.BackCubeL3Command());
-                      case TWO: return m_arm.FrontToBack(m_arm.BackCubeL2Command());
-                      case ONE: return m_arm.FrontToBack(m_arm.BackCubeL1Command());
-                      case INTAKE: return m_arm.FrontToBack(m_arm.BackIntakeCommand());
+                  }
+                  case CUBE: {
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return m_arm.BackToFront(m_arm.FrontCubeL3Command());
+                      case TWO:
+                        return m_arm.BackToFront(m_arm.FrontCubeL2Command());
+                      case INTAKE:
+                        return m_arm.BackToFront(m_arm.FrontIntakeCommand());
                     }
                   }
                 }
               }
-            case FRONT: {// when target arm state = FRONT
-              switch(currentArmState) {
-                case BACK: return m_arm.BackToFront();
-                case TRANSFER: return m_arm.TransferToFront();
-              }
+              case TRANSFER:
+                return m_arm.TransferToFront();
+              case FRONT:
+                return nothingCommand();
             }
           }
-        } else if(!armStateChanges && currentArmState == ArmState.BACK && scoreLevelChanges) { // when arm state does not change and = BACK + score level changes
-          switch (cargoType) {
-            case CONE: {
-              switch(targetScoreLevel) {
-                case THREE: return m_arm.BackToBack(m_arm.BackConeL3Command());
-                case TWO: return m_arm.BackToBack(m_arm.BackConeL2Command());
-                case ONE: return m_arm.BackToBack(m_arm.BackConeL1Command());
-                case INTAKE: return m_arm.BackToBack(m_arm.BackIntakeCommand());
-              }
-            }
-            case CUBE: {
-              switch(targetScoreLevel) {
-                case THREE: return m_arm.BackToBack(m_arm.BackCubeL3Command());
-                case TWO: return m_arm.BackToBack(m_arm.BackCubeL2Command());
-                case ONE: return m_arm.BackToBack(m_arm.BackCubeL1Command());
-                case INTAKE: return m_arm.BackToBack(m_arm.BackIntakeCommand());
-              }
-            }
-          }
-        }//return new PrintCommand("nothing"); // if neither arm state or score level change, do nothing
+        }
       }
-      case HP: {
-        if(armStateChanges || scoreLevelChanges) { // if arm state or score level changes
-          switch(targetArmState) {
-            case TRANSFER: { 
-              return m_arm.TransferCommand();
-            }
-            case BACK:  {
-              switch (cargoType) {
-                case CONE: {
-                  switch(targetScoreLevel) {
-                    case THREE: return m_arm.BackConeL3Command();
-                    case TWO: return m_arm.BackConeL2Command();
-                    case INTAKE: return m_arm.BackIntakeCommand();
-                  }
-                }
-                case CUBE: switch(targetScoreLevel) {
-                  case THREE: return m_arm.BackCubeL3Command();
-                  case TWO: return m_arm.BackCubeL2Command();
-                  case INTAKE: return m_arm.BackIntakeCommand();
+      case HP: { // human player mode
+        switch (targetArmState) {
+          case TRANSFER: {
+            return m_arm.TransferCommand();
+          }
+          case BACK: {
+            switch (cargoType) {
+              case CONE: {
+                switch (targetScoreLevel) {
+                  case THREE:
+                    return m_arm.BackConeL3Command();
+                  case TWO:
+                    return m_arm.BackConeL2Command();
+                  case ONE:
+                    return nothingCommand();
+                  case INTAKE:
+                    return m_arm.BackIntakeCommand();
                 }
               }
-            }
-            case FRONT: {// when target arm state = FRONT
-              switch (cargoType) {
-                case CONE: {
-                  switch(targetScoreLevel) {
-                    case TWO: return m_arm.FrontConeL2Command();
-                    case INTAKE: return m_arm.FrontIntakeCommand();
-                  }
+              case CUBE:
+                switch (targetScoreLevel) {
+                  case THREE:
+                    return m_arm.BackCubeL3Command();
+                  case TWO:
+                    return m_arm.BackCubeL2Command();
+                  case ONE:
+                    return nothingCommand();
+                  case INTAKE:
+                    return m_arm.BackIntakeCommand();
                 }
-                case CUBE: {
-                  switch(targetScoreLevel) {
-                    case THREE: return m_arm.FrontCubeL3Command();
-                    case TWO: return m_arm.FrontCubeL2Command();
-                    case INTAKE: return m_arm.FrontIntakeCommand();
-                  }
+            }
+          }
+          case FRONT: {// when target arm state = FRONT
+            switch (cargoType) {
+              case CONE: {
+                switch (targetScoreLevel) {
+                  case THREE:
+                    return nothingCommand();
+                  case TWO:
+                    return m_arm.FrontConeL2Command();
+                  case ONE:
+                    return nothingCommand();
+                  case INTAKE:
+                    return m_arm.FrontIntakeCommand();
+                }
+              }
+              case CUBE: {
+                switch (targetScoreLevel) {
+                  case THREE:
+                    return m_arm.FrontCubeL3Command();
+                  case TWO:
+                    return m_arm.FrontCubeL2Command();
+                  case ONE:
+                    return nothingCommand();
+                  case INTAKE:
+                    return m_arm.FrontIntakeCommand();
                 }
               }
             }
@@ -217,7 +296,7 @@ public class ArmStateMachine extends SubsystemBase {
         }
       }
     }
-    return new PrintCommand("nothing");
+    return nothingCommand();
   }
 
   
