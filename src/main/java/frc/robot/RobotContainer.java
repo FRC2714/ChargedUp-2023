@@ -43,6 +43,7 @@ import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
+import frc.robot.subsystems.Arm.ArmStateMachine.IntakeMode;
 import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
 
 /*
@@ -90,14 +91,18 @@ public class RobotContainer {
 	}
 
 	public void setTeleopDefaultStates() {
-		m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER, ScoreLevel.THREE).schedule();
-		m_armStatemachine.setCargoTypeCommand(CargoType.CONE).schedule();;
+		m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
+		m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).schedule();
+		m_armStatemachine.setCargoTypeCommand(CargoType.CONE).schedule();
+		m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
 		m_limelight.setLEDCommand(false).schedule();
 	}
 
 	public void setAutoDefaultStates() {
-		m_arm.TransferCommand().schedule();
+		m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
+		m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).schedule();
 		m_armStatemachine.setCargoTypeCommand(CargoType.CONE).schedule();
+		m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
 		m_limelight.setLEDCommand(false).schedule();
 	}
 
@@ -147,16 +152,21 @@ public class RobotContainer {
 		new Trigger(() -> m_operatorController.getRightTriggerAxis() > 0.2)
 			.onTrue(m_claw.score())
 			.onFalse(m_claw.stopOpen());
+		
+		//hold to shoot on left trigger
+		new Trigger(() -> m_operatorController.getLeftTriggerAxis() > 0.2)
+			.onTrue(m_claw.shootCommand())
+			.onFalse(m_claw.stopOpen());
 
 		// back on right
 		new POVButton(m_operatorController, 90)
-			.whileTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.INTAKE));
+			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.BACK));
 		// transfer on down
 		new POVButton(m_operatorController, 180)
-			.whileTrue(m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER, ScoreLevel.INTAKE));
+			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER));
 		// front on left
 		new POVButton(m_operatorController, 270)
-			.whileTrue(m_armStatemachine.setTargetStateCommand(ArmState.FRONT, ScoreLevel.INTAKE));
+			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.FRONT));
 
 		// cone on right bumper
 		new JoystickButton(m_operatorController, Button.kRightBumper.value)
@@ -164,19 +174,27 @@ public class RobotContainer {
 		// cube on left bumper
 		new JoystickButton(m_operatorController, Button.kLeftBumper.value)
 			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CUBE));
+
+		// floor on start
+		new JoystickButton(m_operatorController, Button.kStart.value)
+			.onTrue(m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR));
+		// hp on back
+		new JoystickButton(m_operatorController, Button.kBack.value)
+			.onTrue(m_armStatemachine.setIntakeModeCommand(IntakeMode.HP));
+
 		// level 3 on Y
 		new JoystickButton(m_operatorController, Button.kY.value)
-			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.THREE));
+			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE));
 		// level 2 on B
 		new JoystickButton(m_operatorController, Button.kB.value)
-			.onTrue(m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.TWO));
-
-		//close claw on a
+			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.TWO));
+		// intake on A
 		new JoystickButton(m_operatorController, Button.kA.value)
-			.onTrue(m_claw.intakeCone());
-		//intake cone on x
-		new JoystickButton(m_operatorController, Button.kX.value)
-			.onTrue(m_claw.intakeCube());
+			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
+
+		//toggle claw on X
+		new POVButton(m_operatorController, 0)
+			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 	}
 
 	/**

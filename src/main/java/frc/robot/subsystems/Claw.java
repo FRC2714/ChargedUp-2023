@@ -20,7 +20,6 @@ public class Claw extends SubsystemBase {
 
   private DoubleSolenoid clawSolenoid;
   
-
   private boolean isOpen;
 
   /** Creates a new Claw. */
@@ -41,6 +40,10 @@ public class Claw extends SubsystemBase {
     clawMotor.setVoltage(ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
+  public void shoot() {
+    clawMotor.setVoltage(5*ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
+  }
+
   public void stop() {
     clawMotor.set(0);
   }
@@ -59,13 +62,22 @@ public class Claw extends SubsystemBase {
     return isOpen;
   }
 
-  public Command intakeCone() {
+  public void intakeClose() {
+    close();
+    intake();
+  }
+  public void intakeOpen() {
+    open();
+    intake();
+  }
+
+  public Command intakeConeCommand() {
     return (
       new InstantCommand(() -> close())).andThen(
       new InstantCommand(() -> intake()));
   }
 
-  public Command intakeCube() {
+  public Command intakeCubeCommand() {
     return (
       new InstantCommand(() -> open())).andThen(
       new InstantCommand(() -> intake()));
@@ -81,6 +93,11 @@ public class Claw extends SubsystemBase {
     return (
       new InstantCommand(() -> open())).andThen(
       new InstantCommand(() -> stop()));
+  }
+
+  public Command shootCommand() {
+    return new InstantCommand(() -> shoot()).andThen(
+      new InstantCommand(() -> open())); 
   }
 
   @Override

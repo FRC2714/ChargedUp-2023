@@ -184,6 +184,9 @@ public final class Constants {
   public static final class LEDConstants {
     public static final int kBlinkinPort = 0;
 
+    public static final double kPurpleWave = 0.29;
+    public static final double kYellowWave = 0.09;
+
     public static final double kPurple = 0.91;
     public static final double kYellow = 0.69;
   }
@@ -226,19 +229,19 @@ public final class Constants {
     //Controller Constants
     public static final double kBaseJointMaxVelocity = 4000; //todo tune this
     public static final double kBaseJointMaxAcceleration = 3000;
-    public static final double kBaseJointTolerance = 8;
-    public static final double kBaseJointFF = 0.00007;
-    public static final double kBaseJointP = 0.00002;
+    public static final double kBaseJointTolerance = 10;
+    public static final double kBaseJointFF = 0.00005;
+    public static final double kBaseJointP = 0.00003;
     public static final double kBaseJointI = 0;
-    public static final double kBaseJointD = 0.03; //todo tune this
+    public static final double kBaseJointD = 0.01; //todo tune this
 
-    public static final double kSecondJointMaxVelocity = 4000;
-    public static final double kSecondJointMaxAcceleration = 3000;
+    public static final double kSecondJointMaxVelocity = 4500;
+    public static final double kSecondJointMaxAcceleration = 3500;
     public static final double kSecondJointTolerance = 8;
-    public static final double kSecondJointFF = 0.00007;
-    public static final double kSecondJointP = 0.00005;
+    public static final double kSecondJointFF = 0.00013;
+    public static final double kSecondJointP = 0.00000;
     public static final double kSecondJointI = 0;
-    public static final double kSecondJointD = 0.03;
+    public static final double kSecondJointD = 0;
 
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 50; //amps
@@ -246,7 +249,7 @@ public final class Constants {
 
     //Back to Transfer transition
     public static final ArmForwardKinematicPosition kBackToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(80,30);
+      new ArmForwardKinematicPosition(80,27);
       public static final ArmForwardKinematicPosition kBackToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(60,150);
     public static final ArmForwardKinematicPosition kBackToTransferIntermediate3Position = 
@@ -294,27 +297,38 @@ public final class Constants {
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferPosition = 
-      new ArmForwardKinematicPosition(98,150);
+      new ArmForwardKinematicPosition(85,150);
 
-    //Cone Score positions
-    public static final ArmForwardKinematicPosition kConeL1Position = 
+    //Back Cone Score positions
+    public static final ArmForwardKinematicPosition kBackConeL1Position = 
       new ArmForwardKinematicPosition(130, -120);
-    public static final ArmForwardKinematicPosition kConeL2Position = 
-      new ArmForwardKinematicPosition(90, -77);
-    public static final ArmForwardKinematicPosition kConeL3Position = 
+    public static final ArmForwardKinematicPosition kBackConeL2Position = 
+      new ArmForwardKinematicPosition(90, -80);
+    public static final ArmForwardKinematicPosition kBackConeL3Position = 
       new ArmForwardKinematicPosition(48, -8);
 
-    //Cube Score positions
-    public static final ArmForwardKinematicPosition kCubeL1Position = 
+    //Back Cube Score positions
+    public static final ArmForwardKinematicPosition kBackCubeL1Position = 
       new ArmForwardKinematicPosition(130, -120);//130, 124
-    public static final ArmForwardKinematicPosition kCubeL2Position = 
+    public static final ArmForwardKinematicPosition kBackCubeL2Position = 
       new ArmForwardKinematicPosition(108, -108);
-    public static final ArmForwardKinematicPosition kCubeL3Position = 
+    public static final ArmForwardKinematicPosition kBackCubeL3Position = 
       new ArmForwardKinematicPosition(62, -45);
+
+    //Front Cone Score positions
+    public static final ArmForwardKinematicPosition kFrontConeL2Position = 
+      new ArmForwardKinematicPosition(125, 42);
+
+    //Front Cube Score positions
+    public static final ArmForwardKinematicPosition kFrontCubeL2Position = 
+      new ArmForwardKinematicPosition(110, 81);
+    public static final ArmForwardKinematicPosition kFrontCubeL3Position = 
+      new ArmForwardKinematicPosition(120, 44);
+    
 
     //Arm Intake positions
     public static final ArmForwardKinematicPosition kBackIntakePosition = 
-      new ArmForwardKinematicPosition(90, -80);
+      new ArmForwardKinematicPosition(90, -83);
     public static final ArmForwardKinematicPosition kFrontIntakePosition = 
       new ArmForwardKinematicPosition(104, 68);
     
