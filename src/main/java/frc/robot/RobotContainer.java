@@ -92,7 +92,7 @@ public class RobotContainer {
 
 	public void setTeleopDefaultStates() {
 		m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
-		m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).schedule();
+		m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
 		m_armStatemachine.setCargoTypeCommand(CargoType.CONE).schedule();
 		m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
 		m_limelight.setLEDCommand(false).schedule();
@@ -100,7 +100,7 @@ public class RobotContainer {
 
 	public void setAutoDefaultStates() {
 		m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
-		m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).schedule();
+		m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
 		m_armStatemachine.setCargoTypeCommand(CargoType.CONE).schedule();
 		m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
 		m_limelight.setLEDCommand(false).schedule();
@@ -159,6 +159,9 @@ public class RobotContainer {
 			.onFalse(m_claw.stopOpen());
 
 		// back on right
+		//toggle claw intake on up
+		new POVButton(m_operatorController, 0)
+			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 		new POVButton(m_operatorController, 90)
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.BACK));
 		// transfer on down
@@ -191,10 +194,6 @@ public class RobotContainer {
 		// intake on A
 		new JoystickButton(m_operatorController, Button.kA.value)
 			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
-
-		//toggle claw on X
-		new POVButton(m_operatorController, 0)
-			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 	}
 
 	/**

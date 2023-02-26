@@ -113,7 +113,7 @@ public class Intake extends SubsystemBase {
 
   public boolean isConeDetected() {
     return (intakeRunningTimer.get() > 0.1) && //excludes current spike when motor first starts
-      (topMotor.getOutputCurrent() > 18) && //cone intake current threshold
+      (topMotor.getOutputCurrent() > 19) && //cone intake current threshold
       (intakeState == IntakeState.INTAKING) && 
       getClosed();
   }
