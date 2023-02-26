@@ -156,26 +156,40 @@ public class Arm extends SubsystemBase {
   }
 
   //back cone score levels
-  public Command ConeL1Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kConeL1Position));
+  public Command BackConeL1Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackConeL1Position));
   }
-  public Command ConeL2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kConeL2Position));
+  public Command BackConeL2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackConeL2Position));
   }
-  public Command ConeL3Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kConeL3Position));
+  public Command BackConeL3Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackConeL3Position));
   }
 
   //back cube score levels
-  public Command CubeL1Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kCubeL1Position));
+  public Command BackCubeL1Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackCubeL1Position));
   }
-  public Command CubeL2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kCubeL2Position));
+  public Command BackCubeL2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackCubeL2Position));
   }
-  public Command CubeL3Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kCubeL3Position));
+  public Command BackCubeL3Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackCubeL3Position));
   }
+
+  //front cone levels
+  public Command FrontConeL2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontConeL2Position));
+  }
+
+  //front cube levels
+  public Command FrontCubeL2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontCubeL2Position));
+  }
+  public Command FrontCubeL3Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontCubeL3Position));
+  }
+
 
   //arm intake 
   public Command BackIntakeCommand() {
@@ -190,9 +204,9 @@ public class Arm extends SubsystemBase {
   //Back to Transfer
   public Command BackToTransfer() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToTransferIntermediateCommand()),
+      //new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToTransferIntermediateCommand()),
       new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(BackToTransferIntermediate2Command()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToTransferIntermediate3Command()),
+      //new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(BackToTransferIntermediate3Command()),
       new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferCommand()));
   }
 
@@ -241,17 +255,10 @@ public class Arm extends SubsystemBase {
   //Front to back
   public Command FrontToBack(Command scoreLevelCommand) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToBackIntermediateCommand()),
+      //new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToBackIntermediateCommand()),
       //new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(FrontToBackIntermediate2Command()),
       new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(scoreLevelCommand));
   }
-
-  
-
-  
-
-
-
 
   @Override
   public void periodic() {
