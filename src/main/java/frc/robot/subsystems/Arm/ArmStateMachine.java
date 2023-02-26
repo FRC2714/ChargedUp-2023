@@ -172,7 +172,7 @@ public class ArmStateMachine extends SubsystemBase {
                     }
                 }
               }
-              case BACK: {
+              case BACK: { //when current is back
                 switch (cargoType) {
                   case CONE: {
                     switch (targetScoreLevel) {
@@ -203,12 +203,16 @@ public class ArmStateMachine extends SubsystemBase {
             }
           case FRONT: { // when target arm state = FRONT
             switch (currentArmState) {
-              case BACK: {
+              case BACK: { //when current state is back
                 switch (cargoType) {
                   case CONE: {
                     switch (targetScoreLevel) {
+                      case THREE:
+                        return nothingCommand();
                       case TWO:
                         return m_arm.BackToFront(m_arm.FrontConeL2Command());
+                      case ONE:
+                        return nothingCommand();
                       case INTAKE:
                         return m_arm.BackToFront(m_arm.FrontIntakeCommand());
                     }
@@ -219,16 +223,68 @@ public class ArmStateMachine extends SubsystemBase {
                         return m_arm.BackToFront(m_arm.FrontCubeL3Command());
                       case TWO:
                         return m_arm.BackToFront(m_arm.FrontCubeL2Command());
+                      case ONE:
+                        return nothingCommand();
                       case INTAKE:
                         return m_arm.BackToFront(m_arm.FrontIntakeCommand());
                     }
                   }
                 }
               }
-              case TRANSFER:
-                return m_arm.TransferToFront();
+              case TRANSFER: //when current state is transfer
+                switch (cargoType) {
+                  case CONE: {
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return nothingCommand();
+                      case TWO:
+                        return m_arm.TransferToFront(m_arm.FrontConeL2Command());
+                      case ONE:
+                        return nothingCommand();
+                      case INTAKE:
+                        return m_arm.TransferToFront(m_arm.FrontIntakeCommand());
+                    }
+                  }
+                  case CUBE: {
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return m_arm.TransferToFront(m_arm.FrontCubeL3Command());
+                      case TWO:
+                        return m_arm.TransferToFront(m_arm.FrontCubeL2Command());
+                      case ONE:
+                        return nothingCommand();
+                      case INTAKE:
+                        return m_arm.TransferToFront(m_arm.FrontIntakeCommand());
+                    }
+                  }
+                }
               case FRONT:
-                return nothingCommand();
+                switch (cargoType) {
+                  case CONE: {
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return nothingCommand();
+                      case TWO:
+                        return m_arm.FrontToFront(m_arm.FrontConeL2Command());
+                      case ONE:
+                        return nothingCommand();
+                      case INTAKE:
+                        return m_arm.FrontToFront(m_arm.FrontIntakeCommand());
+                    }
+                  }
+                  case CUBE: {
+                    switch (targetScoreLevel) {
+                      case THREE:
+                        return m_arm.FrontToFront(m_arm.FrontCubeL3Command());
+                      case TWO:
+                        return m_arm.FrontToFront(m_arm.FrontCubeL2Command());
+                      case ONE:
+                        return nothingCommand();
+                      case INTAKE:
+                        return m_arm.FrontToFront(m_arm.FrontIntakeCommand());
+                    }
+                  }
+                }
             }
           }
         }
