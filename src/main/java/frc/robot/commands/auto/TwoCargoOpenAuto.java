@@ -40,10 +40,14 @@ public class TwoCargoOpenAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
         AutoConstants.EventMap.put("auto align", new Autoalign(m_robotDrive, m_limelight));
 		AutoConstants.EventMap.put("score cone", m_claw.score());
-		//AutoConstants.EventMap.put("set arm cone level 3", m_armStatemachine.setTargetStateCommand(ArmState.BACK, ScoreLevel.THREE));
-		//AutoConstants.EventMap.put("arm to transfer", m_armStatemachine.setTargetStateCommand(ArmState.TRANSFER, ScoreLevel.THREE));
-		//AutoConstants.EventMap.put("intake cone", m_intake.intakeCone());
-		//AutoConstants.EventMap.put("handoff cone", m_claw.intakeCone());
+		AutoConstants.EventMap.put("set arm cone level 3", 
+			m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
+			m_armStatemachine.setTargetArmStateCommand(ArmState.BACK)));
+		AutoConstants.EventMap.put("arm to transfer", 
+			m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
+			m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER)));
+		AutoConstants.EventMap.put("intake cone", m_intake.intakeCone());
+		AutoConstants.EventMap.put("handoff cone", m_claw.intakeConeCommand());
 
 		addCommands(
 			autoBuilder.fullAuto(autoPathGroup)

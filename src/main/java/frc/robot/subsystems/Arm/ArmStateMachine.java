@@ -76,12 +76,12 @@ public class ArmStateMachine extends SubsystemBase {
 
   private void setCargoType(CargoType cargoType) {
     this.cargoType = cargoType;
-    this.m_leds.updateColor(cargoType, intakeMode);
+    this.m_leds.updateColor(intakeMode, cargoType);
   }
 
   private void setIntakeMode(IntakeMode intakeMode) {
     this.intakeMode = intakeMode;
-    this.m_leds.updateColor(cargoType, intakeMode);
+    this.m_leds.updateColor(intakeMode, cargoType);
   }
 
   public Command setTargetArmStateCommand(ArmState targetArmState) {

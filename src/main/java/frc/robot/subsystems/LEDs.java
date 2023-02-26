@@ -9,6 +9,7 @@ import frc.robot.Constants.LEDConstants;
 import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 import frc.robot.subsystems.Arm.ArmStateMachine.IntakeMode;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LEDs extends SubsystemBase {
   private Spark Blinkin;
@@ -19,13 +20,11 @@ public class LEDs extends SubsystemBase {
   }
 
   private void set(double val) {
-    System.out.println("val:" + val);
+    SmartDashboard.putNumber("set val: ", val);
     Blinkin.set(val);
   }
 
-  public void updateColor(CargoType cargoType, IntakeMode intakeMode) {
-    System.out.println("intake mode" + intakeMode.toString());
-    System.out.println("cargoType" + cargoType.toString());
+  public void updateColor(IntakeMode intakeMode, CargoType cargoType) {
     switch (intakeMode) {
       case HP: {
         switch(cargoType) {
