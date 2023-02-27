@@ -74,12 +74,12 @@ public class ArmStateMachine extends SubsystemBase {
     getArmCommand().withInterruptBehavior(InterruptionBehavior.kCancelIncoming).schedule();
   }
 
-  private void setCargoType(CargoType cargoType) {
+  public void setCargoType(CargoType cargoType) {
     this.cargoType = cargoType;
     updateLEDs();
   }
 
-  private void setIntakeMode(IntakeMode intakeMode) {
+  public void setIntakeMode(IntakeMode intakeMode) {
     this.intakeMode = intakeMode;
     updateLEDs();
   }
