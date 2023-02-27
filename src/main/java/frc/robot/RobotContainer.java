@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -29,6 +30,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.Autoalign;
+import frc.robot.commands.ZeroHeading;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.ComplexAuto;
 import frc.robot.commands.auto.MarkerAuto;
@@ -122,9 +124,10 @@ public class RobotContainer {
         //autoalign on right bumper
 		new JoystickButton(m_driverController, Button.kRightBumper.value)
 			.whileTrue(new Autoalign(m_robotDrive, m_limelight));
+			
 		//toggle open close on left bumper
 		new JoystickButton(m_driverController, Button.kLeftBumper.value)
-			.toggleOnTrue(Commands.startEnd(m_intake::open, m_intake::close, m_intake));
+			.whileTrue(new ZeroHeading(m_robotDrive));
 
 		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
@@ -135,9 +138,12 @@ public class RobotContainer {
 			.whileTrue(m_intake.outtakeCommand())
 			.whileFalse(m_intake.stopCommand());
 
-		//toggle deploy on a
-		new JoystickButton(m_driverController, Button.kA.value)
+		//toggle deploy on X
+		new JoystickButton(m_driverController, Button.kX.value)
 			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
+		
+		new JoystickButton(m_driverController, Button.kA.value)
+		.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 
 		//reset gyro on y
 		new JoystickButton(m_driverController, Button.kY.value)
@@ -156,10 +162,11 @@ public class RobotContainer {
 			.onTrue(m_claw.shootCommand())
 			.onFalse(m_claw.stopOpen());
 
-		// back on right
+		
 		//toggle claw intake on up
 		new POVButton(m_operatorController, 0)
 			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+		// back on right
 		new POVButton(m_operatorController, 90)
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.BACK));
 		// transfer on down
