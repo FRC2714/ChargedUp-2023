@@ -20,8 +20,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -142,10 +144,10 @@ public class RobotContainer {
 			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
 		
 		new JoystickButton(m_driverController, Button.kB.value)
-		.toggleOnTrue(Commands.startEnd(m_intake::open, m_intake::close, m_intake));
+			.toggleOnTrue(Commands.startEnd(m_intake::open, m_intake::close, m_intake));
 
 		new JoystickButton(m_driverController, Button.kA.value)
-		.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 
 		//reset gyro on y
 		new JoystickButton(m_driverController, Button.kY.value)
@@ -165,11 +167,9 @@ public class RobotContainer {
 			.onFalse(m_claw.stopOpen());
 
 		
-		//toggle claw intake on up
+		//Raise arm on up
 		new POVButton(m_operatorController, 0)
-		.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
-		// new POVButton(m_operatorController, 0)
-		// 	.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(5)));
+			.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(5)));
 		// back on right
 		new POVButton(m_operatorController, 90)
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.BACK));
@@ -180,19 +180,17 @@ public class RobotContainer {
 		new POVButton(m_operatorController, 270)
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.FRONT));
 
-		// cone on right bumper
+		//toggle claw intake on right bumper
 		new JoystickButton(m_operatorController, Button.kRightBumper.value)
-			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CONE));
-		// cube on left bumper
-		new JoystickButton(m_operatorController, Button.kLeftBumper.value)
-			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CUBE));
+			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 
-		// floor on start
+		// toggle FLOOR or HP on start
 		new JoystickButton(m_operatorController, Button.kStart.value)
-			.onTrue(m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR));
-		// hp on back
-		new JoystickButton(m_operatorController, Button.kBack.value)
-			.onTrue(m_armStatemachine.setIntakeModeCommand(IntakeMode.HP));
+			.toggleOnTrue(m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR))
+			.toggleOnFalse(m_armStatemachine.setIntakeModeCommand(IntakeMode.HP));
+		
+		// nothing on back
+		//new JoystickButton(m_operatorController, Button.kBack.value)
 
 		// level 3 on Y
 		new JoystickButton(m_operatorController, Button.kY.value)
@@ -203,6 +201,11 @@ public class RobotContainer {
 		// intake on A
 		new JoystickButton(m_operatorController, Button.kA.value)
 			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
+		
+		// toggle CONE or CUBE mode on X
+		new JoystickButton(m_operatorController, Button.kX.value)
+			.toggleOnTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()))
+			.toggleOnFalse(m_armStatemachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
 	}
 
 	/**
