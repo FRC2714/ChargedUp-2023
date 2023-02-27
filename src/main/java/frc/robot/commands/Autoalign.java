@@ -33,7 +33,7 @@ public class Autoalign extends ProfiledPIDCommand {
         // This should return the measurement
         limelight::getXOffsetRadians,
         // This should return the goal (can also be a constant)
-        () -> 0,
+        0,
         // This uses the output
         (output, setpoint) -> drivetrain.drive(0, output, 0, true, false)
           // Use the output (and setpoint, if desired) here
@@ -43,7 +43,8 @@ public class Autoalign extends ProfiledPIDCommand {
         this.drivetrain = drivetrain;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(Units.degreesToRadians(5));
+    getController().setTolerance(Units.degreesToRadians(3),0);
+
   }
 
   public void initialize() {

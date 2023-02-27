@@ -29,7 +29,7 @@ import frc.robot.subsystems.Limelight;
 public class TwoCargoOpenAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"MarkerAuto",
+			"2CargoOpenAuto",
 			new PathConstraints(
 			AutoConstants.kMaxSpeedMetersPerSecond,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));

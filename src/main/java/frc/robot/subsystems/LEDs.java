@@ -24,21 +24,20 @@ public class LEDs extends SubsystemBase {
     Blinkin.set(val);
   }
 
-  public void updateColor(IntakeMode intakeMode, CargoType cargoType) {
-    switch (intakeMode) {
-      case HP: {
-        switch(cargoType) {
-          case CUBE: {set(LEDConstants.kPurpleWave);}
-          case CONE: {set(LEDConstants.kYellowWave);}
-        }
-      }
-      case FLOOR: {
-        switch(cargoType) {
-          case CUBE: {set(LEDConstants.kPurple);}
-          case CONE: {set(LEDConstants.kYellow);}
-        }
-      }
-    }
+  public void setPurpleWave() {
+    set(LEDConstants.kPurpleWave);
+  }
+
+  public void setYellowWave() {
+    set(LEDConstants.kYellowWave);
+  }
+
+  public void setPurple() {
+    set(LEDConstants.kPurple);
+  }
+
+  public void setYellow() {
+    set(LEDConstants.kYellow);
   }
 
   @Override
