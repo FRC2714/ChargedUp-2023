@@ -33,7 +33,6 @@ import frc.robot.commands.Autoalign;
 import frc.robot.commands.ZeroHeading;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.ComplexAuto;
-import frc.robot.commands.auto.MarkerAuto;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
@@ -257,9 +256,5 @@ public class RobotContainer {
 
   public Command getComplexAuto() {
     return new ComplexAuto(m_robotDrive);
-  }
-
-  public Command getMarkerAuto() {
-    return new MarkerAuto(m_robotDrive, m_intake, m_arm);
   }
 }

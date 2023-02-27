@@ -16,7 +16,6 @@ import frc.robot.subsystems.DriveSubsystem;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ZeroHeading extends ProfiledPIDCommand {
-  private DriveSubsystem drivetrain;
   
   /** Creates a new Autoalign. */
   public ZeroHeading(DriveSubsystem drivetrain) {
@@ -32,17 +31,16 @@ public class ZeroHeading extends ProfiledPIDCommand {
         // This should return the measurement
         drivetrain::getHeadingRadians,
         // This should return the goal (can also be a constant)
-        () -> 0,
+        0,
         // This uses the output
         (output, setpoint) -> drivetrain.drive(0, 0, output, true, false)
           // Use the output (and setpoint, if desired) here
         );
         addRequirements(drivetrain);
-        this.drivetrain = drivetrain;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
     getController().enableContinuousInput(-Math.PI, Math.PI);
-    getController().setTolerance(Units.degreesToRadians(1));
+    getController().setTolerance(Units.degreesToRadians(1), 0);
   }
 
   public void initialize() {
