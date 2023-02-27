@@ -177,7 +177,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(isConeDetected()) {AutoConeIntake().schedule();}
+    //if(isConeDetected()) {AutoConeIntake().schedule();}
 
     // SmartDashboard.putNumber("top motor output current", topMotor.getOutputCurrent());
     // SmartDashboard.putNumber("bootom motor output current", bottomMotor.getOutputCurrent());

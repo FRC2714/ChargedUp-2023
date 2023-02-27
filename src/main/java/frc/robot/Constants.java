@@ -239,7 +239,7 @@ public final class Constants {
     public static final double kSecondJointMaxVelocity = 5500; //6000 too much
     public static final double kSecondJointMaxAcceleration = 4000;
     public static final double kSecondJointTolerance = 6;
-    public static final double kSecondJointFF = 0.00012;
+    public static final double kSecondJointFF = 0.00013;
     public static final double kSecondJointP = 0.00000;
     public static final double kSecondJointI = 0;
     public static final double kSecondJointD = 0;
@@ -252,7 +252,7 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kBackToTransferIntermediatePosition = 
       new ArmForwardKinematicPosition(80,27);
       public static final ArmForwardKinematicPosition kBackToTransferIntermediate2Position = 
-      new ArmForwardKinematicPosition(60,150);
+      new ArmForwardKinematicPosition(50,150);
     public static final ArmForwardKinematicPosition kBackToTransferIntermediate3Position = 
       new ArmForwardKinematicPosition(80,150);
 
@@ -268,7 +268,7 @@ public final class Constants {
     
     //Transfer to back transition
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(60, 150);
+      new ArmForwardKinematicPosition(50, 150);
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate2Position = 
       new ArmForwardKinematicPosition(50, 90);
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate3Position = 
@@ -296,7 +296,7 @@ public final class Constants {
 
     //Transfer intermediate
     public static final ArmForwardKinematicPosition kTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(70,150);
+      new ArmForwardKinematicPosition(50,150);
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferPosition = 

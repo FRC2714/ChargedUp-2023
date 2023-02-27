@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -142,6 +142,9 @@ public class RobotContainer {
 		new JoystickButton(m_driverController, Button.kX.value)
 			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
 		
+		new JoystickButton(m_driverController, Button.kB.value)
+		.toggleOnTrue(Commands.startEnd(m_intake::open, m_intake::close, m_intake));
+
 		new JoystickButton(m_driverController, Button.kA.value)
 		.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 
@@ -165,7 +168,9 @@ public class RobotContainer {
 		
 		//toggle claw intake on up
 		new POVButton(m_operatorController, 0)
-			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+		.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+		// new POVButton(m_operatorController, 0)
+		// 	.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(5)));
 		// back on right
 		new POVButton(m_operatorController, 90)
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.BACK));
