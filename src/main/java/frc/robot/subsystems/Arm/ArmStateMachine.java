@@ -36,7 +36,7 @@ public class ArmStateMachine extends SubsystemBase {
   //m_arm.estimateCurrentArmState()??
   public ScoreLevel currentScoreLevel = ScoreLevel.THREE; //default to THREE
 
-  public ArmState targetArmState = ArmState.TRANSFER; // default to TRANSFER 
+  public ArmState targetArmState = ArmState.BACK; // default to TRANSFER 
   public ScoreLevel targetScoreLevel = ScoreLevel.THREE; // default to THREE
 
   public CargoType cargoType = CargoType.CUBE; // default of cube
@@ -179,11 +179,11 @@ public class ArmStateMachine extends SubsystemBase {
                       case THREE:
                         return m_arm.BackToBack(m_arm.BackConeL3Command());
                       case TWO:
-                        return m_arm.BackToBack(m_arm.BackConeL2Command());
+                        return m_arm.BackConeL2Command();
                       case ONE:
                         return m_arm.BackToBack(m_arm.BackConeL1Command());
                       case INTAKE:
-                        return m_arm.BackToBack(m_arm.BackIntakeCommand());
+                        return m_arm.BackIntakeCommand();
                     }
                   }
                   case CUBE: {

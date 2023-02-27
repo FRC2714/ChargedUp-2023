@@ -10,17 +10,15 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Limelight;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class Autoalign extends ProfiledPIDCommand {
+public class ZeroHeading extends ProfiledPIDCommand {
   private DriveSubsystem drivetrain;
-  private Limelight limelight;
   
   /** Creates a new Autoalign. */
-  public Autoalign(DriveSubsystem drivetrain, Limelight limelight) {
+  public ZeroHeading(DriveSubsystem drivetrain) {
     super(
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
@@ -31,25 +29,23 @@ public class Autoalign extends ProfiledPIDCommand {
             // The motion profile constraints
             new TrapezoidProfile.Constraints(AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared)),
         // This should return the measurement
-        limelight::getXOffsetRadians,
+        drivetrain::getHeadingRadians,
         // This should return the goal (can also be a constant)
         () -> 0,
         // This uses the output
-        (output, setpoint) -> drivetrain.drive(0, output, 0, true, false)
+        (output, setpoint) -> drivetrain.drive(0, 0, output, true, false)
           // Use the output (and setpoint, if desired) here
         );
         addRequirements(drivetrain);
-        this.limelight = limelight;
         this.drivetrain = drivetrain;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(Units.degreesToRadians(5));
+    getController().enableContinuousInput(-Math.PI, Math.PI);
+    getController().setTolerance(Units.degreesToRadians(1));
   }
 
   public void initialize() {
-    limelight.setLED(true);
   }
-
 
   // Returns true when the command should end.
   @Override
@@ -59,7 +55,6 @@ public class Autoalign extends ProfiledPIDCommand {
 
   @Override
   public void end(boolean interrupted) {
-    limelight.setLED(false);
-    drivetrain.drive(0,0,0, true, false);
+    System.out.println("zero heading");
   }
 }
