@@ -146,8 +146,8 @@ public final class Constants {
   public static final class ClawConstants {
     public static final int kClawMotorCanId = 14;
 
-    public static final int kClawSolenoidForwardChannel = 15;
-    public static final int kClawSolenoidReverseChannel = 14;
+    public static final int kClawSolenoidForwardChannel = 7;
+    public static final int kClawSolenoidReverseChannel = 6;
 
     public static final int kClawMotorCurrentLimit = 20; //amps 
 
@@ -164,14 +164,14 @@ public final class Constants {
     public static final double kCompressorMinPressure = 90;
     public static final double kCompressorMaxPressure = 120;
 
-    public static final int kLeftRetractionSolenoidForwardChannel = 10;
-    public static final int kLeftRetractionSolenoidReverseChannel = 11;
+    public static final int kLeftRetractionSolenoidForwardChannel = 2;
+    public static final int kLeftRetractionSolenoidReverseChannel = 3;
 
-    public static final int kRightRetractionSolenoidForwardChannel = 13;
-    public static final int kRightRetractionSolenoidReverseChannel = 12;
+    public static final int kRightRetractionSolenoidForwardChannel = 4;
+    public static final int kRightRetractionSolenoidReverseChannel = 5;
 
-    public static final int kIntakeSolenoidForwardChannel = 9;
-    public static final int kIntakeSolenoidReverseChannel = 8;
+    public static final int kIntakeSolenoidForwardChannel = 1;
+    public static final int kIntakeSolenoidReverseChannel = 0;
 
     public static final int kTopMotorCurrentLimit = 30;
     public static final int kBottomMotorCurrentLimit = 30;
@@ -183,6 +183,7 @@ public final class Constants {
 
   public static final class LEDConstants {
     public static final int kBlinkinPort = 0;
+    public static final int kBlinkin2Port = 1;
 
     public static final double kPurpleWave = 0.29;
     public static final double kYellowWave = 0.09;
@@ -220,8 +221,8 @@ public final class Constants {
     public static final double kBaseJointPositionConversionFactor = (2*Math.PI) * kBaseJointGearRatio; //Radians * Gear ratio
     public static final double kSecondJointPositionConversionFactor = (2*Math.PI) * kSecondJointGearRatio;
 
-    public static final double kBaseJointKinematicOffset = 200; //difference from kinematic 0 to sparkmax 0 approx 45 deg
-    public static final double kSecondJointKinematicOffset = 677; //difference from kinematic 0 to sparkmax 0 approx 160 deg
+    public static final double kBaseJointKinematicOffset = 75; //difference from kinematic 0 to sparkmax 0 approx 45 deg
+    public static final double kSecondJointKinematicOffset = 664; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
     public static final boolean kBaseJointInverted = true; //both base joint motor and encoder are inverted
     public static final boolean kSecondJointInverted = false; //econd joint motor and encoder are NOT inverted
