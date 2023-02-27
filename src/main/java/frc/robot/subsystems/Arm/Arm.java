@@ -235,8 +235,8 @@ public class Arm extends SubsystemBase {
   //Transfer to Back
   public Command TransferToBack(Command backScoreLevelCommand) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferIntermediateCommand()),
-      //new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TransferToBackIntermediate2Command()),
+      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferToBackIntermediateCommand()),
+      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TransferToBackIntermediate2Command()),
       //new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TransferToBackIntermediate3Command()),
       //new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(TransferToBackIntermediate4Command()),
       new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(backScoreLevelCommand));

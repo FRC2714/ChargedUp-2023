@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -45,6 +46,11 @@ public class ZeroHeading extends ProfiledPIDCommand {
   }
 
   public void initialize() {
+  }
+
+  public void execute() {
+    SmartDashboard.putNumber("zero heading position error", getController().getPositionError());
+    SmartDashboard.putNumber("zero heading tolerance", getController().getPositionTolerance());
   }
 
   // Returns true when the command should end.
