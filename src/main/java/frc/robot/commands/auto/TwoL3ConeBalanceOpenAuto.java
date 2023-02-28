@@ -11,8 +11,11 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autoalign;
+import frc.robot.commands.ZeroHeading;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
@@ -26,31 +29,37 @@ import frc.robot.subsystems.Limelight;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class TwoCargoOpenAuto extends AutoBase {
+public class TwoL3ConeBalanceOpenAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"2CargoOpenAuto",
+			"2L3ConeBalanceOpen",
 			new PathConstraints(
 			AutoConstants.kMaxSpeedMetersPerSecond,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
-	public TwoCargoOpenAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStatemachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
+	public TwoL3ConeBalanceOpenAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
 		super(m_robotDrive);
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
-        AutoConstants.EventMap.put("auto align", new Autoalign(m_robotDrive, m_limelight));
-		AutoConstants.EventMap.put("score cone", m_claw.score());
-		AutoConstants.EventMap.put("set arm cone level 3", 
-			m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
-			m_armStatemachine.setTargetArmStateCommand(ArmState.BACK)));
-		AutoConstants.EventMap.put("arm to transfer", 
-			m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
-			m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER)));
+		AutoConstants.EventMap.put("arm to tuck", m_armStateMachine.setTargetArmStateCommand(ArmState.TUCK));
 		AutoConstants.EventMap.put("intake cone", m_intake.intakeCone());
-		AutoConstants.EventMap.put("handoff cone", m_claw.intakeConeCommand());
+		AutoConstants.EventMap.put("retract and stop intake", m_intake.retractAndStop());
+		//AutoConstants.EventMap.put("cone transfer", new ConeTransfer());
+
+        AutoConstants.EventMap.put("auto align", new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)));
+		AutoConstants.EventMap.put("arm to cone level 3", 
+			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
+			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK)).withTimeout(3.0));
+		AutoConstants.EventMap.put("score cone", m_claw.score());
+		AutoConstants.EventMap.put("zero heading", new ZeroHeading(m_robotDrive).raceWith(new WaitCommand(0.3)));
 
 		addCommands(
-			autoBuilder.fullAuto(autoPathGroup)
+			new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)),
+			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
+			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK).withTimeout(3.0),
+			m_claw.score(),
+			autoBuilder.fullAuto(autoPathGroup),
+			new AutoBalance(m_robotDrive)
 		);
 
 	}
