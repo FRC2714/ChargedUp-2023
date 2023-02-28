@@ -67,7 +67,7 @@ public class RobotContainer {
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStatemachine = new ArmStateMachine(m_arm, m_leds);
+	private final ArmStateMachine m_armStatemachine = new ArmStateMachine(m_arm, m_leds, m_intake);
 
 	// The driver's controller
 	XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -171,31 +171,27 @@ public class RobotContainer {
 			.onTrue(m_claw.shootCommand())
 			.onFalse(m_claw.stopOpen());
 
-		
+
 		//Raise arm on up
+		// new POVButton(m_operatorController, 0)
+		// 	.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(5)));
+
+		// TUCK on up
 		new POVButton(m_operatorController, 0)
-			.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(5)));
-		// back on right
+			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.TUCK));
+		// BACK on right
 		new POVButton(m_operatorController, 90)
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.BACK));
-		// transfer on down
+		// TRANSFER on down
 		new POVButton(m_operatorController, 180)
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER));
-		// front on left
+		// FRONT on left
 		new POVButton(m_operatorController, 270)
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.FRONT));
 
 		//toggle claw intake on right bumper
 		new JoystickButton(m_operatorController, Button.kRightBumper.value)
 			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
-
-		// toggle FLOOR or HP on start
-		// new JoystickButton(m_operatorController, Button.kStart.value)
-		// 	.toggleOnTrue(m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR))
-		// 	.toggleOnFalse(m_armStatemachine.setIntakeModeCommand(IntakeMode.HP));
-		
-		// nothing on back
-		//new JoystickButton(m_operatorController, Button.kBack.value)
 
 		// level 3 on Y
 		new JoystickButton(m_operatorController, Button.kY.value)
