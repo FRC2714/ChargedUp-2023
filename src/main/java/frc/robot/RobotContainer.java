@@ -190,9 +190,9 @@ public class RobotContainer {
 			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 
 		// toggle FLOOR or HP on start
-		new JoystickButton(m_operatorController, Button.kStart.value)
-			.toggleOnTrue(m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR))
-			.toggleOnFalse(m_armStatemachine.setIntakeModeCommand(IntakeMode.HP));
+		// new JoystickButton(m_operatorController, Button.kStart.value)
+		// 	.toggleOnTrue(m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR))
+		// 	.toggleOnFalse(m_armStatemachine.setIntakeModeCommand(IntakeMode.HP));
 		
 		// nothing on back
 		//new JoystickButton(m_operatorController, Button.kBack.value)
@@ -208,9 +208,11 @@ public class RobotContainer {
 			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
 		
 		// toggle CONE or CUBE mode on X
-		new JoystickButton(m_operatorController, Button.kX.value)
-			.toggleOnTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()))
-			.toggleOnFalse(m_armStatemachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
+		new JoystickButton(m_operatorController, Button.kStart.value)
+			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()));
+
+		new JoystickButton(m_operatorController, Button.kBack.value)
+			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
 	}
 
 	/**

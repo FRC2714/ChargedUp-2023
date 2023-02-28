@@ -6,22 +6,23 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
-import frc.robot.subsystems.Arm.ArmStateMachine.IntakeMode;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LEDs extends SubsystemBase {
   private Spark Blinkin;
+  private Spark Blinkin2;
 
   /** Creates a new Blinkin. */
   public LEDs() {
     Blinkin = new Spark(LEDConstants.kBlinkinPort);
+    Blinkin2 = new Spark(LEDConstants.kBlinkin2Port);
   }
 
   private void set(double val) {
     SmartDashboard.putNumber("set val: ", val);
     Blinkin.set(val);
+    Blinkin2.set(val);
   }
 
   public void setPurpleWave() {

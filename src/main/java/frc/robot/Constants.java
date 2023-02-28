@@ -284,7 +284,7 @@ public final class Constants {
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferPosition = 
-      new ArmForwardKinematicPosition(85,150);
+      new ArmForwardKinematicPosition(95,145);
 
     //Back Cone Score positions
     public static final ArmForwardKinematicPosition kBackConeL1Position = 
