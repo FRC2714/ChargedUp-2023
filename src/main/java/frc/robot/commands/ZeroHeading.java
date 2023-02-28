@@ -16,6 +16,7 @@ import frc.robot.subsystems.DriveSubsystem;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ZeroHeading extends ProfiledPIDCommand {
+  private boolean atSetpoint;
   
   /** Creates a new Autoalign. */
   public ZeroHeading(DriveSubsystem drivetrain) {
@@ -40,15 +41,9 @@ public class ZeroHeading extends ProfiledPIDCommand {
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
     getController().enableContinuousInput(-Math.PI, Math.PI);
-    getController().setTolerance(Units.degreesToRadians(1), 0);
   }
 
   public void initialize() {
-  }
-
-  public void execute() {
-    SmartDashboard.putNumber("zero heading position error", getController().getPositionError());
-    SmartDashboard.putNumber("zero heading tolerance", getController().getPositionTolerance());
   }
 
   // Returns true when the command should end.

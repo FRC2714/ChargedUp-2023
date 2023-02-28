@@ -62,5 +62,6 @@ public class Autoalign extends ProfiledPIDCommand {
   public void end(boolean interrupted) {
     limelight.setLED(false);
     drivetrain.drive(0,0,0, true, false);
+    drivetrain.setX();
   }
 }

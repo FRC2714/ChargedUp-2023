@@ -23,8 +23,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -121,14 +124,11 @@ public class RobotContainer {
 		DriverStation.silenceJoystickConnectionWarning(true);
 
 		/////////////////////////////DRIVER CONTROLS/////////////////////////////////////////////////////////////
-
-        //autoalign on right bumper
-		new JoystickButton(m_driverController, Button.kRightBumper.value)
-			.whileTrue(new Autoalign(m_robotDrive, m_limelight));
 			
-		//toggle open close on left bumper
-		new JoystickButton(m_driverController, Button.kLeftBumper.value)
-			.whileTrue(new ZeroHeading(m_robotDrive));
+		//zero heading then autoalign on right bumper
+		new JoystickButton(m_driverController, Button.kRightBumper.value)
+			.whileTrue(new WaitCommand(0.4).deadlineWith(new ZeroHeading(m_robotDrive))
+			.andThen(new Autoalign(m_robotDrive, m_limelight)));
 
 		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
