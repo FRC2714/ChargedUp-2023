@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
@@ -72,6 +73,7 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Robot Heading", getHeading());
+    SmartDashboard.putNumber("Robot Pitch", getPitchDegrees());
     // Update the odometry in the periodic block
     m_odometry.update(
         Rotation2d.fromDegrees(m_gyro.getAngle()),
@@ -245,6 +247,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public double getHeadingRadians() {
     return Units.degreesToRadians(getHeading());
+  }
+
+  public double getPitchDegrees() {
+    return m_gyro.getXComplementaryAngle();
   }
 
   /**
