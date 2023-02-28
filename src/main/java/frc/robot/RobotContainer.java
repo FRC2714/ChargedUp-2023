@@ -61,7 +61,7 @@ public class RobotContainer {
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStatemachine = new ArmStateMachine(m_arm, m_leds, m_intake);
+	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -90,18 +90,18 @@ public class RobotContainer {
 	}
 
 	public void setTeleopDefaultStates() {
-		m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
-		m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
-		m_armStatemachine.setCargoTypeCommand(CargoType.CONE).schedule();
-		m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
+		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
+		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
+		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
+		m_armStateMachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
 		m_limelight.setLEDCommand(false).schedule();
 	}
 
 	public void setAutoDefaultStates() {
-		m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
-		m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
-		m_armStatemachine.setCargoTypeCommand(CargoType.CONE).schedule();
-		m_armStatemachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
+		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
+		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
+		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
+		m_armStateMachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
 		m_limelight.setLEDCommand(false).schedule();
 	}
 
@@ -174,16 +174,16 @@ public class RobotContainer {
 
 		// TUCK on up
 		m_operatorController.povUp()
-			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.TUCK));
+			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.TUCK));
 		// BACK on right
 		m_operatorController.povRight()
-			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.BACK));
+			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.BACK));
 		// TRANSFER on down
 		m_operatorController.povDown()
-			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER));
+			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER));
 		// FRONT on left
 		m_operatorController.povLeft()
-			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.FRONT));
+			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT));
 
 		//toggle claw intake on right bumper
 		m_operatorController.rightBumper()
@@ -191,21 +191,21 @@ public class RobotContainer {
 
 		// level 3 on Y
 		m_operatorController.y()
-			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE));
+			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE));
 		// level 2 on B
 		m_operatorController.b()
-			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.TWO));
+			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.TWO));
 		// intake on A
 		m_operatorController.a()
-			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
+			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
 		
 		// cone mode on start
 		m_operatorController.start()
-			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()));
+			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()));
 
 		// cube mode on back
 		m_operatorController.back()
-			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
+			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
 	}
 
 	/**
