@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autoalign;
 import frc.robot.commands.ZeroHeading;
 import frc.robot.commands.auto.NothingAuto;
@@ -129,6 +130,10 @@ public class RobotContainer {
 		new JoystickButton(m_driverController, Button.kRightBumper.value)
 			.whileTrue(new WaitCommand(0.4).deadlineWith(new ZeroHeading(m_robotDrive))
 			.andThen(new Autoalign(m_robotDrive, m_limelight)));
+		
+		//autobalance on left Bumper
+		new JoystickButton(m_driverController, Button.kLeftBumper.value)
+			.whileTrue(new AutoBalance(m_robotDrive));
 
 		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
