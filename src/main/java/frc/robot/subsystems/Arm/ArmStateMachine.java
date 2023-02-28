@@ -79,29 +79,10 @@ public class ArmStateMachine extends SubsystemBase {
 
   public void setCargoType(CargoType cargoType) {
     this.cargoType = cargoType;
-    updateLEDs();
   }
 
   public void setIntakeMode(IntakeMode intakeMode) {
     this.intakeMode = intakeMode;
-    updateLEDs();
-  }
-
-  private void updateLEDs() {
-    switch (intakeMode) {
-      case HP: {
-        switch(cargoType) {
-          case CUBE: {m_leds.setPurpleWave();}
-          case CONE: {m_leds.setYellowWave();}
-        }
-      }
-      case FLOOR: {
-        switch(cargoType) {
-          case CUBE: {m_leds.setPurple();}
-          case CONE: {m_leds.setYellow();}
-        }
-      }
-    }
   }
 
   public Command setTargetArmStateCommand(ArmState targetArmState) {
@@ -113,7 +94,8 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   public Command setCargoTypeCommand(CargoType cargoType) {
-    return new InstantCommand(() -> setCargoType(cargoType));
+    return new InstantCommand(() -> setCargoType(cargoType))
+      .andThen(m_leds.setColorCargoType(cargoType));
   }
 
   public Command setIntakeModeCommand(IntakeMode intakeMode) {
