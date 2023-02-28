@@ -17,19 +17,13 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
@@ -70,8 +64,8 @@ public class RobotContainer {
 	private final ArmStateMachine m_armStatemachine = new ArmStateMachine(m_arm, m_leds, m_intake);
 
 	// The driver's controller
-	XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-	XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
+	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+	CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -127,12 +121,12 @@ public class RobotContainer {
 		/////////////////////////////DRIVER CONTROLS/////////////////////////////////////////////////////////////
 			
 		//zero heading then autoalign on right bumper
-		new JoystickButton(m_driverController, Button.kRightBumper.value)
+		m_driverController.rightBumper()
 			.whileTrue(new WaitCommand(0.4).deadlineWith(new ZeroHeading(m_robotDrive))
 			.andThen(new Autoalign(m_robotDrive, m_limelight)));
 		
 		//autobalance on left Bumper
-		new JoystickButton(m_driverController, Button.kLeftBumper.value)
+		m_driverController.leftBumper()
 			.whileTrue(new AutoBalance(m_robotDrive));
 
 		//intake on right trigger while held 
@@ -144,18 +138,20 @@ public class RobotContainer {
 			.whileTrue(m_intake.outtakeCommand())
 			.whileFalse(m_intake.stopCommand());
 
-		//toggle deploy on X
-		new JoystickButton(m_driverController, Button.kX.value)
+		//toggle intake deploy on X
+		m_driverController.x()
 			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
 		
-		new JoystickButton(m_driverController, Button.kB.value)
+		//toggle intake open close on B
+		m_driverController.b()
 			.toggleOnTrue(Commands.startEnd(m_intake::open, m_intake::close, m_intake));
 
-		new JoystickButton(m_driverController, Button.kA.value)
+		//toggle claw intake on a
+		m_driverController.a()
 			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 
 		//reset gyro on y
-		new JoystickButton(m_driverController, Button.kY.value)
+		m_driverController.y()
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
 
@@ -177,37 +173,38 @@ public class RobotContainer {
 		// 	.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(5)));
 
 		// TUCK on up
-		new POVButton(m_operatorController, 0)
+		m_operatorController.povUp()
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.TUCK));
 		// BACK on right
-		new POVButton(m_operatorController, 90)
+		m_operatorController.povRight()
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.BACK));
 		// TRANSFER on down
-		new POVButton(m_operatorController, 180)
+		m_operatorController.povDown()
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.TRANSFER));
 		// FRONT on left
-		new POVButton(m_operatorController, 270)
+		m_operatorController.povLeft()
 			.onTrue(m_armStatemachine.setTargetArmStateCommand(ArmState.FRONT));
 
 		//toggle claw intake on right bumper
-		new JoystickButton(m_operatorController, Button.kRightBumper.value)
+		m_operatorController.rightBumper()
 			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 
 		// level 3 on Y
-		new JoystickButton(m_operatorController, Button.kY.value)
+		m_operatorController.y()
 			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.THREE));
 		// level 2 on B
-		new JoystickButton(m_operatorController, Button.kB.value)
+		m_operatorController.b()
 			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.TWO));
 		// intake on A
-		new JoystickButton(m_operatorController, Button.kA.value)
+		m_operatorController.a()
 			.onTrue(m_armStatemachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
 		
-		// toggle CONE or CUBE mode on X
-		new JoystickButton(m_operatorController, Button.kStart.value)
+		// cone mode on start
+		m_operatorController.start()
 			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()));
 
-		new JoystickButton(m_operatorController, Button.kBack.value)
+		// cube mode on back
+		m_operatorController.back()
 			.onTrue(m_armStatemachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
 	}
 
