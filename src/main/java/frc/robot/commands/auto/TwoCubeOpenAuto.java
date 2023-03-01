@@ -57,7 +57,7 @@ public class TwoCubeOpenAuto extends AutoBase {
       		new WaitCommand(5),
 
 			//Score First Cube
-			m_claw.shootCommand(),
+			m_claw.shootCube(),
       		new WaitCommand(0.5),
       		m_claw.stopOpen(),
 
@@ -68,7 +68,7 @@ public class TwoCubeOpenAuto extends AutoBase {
 
 			//Score Second Cube
 			new WaitCommand(2),
-			m_claw.shootCommand(),
+			m_claw.shootCube(),
       		new WaitCommand(0.5),
       		m_claw.stopOpen()
 		);

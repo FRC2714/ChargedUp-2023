@@ -33,7 +33,6 @@ public class Arm extends SubsystemBase {
 
   /** Creates a new Superstructure. */
   public Arm() {
-
   }
 
   private void setFowardKinematics(double baseAngle, double secondAngle) {
@@ -87,7 +86,19 @@ public class Arm extends SubsystemBase {
   }
 
   public void raiseCurrentPosition(double degrees) {
-    setFowardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()+Units.degreesToRadians(degrees));
+    if(secondJoint.getKinematicAngle() < 0) { //when second joint is -
+      setFowardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
+    } else {
+      setFowardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
+    }
+  }
+
+  public void lowerCurrentPosition(double degrees) {
+    if(secondJoint.getKinematicAngle() > 0) { //when second joint is +
+      setFowardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
+    } else {
+      setFowardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
+    }
   }
 
 
