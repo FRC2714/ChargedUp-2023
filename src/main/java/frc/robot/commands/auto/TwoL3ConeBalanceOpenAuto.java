@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autoalign;
-import frc.robot.commands.ZeroHeading;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
@@ -51,7 +51,7 @@ public class TwoL3ConeBalanceOpenAuto extends AutoBase {
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK)).withTimeout(3.0));
 		AutoConstants.EventMap.put("score cone", m_claw.score());
-		AutoConstants.EventMap.put("zero heading", new ZeroHeading(m_robotDrive).raceWith(new WaitCommand(0.3)));
+		AutoConstants.EventMap.put("zero heading", new TurnToAngle(m_robotDrive, 0).raceWith(new WaitCommand(0.3)));
 
 		addCommands(
 			m_claw.intakeConeCommand(),

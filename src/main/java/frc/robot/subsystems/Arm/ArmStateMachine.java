@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems.Arm;
 
-import java.lang.module.ModuleDescriptor.Requires;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -49,19 +47,23 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   private void setTargetArmState(ArmState targetArmState) {
-    boolean armStateChanges = this.targetArmState != targetArmState;
-    currentArmState = this.targetArmState;
-    this.targetArmState = targetArmState;
+    if(this.targetArmState != targetArmState) {
+      currentArmState = this.targetArmState;
+      this.targetArmState = targetArmState;
 
-    currentScoreLevel = targetScoreLevel;
-    if(armStateChanges) {callArmCommand();}
+      currentScoreLevel = targetScoreLevel;
+
+      callArmCommand();
+    }
   }
 
   private void setScoreLevel(ScoreLevel targetScoreLevel) {
-    currentScoreLevel = this.targetScoreLevel;
-    this.targetScoreLevel = targetScoreLevel;
+    if(this.targetScoreLevel != targetScoreLevel) {
+      currentScoreLevel = this.targetScoreLevel;
+      this.targetScoreLevel = targetScoreLevel;
 
-    currentArmState = targetArmState;
+      currentArmState = targetArmState;
+    }
   }
 
   private void callArmCommand() {
