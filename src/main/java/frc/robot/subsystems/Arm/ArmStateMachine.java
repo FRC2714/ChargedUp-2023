@@ -21,7 +21,7 @@ public class ArmStateMachine extends SubsystemBase {
   private Intake m_intake;
   
   public enum ArmState {
-    BACK, TRANSFER, FRONT, TUCK
+    BACK, TRANSFER, FRONT, STOW
   }
 
   public enum ScoreLevel {
@@ -178,7 +178,7 @@ public class ArmStateMachine extends SubsystemBase {
               }
             }
           }
-          case TUCK: { // when current is TUCK
+          case STOW: { // when current is TUCK
             switch (cargoType) { 
               case CONE: {
                 switch (targetScoreLevel) {
@@ -234,7 +234,7 @@ public class ArmStateMachine extends SubsystemBase {
                 return m_arm.FrontToTransfer(m_arm.TransferCubeIntakeCommand()).andThen(m_intake.deployCommand());
             }
           }
-          case TUCK: { //when current arm state = TUCK
+          case STOW: { //when current arm state = TUCK
             switch (cargoType) {
               case CONE:
                 return m_arm.TuckToTransfer(m_arm.TransferConeIntakeCommand());
@@ -330,7 +330,7 @@ public class ArmStateMachine extends SubsystemBase {
               }
             }
           }
-          case TUCK: {
+          case STOW: {
             switch (cargoType) {
               case CONE: {
                 switch (targetScoreLevel) {
@@ -360,7 +360,7 @@ public class ArmStateMachine extends SubsystemBase {
           }
         }
       }
-      case TUCK: {
+      case STOW: {
         switch (currentArmState) {
           case BACK:
             return m_arm.BackToTuck();
@@ -368,7 +368,7 @@ public class ArmStateMachine extends SubsystemBase {
            return m_arm.TransferToTuck();
           case FRONT:
             return m_arm.FrontToTuck();
-          case TUCK:
+          case STOW:
             return nothingCommand();
         }
       }

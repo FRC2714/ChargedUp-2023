@@ -23,14 +23,14 @@ public class ConeTransfer extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      m_armStateMachine.setTargetArmStateCommand(ArmState.TUCK),
+      m_armStateMachine.setTargetArmStateCommand(ArmState.STOW),
       m_intake.retractAndStop(),
       m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
       m_claw.intakeCubeCommand(),
       new WaitCommand(2),
       m_claw.intakeConeCommand(),
       m_intake.openCommand(),
-      m_armStateMachine.setTargetArmStateCommand(ArmState.TUCK)
+      m_armStateMachine.setTargetArmStateCommand(ArmState.STOW)
     );
   }
 }

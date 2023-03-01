@@ -126,6 +126,12 @@ public class Arm extends SubsystemBase {
   }
 
   //Transfer to tuck intermediate positions
+  private Command TransferToTuckIntermediateCommand() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToTuckIntermediatePosition));
+  }
+  private Command TransferToTuckIntermediate2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToTuckIntermediate2Position));
+  }
 
   //Front to transfer intermediate positions
   private Command FrontToTransferIntermediateCommand() {
@@ -144,6 +150,9 @@ public class Arm extends SubsystemBase {
   //tuck to transfer intermediate positions
   private Command TuckToTransferIntermediateCommand() {
     return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTuckToTransferIntermediatePosition));
+  }
+  private Command TuckToTransferIntermediate2Command() {
+    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTuckToTransferIntermediate2Position));
   }
 
   //tuck to front intermediate positions
@@ -258,6 +267,8 @@ public class Arm extends SubsystemBase {
   //Transfer to tuck
   public Command TransferToTuck() {
     return new SequentialCommandGroup(
+      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferToTuckIntermediateCommand()),
+      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferToTuckIntermediate2Command()),
       new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TuckCommand()));
   }
 
@@ -296,7 +307,8 @@ public class Arm extends SubsystemBase {
   //Tuck to transfer
   public Command TuckToTransfer(Command transferScoreLevelCommand) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(TuckToTransferIntermediateCommand()),
+      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TuckToTransferIntermediateCommand()),
+      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TuckToTransferIntermediate2Command()),
       new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(transferScoreLevelCommand));
   }
 
