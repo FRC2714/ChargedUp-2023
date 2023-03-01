@@ -169,7 +169,7 @@ public class RobotContainer {
 
 		// TUCK on up
 		m_operatorController.povUp()
-			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.TUCK));
+			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.STOW));
 		// BACK on right
 		m_operatorController.povRight()
 			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.BACK));

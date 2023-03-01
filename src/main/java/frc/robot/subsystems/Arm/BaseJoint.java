@@ -99,7 +99,7 @@ public class BaseJoint extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(5);
+    return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(4);
   }
 
   public void disable() {

@@ -61,7 +61,7 @@ public class TwoCubeOpenAuto extends AutoBase {
       		new WaitCommand(0.5),
       		m_claw.stopOpen(),
 
-      		m_armStateMachine.setTargetArmStateCommand(ArmState.TUCK),
+      		m_armStateMachine.setTargetArmStateCommand(ArmState.STOW),
 
 			//Follow Path
 			autoBuilder.fullAuto(autoPathGroup),

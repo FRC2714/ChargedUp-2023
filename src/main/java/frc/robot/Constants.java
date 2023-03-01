@@ -254,7 +254,7 @@ public final class Constants {
 
     //Back to Transfer transition
     public static final ArmForwardKinematicPosition kBackToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(60,150);
+      new ArmForwardKinematicPosition(50,150);
 
     //Back to front transition
 
@@ -268,7 +268,7 @@ public final class Constants {
 
     //Transfer to transfer transition
     public static final ArmForwardKinematicPosition kTransferToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(70, 140);
+      new ArmForwardKinematicPosition(70, 130);
 
     //Transfer to front transition
     public static final ArmForwardKinematicPosition kTransferToFrontIntermediatePosition = 
@@ -277,16 +277,16 @@ public final class Constants {
     //Transfer to tuck transition
     public static final ArmForwardKinematicPosition kTransferToTuckIntermediatePosition = 
       new ArmForwardKinematicPosition(50, 150);
+    public static final ArmForwardKinematicPosition kTransferToTuckIntermediate2Position = 
+      new ArmForwardKinematicPosition(50, 90);
+
+    //Front to back transition
 
     //Front to transfer transition
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediatePosition = 
       new ArmForwardKinematicPosition(50, 90);
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(50, 150);
-      
-    //Front to back transition
-
-    //Front to transfer transition
 
     //Front to front transition
 
@@ -296,6 +296,8 @@ public final class Constants {
 
     //Tuck to transfer transition
     public static final ArmForwardKinematicPosition kTuckToTransferIntermediatePosition = 
+      new ArmForwardKinematicPosition(50, 90);
+    public static final ArmForwardKinematicPosition kTuckToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(50, 150);
 
     //Tuck to front transition

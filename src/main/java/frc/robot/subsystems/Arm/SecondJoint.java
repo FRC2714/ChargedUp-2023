@@ -93,7 +93,7 @@ public class SecondJoint extends SubsystemBase {
   }
 
   public boolean atSetpoint() {
-    return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(7);
+    return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(6);
   }
 
   public void disable() {
