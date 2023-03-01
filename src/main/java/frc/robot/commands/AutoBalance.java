@@ -22,9 +22,9 @@ public class AutoBalance extends ProfiledPIDCommand {
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
             // The PID gains
-            0.008,
+            0.007,
             0,
-            0,
+            0.002,
             // The motion profile constraints
             new TrapezoidProfile.Constraints(AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared)),
         // This should return the measurement
@@ -40,7 +40,7 @@ public class AutoBalance extends ProfiledPIDCommand {
     // Configure additional PID options by calling `getController` here.
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
-    getController().setTolerance(1); //degrees
+    getController().setTolerance(3); //degrees
 
     if (getController().atSetpoint()) {
       atSetpoint = true;
