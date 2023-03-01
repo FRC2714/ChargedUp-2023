@@ -10,7 +10,7 @@
         "x": 2.809999999999999,
         "y": 3.3
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -24,15 +24,15 @@
     },
     {
       "anchorPoint": {
-        "x": 4.1,
+        "x": 3.8,
         "y": 3.3
       },
       "prevControl": {
-        "x": 3.0999999999999996,
+        "x": 2.8,
         "y": 3.3
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -49,8 +49,7 @@
     {
       "position": 0.0,
       "names": [
-        "event",
-        "score cone level 3"
+        "event"
       ]
     }
   ]

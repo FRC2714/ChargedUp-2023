@@ -37,6 +37,7 @@ public class Robot extends TimedRobot {
     autoChooser.setDefaultOption("Nothing Auto", m_robotContainer.getNothingAuto());
     autoChooser.addOption("Test Auto", m_robotContainer.getTestAuto());
     autoChooser.addOption("Complex Path Auto", m_robotContainer.getComplexAuto());
+    autoChooser.addOption("1Cone Balace Auto", m_robotContainer.getOneConeBalanceMiddleAuto());
 
     SmartDashboard.putData("Auton Selection", autoChooser);
   }

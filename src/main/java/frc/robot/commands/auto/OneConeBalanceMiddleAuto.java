@@ -19,6 +19,7 @@ import frc.robot.commands.ZeroHeading;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
+import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
@@ -29,36 +30,31 @@ import frc.robot.subsystems.Limelight;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class TwoL3ConeBalanceOpenAuto extends AutoBase {
+public class OneConeBalanceMiddleAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"2L3ConeBalanceOpen",
+			"1ConeBalanceMIDDLE",
 			new PathConstraints(
-			AutoConstants.kMaxSpeedMetersPerSecond,
+			1.5,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
-	public TwoL3ConeBalanceOpenAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
+	public OneConeBalanceMiddleAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
 		super(m_robotDrive);
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
-		AutoConstants.EventMap.put("arm to tuck", m_armStateMachine.setTargetArmStateCommand(ArmState.TUCK));
-		AutoConstants.EventMap.put("intake cone", m_intake.intakeCone());
-		AutoConstants.EventMap.put("retract and stop intake", m_intake.retractAndStop());
-		//AutoConstants.EventMap.put("cone transfer", new ConeTransfer());
-
-        AutoConstants.EventMap.put("auto align", new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)));
-		AutoConstants.EventMap.put("arm to cone level 3", 
-			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
-			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK)).withTimeout(3.0));
-		AutoConstants.EventMap.put("score cone", m_claw.score());
-		AutoConstants.EventMap.put("zero heading", new ZeroHeading(m_robotDrive).raceWith(new WaitCommand(0.3)));
 
 		addCommands(
-			m_claw.intakeConeCommand(),
-			new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)),
+      m_intake.deployCommand(),
+      m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
+			m_claw.intakeCubeCommand(),
+			//new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
-			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK).withTimeout(3.0),
-			m_claw.score(),
+			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK),
+      new WaitCommand(6),
+			m_claw.shootCommand(),
+      new WaitCommand(0.5),
+      m_claw.stopOpen(),
+      m_armStateMachine.setTargetArmStateCommand(ArmState.TUCK),
 			autoBuilder.fullAuto(autoPathGroup),
 			new AutoBalance(m_robotDrive)
 		);

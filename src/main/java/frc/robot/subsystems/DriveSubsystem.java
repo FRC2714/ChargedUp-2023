@@ -252,6 +252,10 @@ public class DriveSubsystem extends SubsystemBase {
     return m_gyro.getXComplementaryAngle();
   }
 
+  public double getRollDegrees() {
+    return m_gyro.getYComplementaryAngle();
+  }
+
   /**
    * Returns the turn rate of the robot.
    *

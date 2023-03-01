@@ -32,6 +32,7 @@ import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autoalign;
 import frc.robot.commands.ZeroHeading;
 import frc.robot.commands.auto.NothingAuto;
+import frc.robot.commands.auto.OneConeBalanceMiddleAuto;
 import frc.robot.commands.auto.ComplexAuto;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
@@ -92,16 +93,10 @@ public class RobotContainer {
 	public void setTeleopDefaultStates() {
 		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
 		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
-		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
-		m_armStateMachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
 		m_limelight.setLEDCommand(false).schedule();
 	}
 
 	public void setAutoDefaultStates() {
-		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
-		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
-		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
-		m_armStateMachine.setIntakeModeCommand(IntakeMode.FLOOR).schedule();
 		m_limelight.setLEDCommand(false).schedule();
 	}
 
@@ -253,11 +248,15 @@ public class RobotContainer {
 		return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
 	}
 
-	public Command getNothingAuto() {
+public Command getNothingAuto() {
     return new NothingAuto();
   }
 
   public Command getComplexAuto() {
     return new ComplexAuto(m_robotDrive);
+  }
+
+  public Command getOneConeBalanceMiddleAuto() {
+    return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
   }
 }
