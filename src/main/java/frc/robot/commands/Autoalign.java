@@ -25,11 +25,11 @@ public class Autoalign extends ProfiledPIDCommand {
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
             // The PID gains
-            1,
+            AutoConstants.kPYController,
             0,
             0,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared)),
+            AutoConstants.kThetaControllerConstraints),
         // This should return the measurement
         limelight::getXOffsetRadians,
         // This should return the goal (can also be a constant)
@@ -55,7 +55,7 @@ public class Autoalign extends ProfiledPIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return getController().atGoal();
+    return getController().atSetpoint();
   }
 
   @Override
