@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 
@@ -17,6 +18,7 @@ public class ArmStateMachine extends SubsystemBase {
   private Arm m_arm;
   private LEDs m_leds;
   private Intake m_intake;
+  private Claw m_claw;
   
   public enum ArmState {
     BACK, TRANSFER, FRONT, STOW
@@ -40,10 +42,11 @@ public class ArmStateMachine extends SubsystemBase {
   public CargoType cargoType = CargoType.CONE; // default of cube
 
   /** Creates a new StateMachine. */
-  public ArmStateMachine(Arm m_arm, LEDs m_leds, Intake m_intake) {
+  public ArmStateMachine(Arm m_arm, LEDs m_leds, Intake m_intake, Claw m_claw) {
     this.m_arm = m_arm;
     this.m_leds = m_leds;
     this.m_intake = m_intake;
+    this.m_claw = m_claw;
   }
 
   private void setTargetArmState(ArmState targetArmState) {
@@ -85,6 +88,14 @@ public class ArmStateMachine extends SubsystemBase {
   public Command setCargoTypeCommand(CargoType cargoType) {
     return new InstantCommand(() -> setCargoType(cargoType))
       .andThen(m_leds.setColorCargoType(cargoType));
+  }
+
+  public Command scoreCommand() {
+    if (cargoType == CargoType.CONE) {
+      return m_claw.scoreCone();
+    } else {
+      return m_claw.shootCube();
+    }
   }
 
   public Command nothingCommand() {

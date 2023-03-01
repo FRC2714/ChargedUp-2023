@@ -24,7 +24,7 @@ public class AutoBalance extends ProfiledPIDCommand {
             // The PID gains
             0.006,
             0,
-            0.002,
+            0.001,
             // The motion profile constraints
             new TrapezoidProfile.Constraints(AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared)),
         // This should return the measurement

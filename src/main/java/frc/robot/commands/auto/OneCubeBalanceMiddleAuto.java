@@ -51,7 +51,7 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK),
       		new WaitCommand(6),
-			m_claw.shootCommand(),
+			m_claw.shootCube(),
       		new WaitCommand(0.5),
       		m_claw.stopOpen(),
       		m_armStateMachine.setTargetArmStateCommand(ArmState.STOW),

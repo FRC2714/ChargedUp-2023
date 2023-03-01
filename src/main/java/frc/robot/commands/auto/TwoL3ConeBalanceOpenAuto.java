@@ -50,7 +50,7 @@ public class TwoL3ConeBalanceOpenAuto extends AutoBase {
 		AutoConstants.EventMap.put("arm to cone level 3", 
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK)).withTimeout(3.0));
-		AutoConstants.EventMap.put("score cone", m_claw.score());
+		AutoConstants.EventMap.put("score cone", m_claw.scoreCone());
 		AutoConstants.EventMap.put("zero heading", new TurnToAngle(m_robotDrive, 0).raceWith(new WaitCommand(0.3)));
 
 		addCommands(
@@ -58,7 +58,7 @@ public class TwoL3ConeBalanceOpenAuto extends AutoBase {
 			new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK).withTimeout(3.0),
-			m_claw.score(),
+			m_claw.scoreCone(),
 			autoBuilder.fullAuto(autoPathGroup),
 			new AutoBalance(m_robotDrive)
 		);

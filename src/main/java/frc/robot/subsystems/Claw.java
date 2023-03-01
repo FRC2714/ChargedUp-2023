@@ -83,19 +83,19 @@ public class Claw extends SubsystemBase {
       new InstantCommand(() -> intake()));
   }
 
-  public Command score() {
-    return (
-      new InstantCommand(() -> open())).andThen(
-      new InstantCommand(() -> outtake()));
-  }
-
   public Command stopOpen() {
     return (
       new InstantCommand(() -> open())).andThen(
       new InstantCommand(() -> stop()));
   }
 
-  public Command shootCommand() {
+  public Command scoreCone() {
+    return (
+      new InstantCommand(() -> open())).andThen(
+      new InstantCommand(() -> outtake()));
+  }
+
+  public Command shootCube() {
     return new InstantCommand(() -> shoot()).andThen(
       new InstantCommand(() -> open())); 
   }
