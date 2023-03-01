@@ -32,7 +32,8 @@ import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autoalign;
 import frc.robot.commands.ZeroHeading;
 import frc.robot.commands.auto.NothingAuto;
-import frc.robot.commands.auto.OneConeBalanceMiddleAuto;
+import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
+import frc.robot.commands.auto.TwoCubeOpenAuto;
 import frc.robot.commands.auto.ComplexAuto;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
@@ -42,9 +43,8 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
-import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
-import frc.robot.subsystems.Arm.ArmStateMachine.IntakeMode;
 import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
+import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -256,7 +256,11 @@ public Command getNothingAuto() {
     return new ComplexAuto(m_robotDrive);
   }
 
-  public Command getOneConeBalanceMiddleAuto() {
-    return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
+  public Command getOneCubeBalanceMiddleAuto() {
+    return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
+  }
+
+  public Command getTwoCubeOpenAuto() {
+    return new TwoCubeOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
   }
 }
