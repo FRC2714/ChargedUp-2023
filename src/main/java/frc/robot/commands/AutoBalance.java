@@ -22,7 +22,7 @@ public class AutoBalance extends ProfiledPIDCommand {
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
             // The PID gains
-            0.007,
+            0.006,
             0,
             0.002,
             // The motion profile constraints

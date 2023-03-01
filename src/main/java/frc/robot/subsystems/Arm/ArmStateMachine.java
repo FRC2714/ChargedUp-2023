@@ -4,12 +4,14 @@
 
 package frc.robot.subsystems.Arm;
 
+import java.lang.module.ModuleDescriptor.Requires;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 
@@ -30,10 +32,6 @@ public class ArmStateMachine extends SubsystemBase {
     CONE, CUBE
   }
 
-  public enum IntakeMode {
-    FLOOR, HP
-  }
-
   public ArmState currentArmState = ArmState.BACK; //will default to TRANSFER 
   //m_arm.estimateCurrentArmState()??
   public ScoreLevel currentScoreLevel = ScoreLevel.THREE; //default to THREE
@@ -43,8 +41,6 @@ public class ArmStateMachine extends SubsystemBase {
 
   public CargoType cargoType = CargoType.CONE; // default of cube
 
-  public IntakeMode intakeMode = IntakeMode.FLOOR; // default of FLOOR
-
   /** Creates a new StateMachine. */
   public ArmStateMachine(Arm m_arm, LEDs m_leds, Intake m_intake) {
     this.m_arm = m_arm;
@@ -53,11 +49,12 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   private void setTargetArmState(ArmState targetArmState) {
+    boolean armStateChanges = this.targetArmState != targetArmState;
     currentArmState = this.targetArmState;
     this.targetArmState = targetArmState;
 
     currentScoreLevel = targetScoreLevel;
-    callArmCommand();
+    if(armStateChanges) {callArmCommand();}
   }
 
   private void setScoreLevel(ScoreLevel targetScoreLevel) {
@@ -65,7 +62,6 @@ public class ArmStateMachine extends SubsystemBase {
     this.targetScoreLevel = targetScoreLevel;
 
     currentArmState = targetArmState;
-    //callArmCommand();
   }
 
   private void callArmCommand() {
@@ -74,10 +70,6 @@ public class ArmStateMachine extends SubsystemBase {
 
   public void setCargoType(CargoType cargoType) {
     this.cargoType = cargoType;
-  }
-
-  public void setIntakeMode(IntakeMode intakeMode) {
-    this.intakeMode = intakeMode;
   }
 
   public Command setTargetArmStateCommand(ArmState targetArmState) {
@@ -93,16 +85,11 @@ public class ArmStateMachine extends SubsystemBase {
       .andThen(m_leds.setColorCargoType(cargoType));
   }
 
-  public Command setIntakeModeCommand(IntakeMode intakeMode) {
-    return new InstantCommand(() -> setIntakeMode(intakeMode));
-  }
-
   public Command nothingCommand() {
     return new WaitCommand(0);
   }
 
   public Command getArmCommand() {
-
     switch (targetArmState) {
       case BACK: {
         switch (currentArmState) { // when target arm state = BACK
@@ -400,6 +387,5 @@ public class ArmStateMachine extends SubsystemBase {
     SmartDashboard.putString("Current Score Level", currentScoreLevel.toString());
 
     SmartDashboard.putString("Cargo Type", cargoType.toString());
-    SmartDashboard.putString("Arm Intake Mode", intakeMode.toString());
   }
 }
