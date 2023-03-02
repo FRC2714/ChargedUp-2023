@@ -34,6 +34,7 @@ import frc.robot.commands.Autoalign;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
+import frc.robot.commands.auto.OneCubeTerrainAuto;
 import frc.robot.commands.auto.TwoCubeOpenAuto;
 import frc.robot.commands.auto.ComplexAuto;
 import frc.robot.subsystems.Claw;
@@ -260,5 +261,9 @@ public class RobotContainer {
 
 	public Command getTwoCubeOpenAuto() {
 		return new TwoCubeOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
+	}
+
+	public Command getOneCubeTerrainAuto() {
+		return new OneCubeTerrainAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
 	}
 }
