@@ -221,8 +221,8 @@ public final class Constants {
     public static final double kBaseJointPositionConversionFactor = (2*Math.PI) * kBaseJointGearRatio; //Radians * Gear ratio
     public static final double kSecondJointPositionConversionFactor = (2*Math.PI) * kSecondJointGearRatio;
 
-    public static final double kBaseJointKinematicOffset = 75; //difference from kinematic 0 to sparkmax 0 approx 45 deg
-    public static final double kSecondJointKinematicOffset = 664; //difference from kinematic 0 to sparkmax 0 approx 160 deg
+    public static final double kBaseJointKinematicOffset = 105; //difference from kinematic 0 to sparkmax 0 approx 45 deg
+    public static final double kSecondJointKinematicOffset = 630; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
     public static final boolean kBaseJointInverted = true; //both base joint motor and encoder are inverted
     public static final boolean kSecondJointInverted = false; //econd joint motor and encoder are NOT inverted
