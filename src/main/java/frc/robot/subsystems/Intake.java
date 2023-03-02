@@ -166,7 +166,7 @@ public class Intake extends SubsystemBase {
       .andThen(stopCommand());
   }
 
-  public Command AutoConeIntake() {
+  private Command AutoConeIntake() {
     return new SequentialCommandGroup(
       new WaitCommand(0.25),
       retractCommand(),

@@ -50,7 +50,7 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   private void setTargetArmState(ArmState targetArmState) {
-    if(this.targetArmState != targetArmState) {
+    if(this.targetArmState != targetArmState || targetArmState == ArmState.TRANSFER) {
       currentArmState = this.targetArmState;
       this.targetArmState = targetArmState;
 
@@ -228,7 +228,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.BackToTransfer(m_arm.TransferConeIntakeCommand());
               case CUBE:
-                return m_arm.BackToTransfer(m_arm.TransferCubeIntakeCommand()).andThen(m_intake.deployCommand());
+                return m_intake.deployCommand().andThen(m_arm.BackToTransfer(m_arm.TransferCubeIntakeCommand()));
             }
           }
           case TRANSFER: { //when current arm state = TRANSFER
@@ -236,7 +236,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.TransferToTransfer(m_arm.TransferConeIntakeCommand());
               case CUBE:
-                return m_arm.TransferToTransfer(m_arm.TransferCubeIntakeCommand()).andThen(m_intake.deployCommand());
+                return m_intake.deployCommand().andThen(m_arm.TransferToTransfer(m_arm.TransferCubeIntakeCommand()));
             }
           }
           case FRONT: { //when current arm state = FRONT
@@ -244,7 +244,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.FrontToTransfer(m_arm.TransferConeIntakeCommand());
               case CUBE:
-                return m_arm.FrontToTransfer(m_arm.TransferCubeIntakeCommand()).andThen(m_intake.deployCommand());
+                return m_intake.deployCommand().andThen(m_arm.FrontToTransfer(m_arm.TransferCubeIntakeCommand()));
             }
           }
           case STOW: { //when current arm state = TUCK
@@ -252,7 +252,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.TuckToTransfer(m_arm.TransferConeIntakeCommand());
               case CUBE:
-                return m_arm.TuckToTransfer(m_arm.TransferCubeIntakeCommand()).andThen(m_intake.deployCommand());
+                return m_intake.deployCommand().andThen(m_arm.TuckToTransfer(m_arm.TransferCubeIntakeCommand()));
             }
           }
         }
