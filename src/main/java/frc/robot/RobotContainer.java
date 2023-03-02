@@ -92,6 +92,7 @@ public class RobotContainer {
 	}
 
 	public void setTeleopDefaultStates() {
+		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
 		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
 		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
 		m_limelight.setLEDCommand(false).schedule();
@@ -140,7 +141,6 @@ public class RobotContainer {
 		//toggle intake deploy on A
 		m_driverController.a()
 			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
-		
 		
 
 		//toggle claw intake on X
