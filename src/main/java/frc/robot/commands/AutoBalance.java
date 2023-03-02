@@ -16,7 +16,6 @@ import frc.robot.subsystems.DriveSubsystem;
 public class AutoBalance extends ProfiledPIDCommand {
   /** Creates a new AutoBalance. */
   private DriveSubsystem drivetrain;
-  private boolean atSetpoint;
   public AutoBalance(DriveSubsystem drivetrain) {
     super(
         // The ProfiledPIDController used by the command
@@ -42,20 +41,16 @@ public class AutoBalance extends ProfiledPIDCommand {
     this.drivetrain = drivetrain;
     getController().setTolerance(3); //degrees
 
-    if (getController().atSetpoint()) {
-      atSetpoint = true;
-    }
   }
   
   public void initialize() {
     System.out.println("autobalance start");
-    atSetpoint = false;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return atSetpoint;
+    return getController().atSetpoint();
   }
 
   public void end() {
