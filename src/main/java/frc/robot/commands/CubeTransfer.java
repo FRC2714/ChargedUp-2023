@@ -15,23 +15,19 @@ import frc.robot.subsystems.Intake;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ConeTransfer extends SequentialCommandGroup {
-  
-  /** Creates a new ConeTransfer. */
-  public ConeTransfer(ArmStateMachine m_armStateMachine, Claw m_claw, Intake m_intake) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_armStateMachine, m_claw, m_intake);
+public class CubeTransfer extends SequentialCommandGroup {
+  /** Creates a new CubeTransfer. */
+  public CubeTransfer(ArmStateMachine m_armStateMachine, Claw m_claw, Intake m_intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    addRequirements(m_armStateMachine, m_claw, m_intake);
+
     addCommands(
-      m_armStateMachine.setCargoTypeCommand(CargoType.CONE),
-      m_intake.retractAndStop(),
+      m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
+      m_intake.intakeCube(),
       m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
       m_claw.intakeCubeCommand(),
-      new WaitCommand(3),
-      m_claw.intakeConeCommand(),
-      m_intake.openCommand(),
-      m_armStateMachine.setTargetArmStateCommand(ArmState.STOW)
+      new WaitCommand(4)
     );
   }
 }

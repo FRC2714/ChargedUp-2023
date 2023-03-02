@@ -50,7 +50,7 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   private void setTargetArmState(ArmState targetArmState) {
-    if(this.targetArmState != targetArmState || targetArmState == ArmState.TRANSFER) {
+    if(this.targetArmState != targetArmState || targetArmState == ArmState.TRANSFER || targetArmState == ArmState.BACK) {
       currentArmState = this.targetArmState;
       this.targetArmState = targetArmState;
 
@@ -234,7 +234,7 @@ public class ArmStateMachine extends SubsystemBase {
           case TRANSFER: { //when current arm state = TRANSFER
             switch (cargoType) {
               case CONE:
-                return m_arm.TransferToTransfer(m_arm.TransferConeIntakeCommand());
+                return m_arm.TransferConeIntakeCommand();
               case CUBE:
                 return m_intake.deployCommand().andThen(m_arm.TransferToTransfer(m_arm.TransferCubeIntakeCommand()));
             }

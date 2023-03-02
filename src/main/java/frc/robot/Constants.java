@@ -268,7 +268,7 @@ public final class Constants {
 
     //Transfer to transfer transition
     public static final ArmForwardKinematicPosition kTransferToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(70, 130);
+      new ArmForwardKinematicPosition(75, 130);
 
     //Transfer to front transition
     public static final ArmForwardKinematicPosition kTransferToFrontIntermediatePosition = 
