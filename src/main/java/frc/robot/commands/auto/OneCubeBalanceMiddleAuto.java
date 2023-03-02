@@ -54,8 +54,8 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 			m_claw.shootCube(),
       		new WaitCommand(0.5),
       		m_claw.stopOpen(),
-      		m_armStateMachine.setTargetArmStateCommand(ArmState.STOW),
-			autoBuilder.fullAuto(autoPathGroup)
+      		m_armStateMachine.setTargetArmStateCommand(ArmState.STOW)
+			//autoBuilder.fullAuto(autoPathGroup)
 			//new AutoBalance(m_robotDrive)
 		);
 

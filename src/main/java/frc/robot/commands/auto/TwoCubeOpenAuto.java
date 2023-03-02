@@ -32,8 +32,8 @@ public class TwoCubeOpenAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"2CubeOPENAuto",
 			new PathConstraints(
-			1.5,
-			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+			1.7,
+			2.0));
 
 	public TwoCubeOpenAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
 		super(m_robotDrive);
