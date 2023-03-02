@@ -141,16 +141,14 @@ public class RobotContainer {
 		m_driverController.a()
 			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
 		
-		//toggle intake open close on B
-		m_driverController.b()
-			.toggleOnTrue(Commands.startEnd(m_intake::intake, m_intake::stop, m_intake));
+		
 
 		//toggle claw intake on X
 		m_driverController.x()
 			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 
-		//reset gyro on Y
-		m_driverController.y()
+		//reset gyro on left
+		m_driverController.povLeft()
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
 
@@ -160,11 +158,11 @@ public class RobotContainer {
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
 			.whileTrue(m_claw.stopOpen());
 
-		//manual raise arm on right bumper
-		m_operatorController.rightBumper()
+		//manual raise arm on start
+		m_operatorController.start()
 			.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(3)));
-		//manual lower arm on left bumper
-		m_operatorController.leftBumper()
+		//manual lower arm on back
+		m_operatorController.back()
 			.onTrue(new InstantCommand(() -> m_arm.lowerCurrentPosition(3)));
 
 		// TUCK on up
@@ -194,12 +192,12 @@ public class RobotContainer {
 		m_operatorController.x()
 			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 		
-		// cone mode on start
-		m_operatorController.start()
+		// cone mode on right bumper
+		m_operatorController.rightBumper()
 			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()));
 
-		// cube mode on back
-		m_operatorController.back()
+		// cube mode on left bumper
+		m_operatorController.leftBumper()
 			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
 	}
 

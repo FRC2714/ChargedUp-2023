@@ -153,7 +153,7 @@ public final class Constants {
 
     public static final double kNominalVoltage = 10.5;
     public static final double kIntakeMotorSpeed = 1;
-    public static final double kOuttakeMotorSpeed = -0.1;
+    public static final double kOuttakeMotorSpeed = -0.3;
   }
 
   public static final class IntakeConstants {
@@ -236,7 +236,7 @@ public final class Constants {
     public static final double kBaseJointI = 0;
     public static final double kBaseJointD = 0.0000;
 
-    public static final double kSecondJointMaxVelocity = 5500; //6000 too much
+    public static final double kSecondJointMaxVelocity = 5200; //6000 too much
     public static final double kSecondJointMaxAcceleration = 4000;
     public static final double kSecondJointTolerance = 6;
     public static final double kSecondJointFF = 0.00013;
@@ -284,7 +284,7 @@ public final class Constants {
 
     //Front to transfer transition
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 90);
+      new ArmForwardKinematicPosition(50, 100);
     public static final ArmForwardKinematicPosition kFrontToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(50, 150);
 
@@ -296,7 +296,7 @@ public final class Constants {
 
     //Tuck to transfer transition
     public static final ArmForwardKinematicPosition kTuckToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 90);
+      new ArmForwardKinematicPosition(50, 100);
     public static final ArmForwardKinematicPosition kTuckToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(50, 150);
 
@@ -327,7 +327,7 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kBackCubeL2Position = 
       new ArmForwardKinematicPosition(108, -108);
     public static final ArmForwardKinematicPosition kBackCubeL3Position = 
-      new ArmForwardKinematicPosition(58, -49);
+      new ArmForwardKinematicPosition(68, -45);
 
     //Front Cone Score positions
     public static final ArmForwardKinematicPosition kFrontConeL2Position = 
