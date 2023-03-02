@@ -41,7 +41,7 @@ public class Claw extends SubsystemBase {
   }
 
   public void shoot() {
-    clawMotor.setVoltage(5*ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
+    clawMotor.setVoltage(6*ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
   public void stop() {
@@ -85,18 +85,19 @@ public class Claw extends SubsystemBase {
 
   public Command stopOpen() {
     return (
-      new InstantCommand(() -> open())).andThen(
-      new InstantCommand(() -> stop()));
+      new InstantCommand(() -> stop())).andThen(
+      new InstantCommand(() -> open()));
   }
 
   public Command scoreCone() {
     return (
-      new InstantCommand(() -> open())).andThen(
-      new InstantCommand(() -> outtake()));
+      new InstantCommand(() -> stop())).andThen(
+      new InstantCommand(() -> open()));
   }
 
   public Command shootCube() {
-    return new InstantCommand(() -> shoot()).andThen(
+    return 
+      new InstantCommand(() -> shoot()).andThen(
       new InstantCommand(() -> open())); 
   }
 

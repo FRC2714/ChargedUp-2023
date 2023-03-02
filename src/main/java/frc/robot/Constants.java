@@ -153,7 +153,7 @@ public final class Constants {
 
     public static final double kNominalVoltage = 10.5;
     public static final double kIntakeMotorSpeed = 1;
-    public static final double kOuttakeMotorSpeed = -0.3;
+    public static final double kOuttakeMotorSpeed = -0.1;
   }
 
   public static final class IntakeConstants {
@@ -296,7 +296,7 @@ public final class Constants {
 
     //Tuck to transfer transition
     public static final ArmForwardKinematicPosition kTuckToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 100);
+      new ArmForwardKinematicPosition(50, 120);
     public static final ArmForwardKinematicPosition kTuckToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(50, 150);
 
