@@ -15,13 +15,29 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auton Selection": "String Chooser"
+    },
+    "windows": {
+      "/SmartDashboard/Auton Selection": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
     "transitory": {
       "SmartDashboard": {
+        "PPSwerveControllerCommand": {
+          "open": true
+        },
+        "open": true
+      },
+      "limelight": {
         "open": true
       }
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }

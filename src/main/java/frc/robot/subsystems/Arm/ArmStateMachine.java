@@ -50,7 +50,7 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   private void setTargetArmState(ArmState targetArmState) {
-    if(this.targetArmState != targetArmState || targetArmState == ArmState.TRANSFER || targetArmState == ArmState.BACK) {
+    if(this.targetArmState != targetArmState || targetArmState != ArmState.STOW) {
       currentArmState = this.targetArmState;
       this.targetArmState = targetArmState;
 
