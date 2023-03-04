@@ -90,7 +90,11 @@ public class ArmStateMachine extends SubsystemBase {
       .andThen(m_leds.setColorCargoType(cargoType));
   }
 
-  public Command scoreCommand() {
+  public CargoType getCargoType() {
+    return this.cargoType;
+  }
+
+  public Command scoreCommand(CargoType cargoType) {
     if (cargoType == CargoType.CONE) {
       return m_claw.scoreCone();
     } else {
