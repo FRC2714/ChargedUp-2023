@@ -31,11 +31,13 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autoalign;
+import frc.robot.commands.IntakeCube;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
 import frc.robot.commands.auto.OneCubeTerrainAuto;
 import frc.robot.commands.auto.TwoCubeOpenAuto;
+import frc.robot.commands.auto.TwoCubeOpenAutoStop;
 import frc.robot.commands.auto.ComplexAuto;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
@@ -121,13 +123,13 @@ public class RobotContainer {
 		//zero heading then autoalign on right bumper
 		m_driverController.rightBumper()
 			.whileTrue(
-				new WaitCommand(0.4).deadlineWith(
+				new WaitCommand(0.3).deadlineWith(
 				new TurnToAngle(m_robotDrive, 0))
 			.andThen(new Autoalign(m_robotDrive, m_limelight)));
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(m_armStateMachine.scoreCommand())
+			.onTrue(m_armStateMachine.scoreCommand(m_armStateMachine.getCargoType()))
 			.onFalse(m_claw.stopOpen());
 
 		//intake on right trigger while held 
@@ -152,6 +154,14 @@ public class RobotContainer {
 		m_driverController.povLeft()
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
+		m_driverController.povRight()
+			.onTrue(new IntakeCube(m_armStateMachine, m_claw, m_intake));
+
+		m_driverController.povDown()
+			.whileTrue(new AutoBalance(m_robotDrive));
+
+		m_driverController.povUp()
+			.whileTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
@@ -261,6 +271,10 @@ public class RobotContainer {
 
 	public Command getTwoCubeOpenAuto() {
 		return new TwoCubeOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
+	}
+
+	public Command getTwoCubeOpenAutoStop() {
+		return new TwoCubeOpenAutoStop(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
 	}
 
 	public Command getOneCubeTerrainAuto() {

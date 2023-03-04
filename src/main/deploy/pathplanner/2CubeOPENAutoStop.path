@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.8952814619161833,
-        "y": 5.358393485355518
+        "x": 3.7248586952689933,
+        "y": 4.992330269358048
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,19 +24,46 @@
     },
     {
       "anchorPoint": {
-        "x": 7.015042072788773,
-        "y": 4.5834346472963405
+        "x": 5.569643594803205,
+        "y": 4.57
       },
       "prevControl": {
-        "x": 6.019523205185742,
-        "y": 4.701410022424194
+        "x": 4.419030332722588,
+        "y": 4.589018401026124
       },
       "nextControl": {
-        "x": 6.019523205185742,
-        "y": 4.701410022424194
+        "x": 6.571991595763363,
+        "y": 4.55343226444694
       },
-      "holonomicAngle": -12.0,
-      "isReversal": true,
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": 1.2,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "wait"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "minimum",
+        "waitTime": 1.5
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 7.062588075354087,
+        "y": 4.57
+      },
+      "prevControl": {
+        "x": 6.672710854318507,
+        "y": 4.564416246270215
+      },
+      "nextControl": {
+        "x": 7.452465296389668,
+        "y": 4.575583753729785
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": true,
@@ -49,12 +76,12 @@
     },
     {
       "anchorPoint": {
-        "x": 1.84,
-        "y": 4.402487660073711
+        "x": 1.8230185926564035,
+        "y": 4.402759837548145
       },
       "prevControl": {
-        "x": 4.090547976163771,
-        "y": 5.0055201728142915
+        "x": 3.677312692703679,
+        "y": 5.182514279619307
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -70,18 +97,18 @@
       }
     }
   ],
-  "maxVelocity": 2.0,
+  "maxVelocity": 3.0,
   "maxAcceleration": 2.0,
   "isReversed": null,
   "markers": [
     {
-      "position": 0.4,
+      "position": 0.7,
       "names": [
-        "intake cube"
+        "deploy intake"
       ]
     },
     {
-      "position": 1.3,
+      "position": 2.3,
       "names": [
         "arm to front level 2"
       ]
