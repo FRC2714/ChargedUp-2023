@@ -70,12 +70,12 @@
       }
     }
   ],
-  "maxVelocity": 2.0,
+  "maxVelocity": 2.2,
   "maxAcceleration": 2.0,
   "isReversed": null,
   "markers": [
     {
-      "position": 0.4,
+      "position": 0.35,
       "names": [
         "intake cube"
       ]

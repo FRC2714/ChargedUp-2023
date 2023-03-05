@@ -161,7 +161,10 @@ public class RobotContainer {
 			.whileTrue(new AutoBalance(m_robotDrive));
 
 		m_driverController.povUp()
-			.whileTrue(new InstantCommand(() -> m_robotDrive.setX()));
+			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
+
+		m_driverController.back()
+			.toggleOnTrue(Commands.startEnd(m_claw::shoot, m_claw::stop, m_claw));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 

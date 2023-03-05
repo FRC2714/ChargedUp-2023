@@ -325,7 +325,7 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kBackCubeL1Position = 
       new ArmForwardKinematicPosition(130, -120);//130, 124
     public static final ArmForwardKinematicPosition kBackCubeL2Position = 
-      new ArmForwardKinematicPosition(108, -108);
+      new ArmForwardKinematicPosition(108, -112);
     public static final ArmForwardKinematicPosition kBackCubeL3Position = 
       new ArmForwardKinematicPosition(68, -45);
 
