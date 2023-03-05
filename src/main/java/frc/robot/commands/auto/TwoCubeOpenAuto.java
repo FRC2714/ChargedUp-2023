@@ -32,7 +32,7 @@ public class TwoCubeOpenAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"2CubeOPENAuto",
 			new PathConstraints(
-			2,
+			2.2,
 			2.0));
 
 	public TwoCubeOpenAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
@@ -45,7 +45,7 @@ public class TwoCubeOpenAuto extends AutoBase {
 
 		AutoConstants.EventMap.put("arm to front level 2", 
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.TWO)
-			.andThen(m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT))
+			.andThen(m_arm.FrontCubeL2Command())
 			.andThen(new WaitCommand(0.7))
 			.andThen(m_intake.retractAndStop()));
 
@@ -56,7 +56,7 @@ public class TwoCubeOpenAuto extends AutoBase {
 			m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK),
-      		new WaitCommand(4.5),
+      		new WaitCommand(4.3),
 
 			//Score First Cube
 			m_claw.shootCube(),
@@ -66,7 +66,7 @@ public class TwoCubeOpenAuto extends AutoBase {
 			m_intake.deployCommand(),
       		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
 
-			new WaitCommand(2.5),
+			new WaitCommand(1.7),
 
 			//Follow Path
 			autoBuilder.fullAuto(autoPathGroup),
