@@ -33,7 +33,7 @@ import frc.robot.subsystems.Limelight;
 public class OneCubeBalanceMiddleAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"1ConeBalanceMIDDLE",
+			"1CubeBalanceMIDDLE",
 			new PathConstraints(
 			1.2,
 			2.0));
