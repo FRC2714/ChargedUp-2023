@@ -258,7 +258,7 @@ public final class Constants {
 
     //Back to front transition
 
-    //Back to tuck transition
+    //Back to stow transition
     
     //Transfer to back transition
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
@@ -274,10 +274,10 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kTransferToFrontIntermediatePosition = 
       new ArmForwardKinematicPosition(50, 90);
 
-    //Transfer to tuck transition
-    public static final ArmForwardKinematicPosition kTransferToTuckIntermediatePosition = 
+    //Transfer to stow transition
+    public static final ArmForwardKinematicPosition kTransferToStowIntermediatePosition = 
       new ArmForwardKinematicPosition(50, 150);
-    public static final ArmForwardKinematicPosition kTransferToTuckIntermediate2Position = 
+    public static final ArmForwardKinematicPosition kTransferToStowIntermediate2Position = 
       new ArmForwardKinematicPosition(50, 90);
 
     //Front to back transition
@@ -290,20 +290,20 @@ public final class Constants {
 
     //Front to front transition
 
-    //Front to tuck transition
+    //Front to stow transition
 
-    //Tuck to back transition
+    //Stow to back transition
 
-    //Tuck to transfer transition
-    public static final ArmForwardKinematicPosition kTuckToTransferIntermediatePosition = 
+    //Stow to transfer transition
+    public static final ArmForwardKinematicPosition kStowToTransferIntermediatePosition = 
       new ArmForwardKinematicPosition(50, 120);
-    public static final ArmForwardKinematicPosition kTuckToTransferIntermediate2Position = 
+    public static final ArmForwardKinematicPosition kStowToTransferIntermediate2Position = 
       new ArmForwardKinematicPosition(50, 150);
 
-    //Tuck to front transition
+    //Stow to front transition
 
-    //Tuck position 
-    public static final ArmForwardKinematicPosition kTuckPosition = 
+    //Stow position 
+    public static final ArmForwardKinematicPosition kStowPosition = 
       new ArmForwardKinematicPosition(85,115);
 
     //Transfer position

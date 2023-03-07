@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
@@ -103,7 +103,7 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   public Command nothingCommand() {
-    return new WaitCommand(0);
+    return new InstantCommand();
   }
 
   public Command getArmCommand() {
@@ -116,25 +116,25 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.BackToBack(m_arm.BackConeL3Command());
+                    return m_arm.BackToBack(ArmConstants.kBackConeL3Position);
                   case TWO:
-                    return m_arm.BackConeL2Command();
+                    return m_arm.setForwardKinematicsCommand(ArmConstants.kBackConeL2Position);
                   case ONE:
-                    return m_arm.BackToBack(m_arm.BackConeL1Command());
+                    return m_arm.BackToBack(ArmConstants.kBackConeL1Position);
                   case INTAKE:
-                    return m_arm.BackIntakeCommand();
+                    return m_arm.setForwardKinematicsCommand(ArmConstants.kBackIntakePosition);
                 }
               }
               case CUBE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.BackToBack(m_arm.BackCubeL3Command());
+                    return m_arm.BackToBack(ArmConstants.kBackCubeL3Position);
                   case TWO:
-                    return m_arm.BackToBack(m_arm.BackCubeL2Command());
+                    return m_arm.BackToBack(ArmConstants.kBackCubeL2Position);
                   case ONE:
-                    return m_arm.BackToBack(m_arm.BackCubeL1Command());
+                    return m_arm.BackToBack(ArmConstants.kBackCubeL1Position);
                   case INTAKE:
-                    return m_arm.BackToBack(m_arm.BackIntakeCommand());
+                    return m_arm.BackToBack(ArmConstants.kBackIntakePosition);
                 }
               }
             }
@@ -144,25 +144,25 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.TransferToBack(m_arm.BackConeL3Command());
+                    return m_arm.TransferToBack(ArmConstants.kBackConeL3Position);
                   case TWO:
-                    return m_arm.TransferToBack(m_arm.BackConeL2Command());
+                    return m_arm.TransferToBack(ArmConstants.kBackConeL2Position);
                   case ONE:
-                    return m_arm.TransferToBack(m_arm.BackConeL1Command());
+                    return m_arm.TransferToBack(ArmConstants.kBackConeL1Position);
                   case INTAKE:
-                    return m_arm.TransferToBack(m_arm.BackIntakeCommand());
+                    return m_arm.TransferToBack(ArmConstants.kBackIntakePosition);
                 }
               }
               case CUBE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.TransferToBack(m_arm.BackCubeL3Command());
+                    return m_arm.TransferToBack(ArmConstants.kBackCubeL3Position);
                   case TWO:
-                    return m_arm.TransferToBack(m_arm.BackCubeL2Command());
+                    return m_arm.TransferToBack(ArmConstants.kBackCubeL2Position);
                   case ONE:
-                    return m_arm.TransferToBack(m_arm.BackCubeL1Command());
+                    return m_arm.TransferToBack(ArmConstants.kBackCubeL1Position);
                   case INTAKE:
-                    return m_arm.TransferToBack(m_arm.BackIntakeCommand());
+                    return m_arm.TransferToBack(ArmConstants.kBackIntakePosition);
                 }
               }
             }
@@ -172,53 +172,53 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.FrontToBack(m_arm.BackConeL3Command());
+                    return m_arm.FrontToBack(ArmConstants.kBackConeL3Position);
                   case TWO:
-                    return m_arm.FrontToBack(m_arm.BackConeL2Command());
+                    return m_arm.FrontToBack(ArmConstants.kBackConeL2Position);
                   case ONE:
-                    return m_arm.FrontToBack(m_arm.BackConeL1Command());
+                    return m_arm.FrontToBack(ArmConstants.kBackConeL1Position);
                   case INTAKE:
-                    return m_arm.FrontToBack(m_arm.BackIntakeCommand());
+                    return m_arm.FrontToBack(ArmConstants.kBackIntakePosition);
                 }
               }
               case CUBE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.FrontToBack(m_arm.BackCubeL3Command());
+                    return m_arm.FrontToBack(ArmConstants.kBackCubeL3Position);
                   case TWO:
-                    return m_arm.FrontToBack(m_arm.BackCubeL2Command());
+                    return m_arm.FrontToBack(ArmConstants.kBackCubeL2Position);
                   case ONE:
-                    return m_arm.FrontToBack(m_arm.BackCubeL1Command());
+                    return m_arm.FrontToBack(ArmConstants.kBackCubeL1Position);
                   case INTAKE:
-                    return m_arm.FrontToBack(m_arm.BackIntakeCommand());
+                    return m_arm.FrontToBack(ArmConstants.kBackIntakePosition);
                 }
               }
             }
           }
-          case STOW: { // when current is TUCK
+          case STOW: { // when current is STOW
             switch (cargoType) { 
               case CONE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.TuckToBack(m_arm.BackConeL3Command());
+                    return m_arm.StowToBack(ArmConstants.kBackConeL3Position);
                   case TWO:
-                    return m_arm.TuckToBack(m_arm.BackConeL2Command());
+                    return m_arm.StowToBack(ArmConstants.kBackConeL2Position);
                   case ONE:
-                    return m_arm.TuckToBack(m_arm.BackConeL1Command());
+                    return m_arm.StowToBack(ArmConstants.kBackConeL1Position);
                   case INTAKE:
-                    return m_arm.TuckToBack(m_arm.BackIntakeCommand());
+                    return m_arm.StowToBack(ArmConstants.kBackIntakePosition);
                 }
               }
               case CUBE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.TuckToBack(m_arm.BackCubeL3Command());
+                    return m_arm.StowToBack(ArmConstants.kBackCubeL3Position);
                   case TWO:
-                    return m_arm.TuckToBack(m_arm.BackCubeL2Command());
+                    return m_arm.StowToBack(ArmConstants.kBackCubeL2Position);
                   case ONE:
-                    return m_arm.TuckToBack(m_arm.BackCubeL1Command());
+                    return m_arm.StowToBack(ArmConstants.kBackCubeL1Position);
                   case INTAKE:
-                    return m_arm.TuckToBack(m_arm.BackIntakeCommand());
+                    return m_arm.StowToBack(ArmConstants.kBackIntakePosition);
                 }
               }
             }
@@ -230,33 +230,33 @@ public class ArmStateMachine extends SubsystemBase {
           case BACK: { //when current arm state = BACK
             switch (cargoType) {
               case CONE:
-                return m_arm.BackToTransfer(m_arm.TransferConeIntakeCommand());
+                return m_arm.BackToTransfer(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.BackToTransfer(m_arm.TransferCubeIntakeCommand()));
+                return m_intake.deployCommand().andThen(m_arm.BackToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
           case TRANSFER: { //when current arm state = TRANSFER
             switch (cargoType) {
               case CONE:
-                return m_arm.TransferConeIntakeCommand();
+                return m_arm.setForwardKinematicsCommand(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.TransferToTransfer(m_arm.TransferCubeIntakeCommand()));
+                return m_intake.deployCommand().andThen(m_arm.TransferToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
           case FRONT: { //when current arm state = FRONT
             switch (cargoType) {
               case CONE:
-                return m_arm.FrontToTransfer(m_arm.TransferConeIntakeCommand());
+                return m_arm.FrontToTransfer(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.FrontToTransfer(m_arm.TransferCubeIntakeCommand()));
+                return m_intake.deployCommand().andThen(m_arm.FrontToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
-          case STOW: { //when current arm state = TUCK
+          case STOW: { //when current arm state = STOW
             switch (cargoType) {
               case CONE:
-                return m_arm.TuckToTransfer(m_arm.TransferConeIntakeCommand());
+                return m_arm.StowToTransfer(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.TuckToTransfer(m_arm.TransferCubeIntakeCommand()));
+                return m_intake.deployCommand().andThen(m_arm.StowToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
         }
@@ -270,23 +270,23 @@ public class ArmStateMachine extends SubsystemBase {
                   case THREE:
                     return nothingCommand();
                   case TWO:
-                    return m_arm.BackToFront(m_arm.FrontConeL2Command());
+                    return m_arm.BackToFront(ArmConstants.kFrontConeL2Position);
                   case ONE:
                     return nothingCommand();
                   case INTAKE:
-                    return m_arm.BackToFront(m_arm.FrontIntakeCommand());
+                    return m_arm.BackToFront(ArmConstants.kFrontIntakePosition);
                 }
               }
               case CUBE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.BackToFront(m_arm.FrontCubeL3Command());
+                    return m_arm.BackToFront(ArmConstants.kFrontCubeL3Position);
                   case TWO:
-                    return m_arm.BackToFront(m_arm.FrontCubeL2Command());
+                    return m_arm.BackToFront(ArmConstants.kFrontCubeL2Position);
                   case ONE:
                     return nothingCommand();
                   case INTAKE:
-                    return m_arm.BackToFront(m_arm.FrontIntakeCommand());
+                    return m_arm.BackToFront(ArmConstants.kFrontIntakePosition);
                 }
               }
             }
@@ -298,23 +298,23 @@ public class ArmStateMachine extends SubsystemBase {
                   case THREE:
                     return nothingCommand();
                   case TWO:
-                    return m_arm.TransferToFront(m_arm.FrontConeL2Command());
+                    return m_arm.TransferToFront(ArmConstants.kFrontConeL2Position);
                   case ONE:
                     return nothingCommand();
                   case INTAKE:
-                    return m_arm.TransferToFront(m_arm.FrontIntakeCommand());
+                    return m_arm.TransferToFront(ArmConstants.kFrontIntakePosition);
                 }
               }
               case CUBE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.TransferToFront(m_arm.FrontCubeL3Command());
+                    return m_arm.TransferToFront(ArmConstants.kFrontCubeL3Position);
                   case TWO:
-                    return m_arm.TransferToFront(m_arm.FrontCubeL2Command());
+                    return m_arm.TransferToFront(ArmConstants.kFrontCubeL2Position);
                   case ONE:
                     return nothingCommand();
                   case INTAKE:
-                    return m_arm.TransferToFront(m_arm.FrontIntakeCommand());
+                    return m_arm.TransferToFront(ArmConstants.kFrontIntakePosition);
                 }
               }
             }
@@ -326,23 +326,23 @@ public class ArmStateMachine extends SubsystemBase {
                   case THREE:
                     return nothingCommand();
                   case TWO:
-                    return m_arm.FrontToFront(m_arm.FrontConeL2Command());
+                    return m_arm.FrontToFront(ArmConstants.kFrontConeL2Position);
                   case ONE:
                     return nothingCommand();
                   case INTAKE:
-                    return m_arm.FrontToFront(m_arm.FrontIntakeCommand());
+                    return m_arm.FrontToFront(ArmConstants.kFrontIntakePosition);
                 }
               }
               case CUBE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.FrontToFront(m_arm.FrontCubeL3Command());
+                    return m_arm.FrontToFront(ArmConstants.kFrontCubeL3Position);
                   case TWO:
-                    return m_arm.FrontToFront(m_arm.FrontCubeL2Command());
+                    return m_arm.FrontToFront(ArmConstants.kFrontCubeL2Position);
                   case ONE:
                     return nothingCommand();
                   case INTAKE:
-                    return m_arm.FrontToFront(m_arm.FrontIntakeCommand());
+                    return m_arm.FrontToFront(ArmConstants.kFrontIntakePosition);
                 }
               }
             }
@@ -354,23 +354,23 @@ public class ArmStateMachine extends SubsystemBase {
                   case THREE:
                     return nothingCommand();
                   case TWO:
-                    return m_arm.TuckToFront(m_arm.FrontConeL2Command());
+                    return m_arm.StowToFront(ArmConstants.kFrontConeL2Position);
                   case ONE:
                     return nothingCommand();
                   case INTAKE:
-                    return m_arm.TuckToFront(m_arm.FrontIntakeCommand());
+                    return m_arm.StowToFront(ArmConstants.kFrontIntakePosition);
                 }
               }
               case CUBE: {
                 switch (targetScoreLevel) {
                   case THREE:
-                    return m_arm.TuckToFront(m_arm.FrontCubeL3Command());
+                    return m_arm.StowToFront(ArmConstants.kFrontCubeL3Position);
                   case TWO:
-                    return m_arm.TuckToFront(m_arm.FrontCubeL2Command());
+                    return m_arm.StowToFront(ArmConstants.kFrontCubeL2Position);
                   case ONE:
                     return nothingCommand();
                   case INTAKE:
-                    return m_arm.TuckToFront(m_arm.FrontIntakeCommand());
+                    return m_arm.StowToFront(ArmConstants.kFrontIntakePosition);
                 }
               }
             }
@@ -380,11 +380,11 @@ public class ArmStateMachine extends SubsystemBase {
       case STOW: {
         switch (currentArmState) {
           case BACK:
-            return m_arm.BackToTuck();
+            return m_arm.BackToStow();
           case TRANSFER:
-           return m_arm.TransferToTuck();
+           return m_arm.TransferToStow();
           case FRONT:
-            return m_arm.FrontToTuck();
+            return m_arm.FrontToStow();
           case STOW:
             return nothingCommand();
         }
@@ -398,10 +398,10 @@ public class ArmStateMachine extends SubsystemBase {
   public void periodic() {
     //This method will be called once per scheduler run
     SmartDashboard.putString("Target Arm State", targetArmState.toString());
-    SmartDashboard.putString("Current Arm State", currentArmState.toString());
+    //SmartDashboard.putString("Current Arm State", currentArmState.toString());
     
     SmartDashboard.putString("Target Score Level", targetScoreLevel.toString());
-    SmartDashboard.putString("Current Score Level", currentScoreLevel.toString());
+    //SmartDashboard.putString("Current Score Level", currentScoreLevel.toString());
 
     SmartDashboard.putString("Cargo Type", cargoType.toString());
   }

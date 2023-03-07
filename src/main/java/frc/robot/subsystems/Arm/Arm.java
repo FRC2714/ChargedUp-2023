@@ -35,14 +35,22 @@ public class Arm extends SubsystemBase {
   public Arm() {
   }
 
-  private void setFowardKinematics(double baseAngle, double secondAngle) {
+  private void setForwardKinematics(double baseAngle, double secondAngle) {
     baseJoint.setTargetKinematicAngle(baseAngle);
     secondJoint.setTargetKinematicAngle(secondAngle);
   }
 
-  private void setFowardKinematics(ArmForwardKinematicPosition forwardKinematicsPosition) {
+  private void setForwardKinematics(ArmForwardKinematicPosition forwardKinematicsPosition) {
     baseJoint.setTargetKinematicAngle(forwardKinematicsPosition.getBaseAngleRadians());
     secondJoint.setTargetKinematicAngle(forwardKinematicsPosition.getSecondAngleRadians());
+  }
+
+  public InstantCommand setForwardKinematicsCommand(ArmForwardKinematicPosition forwardKinematicsPosition) {
+    return new InstantCommand(() -> setForwardKinematics(forwardKinematicsPosition));
+  }
+
+  public Command setForwardKinematicsUntil(Boolean condition, ArmForwardKinematicPosition forwardKinematicsPosition) {
+    return new WaitUntilCommand(() -> condition).deadlineWith(setForwardKinematicsCommand(forwardKinematicsPosition));
   }
 
   public void setTargetPosition(double X, double Y) {
@@ -75,8 +83,8 @@ public class Arm extends SubsystemBase {
   private void estimateCurrentXY() {
     estimatedX = a1*Math.cos(baseJoint.getKinematicAngle()) + a2*Math.cos(baseJoint.getKinematicAngle()+secondJoint.getKinematicAngle());
     estimatedY = a2*Math.sin(secondJoint.getKinematicAngle()) + a2*Math.sin(baseJoint.getKinematicAngle()+secondJoint.getKinematicAngle());
-    SmartDashboard.putNumber("Estimated X", Units.metersToInches(estimatedX));
-    SmartDashboard.putNumber("Estimated Y", Units.metersToInches(estimatedY));
+    SmartDashboard.putNumber("Arm Estimated X", Units.metersToInches(estimatedX));
+    SmartDashboard.putNumber("Arm Estimated Y", Units.metersToInches(estimatedY));
   }
 
   public ArmState estimateCurrentArmState() {
@@ -87,253 +95,128 @@ public class Arm extends SubsystemBase {
 
   public void raiseCurrentPosition(double degrees) {
     if(secondJoint.getKinematicAngle() < 0) { //when second joint is -
-      setFowardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
+      setForwardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
     } else {
-      setFowardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
+      setForwardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
     }
   }
 
   public void lowerCurrentPosition(double degrees) {
     if(secondJoint.getKinematicAngle() > 0) { //when second joint is +
-      setFowardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
+      setForwardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
     } else {
-      setFowardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
+      setForwardKinematics(baseJoint.getKinematicAngle(), secondJoint.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
     }
-  }
-
-
-  //////////////////////////////INTERMEDIATE POSITIONS/////////////////////////////
-
-  //back to transfer intermediate positions
-  private Command BackToTransferIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToTransferIntermediatePosition));
-  }
-
-  //back to back intermediate positions
-  private Command BackToBackIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackToBackIntermediatePosition));
-  }
-
-  //Back to font intermediate positions
-
-  //Back to Tuck intermediate positions
-
-  //transfer to back intermediate positions
-  private Command TransferToBackIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToBackIntermediatePosition));
-  }
-  private Command TransferToBackIntermediate2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToBackIntermediate2Position));
-  }
-
-  //transfer to transfer intermediate positions
-  private Command TransferToTransferIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToTransferIntermediatePosition));
-  }
-
-  //Transfer to front intermediate positions
-  private Command TransferToFrontIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToFrontIntermediatePosition));
-  }
-
-  //Transfer to tuck intermediate positions
-  private Command TransferToTuckIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToTuckIntermediatePosition));
-  }
-  private Command TransferToTuckIntermediate2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferToTuckIntermediate2Position));
-  }
-
-  //Front to transfer intermediate positions
-  private Command FrontToTransferIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontToTransferIntermediatePosition));
-  }
-  private Command FrontToTransferIntermediate2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontToTransferIntermediate2Position));
-  }
-
-  //Front to back intermediate positions
-
-  //font to tuck intermediate positions
-
-  //tuck to back intermediate positions
-
-  //tuck to transfer intermediate positions
-  private Command TuckToTransferIntermediateCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTuckToTransferIntermediatePosition));
-  }
-  private Command TuckToTransferIntermediate2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTuckToTransferIntermediate2Position));
-  }
-
-  //tuck to front intermediate positions
-
-  //tuck position
-  public Command TuckCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTuckPosition));
-  }
-
-  //transfer position
-  public Command TransferConeIntakeCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferConeIntakePosition));
-  }
-  public Command TransferCubeIntakeCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kTransferCubeIntakePosition));
-  }
-
-  //back cone score levels
-  public Command BackConeL1Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackConeL1Position));
-  }
-  public Command BackConeL2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackConeL2Position));
-  }
-  public Command BackConeL3Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackConeL3Position));
-  }
-
-  //back cube score levels
-  public Command BackCubeL1Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackCubeL1Position));
-  }
-  public Command BackCubeL2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackCubeL2Position));
-  }
-  public Command BackCubeL3Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackCubeL3Position));
-  }
-
-  //front cone levels
-  public Command FrontConeL2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontConeL2Position));
-  }
-
-  //front cube levels
-  public Command FrontCubeL2Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontCubeL2Position));
-  }
-  public Command FrontCubeL3Command() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontCubeL3Position));
-  }
-
-
-  //arm intake 
-  public Command BackIntakeCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kBackIntakePosition));
-  }
-  public Command FrontIntakeCommand() {
-    return new InstantCommand(() -> setFowardKinematics(ArmConstants.kFrontIntakePosition));
   }
 
   ///////////////////////////TRANSITIONS/////////////////////////////////////////////////////
   
   //Back to Back
-  public Command BackToBack(Command backScoreLevelCommand) {
+  public Command BackToBack(ArmForwardKinematicPosition backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(BackToBackIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(backScoreLevelCommand));
+      setForwardKinematicsUntil(secondJoint.atSetpoint(), ArmConstants.kBackToBackIntermediatePosition),
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), backScoreLevelPosition));
   }
 
   //Back to Transfer
-  public Command BackToTransfer(Command transferScoreLevelCommand) {
+  public Command BackToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(BackToTransferIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(transferScoreLevelCommand));
+      setForwardKinematicsUntil(secondJoint.atSetpoint(), ArmConstants.kBackToTransferIntermediatePosition),
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), transferScoreLevelPosition));
   }
 
   //Back to Front
-  public Command BackToFront(Command frontScoreLevelCommand) {
+  public Command BackToFront(ArmForwardKinematicPosition frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(frontScoreLevelCommand));
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), frontScoreLevelPosition));
   }
 
-  //Back to Tuck
-  public Command BackToTuck() {
+  //Back to Stow
+  public Command BackToStow() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TuckCommand()));
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), ArmConstants.kStowPosition));
   }
 
   //Transfer to Back
-  public Command TransferToBack(Command backScoreLevelCommand) {
+  public Command TransferToBack(ArmForwardKinematicPosition backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferToBackIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TransferToBackIntermediate2Command()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(backScoreLevelCommand));
+      setForwardKinematicsUntil(secondJoint.atSetpoint(), ArmConstants.kTransferToBackIntermediatePosition),
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), ArmConstants.kTransferToBackIntermediate2Position),
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), backScoreLevelPosition));
   }
 
   //Transfer to Front
-  public Command TransferToFront(Command frontScoreLevelCommand) {
+  public Command TransferToFront(ArmForwardKinematicPosition frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferToFrontIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(frontScoreLevelCommand));
+      setForwardKinematicsUntil(secondJoint.atSetpoint(), ArmConstants.kTransferToFrontIntermediatePosition),
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), frontScoreLevelPosition));
   }
 
   //Transfer to Transfer
-  public Command TransferToTransfer(Command transferScoreLevelCommand) {
+  public Command TransferToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(TransferToTransferIntermediateCommand()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(transferScoreLevelCommand));
+      setForwardKinematicsUntil(baseJoint.atSetpoint() && secondJoint.atSetpoint(), ArmConstants.kTransferToTransferIntermediatePosition),
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), transferScoreLevelPosition));
   }
 
-  //Transfer to tuck
-  public Command TransferToTuck() {
+  //Transfer to stow
+  public Command TransferToStow() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferToTuckIntermediateCommand()),
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TransferToTuckIntermediate2Command()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TuckCommand()));
+      setForwardKinematicsUntil(secondJoint.atSetpoint(), ArmConstants.kTransferToStowIntermediatePosition),
+      setForwardKinematicsUntil(secondJoint.atSetpoint(), ArmConstants.kTransferToStowIntermediate2Position),
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), ArmConstants.kStowPosition));
   }
 
   //Front to Back
-  public Command FrontToBack(Command backScoreLevelCommand) {
+  public Command FrontToBack(ArmForwardKinematicPosition backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(backScoreLevelCommand));
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), backScoreLevelPosition));
   }
 
   //Front to Transfer
-  public Command FrontToTransfer(Command transferScoreLevelCommand) {
+  public Command FrontToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint() && secondJoint.atSetpoint()).deadlineWith(FrontToTransferIntermediateCommand()),
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(FrontToTransferIntermediate2Command()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(transferScoreLevelCommand));
+      setForwardKinematicsUntil(baseJoint.atSetpoint() && secondJoint.atSetpoint(), ArmConstants.kFrontToTransferIntermediatePosition),
+      setForwardKinematicsUntil(secondJoint.atSetpoint(), ArmConstants.kFrontToTransferIntermediate2Position),
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), transferScoreLevelPosition));
   }
 
   //Front to Front
-  public Command FrontToFront(Command frontScoreLevelCommand) {
+  public Command FrontToFront(ArmForwardKinematicPosition frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(frontScoreLevelCommand));
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), frontScoreLevelPosition));
   }
 
-  //Front to Tuck
-  public Command FrontToTuck() {
+  //Front to Stow
+  public Command FrontToStow() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(TuckCommand()));
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), ArmConstants.kStowPosition));
   }
 
-  //Tuck to Back
-  public Command TuckToBack(Command backScoreLevelCommand) {
+  //Stow to Back
+  public Command StowToBack(ArmForwardKinematicPosition backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(backScoreLevelCommand));
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), backScoreLevelPosition));
   }
 
-  //Tuck to transfer
-  public Command TuckToTransfer(Command transferScoreLevelCommand) {
+  //Stow to transfer
+  public Command StowToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TuckToTransferIntermediateCommand()),
-      new WaitUntilCommand(() -> secondJoint.atSetpoint()).deadlineWith(TuckToTransferIntermediate2Command()),
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(transferScoreLevelCommand));
+      setForwardKinematicsUntil(secondJoint.atSetpoint(), ArmConstants.kStowToTransferIntermediatePosition),
+      setForwardKinematicsUntil(secondJoint.atSetpoint(), ArmConstants.kStowToTransferIntermediate2Position),
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), transferScoreLevelPosition));
   }
 
-  //tuck to front
-  public Command TuckToFront(Command frontScoreLevelCommand) {
-    System.out.println("tuck to front");
+  //stow to front
+  public Command StowToFront(ArmForwardKinematicPosition frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> baseJoint.atSetpoint()).deadlineWith(frontScoreLevelCommand));
+      setForwardKinematicsUntil(baseJoint.atSetpoint(), frontScoreLevelPosition));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    calculateInverseKinematics();
-    estimateCurrentXY();
+    // calculateInverseKinematics();
+    // estimateCurrentXY();
   }
 }

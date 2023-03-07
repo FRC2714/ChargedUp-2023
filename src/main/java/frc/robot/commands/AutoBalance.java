@@ -44,7 +44,6 @@ public class AutoBalance extends ProfiledPIDCommand {
   }
   
   public void initialize() {
-    System.out.println("autobalance start");
   }
 
   // Returns true when the command should end.
@@ -54,7 +53,6 @@ public class AutoBalance extends ProfiledPIDCommand {
   }
 
   public void end() {
-    System.out.println("autobalance end");
     drivetrain.setX();
   }
 }
