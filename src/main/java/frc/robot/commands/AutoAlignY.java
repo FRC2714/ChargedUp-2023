@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.AutoConstants;
@@ -15,32 +14,32 @@ import frc.robot.subsystems.Limelight;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class Autoalign extends ProfiledPIDCommand {
-  private DriveSubsystem drivetrain;
-  private Limelight limelight;
+public class AutoAlignY extends ProfiledPIDCommand {
+  private DriveSubsystem m_robotDrive;
+  private Limelight m_limelight;
   
   /** Creates a new Autoalign. */
-  public Autoalign(DriveSubsystem drivetrain, Limelight limelight) {
+  public AutoAlignY(DriveSubsystem m_robotDrive, Limelight m_limelight) {
     super(
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
             // The PID gains
-            AutoConstants.kPYController,
+            1,
             0,
             0,
             // The motion profile constraints
-            AutoConstants.kThetaControllerConstraints),
+            AutoConstants.kAutoControllerConstraints),
         // This should return the measurement
-        limelight::getXOffsetRadians,
+        m_limelight::getXOffsetRadians,
         // This should return the goal (can also be a constant)
         0,
         // This uses the output
-        (output, setpoint) -> drivetrain.drive(0, output, 0, true, false)
+        (output, setpoint) -> m_robotDrive.drive(0, output, 0, true, false)
           // Use the output (and setpoint, if desired) here
         );
-        addRequirements(drivetrain);
-        this.limelight = limelight;
-        this.drivetrain = drivetrain;
+        addRequirements(m_robotDrive);
+        this.m_limelight = m_limelight;
+        this.m_robotDrive = m_robotDrive;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
     getController().setTolerance(Units.degreesToRadians(3),0);
@@ -48,7 +47,7 @@ public class Autoalign extends ProfiledPIDCommand {
   }
 
   public void initialize() {
-    limelight.setLED(true);
+    m_limelight.setLED(true);
   }
 
 
@@ -60,8 +59,8 @@ public class Autoalign extends ProfiledPIDCommand {
 
   @Override
   public void end(boolean interrupted) {
-    limelight.setLED(false);
-    drivetrain.drive(0,0,0, true, false);
-    drivetrain.setX();
+    m_limelight.setLED(false);
+    m_robotDrive.drive(0,0,0, true, false);
+    System.out.println("Auto Align Y finished");
   }
 }

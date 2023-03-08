@@ -12,7 +12,6 @@ import frc.robot.Constants;
 
 public class Limelight extends SubsystemBase {
 
-	private double tx, ty, tv, distance = 0;
 	private NetworkTable limelight;
 	private static final double kCameraToGoalHeight = Constants.FieldConstants.kGoalHeight - Constants.CameraConstants.kCameraHeight;
 
@@ -25,16 +24,16 @@ public class Limelight extends SubsystemBase {
 		return kCameraToGoalHeight / Math.tan(Math.toRadians(Constants.CameraConstants.kMountingAngle + getYAngleOffsetDegrees()));
 	}
 
-	public double getDistanceToGoalDegrees() {
-		return distance;
+	public double getDistanceToGoal() {
+		return internalGetDistanceToGoal();
 	}
 
 	public double getYAngleOffsetDegrees() {
-		return ty;
+		return limelight.getEntry("ty").getDouble(-1);
 	}
 
 	public double getXAngleOffsetDegrees() {
-		return -tx; //must be negative
+		return -1 * limelight.getEntry("tx").getDouble(-1); //must be negative
 	}
 
 	public double getXOffsetRadians() {
@@ -60,11 +59,6 @@ public class Limelight extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		SmartDashboard.putNumber("X Angle Offset Degrees", getXAngleOffsetDegrees());
-
-		tx = limelight.getEntry("tx").getDouble(-1);
-		ty = limelight.getEntry("ty").getDouble(-1);
-		tv = limelight.getEntry("tz").getDouble(0);
-		distance = internalGetDistanceToGoal();
+		SmartDashboard.putNumber("distance to goal", getDistanceToGoal());
 	}
 }

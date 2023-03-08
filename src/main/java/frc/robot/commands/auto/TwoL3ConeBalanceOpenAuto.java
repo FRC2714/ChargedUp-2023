@@ -14,7 +14,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.Autoalign;
+import frc.robot.commands.AutoAlignY;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
@@ -46,7 +46,7 @@ public class TwoL3ConeBalanceOpenAuto extends AutoBase {
 		AutoConstants.EventMap.put("retract and stop intake", m_intake.retractAndStop());
 		//AutoConstants.EventMap.put("cone transfer", new ConeTransfer());
 
-        AutoConstants.EventMap.put("auto align", new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)));
+        AutoConstants.EventMap.put("auto align", new AutoAlignY(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)));
 		AutoConstants.EventMap.put("arm to cone level 3", 
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK)).withTimeout(3.0));
@@ -55,7 +55,7 @@ public class TwoL3ConeBalanceOpenAuto extends AutoBase {
 
 		addCommands(
 			m_claw.intakeConeCommand(),
-			new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)),
+			new AutoAlignY(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK).withTimeout(3.0),
 			m_claw.scoreCone(),
