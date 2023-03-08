@@ -236,13 +236,13 @@ public final class Constants {
     public static final double kBaseJointI = 0;
     public static final double kBaseJointD = 0.0000;
 
-    public static final double kSecondJointMaxVelocity = 5500; //6000 too much
-    public static final double kSecondJointMaxAcceleration = 4000;
+    public static final double kSecondJointMaxVelocity = 6000; //6000 too much
+    public static final double kSecondJointMaxAcceleration = 3000;
     public static final double kSecondJointTolerance = 6;
-    public static final double kSecondJointFF = 0.000125;
+    public static final double kSecondJointFF = 0.00009;
     public static final double kSecondJointP = 0.00000;
-    public static final double kSecondJointI = 0;
-    public static final double kSecondJointD = 0;
+    public static final double kSecondJointI = 0.0;
+    public static final double kSecondJointD = 0.0;
 
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 50; //amps
