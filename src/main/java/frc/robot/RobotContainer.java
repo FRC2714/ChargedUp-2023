@@ -164,7 +164,7 @@ public class RobotContainer {
 			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
 		m_driverController.back()
-			.toggleOnTrue(Commands.startEnd(m_claw::shoot, m_claw::stop, m_claw));
+			.toggleOnTrue(Commands.startEnd(m_claw::open, m_claw::stop, m_claw));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 

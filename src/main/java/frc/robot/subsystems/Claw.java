@@ -6,81 +6,68 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClawConstants;
 
 public class Claw extends SubsystemBase {
-  private CANSparkMax clawMotor;
+  private CANSparkMax ClawMotor;
 
-  private DoubleSolenoid clawSolenoid;
-  
-  private boolean isOpen;
+  private SparkMaxPIDController ClawPID;
+
+  private double openPosition = 0;
+  private double maxPosition = 0;
 
   /** Creates a new Claw. */
   public Claw() {
-    clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
+    ClawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    ClawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
 
-    clawMotor.enableVoltageCompensation(ClawConstants.kNominalVoltage);
+    ClawMotor.enableVoltageCompensation(ClawConstants.kNominalVoltage);
 
-    clawSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kClawSolenoidForwardChannel, ClawConstants.kClawSolenoidReverseChannel);
-  }
+    ClawPID = ClawMotor.getPIDController();
 
-  public void intake() {
-    clawMotor.setVoltage(ClawConstants.kIntakeMotorSpeed*ClawConstants.kNominalVoltage);
-  }
+    ClawPID.setFF(0, 0);
+    ClawPID.setP(0, 0);
+    ClawPID.setI(0, 0);
+    ClawPID.setD(0, 0);
 
-  public void outtake() {
-    clawMotor.setVoltage(ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
-  }
-
-  public void shoot() {
-    clawMotor.setVoltage(6*ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
+    ClawPID.setPositionPIDWrappingEnabled(false);
+    ClawPID.setPositionPIDWrappingMinInput(0);
+    ClawPID.setPositionPIDWrappingMaxInput(maxPosition);
   }
 
   public void stop() {
-    clawMotor.set(0);
+    ClawMotor.set(0);
+  }
+
+  public void open() {
+    ClawPID.setReference(openPosition, ControlType.kPosition);
   }
 
   public void close() {
-    clawSolenoid.set(Value.kReverse);
-    isOpen = false;
-  }
-  
-  public void open() {
-    clawSolenoid.set(Value.kForward);
-    isOpen = true;
-  }
-
-  public boolean getState() {
-    return isOpen;
+    ClawPID.setReference(0, ControlType.kPosition);
   }
 
   public void intakeClose() {
     close();
-    intake();
   }
   public void intakeOpen() {
     open();
-    intake();
   }
 
   public Command intakeConeCommand() {
     return (
-      new InstantCommand(() -> close())).andThen(
-      new InstantCommand(() -> intake()));
+      new InstantCommand(() -> close()));
   }
 
   public Command intakeCubeCommand() {
     return (
-      new InstantCommand(() -> open())).andThen(
-      new InstantCommand(() -> intake()));
+      new InstantCommand(() -> open()));
   }
 
   public Command stopOpen() {
@@ -97,8 +84,7 @@ public class Claw extends SubsystemBase {
 
   public Command shootCube() {
     return 
-      new InstantCommand(() -> shoot()).andThen(
-      new InstantCommand(() -> open())); 
+      new InstantCommand(() -> open()); 
   }
 
   @Override
