@@ -228,25 +228,25 @@ public final class Constants {
     public static final boolean kSecondJointInverted = false; //econd joint motor and encoder are NOT inverted
 
     //Controller Constants
-    public static final double kBaseJointMaxVelocity = 4000;
-    public static final double kBaseJointMaxAcceleration = 3000;
-    public static final double kBaseJointTolerance = 6;
-    public static final double kBaseJointFF = 0.00007;
+    public static final double kBaseJointMaxVelocity = 3000;
+    public static final double kBaseJointMaxAcceleration = 2500;
+    public static final double kBaseJointTolerance = 7;
+    public static final double kBaseJointFF = 0.00008;
     public static final double kBaseJointP = 0.00000;
     public static final double kBaseJointI = 0;
     public static final double kBaseJointD = 0.0000;
 
-    public static final double kSecondJointMaxVelocity = 6000; //6000 too much
-    public static final double kSecondJointMaxAcceleration = 3000;
+    public static final double kSecondJointMaxVelocity = 3500;
+    public static final double kSecondJointMaxAcceleration = 2750;
     public static final double kSecondJointTolerance = 6;
-    public static final double kSecondJointFF = 0.00009;
-    public static final double kSecondJointP = 0.00000;
+    public static final double kSecondJointFF = 0.00006;
+    public static final double kSecondJointP = 0.00015;
     public static final double kSecondJointI = 0.0;
-    public static final double kSecondJointD = 0.0;
+    public static final double kSecondJointD = 0.0005;
 
     //Current Limits
-    public static final int kBaseJointMotorCurrentLimit = 50; //amps
-    public static final int kSecondJointMotorCurrentLimit = 40; //amps
+    public static final int kBaseJointMotorCurrentLimit = 40; //amps
+    public static final int kSecondJointMotorCurrentLimit = 50; //amps
 
     //Back to back transition
     public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
