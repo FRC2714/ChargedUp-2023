@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -42,6 +43,14 @@ public class TurnToAngle extends ProfiledPIDCommand {
   }
 
   public void initialize() {
+  }
+
+  @Override
+  public void execute() {
+    SmartDashboard.putBoolean("turn to angle atSetpoint", getController().atSetpoint());
+    m_useOutput.accept(
+        m_controller.calculate(m_measurement.getAsDouble(), m_goal.get()),
+        m_controller.getSetpoint());
   }
 
   // Returns true when the command should end.

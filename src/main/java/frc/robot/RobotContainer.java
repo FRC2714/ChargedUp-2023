@@ -146,22 +146,22 @@ public class RobotContainer {
 
 		//toggle claw intake on X
 		m_driverController.x()
-			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+			.toggleOnTrue(Commands.startEnd(m_claw::intakeClose, m_claw::intakeOpen, m_claw));
 
 		//reset gyro on left
-		m_driverController.povLeft()
+		m_driverController.back()
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
 		m_driverController.povRight()
 			.onTrue(new IntakeCube(m_armStateMachine, m_claw, m_intake));
 
 		m_driverController.povDown()
-			.whileTrue(new AutoBalance(m_robotDrive));
+			.whileTrue(new TurnToAngle(m_robotDrive, 0));
 
 		m_driverController.povUp()
-			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
+			.whileTrue(new TurnToAngle(m_robotDrive, 180));
 
-		m_driverController.back()
+		m_driverController.start()
 			.toggleOnTrue(Commands.startEnd(m_claw::shoot, m_claw::stop, m_claw));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////

@@ -320,9 +320,9 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kBackConeL1Position =
       new ArmForwardKinematicPosition(130, -120);
     public static final ArmForwardKinematicPosition kBackConeL2Position = 
-      new ArmForwardKinematicPosition(90, -83);
+      new ArmForwardKinematicPosition(101, -90);
     public static final ArmForwardKinematicPosition kBackConeL3Position = 
-      new ArmForwardKinematicPosition(50, -10);
+      new ArmForwardKinematicPosition(54, -14);
 
     //Back Cube Score positions
     public static final ArmForwardKinematicPosition kBackCubeL1Position = 
@@ -340,7 +340,7 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kFrontCubeL2Position = 
       new ArmForwardKinematicPosition(110, 81);
     public static final ArmForwardKinematicPosition kFrontCubeL3Position = 
-      new ArmForwardKinematicPosition(120, 44);
+      new ArmForwardKinematicPosition(140, 15);
     
 
     //Arm Intake positions
