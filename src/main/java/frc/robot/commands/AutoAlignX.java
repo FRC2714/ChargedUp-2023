@@ -5,44 +5,50 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Limelight;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TurnToAngle extends ProfiledPIDCommand {
+public class AutoAlignX extends ProfiledPIDCommand {
+  private DriveSubsystem m_robotDrive;
+  private Limelight m_limelight;
   
   /** Creates a new Autoalign. */
-  public TurnToAngle(DriveSubsystem drivetrain, double targetAngleDegrees) {
+  public AutoAlignX(DriveSubsystem m_robotDrive, Limelight m_limelight) {
     super(
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
             // The PID gains
-            AutoConstants.kPThetaController,
+            0.7,
             0,
             0,
             // The motion profile constraints
-            AutoConstants.kThetaControllerConstraints),
+            AutoConstants.kAutoControllerConstraints),
         // This should return the measurement
-        drivetrain::getHeadingRadians,
+        m_limelight::getDistanceToGoal,
         // This should return the goal (can also be a constant)
-        Units.degreesToRadians(targetAngleDegrees),
+        0.35, // distance from limelight to pole TODO
         // This uses the output
-        (output, setpoint) -> drivetrain.drive(0, 0, output, true, false)
+        (output, setpoint) -> m_robotDrive.drive(output, 0, 0, true, false)
           // Use the output (and setpoint, if desired) here
         );
-        addRequirements(drivetrain);
+        addRequirements(m_robotDrive);
+        this.m_limelight = m_limelight;
+        this.m_robotDrive = m_robotDrive;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
-    getController().enableContinuousInput(-Math.PI, Math.PI);
-    getController().setTolerance(Units.degreesToRadians(1.5));
+    getController().setTolerance(0.07,0);
+
   }
 
   public void initialize() {
+    m_limelight.setLED(true);
   }
+
 
   // Returns true when the command should end.
   @Override
@@ -52,6 +58,8 @@ public class TurnToAngle extends ProfiledPIDCommand {
 
   @Override
   public void end(boolean interrupted) {
-    System.out.println("Turn to angle finished");
+    m_limelight.setLED(false);
+    m_robotDrive.drive(0,0,0, true, false);
+    System.out.println("Auto Align X finished");
   }
 }

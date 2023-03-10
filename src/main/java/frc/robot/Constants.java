@@ -140,6 +140,9 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     
+    public static final TrapezoidProfile.Constraints kAutoControllerConstraints = new TrapezoidProfile.Constraints(
+        kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
+    
     public static final HashMap<String, Command> EventMap = new HashMap<>();
   }
 
@@ -197,12 +200,12 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static final double kGoalHeight = Units.inchesToMeters(0); //todo
+    public static final double kGoalHeight = Units.inchesToMeters(24); //todo
   }
 
   public static final class CameraConstants {
-    public static final double kMountingAngle = 0; //todo
-    public static double kCameraHeight = Units.inchesToMeters(0); //todo
+    public static final double kMountingAngle = 35; //todo
+    public static double kCameraHeight = Units.inchesToMeters(9.14); //todo
   }
   public static final class ArmConstants {
     //Spark IDs
