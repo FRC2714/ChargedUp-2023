@@ -200,7 +200,7 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static final double kGoalHeight = Units.inchesToMeters(0); //todo
+    public static final double kGoalHeight = Units.inchesToMeters(24); //todo
   }
 
   public static final class CameraConstants {

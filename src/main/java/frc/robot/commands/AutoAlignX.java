@@ -23,7 +23,7 @@ public class AutoAlignX extends ProfiledPIDCommand {
         // The ProfiledPIDController used by the command
         new ProfiledPIDController(
             // The PID gains
-            1,
+            0.7,
             0,
             0,
             // The motion profile constraints
@@ -31,7 +31,7 @@ public class AutoAlignX extends ProfiledPIDCommand {
         // This should return the measurement
         m_limelight::getDistanceToGoal,
         // This should return the goal (can also be a constant)
-        0, // distance from limelight to pole TODO
+        0.35, // distance from limelight to pole TODO
         // This uses the output
         (output, setpoint) -> m_robotDrive.drive(output, 0, 0, true, false)
           // Use the output (and setpoint, if desired) here
@@ -41,7 +41,7 @@ public class AutoAlignX extends ProfiledPIDCommand {
         this.m_robotDrive = m_robotDrive;
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
-    getController().setTolerance(0,0);
+    getController().setTolerance(0.07,0);
 
   }
 
