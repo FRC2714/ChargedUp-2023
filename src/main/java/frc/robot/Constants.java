@@ -228,21 +228,21 @@ public final class Constants {
     public static final boolean kSecondJointInverted = false; //econd joint motor and encoder are NOT inverted
 
     //Controller Constants
-    public static final double kBaseJointMaxVelocity = 3000;
-    public static final double kBaseJointMaxAcceleration = 2500;
-    public static final double kBaseJointTolerance = 7;
+    public static final double kBaseJointMaxVelocity = 4000;
+    public static final double kBaseJointMaxAcceleration = 3000;
+    public static final double kBaseJointTolerance = 6;
     public static final double kBaseJointFF = 0.00008;
     public static final double kBaseJointP = 0.00000;
     public static final double kBaseJointI = 0;
     public static final double kBaseJointD = 0.0000;
 
-    public static final double kSecondJointMaxVelocity = 3500;
-    public static final double kSecondJointMaxAcceleration = 2750;
+    public static final double kSecondJointMaxVelocity = 5000;
+    public static final double kSecondJointMaxAcceleration = 3500;
     public static final double kSecondJointTolerance = 6;
-    public static final double kSecondJointFF = 0.00006;
-    public static final double kSecondJointP = 0.00015;
+    public static final double kSecondJointFF = 0.00004;
+    public static final double kSecondJointP = 0.00006;
     public static final double kSecondJointI = 0.0;
-    public static final double kSecondJointD = 0.0005;
+    public static final double kSecondJointD = 0.00020;
 
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 40; //amps
@@ -304,7 +304,7 @@ public final class Constants {
 
     //Stow position 
     public static final ArmForwardKinematicPosition kStowPosition = 
-      new ArmForwardKinematicPosition(85,115);
+      new ArmForwardKinematicPosition(76,110);
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferConeIntakePosition = 
