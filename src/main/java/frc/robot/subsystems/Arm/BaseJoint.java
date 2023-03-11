@@ -18,8 +18,8 @@ import frc.robot.Constants.ArmConstants;
 
 
 public class BaseJoint extends SubsystemBase {
-  private CANSparkMax RightBaseMotor;
-  private CANSparkMax LeftBaseMotor;
+  private CANSparkMax RightBaseJointMotor;
+  private CANSparkMax LeftBaseJointMotor;
   private AbsoluteEncoder BaseEncoder;
   private SparkMaxPIDController BaseJointPID;
 
@@ -29,23 +29,23 @@ public class BaseJoint extends SubsystemBase {
   
   /** Creates a new BaseJoint. */
   public BaseJoint() {
-    LeftBaseMotor = new CANSparkMax(ArmConstants.kLeftBaseJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    RightBaseMotor = new CANSparkMax(ArmConstants.kRightBaseJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    LeftBaseMotor.follow(RightBaseMotor, true);
+    LeftBaseJointMotor = new CANSparkMax(ArmConstants.kLeftBaseJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    RightBaseJointMotor = new CANSparkMax(ArmConstants.kRightBaseJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    LeftBaseJointMotor.follow(RightBaseJointMotor, true);
 
-    RightBaseMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
-    LeftBaseMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
+    RightBaseJointMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
+    LeftBaseJointMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
 
-    RightBaseMotor.setInverted(ArmConstants.kBaseJointInverted); //must be inverted
-    RightBaseMotor.setIdleMode(IdleMode.kBrake);
-    LeftBaseMotor.setIdleMode(IdleMode.kBrake);
+    RightBaseJointMotor.setInverted(ArmConstants.kBaseJointInverted); //must be inverted
+    RightBaseJointMotor.setIdleMode(IdleMode.kBrake);
+    LeftBaseJointMotor.setIdleMode(IdleMode.kBrake);
 
-    BaseEncoder = RightBaseMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    BaseEncoder = RightBaseJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
     BaseEncoder.setPositionConversionFactor(ArmConstants.kBaseJointPositionConversionFactor);
     BaseEncoder.setInverted(ArmConstants.kBaseJointInverted); //must be inverted
     //todo set velocity conversion factor
 
-    BaseJointPID = RightBaseMotor.getPIDController();
+    BaseJointPID = RightBaseJointMotor.getPIDController();
     BaseJointPID.setPositionPIDWrappingEnabled(false);
     BaseJointPID.setFeedbackDevice(BaseEncoder);
     BaseJointPID.setFF(ArmConstants.kBaseJointFF, 0);
@@ -103,7 +103,7 @@ public class BaseJoint extends SubsystemBase {
   }
 
   public void disable() {
-    RightBaseMotor.set(0);
+    RightBaseJointMotor.set(0);
   }
 
   @Override

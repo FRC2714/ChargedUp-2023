@@ -17,7 +17,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
 public class SecondJoint extends SubsystemBase {
-  private CANSparkMax SecondJointMotor;
+  private CANSparkMax RightSecondJointMotor;
+  private CANSparkMax LeftSecondJointMotor;
   private AbsoluteEncoder SecondJointEncoder;
   private SparkMaxPIDController SecondJointPID;
 
@@ -27,18 +28,23 @@ public class SecondJoint extends SubsystemBase {
   
   /** Creates a new SecondJoint. */
   public SecondJoint() {
-    SecondJointMotor = new CANSparkMax(ArmConstants.kSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    SecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
+    RightSecondJointMotor = new CANSparkMax(ArmConstants.kRightSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    LeftSecondJointMotor = new CANSparkMax(ArmConstants.kRightSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    LeftSecondJointMotor.follow(RightSecondJointMotor, true);
 
-    SecondJointMotor.setInverted(ArmConstants.kSecondJointInverted); //must not be inverted
-    SecondJointMotor.setIdleMode(IdleMode.kBrake);
+    RightSecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
+    LeftSecondJointMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
 
-    SecondJointEncoder = SecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    RightSecondJointMotor.setInverted(ArmConstants.kSecondJointInverted); //must not be inverted
+    RightSecondJointMotor.setIdleMode(IdleMode.kBrake);
+    LeftSecondJointMotor.setIdleMode(IdleMode.kBrake);
+
+    SecondJointEncoder = RightSecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
     SecondJointEncoder.setPositionConversionFactor(ArmConstants.kSecondJointPositionConversionFactor);
     SecondJointEncoder.setInverted(ArmConstants.kSecondJointInverted); //must not be inverted
     //todo set velocity conversion factor
 
-    SecondJointPID = SecondJointMotor.getPIDController();
+    SecondJointPID = RightSecondJointMotor.getPIDController();
     SecondJointPID.setPositionPIDWrappingEnabled(false);
     SecondJointPID.setFeedbackDevice(SecondJointEncoder);
     SecondJointPID.setFF(ArmConstants.kSecondJointFF, 0);
@@ -97,7 +103,7 @@ public class SecondJoint extends SubsystemBase {
   }
 
   public void disable() {
-    SecondJointMotor.set(0);
+    RightSecondJointMotor.set(0);
   }
 
   @Override

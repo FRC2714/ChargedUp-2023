@@ -206,9 +206,11 @@ public final class Constants {
   }
   public static final class ArmConstants {
     //Spark IDs
-    public static final int kLeftBaseJointMotorCanId = 9;
     public static final int kRightBaseJointMotorCanId = 10;
-    public static final int kSecondJointMotorCanId = 11;
+    public static final int kLeftBaseJointMotorCanId = 9;
+
+    public static final int kRightSecondJointMotorCanId = 11;
+    public static final int kLeftSecondJointMotorCanId = 12;
 
     //Physical constants
     public static final double kBaseJointGearRatio = 240;
