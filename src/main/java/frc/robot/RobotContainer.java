@@ -66,7 +66,7 @@ public class RobotContainer {
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake, m_claw);
+	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
