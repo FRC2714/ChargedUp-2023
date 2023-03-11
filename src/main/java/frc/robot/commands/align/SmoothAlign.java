@@ -25,20 +25,20 @@ public class SmoothAlign extends CommandBase {
     this.m_limelight = m_limelight;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    xController = new ProfiledPIDController(0.7, 0, 0, AutoConstants.kAutoControllerConstraints);
-    yController = new ProfiledPIDController(1, 0, 0, AutoConstants.kAutoControllerConstraints);
+    xController = new ProfiledPIDController(0.8, 0, 0, AutoConstants.kAutoControllerConstraints);
+    yController = new ProfiledPIDController(1.1, 0, 0, AutoConstants.kAutoControllerConstraints);
     thetaController = new ProfiledPIDController(1, 0, 0, AutoConstants.kThetaControllerConstraints);
     
     addRequirements(m_robotDrive);
 
-    xController.setGoal(0.40);
-    xController.setTolerance(0.03,0);
+    xController.setGoal(0.37);
+    xController.setTolerance(0.05,0);
 
     yController.setGoal(0);
-    yController.setTolerance(Units.degreesToRadians(3),0);
+    yController.setTolerance(Units.degreesToRadians(0),0);
 
     thetaController.setGoal(0);
-    thetaController.setTolerance(Units.degreesToRadians(1.5),0);
+    thetaController.setTolerance(Units.degreesToRadians(0),0);
   }
 
   // Called when the command is initially scheduled.
