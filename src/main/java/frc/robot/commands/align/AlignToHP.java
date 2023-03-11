@@ -51,6 +51,7 @@ public class AlignToHP extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_limelight.setLED(true);
     m_limelight.setAprilTagPipeline();
   }
 
@@ -62,7 +63,7 @@ public class AlignToHP extends CommandBase {
         -yController.calculate(m_limelight.getXOffsetRadians()), 
         thetaController.calculate(m_robotDrive.getHeadingRadians()), 
         true,
-        false);
+        true);
   }
 
   // Called once the command ends or is interrupted.

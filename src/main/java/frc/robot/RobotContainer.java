@@ -29,6 +29,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.IntakeCube;
+import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToHP;
 import frc.robot.commands.align.SmoothAlign;
@@ -125,7 +126,7 @@ public class RobotContainer {
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(m_armStateMachine.scoreCommand())
+			.onTrue(new ScoreCommand(m_armStateMachine, m_claw))
 			.onFalse(m_claw.stopOpen());
 
 		//intake on right trigger while held 

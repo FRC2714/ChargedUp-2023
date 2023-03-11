@@ -94,14 +94,6 @@ public class ArmStateMachine extends SubsystemBase {
     return this.cargoType;
   }
 
-  public Command scoreCommand() {
-    if (cargoType == CargoType.CONE) {
-      return m_claw.scoreCone();
-    } else {
-      return m_claw.shootCube();
-    }
-  }
-
   public Command nothingCommand() {
     return new InstantCommand();
   }
