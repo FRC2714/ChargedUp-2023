@@ -235,8 +235,8 @@ public final class Constants {
     public static final double kBaseJointPositionConversionFactor = (2*Math.PI) * kBaseJointGearRatio; //Radians * Gear ratio
     public static final double kSecondJointPositionConversionFactor = (2*Math.PI) * kSecondJointGearRatio;
 
-    public static final double kBaseJointKinematicOffset = 105; //difference from kinematic 0 to sparkmax 0 approx 45 deg
-    public static final double kSecondJointKinematicOffset = 630; //difference from kinematic 0 to sparkmax 0 approx 160 deg
+    public static final double kBaseJointKinematicOffset = 188; //difference from kinematic 0 to sparkmax 0 approx 45 deg
+    public static final double kSecondJointKinematicOffset = 781; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
     public static final boolean kBaseJointInverted = true; //both base joint motor and encoder are inverted
     public static final boolean kSecondJointInverted = false; //econd joint motor and encoder are NOT inverted
@@ -245,7 +245,7 @@ public final class Constants {
     public static final double kBaseJointMaxVelocity = 3000;
     public static final double kBaseJointMaxAcceleration = 2500;
     public static final double kBaseJointTolerance = 7;
-    public static final double kBaseJointFF = 0.00008;
+    public static final double kBaseJointFF = 0.00007;
     public static final double kBaseJointP = 0.00000;
     public static final double kBaseJointI = 0;
     public static final double kBaseJointD = 0.0000;
@@ -254,9 +254,9 @@ public final class Constants {
     public static final double kSecondJointMaxAcceleration = 2750;
     public static final double kSecondJointTolerance = 6;
     public static final double kSecondJointFF = 0.00006;
-    public static final double kSecondJointP = 0.00015;
+    public static final double kSecondJointP = 0.00000;
     public static final double kSecondJointI = 0.0;
-    public static final double kSecondJointD = 0.0005;
+    public static final double kSecondJointD = 0.0000;
 
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 40; //amps

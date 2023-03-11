@@ -46,6 +46,7 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
+import frc.robot.subsystems.Arm.Wrist;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
 import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
@@ -64,6 +65,7 @@ public class RobotContainer {
 	private final Arm m_arm = new Arm();
 	private final Intake m_intake = new Intake();
 	private final Claw m_claw = new Claw();
+	private final Wrist m_wrist = new Wrist();
 	private final LEDs m_leds = new LEDs();
 	
 	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake, m_claw);
