@@ -13,7 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.utils.ArmForwardKinematicPosition;
+import frc.robot.utils.ArmForwardKinematicPosition;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide

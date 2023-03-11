@@ -8,15 +8,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utils.LimelightHelpers;
 
 
 public class Limelight extends SubsystemBase {
 
-	private NetworkTable limelight;
 	private static final double kCameraToGoalHeight = Constants.FieldConstants.kGoalHeight - Constants.CameraConstants.kCameraHeight;
 
+	private String defaultPipeline = "";
 	public Limelight() {
-		limelight = NetworkTableInstance.getDefault().getTable("limelight");
 	}
 
 	private double internalGetDistanceToGoal() {
@@ -29,11 +29,11 @@ public class Limelight extends SubsystemBase {
 	}
 
 	public double getYAngleOffsetDegrees() {
-		return limelight.getEntry("ty").getDouble(-1);
+		return LimelightHelpers.getTY("");
 	}
 
 	public double getXAngleOffsetDegrees() {
-		return -1 * limelight.getEntry("tx").getDouble(-1); //must be negative
+		return -1 * LimelightHelpers.getTX(""); //must be negative
 	}
 
 	public double getXOffsetRadians() {
@@ -41,16 +41,16 @@ public class Limelight extends SubsystemBase {
 	}
 
 	public boolean targetVisible() {
-		return limelight.getEntry("tv").getDouble(0.0) != 0.0;
+		return LimelightHelpers.getTV("");
 	}
 
-	public void setPipeline(double numPipeline) {
-		limelight.getEntry("pipeline").setDouble(numPipeline);
+	public void setPipeline(String pipelineName) {
+		LimelightHelpers.setPipelineIndex("", 0);
 	}
 
 	public void setLED(boolean lightOn) {
-        if (lightOn) limelight.getEntry("ledMode").setDouble(3); // LED force on
-        else limelight.getEntry("ledMode").setDouble(1); // LED force off
+        if (lightOn) LimelightHelpers.setLEDMode_ForceOn(""); // LED force on
+        else LimelightHelpers.setLEDMode_ForceOff(""); // LED force off
     }
 
 	public Command setLEDCommand(boolean lightOn) {
@@ -60,5 +60,6 @@ public class Limelight extends SubsystemBase {
 	@Override
 	public void periodic() {
 		SmartDashboard.putNumber("distance to goal", getDistanceToGoal());
+		SmartDashboard.putNumber("x offset degrees", getXAngleOffsetDegrees());
 	}
 }
