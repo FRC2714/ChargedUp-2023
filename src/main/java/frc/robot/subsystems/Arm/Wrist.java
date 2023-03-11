@@ -34,31 +34,19 @@ public class Wrist extends SubsystemBase {
     WristMotor.setInverted(true);
     WristMotor.enableVoltageCompensation(12.0);
 
+    WristMotor.burnFlash();
+
     WristEncoder = WristMotor.getAbsoluteEncoder(Type.kDutyCycle);
     WristEncoder.setPositionConversionFactor(WristConstants.kWristPositionConversionFactor);
     WristEncoder.setInverted(WristConstants.kWristInverted);
-
-    WristController = new PIDController(1, 0, 0.01);
-
-    WristController.enableContinuousInput(0, 2*Math.PI);
-    WristController.setTolerance(Units.degreesToRadians(1));
   }
 
-  private void setControllerMotorOutput() {
-    WristMotor.setVoltage(WristController.calculate(getCurrentAngleRadians())*12.0);
+  public void setPower(double power) {
+    WristMotor.setVoltage(power*12.0);
   }
 
   public double getCurrentAngleRadians() {
     return WristEncoder.getPosition() / WristConstants.kWristGearRatio;
-  }
-
-  public void setTargetAngle(double targetDegrees) {
-    this.targetAngle = Units.degreesToRadians(targetDegrees);
-    WristController.setSetpoint(Units.degreesToRadians(targetDegrees));
-  }
-
-  public Command setTargetAngleCommand(double targetDegrees) {
-    return new InstantCommand(() -> setTargetAngle(targetDegrees));
   }
 
   public boolean atSetpoint() {
@@ -70,8 +58,6 @@ public class Wrist extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("wrist target angle", Units.radiansToDegrees(targetAngle));
     SmartDashboard.putNumber("current wrist angle", Units.radiansToDegrees(getCurrentAngleRadians()));
-    SmartDashboard.putBoolean("wrist at setpoint", atSetpoint());
-    setControllerMotorOutput();
 
   }
 }

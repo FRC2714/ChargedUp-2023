@@ -40,6 +40,9 @@ public class SecondJoint extends SubsystemBase {
     RightSecondJointMotor.setIdleMode(IdleMode.kBrake);
     LeftSecondJointMotor.setIdleMode(IdleMode.kBrake);
 
+    RightSecondJointMotor.burnFlash();
+    LeftSecondJointMotor.burnFlash();
+
     SecondJointEncoder = RightSecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
     SecondJointEncoder.setPositionConversionFactor(ArmConstants.kSecondJointPositionConversionFactor);
     SecondJointEncoder.setInverted(ArmConstants.kSecondJointInverted); //must not be inverted

@@ -33,6 +33,7 @@ import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autoalign;
 import frc.robot.commands.IntakeCube;
 import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.TurnWristToAngle;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
 import frc.robot.commands.auto.OneCubeTerrainAuto;
@@ -172,10 +173,10 @@ public class RobotContainer {
 
 		//manual raise arm on start
 		m_operatorController.start()
-			.onTrue(m_wrist.setTargetAngleCommand(0));
+			.onTrue(new WaitCommand(0.5).raceWith(new TurnToAngle(m_robotDrive, 0)));
 		//manual lower arm on back
 		m_operatorController.back()
-			.onTrue(m_wrist.setTargetAngleCommand(180));
+			.onTrue(new WaitCommand(0.5).raceWith(new TurnToAngle(m_robotDrive, 180)));
 
 		// TUCK on up
 		m_operatorController.povUp()

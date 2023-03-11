@@ -260,7 +260,7 @@ public final class Constants {
 
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 50; //amps
-    public static final int kSecondJointMotorCurrentLimit = 50; //amps
+    public static final int kSecondJointMotorCurrentLimit = 20; //amps PREVENT ENDCAP ROUNDOUT
 
     //Back to back transition
     public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
@@ -322,7 +322,7 @@ public final class Constants {
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferConeIntakePosition = 
-      new ArmForwardKinematicPosition(85,150);
+      new ArmForwardKinematicPosition(85,140);
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferCubeIntakePosition = 
       new ArmForwardKinematicPosition(103,130);

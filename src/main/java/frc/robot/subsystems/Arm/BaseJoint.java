@@ -40,6 +40,9 @@ public class BaseJoint extends SubsystemBase {
     RightBaseJointMotor.setIdleMode(IdleMode.kBrake);
     LeftBaseJointMotor.setIdleMode(IdleMode.kBrake);
 
+    RightBaseJointMotor.burnFlash();
+    LeftBaseJointMotor.burnFlash();
+
     BaseEncoder = RightBaseJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
     BaseEncoder.setPositionConversionFactor(ArmConstants.kBaseJointPositionConversionFactor);
     BaseEncoder.setInverted(ArmConstants.kBaseJointInverted); //must be inverted
