@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.Arm;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -14,6 +14,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.WristConstants;
 
 public class Wrist extends SubsystemBase {
   private CANSparkMax WristMotor;
@@ -22,15 +23,15 @@ public class Wrist extends SubsystemBase {
   private SparkMaxPIDController WristPID;
 
   private double targetAngle;
-  private final double WristGearRatio = 60;
+  
 
   /** Creates a new Claw. */
   public Wrist() {
-    WristMotor = new CANSparkMax(0, CANSparkMaxLowLevel.MotorType.kBrushless);
+    WristMotor = new CANSparkMax(WristConstants.kWristMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     WristEncoder = WristMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    WristEncoder.setPositionConversionFactor(2*Math.PI*WristGearRatio);
-    WristEncoder.setInverted(false);
+    WristEncoder.setPositionConversionFactor(WristConstants.kWristPositionConversionFactor);
+    WristEncoder.setInverted(WristConstants.kWristInverted);
 
     WristPID = WristMotor.getPIDController();
     WristPID.setFeedbackDevice(WristEncoder);
@@ -49,11 +50,11 @@ public class Wrist extends SubsystemBase {
   }
 
   private double convertAngleFromRadiansToSparkMax(double radians) {
-    return radians * WristGearRatio;
+    return radians * WristConstants.kWristGearRatio;
   }
 
   private double convertAngleFromSparkMaxToRadians(double sparkAngle) {
-    return sparkAngle / WristGearRatio;
+    return sparkAngle / WristConstants.kWristGearRatio;
   }
 
   public double getCurrentAngle() {

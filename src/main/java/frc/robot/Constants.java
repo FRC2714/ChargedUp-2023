@@ -204,6 +204,18 @@ public final class Constants {
     public static final double kMountingAngle = 0; //todo
     public static double kCameraHeight = Units.inchesToMeters(0); //todo
   }
+
+  public static final class WristConstants {
+    public static final int kWristMotorCanId = 16;
+
+    public static final double kWristGearRatio = 60;
+
+    public static final double kWristPositionConversionFactor = (2*Math.PI) * kWristGearRatio;
+
+    public static final boolean kWristInverted = false; //CW +
+
+  }
+
   public static final class ArmConstants {
     //Spark IDs
     public static final int kRightBaseJointMotorCanId = 10;
