@@ -259,8 +259,8 @@ public final class Constants {
     public static final double kSecondJointD = 0.0000;
 
     //Current Limits
-    public static final int kBaseJointMotorCurrentLimit = 50; //amps
-    public static final int kSecondJointMotorCurrentLimit = 20; //amps PREVENT ENDCAP ROUNDOUT
+    public static final int kBaseJointMotorCurrentLimit = 40; //amps
+    public static final int kSecondJointMotorCurrentLimit = 10; //amps PREVENT ENDCAP ROUNDOUT
 
     //Back to back transition
     public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 

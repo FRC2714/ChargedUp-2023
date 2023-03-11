@@ -20,6 +20,7 @@ public class Claw extends SubsystemBase {
   private SparkMaxPIDController ClawPID;
 
   private double openPosition = 0;
+  private double closePosition = 0;
   private double maxPosition = 0;
 
   /** Creates a new Claw. */
@@ -50,7 +51,7 @@ public class Claw extends SubsystemBase {
   }
 
   public void close() {
-    ClawPID.setReference(0, ControlType.kPosition);
+    ClawPID.setReference(closePosition, ControlType.kPosition);
   }
 
   public void intakeClose() {
