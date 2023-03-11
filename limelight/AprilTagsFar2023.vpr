@@ -54,13 +54,13 @@ image_source:0
 img_to_show:0
 intersection_filter:0
 invert_hue:0
-lcgain:12
+lcgain:15
 multigroup_max:7
 multigroup_min:1
 multigroup_rejector:0
 pipeline_led_enabled:0
 pipeline_led_power:100
-pipeline_res:1
+pipeline_res:2
 pipeline_type:3
 red_balance:1200
 roi_x:0.000000

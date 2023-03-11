@@ -29,6 +29,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.IntakeCube;
+import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToHP;
 import frc.robot.commands.align.SmoothAlign;
@@ -65,7 +66,7 @@ public class RobotContainer {
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake, m_claw);
+	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -125,7 +126,7 @@ public class RobotContainer {
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(m_armStateMachine.scoreCommand())
+			.onTrue(new ScoreCommand(m_armStateMachine, m_claw))
 			.onFalse(m_claw.stopOpen());
 
 		//intake on right trigger while held 
