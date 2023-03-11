@@ -30,10 +30,11 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.FullAutoAlign;
-import frc.robot.commands.AutoAlignY;
 import frc.robot.commands.IntakeCube;
 import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.align.AutoAlignY;
+import frc.robot.commands.align.FullAutoAlign;
+import frc.robot.commands.align.SmoothAlign;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
 import frc.robot.commands.auto.OneCubeTerrainAuto;
@@ -123,7 +124,7 @@ public class RobotContainer {
 			
 		//zero heading then autoalign on right bumper
 		m_driverController.rightBumper()
-			.whileTrue(new FullAutoAlign(m_robotDrive, m_limelight));
+			.whileTrue(new SmoothAlign(m_robotDrive, m_limelight));
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
