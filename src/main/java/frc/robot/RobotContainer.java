@@ -30,6 +30,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.IntakeCube;
 import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.align.AlignToHP;
 import frc.robot.commands.align.SmoothAlign;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
@@ -156,7 +157,7 @@ public class RobotContainer {
 			.whileTrue(new TurnToAngle(m_robotDrive, 0));
 
 		m_driverController.povUp()
-			.whileTrue(new TurnToAngle(m_robotDrive, 180));
+			.whileTrue(new AlignToHP(m_robotDrive, m_limelight));
 
 		m_driverController.start()
 			.toggleOnTrue(Commands.startEnd(m_claw::shoot, m_claw::stop, m_claw));
