@@ -170,16 +170,12 @@ public class RobotContainer {
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
-		//intake on right trigger while held 
-		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
-			.whileTrue(m_claw.stopOpen());
-
 		//manual raise arm on start
 		m_operatorController.start()
-			.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(3)));
+			.onTrue(m_wrist.setTargetAngleCommand(0));
 		//manual lower arm on back
 		m_operatorController.back()
-			.onTrue(new InstantCommand(() -> m_arm.lowerCurrentPosition(3)));
+			.onTrue(m_wrist.setTargetAngleCommand(180));
 
 		// TUCK on up
 		m_operatorController.povUp()

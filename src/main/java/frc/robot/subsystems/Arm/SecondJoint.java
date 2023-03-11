@@ -8,6 +8,7 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANPIDController.AccelStrategy;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkMax.IdleMode;
 
@@ -35,7 +36,7 @@ public class SecondJoint extends SubsystemBase {
     RightSecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
     LeftSecondJointMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
 
-    RightSecondJointMotor.setInverted(ArmConstants.kSecondJointInverted); //must not be inverted
+    RightSecondJointMotor.setInverted(true); //must not be inverted
     RightSecondJointMotor.setIdleMode(IdleMode.kBrake);
     LeftSecondJointMotor.setIdleMode(IdleMode.kBrake);
 
@@ -97,6 +98,7 @@ public class SecondJoint extends SubsystemBase {
     //SmartDashboard.putNumber("SecondJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
     SecondJointPID.setReference(convertAngleFromKinematicToSparkMax(targetAngle), CANSparkMax.ControlType.kSmartMotion, 0);
   }
+
 
   public boolean atSetpoint() {
     return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(8);
