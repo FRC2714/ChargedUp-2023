@@ -94,7 +94,7 @@ public class ArmStateMachine extends SubsystemBase {
     return this.cargoType;
   }
 
-  public Command scoreCommand(CargoType cargoType) {
+  public Command scoreCommand() {
     if (cargoType == CargoType.CONE) {
       return m_claw.scoreCone();
     } else {

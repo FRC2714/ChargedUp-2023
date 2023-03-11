@@ -200,13 +200,14 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static final double kGoalHeight = Units.inchesToMeters(24); //todo
+    public static final double kGoalHeight = Units.inchesToMeters(24);
   }
 
   public static final class CameraConstants {
-    public static final double kMountingAngle = 35; //todo
-    public static double kCameraHeight = Units.inchesToMeters(9.14); //todo
+    public static final double kMountingAngle = 35; // deg
+    public static double kCameraHeight = Units.inchesToMeters(9.14);
   }
+
   public static final class ArmConstants {
     //Spark IDs
     public static final int kLeftBaseJointMotorCanId = 9;

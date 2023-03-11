@@ -22,18 +22,14 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.AutoBalance;
 import frc.robot.commands.IntakeCube;
 import frc.robot.commands.TurnToAngle;
-import frc.robot.commands.align.AutoAlignY;
-import frc.robot.commands.align.FullAutoAlign;
 import frc.robot.commands.align.SmoothAlign;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
@@ -124,11 +120,11 @@ public class RobotContainer {
 			
 		//zero heading then autoalign on right bumper
 		m_driverController.rightBumper()
-			.whileTrue(new SmoothAlign(m_robotDrive, m_limelight));
+			.whileTrue(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine));
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(m_armStateMachine.scoreCommand(m_armStateMachine.getCargoType()))
+			.onTrue(m_armStateMachine.scoreCommand())
 			.onFalse(m_claw.stopOpen());
 
 		//intake on right trigger while held 

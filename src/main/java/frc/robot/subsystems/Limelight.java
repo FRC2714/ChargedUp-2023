@@ -1,39 +1,30 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.CameraConstants;
 import frc.robot.utils.LimelightHelpers;
 
 
 public class Limelight extends SubsystemBase {
+	private String limelightName = "limelight";
 
-	private static final double kCameraToGoalHeight = Constants.FieldConstants.kGoalHeight - Constants.CameraConstants.kCameraHeight;
+	public Limelight() {}
 
-	private String defaultPipeline = "";
-	public Limelight() {
-	}
-
-	private double internalGetDistanceToGoal() {
-		if (getYAngleOffsetDegrees() == -1) return -1;
-		return kCameraToGoalHeight / Math.tan(Math.toRadians(Constants.CameraConstants.kMountingAngle + getYAngleOffsetDegrees()));
-	}
-
-	public double getDistanceToGoal() {
-		return internalGetDistanceToGoal();
+	public double getDistanceToGoalMeters() {
+		return (FieldConstants.kGoalHeight - CameraConstants.kCameraHeight)/Math.tan(Units.degreesToRadians(CameraConstants.kMountingAngle + getYAngleOffsetDegrees()));
 	}
 
 	public double getYAngleOffsetDegrees() {
-		return LimelightHelpers.getTY("");
+		return LimelightHelpers.getTY(limelightName);
 	}
 
 	public double getXAngleOffsetDegrees() {
-		return -1 * LimelightHelpers.getTX(""); //must be negative
+		return -1 * LimelightHelpers.getTX(limelightName); //must be negative
 	}
 
 	public double getXOffsetRadians() {
@@ -41,17 +32,25 @@ public class Limelight extends SubsystemBase {
 	}
 
 	public boolean targetVisible() {
-		return LimelightHelpers.getTV("");
-	}
-
-	public void setPipeline(String pipelineName) {
-		LimelightHelpers.setPipelineIndex("", 0);
+		return LimelightHelpers.getTV(limelightName);
 	}
 
 	public void setLED(boolean lightOn) {
-        if (lightOn) LimelightHelpers.setLEDMode_ForceOn(""); // LED force on
-        else LimelightHelpers.setLEDMode_ForceOff(""); // LED force off
+        if (lightOn) LimelightHelpers.setLEDMode_ForceOn(limelightName); // LED force on
+        else LimelightHelpers.setLEDMode_ForceOff(limelightName); // LED force off
     }
+
+	public void setRetroPipeline() {
+		LimelightHelpers.setPipelineIndex(limelightName, 0);
+	}
+
+	public void setAprilTagPipeline() {
+		LimelightHelpers.setPipelineIndex(limelightName, 1);
+	}
+
+	public void setAprilTagFarPipeline() {
+		LimelightHelpers.setPipelineIndex(limelightName, 2);
+	}
 
 	public Command setLEDCommand(boolean lightOn) {
 		return new InstantCommand(() -> setLED(lightOn));
@@ -59,7 +58,6 @@ public class Limelight extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		SmartDashboard.putNumber("distance to goal", getDistanceToGoal());
-		SmartDashboard.putNumber("x offset degrees", getXAngleOffsetDegrees());
+		SmartDashboard.putNumber("distance to goal", getDistanceToGoalMeters());
 	}
 }
