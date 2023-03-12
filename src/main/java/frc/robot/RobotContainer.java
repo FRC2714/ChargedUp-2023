@@ -141,6 +141,9 @@ public class RobotContainer {
 		//toggle intake deploy on A
 		m_driverController.a()
 			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
+
+		m_driverController.y()
+			.onTrue(new AlignToHP(m_robotDrive, m_limelight));
 		
 
 		//toggle claw intake on X
