@@ -4,15 +4,17 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -22,48 +24,59 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
-  private CANSparkMax topMotor;
-  private CANSparkMax bottomMotor;
-    
-  private DoubleSolenoid leftRetractionSolenoid;
-  private DoubleSolenoid rightRetractionSolenoid;
-  private DoubleSolenoid intakeSolenoid;
+  private CANSparkMax intakeMotor;
+  private CANSparkMax pivotMotor;
+
+  private AbsoluteEncoder pivotEncoder;
+
+  private SparkMaxPIDController PivotController;
 
   private PneumaticHub pneumaticHub;
-
-  private IntakeState intakeState = IntakeState.STOPPED;
-
-  private Timer intakeRunningTimer = new Timer();
-
-  /** Creates a new Intake. */
-  public Intake() {
-    topMotor = new CANSparkMax(IntakeConstants.kTopMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    bottomMotor = new CANSparkMax(IntakeConstants.kBottomMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    topMotor.setInverted(true);
-    bottomMotor.follow(topMotor, false);
-
-    topMotor.setIdleMode(IdleMode.kBrake);
-    bottomMotor.setIdleMode(IdleMode.kBrake);
-    topMotor.setSmartCurrentLimit(IntakeConstants.kTopMotorCurrentLimit);
-    bottomMotor.setSmartCurrentLimit(IntakeConstants.kBottomMotorCurrentLimit);
-
-    topMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
-    bottomMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
-
-    pneumaticHub = new PneumaticHub(IntakeConstants.kPneumaticHubCanId);
-    pneumaticHub.enableCompressorAnalog(IntakeConstants.kCompressorMinPressure, IntakeConstants.kCompressorMaxPressure);
-
-    leftRetractionSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kLeftRetractionSolenoidForwardChannel, IntakeConstants.kLeftRetractionSolenoidReverseChannel);
-    rightRetractionSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kRightRetractionSolenoidForwardChannel, IntakeConstants.kRightRetractionSolenoidReverseChannel);
-    intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kIntakeSolenoidForwardChannel, IntakeConstants.kIntakeSolenoidReverseChannel);
-  }
 
   public enum IntakeState {
     INTAKING, OUTTAKING, STOPPED
   }
 
-  public void intake() {
-    topMotor.setVoltage(IntakeConstants.kIntakeMotorSpeed*IntakeConstants.kNominalVoltage);
+  private IntakeState intakeState = IntakeState.STOPPED;
+
+  private Timer intakeRunningTimer = new Timer();
+
+  private double targetAngleRadians = 0;
+
+  private double pivotMotorGearRatio = 50;
+
+  private double retractPosition = Units.degreesToRadians(0);
+  private double deployPosition = Units.degreesToRadians(0);
+
+  /** Creates a new Intake. */
+  public Intake() {
+    intakeMotor = new CANSparkMax(IntakeConstants.kTopMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    pivotMotor = new CANSparkMax(IntakeConstants.kBottomMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    intakeMotor.setInverted(true);
+
+    intakeMotor.setIdleMode(IdleMode.kBrake);
+    pivotMotor.setIdleMode(IdleMode.kBrake);
+    intakeMotor.setSmartCurrentLimit(IntakeConstants.kTopMotorCurrentLimit);
+    pivotMotor.setSmartCurrentLimit(IntakeConstants.kBottomMotorCurrentLimit);
+
+    intakeMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
+    pivotMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
+
+    intakeMotor.burnFlash();
+    pivotMotor.burnFlash();
+
+    pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    pivotEncoder.setPositionConversionFactor(2*Math.PI*pivotMotorGearRatio);
+    pivotEncoder.setInverted(false);
+
+    pneumaticHub = new PneumaticHub(IntakeConstants.kPneumaticHubCanId);
+    pneumaticHub.enableCompressorAnalog(IntakeConstants.kCompressorMinPressure, IntakeConstants.kCompressorMaxPressure);
+    
+    PivotController.setFF(0, 0);
+  }
+
+  private void intake() {
+    intakeMotor.setVoltage(IntakeConstants.kIntakeMotorSpeed*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.INTAKING) {
       intakeRunningTimer.reset();
       intakeRunningTimer.start();
@@ -71,8 +84,8 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public void outtake() {
-    topMotor.setVoltage(IntakeConstants.kOuttakeMotorSpeed*IntakeConstants.kNominalVoltage);
+  private void outtake(double power) {
+    intakeMotor.setVoltage(power*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.OUTTAKING) {
       intakeRunningTimer.reset();
       intakeRunningTimer.start();
@@ -80,40 +93,42 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public void stop() {
-    intakeState = IntakeState.STOPPED;
-    topMotor.set(0);
+  private void stop() {
+    intakeMotor.set(0);
+  }
+
+  private double getPivotAngleRadians() {
+    return pivotEncoder.getPosition() / pivotMotorGearRatio;
+  }
+
+  public void setPivotTargetAngle(double targetAngleDegrees) {
+    this.targetAngleRadians = Units.degreesToRadians(targetAngleDegrees);
+    PivotController.setReference(targetAngleRadians, ControlType.kPosition);
+  }
+
+  public boolean pivotAtSetpoint() {
+    return Math.abs(getPivotAngleRadians() - targetAngleRadians) < Units.degreesToRadians(2);
   }
 
   public void deploy() {
-    leftRetractionSolenoid.set(Value.kForward);
-    rightRetractionSolenoid.set(Value.kForward);
+    setPivotTargetAngle(deployPosition);
   }
 
   public void retract() {
-    leftRetractionSolenoid.set(Value.kReverse);
-    rightRetractionSolenoid.set(Value.kReverse);
-  }
-
-  public void open() {
-    intakeSolenoid.set(Value.kReverse);
-  }
-
-  public void close() {
-    intakeSolenoid.set(Value.kForward);
+    setPivotTargetAngle(retractPosition);
   }
 
   public boolean getDeployed() {
-    return leftRetractionSolenoid.get() == Value.kForward;
+    return true;
   }
 
   public boolean getClosed() {
-    return intakeSolenoid.get() == Value.kForward;
+    return true;
   }
 
   public boolean isConeDetected() {
     return (intakeRunningTimer.get() > 0.1) && //excludes current spike when motor first starts
-      (topMotor.getOutputCurrent() > 19) && //cone intake current threshold
+      (intakeMotor.getOutputCurrent() > 19) && //cone intake current threshold
       (intakeState == IntakeState.INTAKING) && 
       getClosed();
   }
@@ -123,7 +138,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command outtakeCommand() {
-    return new InstantCommand(() -> outtake());
+    return new InstantCommand(() -> outtake(0.6));
   }
 
   public Command stopCommand() {
@@ -138,25 +153,15 @@ public class Intake extends SubsystemBase {
     return new InstantCommand(() -> retract());
   }
 
-  public Command openCommand() {
-    return new InstantCommand(() -> open());
-  }
-
-  public Command closeCommand() {
-    return new InstantCommand(() -> close());
-  }
-
   public Command intakeCone() {
     return 
       deployCommand()
-      .andThen(closeCommand())
       .andThen(intakeCommand());
   }
 
   public Command intakeCube() {
     return 
       deployCommand()
-      .andThen(openCommand())
       .andThen(intakeCommand());
   }
 

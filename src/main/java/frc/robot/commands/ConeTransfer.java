@@ -30,7 +30,7 @@ public class ConeTransfer extends SequentialCommandGroup {
       m_claw.intakeCubeCommand(),
       new WaitCommand(3),
       m_claw.intakeConeCommand(),
-      m_intake.openCommand(),
+      //m_intake.openCommand(),
       m_armStateMachine.setTargetArmStateCommand(ArmState.STOW)
     );
   }

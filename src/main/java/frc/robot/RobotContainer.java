@@ -207,11 +207,13 @@ public class RobotContainer {
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()));
+			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE));
+			//.andThen(m_intake.closeCommand()));
 
 		// cube mode on left bumper
 		m_operatorController.leftBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
+			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE));
+			//.andThen(m_intake.openCommand()));
 	}
 
 	/**
