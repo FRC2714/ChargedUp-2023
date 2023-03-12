@@ -18,9 +18,9 @@ public class TurnWristToAngle extends PIDCommand {
   public TurnWristToAngle(Wrist m_wrist, double targetAngleDegrees) {
     super(
         // The controller that the command will use
-        new PIDController(1, 0, 0.02),
+        new PIDController(0.7, 0, 0),
         // This should return the measurement
-        () -> m_wrist.getCurrentAngleRadians(),
+        () -> m_wrist.getAngleRadians(),
         // This should return the setpoint (can also be a constant)
         () -> Units.degreesToRadians(targetAngleDegrees),
         // This uses the output
@@ -28,6 +28,7 @@ public class TurnWristToAngle extends PIDCommand {
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
     this.m_wrist = m_wrist;
+    addRequirements(m_wrist);
     getController().enableContinuousInput(0, 2*Math.PI);
     getController().setTolerance(Units.degreesToRadians(2));
   }

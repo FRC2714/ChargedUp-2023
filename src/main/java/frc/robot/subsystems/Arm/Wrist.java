@@ -9,21 +9,19 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.WristConstants;
+import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.TurnWristToAngle;
 
 public class Wrist extends SubsystemBase {
   private CANSparkMax WristMotor;
 
   private AbsoluteEncoder WristEncoder;
-  private PIDController WristController;
 
   private double targetAngle = 0;
   
@@ -45,19 +43,23 @@ public class Wrist extends SubsystemBase {
     WristMotor.setVoltage(power*12.0);
   }
 
-  public double getCurrentAngleRadians() {
+  public double getAngleRadians() {
     return WristEncoder.getPosition() / WristConstants.kWristGearRatio;
   }
 
+  public double getAngleDegrees() {
+    return Units.radiansToDegrees(getAngleRadians());
+  }
+
   public boolean atSetpoint() {
-    return Math.abs(getCurrentAngleRadians() - targetAngle) < Units.degreesToRadians(1);
+    return Math.abs(getAngleRadians() - targetAngle) < Units.degreesToRadians(1);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("wrist target angle", Units.radiansToDegrees(targetAngle));
-    SmartDashboard.putNumber("current wrist angle", Units.radiansToDegrees(getCurrentAngleRadians()));
+    SmartDashboard.putNumber("current wrist angle", getAngleDegrees());
 
   }
 }

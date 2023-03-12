@@ -31,6 +31,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autoalign;
+import frc.robot.commands.FlipWrist;
 import frc.robot.commands.IntakeCube;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.TurnWristToAngle;
@@ -100,7 +101,7 @@ public class RobotContainer {
 	public void setTeleopDefaultStates() {
 		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
 		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
-		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
+		m_armStateMachine.setTargetArmStateCommand(ArmState.STOW).schedule();
 		m_limelight.setLEDCommand(false).schedule();
 	}
 
@@ -173,10 +174,10 @@ public class RobotContainer {
 
 		//manual raise arm on start
 		m_operatorController.start()
-			.onTrue(new WaitCommand(0.5).raceWith(new TurnToAngle(m_robotDrive, 0)));
+			.onTrue(new WaitCommand(2).raceWith(new TurnWristToAngle(m_wrist, 0)));
 		//manual lower arm on back
 		m_operatorController.back()
-			.onTrue(new WaitCommand(0.5).raceWith(new TurnToAngle(m_robotDrive, 180)));
+			.onTrue(new WaitCommand(2).raceWith(new TurnWristToAngle(m_wrist, 180)));
 
 		// TUCK on up
 		m_operatorController.povUp()
@@ -203,7 +204,7 @@ public class RobotContainer {
 
 		//toggle claw intake on X
 		m_operatorController.x()
-			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+			.onTrue(new FlipWrist(m_wrist));
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()

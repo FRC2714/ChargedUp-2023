@@ -31,12 +31,12 @@ public class SecondJoint extends SubsystemBase {
   public SecondJoint() {
     RightSecondJointMotor = new CANSparkMax(ArmConstants.kRightSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     LeftSecondJointMotor = new CANSparkMax(ArmConstants.kLeftSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    LeftSecondJointMotor.follow(RightSecondJointMotor, true);
+    LeftSecondJointMotor.follow(RightSecondJointMotor, false);
 
     RightSecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
     LeftSecondJointMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
 
-    RightSecondJointMotor.setInverted(true); //must not be inverted
+    RightSecondJointMotor.setInverted(false); //must not be inverted
     RightSecondJointMotor.setIdleMode(IdleMode.kBrake);
     LeftSecondJointMotor.setIdleMode(IdleMode.kBrake);
 
@@ -46,6 +46,8 @@ public class SecondJoint extends SubsystemBase {
     SecondJointEncoder = RightSecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
     SecondJointEncoder.setPositionConversionFactor(ArmConstants.kSecondJointPositionConversionFactor);
     SecondJointEncoder.setInverted(ArmConstants.kSecondJointInverted); //must not be inverted
+
+    SecondJointEncoder.setZeroOffset(235.7475974);
     //todo set velocity conversion factor
 
     SecondJointPID = RightSecondJointMotor.getPIDController();
