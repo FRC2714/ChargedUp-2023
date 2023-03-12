@@ -4,7 +4,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -19,9 +18,9 @@ public class FlipWrist extends SequentialCommandGroup {
   public FlipWrist(Wrist m_wrist) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    if ((m_wrist.getAngleDegrees() < 90) || (m_wrist.getAngleDegrees() > 270)) { //when wrist is near 0
+    if ((m_wrist.getAngleDegrees() < 90) && (m_wrist.getAngleDegrees() > 270)) { //when wrist is near 0
       finalTargetAngleDegrees = 180;
-    } else if (((m_wrist.getAngleDegrees() > 90) || (m_wrist.getAngleDegrees() < 270))) {
+    } else if (((m_wrist.getAngleDegrees() > 90) && (m_wrist.getAngleDegrees() < 270))) {
       finalTargetAngleDegrees = 0;
     }
 
