@@ -68,7 +68,7 @@ public class ArmStateMachine extends SubsystemBase {
   }
 
   private void callArmCommand() {
-    getArmCommand().withInterruptBehavior(InterruptionBehavior.kCancelIncoming).schedule();
+    getArmCommand().withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
   }
 
   public void setCargoType(CargoType cargoType) {
