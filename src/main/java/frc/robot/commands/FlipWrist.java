@@ -14,23 +14,13 @@ import frc.robot.subsystems.Arm.Wrist;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class FlipWrist extends SequentialCommandGroup {
-  private double finalTargetAngleDegrees;
-  private double wristAngle;
   /** Creates a new FlipWrist. */
   public FlipWrist(Wrist m_wrist) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    wristAngle = SmartDashboard.getNumber("Wrist Angle Degrees", 180);
-    if ((wristAngle >= 0 && wristAngle < 90) || (wristAngle <= 360 && wristAngle > 270)) { //when wrist is near 0
-      finalTargetAngleDegrees = 90;
-    } else {
-      finalTargetAngleDegrees = 270;
-    }
-
     addCommands(
-      new PrintCommand("wrist angle" + wristAngle),
       new WaitCommand(0.2).raceWith(new TurnWristToAngle(m_wrist, 90)),
-      new WaitCommand(1.5).raceWith(new TurnWristToAngle(m_wrist, finalTargetAngleDegrees))
+      new WaitCommand(1.5).raceWith(new TurnWristToAngle(m_wrist, m_wrist.getFlipTargetAngle()))
     );
   }
 }

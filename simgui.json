@@ -1,13 +1,10 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "window": {
-        "visible": false
-      }
-    },
-    "RoboRIO": {
-      "window": {
-        "visible": true
+      "SPARK MAX [16]": {
+        "header": {
+          "open": true
+        }
       }
     }
   },
@@ -36,8 +33,5 @@
         "open": true
       }
     }
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

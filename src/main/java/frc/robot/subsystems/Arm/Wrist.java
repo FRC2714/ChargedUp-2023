@@ -59,16 +59,18 @@ public class Wrist extends SubsystemBase {
   }
 
   public Command FlipWrist() {
-    double finalTargetAngleDegrees;
-    if ((getAngleDegrees() >= 0 && getAngleDegrees() < 90) || (getAngleDegrees() <= 360 && getAngleDegrees() > 270)) { //when wrist is near 0
-      finalTargetAngleDegrees = 180;
-    } else {
-      finalTargetAngleDegrees = 0;
-    }
     return new SequentialCommandGroup(
       new WaitCommand(0.2).raceWith(new TurnWristToAngle(this, 90)),
-      new WaitCommand(1.5).raceWith(new TurnWristToAngle(this, finalTargetAngleDegrees))
+      new WaitCommand(1.5).raceWith(new TurnWristToAngle(this, getFlipTargetAngle()))
     );
+  }
+
+  public double getFlipTargetAngle() {
+    if ((wristAngle >= 0 && wristAngle < 90) || (wristAngle <= 360 && wristAngle > 270)) { //when wrist is near 0
+      return 180;
+    } else {
+      return 0;
+    }
   }
 
   @Override
@@ -76,6 +78,7 @@ public class Wrist extends SubsystemBase {
     // This method will be called once per scheduler run
     //SmartDashboard.putNumber("wrist target angle", Units.radiansToDegrees(targetAngle));
     SmartDashboard.putNumber("Wrist Angle Degrees", getAngleDegrees());
+    SmartDashboard.putNumber("get flip target angle", getFlipTargetAngle());
 
   }
 }

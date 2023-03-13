@@ -204,7 +204,7 @@ public class RobotContainer {
 
 		//toggle claw intake on X
 		m_operatorController.x()
-			.onTrue(new FlipWrist(m_wrist));
+			.onTrue(m_wrist.FlipWrist());
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()
