@@ -160,8 +160,8 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int kTopMotorCanId = 13;
-    public static final int kBottomMotorCanId = 15;
+    public static final int kIntakeMotorCanId = 13;
+    public static final int kPivotMotorCanId = 15;
 
     public static final int kPneumaticHubCanId = 1;
     public static final double kCompressorMinPressure = 90;
@@ -176,8 +176,8 @@ public final class Constants {
     public static final int kIntakeSolenoidForwardChannel = 1;
     public static final int kIntakeSolenoidReverseChannel = 0;
 
-    public static final int kTopMotorCurrentLimit = 30;
-    public static final int kBottomMotorCurrentLimit = 30;
+    public static final int kIntakeMotorCurrentLimit = 30;
+    public static final int kPivotMotorCurrentLimit = 30;
 
     public static final double kNominalVoltage = 11.0;
     public static final double kIntakeMotorSpeed = 0.85;

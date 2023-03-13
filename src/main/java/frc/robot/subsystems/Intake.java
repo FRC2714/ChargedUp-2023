@@ -45,19 +45,19 @@ public class Intake extends SubsystemBase {
 
   private double pivotMotorGearRatio = 50;
 
-  private double retractPosition = Units.degreesToRadians(0);
-  private double deployPosition = Units.degreesToRadians(0);
+  private double retractPosition = 50;
+  private double deployPosition = 130;
 
   /** Creates a new Intake. */
   public Intake() {
-    intakeMotor = new CANSparkMax(IntakeConstants.kTopMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    pivotMotor = new CANSparkMax(IntakeConstants.kBottomMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    intakeMotor = new CANSparkMax(IntakeConstants.kIntakeMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    pivotMotor = new CANSparkMax(IntakeConstants.kPivotMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     intakeMotor.setInverted(true);
 
     intakeMotor.setIdleMode(IdleMode.kBrake);
     pivotMotor.setIdleMode(IdleMode.kBrake);
-    intakeMotor.setSmartCurrentLimit(IntakeConstants.kTopMotorCurrentLimit);
-    pivotMotor.setSmartCurrentLimit(IntakeConstants.kBottomMotorCurrentLimit);
+    intakeMotor.setSmartCurrentLimit(IntakeConstants.kIntakeMotorCurrentLimit);
+    pivotMotor.setSmartCurrentLimit(IntakeConstants.kPivotMotorCurrentLimit);
 
     intakeMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
     pivotMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
@@ -66,13 +66,16 @@ public class Intake extends SubsystemBase {
     pivotMotor.burnFlash();
 
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    pivotEncoder.setPositionConversionFactor(2*Math.PI*pivotMotorGearRatio);
-    pivotEncoder.setInverted(false);
+    pivotEncoder.setPositionConversionFactor((2*Math.PI)*(pivotMotorGearRatio/2));
+    pivotEncoder.setInverted(true);
 
     pneumaticHub = new PneumaticHub(IntakeConstants.kPneumaticHubCanId);
     pneumaticHub.enableCompressorAnalog(IntakeConstants.kCompressorMinPressure, IntakeConstants.kCompressorMaxPressure);
     
-    PivotController.setFF(0, 0);
+    PivotController = pivotMotor.getPIDController();
+    PivotController.setP(0.00010, 0);
+    PivotController.setSmartMotionMaxVelocity(500, 0);
+    PivotController.setSmartMotionMaxAccel(500, 0);
   }
 
   private void intake() {
@@ -103,7 +106,7 @@ public class Intake extends SubsystemBase {
 
   public void setPivotTargetAngle(double targetAngleDegrees) {
     this.targetAngleRadians = Units.degreesToRadians(targetAngleDegrees);
-    PivotController.setReference(targetAngleRadians, ControlType.kPosition);
+    PivotController.setReference((targetAngleRadians * pivotMotorGearRatio*2), ControlType.kSmartMotion);
   }
 
   public boolean pivotAtSetpoint() {
@@ -183,5 +186,8 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     //if(isConeDetected()) {AutoConeIntake().schedule();}
+    SmartDashboard.putNumber("Intake Angle", Units.radiansToDegrees(getPivotAngleRadians()));
+    SmartDashboard.putNumber("intake target angle degrees", Units.radiansToDegrees(targetAngleRadians));
+    SmartDashboard.putNumber("intake target angle radians", targetAngleRadians);
   }
 }

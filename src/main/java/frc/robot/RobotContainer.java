@@ -173,10 +173,10 @@ public class RobotContainer {
 
 		//manual raise arm on start
 		m_operatorController.start()
-			.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(3)));
+			.onTrue(m_intake.deployCommand());
 		//manual lower arm on back
 		m_operatorController.back()
-			.onTrue(new InstantCommand(() -> m_arm.lowerCurrentPosition(3)));
+			.onTrue(m_intake.retractCommand());
 
 		// TUCK on up
 		m_operatorController.povUp()
@@ -202,8 +202,8 @@ public class RobotContainer {
 			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
 
 		//toggle claw intake on X
-		m_operatorController.x()
-			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+		//m_operatorController.x()
+			//.toggleOnTrue(Commands.startEnd(m_intake::intake, m_intake::shoot, m_intake));
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()
