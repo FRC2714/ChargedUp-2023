@@ -21,7 +21,8 @@ public class AlignToHP extends CommandBase {
 
   private double kPThetaController = 1;
 
-  private double xDistanceOffsetMeters = 0.4;
+  private double xOffsetMeters = 0.50;
+  private double yOffsetDegrees = Units.degreesToRadians(-22);
 
   //private double thetaControllerkP
 
@@ -32,15 +33,15 @@ public class AlignToHP extends CommandBase {
 
     // Use addRequirements() here to declare subsystem dependencies.
     xController = new ProfiledPIDController(0.8, 0, 0, AutoConstants.kAutoControllerConstraints);
-    yController = new ProfiledPIDController(1, 0, 0, AutoConstants.kAutoControllerConstraints);
+    yController = new ProfiledPIDController(0.7, 0, 0, AutoConstants.kAutoControllerConstraints);
     thetaController = new ProfiledPIDController(kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     
     addRequirements(m_robotDrive);
 
-    xController.setGoal(xDistanceOffsetMeters);
+    xController.setGoal(xOffsetMeters);
     xController.setTolerance(0.03,0);
 
-    yController.setGoal(0);
+    yController.setGoal(yOffsetDegrees);
     yController.setTolerance(Units.degreesToRadians(0),0);
 
     thetaController.setGoal(Units.degreesToRadians(180));
@@ -70,7 +71,7 @@ public class AlignToHP extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_limelight.setLED(false);
-    m_robotDrive.drive(0, 0, 0, true, true);
+    m_robotDrive.drive(0, 0, 0, true, false);
   }
 
   // Returns true when the command should end.

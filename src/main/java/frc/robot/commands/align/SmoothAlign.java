@@ -92,7 +92,7 @@ public class SmoothAlign extends CommandBase {
   public void end(boolean interrupted) {
     m_limelight.setAprilTagPipeline();
     m_limelight.setLED(false);
-    m_robotDrive.drive(0, 0, 0, true, true);
+    m_robotDrive.drive(0, 0, 0, true, false);
   }
 
   // Returns true when the command should end.

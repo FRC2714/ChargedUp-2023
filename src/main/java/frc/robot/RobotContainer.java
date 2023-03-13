@@ -143,7 +143,7 @@ public class RobotContainer {
 			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
 
 		m_driverController.y()
-			.onTrue(new AlignToHP(m_robotDrive, m_limelight));
+			.onTrue(new TurnToAngle(m_robotDrive, 180));
 		
 
 		//toggle claw intake on X
@@ -200,7 +200,7 @@ public class RobotContainer {
 			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.TWO));
 		// intake on A
 		m_operatorController.a()
-			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
+			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).andThen(m_claw.intakeConeCommand()));
 
 		//toggle claw intake on X
 		m_operatorController.x()
