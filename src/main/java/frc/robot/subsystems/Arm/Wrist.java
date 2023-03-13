@@ -11,8 +11,12 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.WristConstants;
+import frc.robot.commands.TurnWristToAngle;
 
 public class Wrist extends SubsystemBase {
   private CANSparkMax WristMotor;
@@ -20,6 +24,7 @@ public class Wrist extends SubsystemBase {
   private AbsoluteEncoder WristEncoder;
 
   private double targetAngle = 0;
+  private double wristAngle;
   
 
   /** Creates a new Claw. */
@@ -33,6 +38,7 @@ public class Wrist extends SubsystemBase {
     WristEncoder = WristMotor.getAbsoluteEncoder(Type.kDutyCycle);
     WristEncoder.setPositionConversionFactor(WristConstants.kWristPositionConversionFactor);
     WristEncoder.setInverted(WristConstants.kWristInverted);
+    WristEncoder.setZeroOffset(225.4339894);
   }
 
   public void setPower(double power) {
@@ -40,7 +46,8 @@ public class Wrist extends SubsystemBase {
   }
 
   public double getAngleRadians() {
-    return WristEncoder.getPosition() / WristConstants.kWristGearRatio;
+    this.wristAngle = WristEncoder.getPosition() / WristConstants.kWristGearRatio;
+    return wristAngle;
   }
 
   public double getAngleDegrees() {
@@ -51,11 +58,24 @@ public class Wrist extends SubsystemBase {
     return Math.abs(getAngleRadians() - targetAngle) < Units.degreesToRadians(1);
   }
 
+  public Command FlipWrist() {
+    double finalTargetAngleDegrees;
+    if ((getAngleDegrees() >= 0 && getAngleDegrees() < 90) || (getAngleDegrees() <= 360 && getAngleDegrees() > 270)) { //when wrist is near 0
+      finalTargetAngleDegrees = 180;
+    } else {
+      finalTargetAngleDegrees = 0;
+    }
+    return new SequentialCommandGroup(
+      new WaitCommand(0.2).raceWith(new TurnWristToAngle(this, 90)),
+      new WaitCommand(1.5).raceWith(new TurnWristToAngle(this, finalTargetAngleDegrees))
+    );
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("wrist target angle", Units.radiansToDegrees(targetAngle));
-    SmartDashboard.putNumber("current wrist angle", getAngleDegrees());
+    //SmartDashboard.putNumber("wrist target angle", Units.radiansToDegrees(targetAngle));
+    SmartDashboard.putNumber("Wrist Angle Degrees", getAngleDegrees());
 
   }
 }

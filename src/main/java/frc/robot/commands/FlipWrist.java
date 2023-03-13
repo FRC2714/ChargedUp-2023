@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -13,21 +14,23 @@ import frc.robot.subsystems.Arm.Wrist;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class FlipWrist extends SequentialCommandGroup {
-  private double finalTargetAngleDegrees = 90;
+  private double finalTargetAngleDegrees;
+  private double wristAngle;
   /** Creates a new FlipWrist. */
   public FlipWrist(Wrist m_wrist) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    if ((m_wrist.getAngleDegrees() < 90) && (m_wrist.getAngleDegrees() > 270)) { //when wrist is near 0
-      finalTargetAngleDegrees = 180;
-    } else if (((m_wrist.getAngleDegrees() > 90) && (m_wrist.getAngleDegrees() < 270))) {
-      finalTargetAngleDegrees = 0;
+    wristAngle = SmartDashboard.getNumber("Wrist Angle Degrees", 180);
+    if ((wristAngle >= 0 && wristAngle < 90) || (wristAngle <= 360 && wristAngle > 270)) { //when wrist is near 0
+      finalTargetAngleDegrees = 90;
+    } else {
+      finalTargetAngleDegrees = 270;
     }
 
     addCommands(
-      new PrintCommand("final target degrees" + finalTargetAngleDegrees),
-      new WaitCommand(1).raceWith(new TurnWristToAngle(m_wrist, 90)),
-      new WaitCommand(2).raceWith(new TurnWristToAngle(m_wrist, finalTargetAngleDegrees))
+      new PrintCommand("wrist angle" + wristAngle),
+      new WaitCommand(0.2).raceWith(new TurnWristToAngle(m_wrist, 90)),
+      new WaitCommand(1.5).raceWith(new TurnWristToAngle(m_wrist, finalTargetAngleDegrees))
     );
   }
 }
