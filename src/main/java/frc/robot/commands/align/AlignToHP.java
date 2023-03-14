@@ -10,51 +10,41 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Arm.ArmStateMachine;
-import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 
-public class SmoothAlign extends CommandBase {
+public class AlignToHP extends CommandBase {
   private DriveSubsystem m_robotDrive;
   private Limelight m_limelight;
-  private ArmStateMachine m_armStateMachine;
 
   private ProfiledPIDController xController;
   private ProfiledPIDController yController;
   private ProfiledPIDController thetaController;
 
-  private double kPXControllerCone = 0.8;
-  private double kPYControllerCone = 1.1;
-
-  private double kPXControllerCube = 0.65;
-  private double kPYControllerCube = 1.1;
-
   private double kPThetaController = 1;
 
-  private double xControllerGoalCone = 0.37;
-  private double xControllerGoalCube = 0.40;
+  private double xOffsetMeters = 0.50;
+  private double yOffsetDegrees = Units.degreesToRadians(-22);
 
   //private double thetaControllerkP
 
   /** Creates a new SmoothAlign. */
-  public SmoothAlign(DriveSubsystem m_robotDrive, Limelight m_limelight, ArmStateMachine m_armStateMachine) {
+  public AlignToHP(DriveSubsystem m_robotDrive, Limelight m_limelight) {
     this.m_robotDrive = m_robotDrive;
     this.m_limelight = m_limelight;
-    this.m_armStateMachine = m_armStateMachine;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    xController = new ProfiledPIDController(kPXControllerCone, 0, 0, AutoConstants.kAutoControllerConstraints);
-    yController = new ProfiledPIDController(kPYControllerCone, 0, 0, AutoConstants.kAutoControllerConstraints);
+    xController = new ProfiledPIDController(0.8, 0, 0, AutoConstants.kAutoControllerConstraints);
+    yController = new ProfiledPIDController(0.7, 0, 0, AutoConstants.kAutoControllerConstraints);
     thetaController = new ProfiledPIDController(kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     
     addRequirements(m_robotDrive);
 
-    xController.setGoal(xControllerGoalCone);
-    xController.setTolerance(0.05,0);
+    xController.setGoal(xOffsetMeters);
+    xController.setTolerance(0.03,0);
 
-    yController.setGoal(0);
+    yController.setGoal(yOffsetDegrees);
     yController.setTolerance(Units.degreesToRadians(0),0);
 
-    thetaController.setGoal(0);
+    thetaController.setGoal(Units.degreesToRadians(180));
     thetaController.setTolerance(Units.degreesToRadians(0),0);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
@@ -62,26 +52,16 @@ public class SmoothAlign extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_armStateMachine.getCargoType() == CargoType.CONE) {
-      m_limelight.setRetroPipeline();
-      xController.setGoal(xControllerGoalCone);
-      xController.setP(kPXControllerCone);
-      yController.setP(kPYControllerCone);
-    } else {
-      m_limelight.setAprilTagPipeline();
-      xController.setGoal(xControllerGoalCube);
-      xController.setP(kPXControllerCube);
-      yController.setP(kPYControllerCube);
-    }
     m_limelight.setLED(true);
+    m_limelight.setAprilTagPipeline();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     m_robotDrive.drive(
-        xController.calculate(m_limelight.getDistanceToGoalMeters()), 
-        yController.calculate(m_limelight.getXOffsetRadians()), 
+        -xController.calculate(m_limelight.getDistanceToGoalMeters()), 
+        -yController.calculate(m_limelight.getXOffsetRadians()), 
         thetaController.calculate(m_robotDrive.getHeadingRadians()), 
         true,
         true);
@@ -90,7 +70,6 @@ public class SmoothAlign extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_limelight.setAprilTagPipeline();
     m_limelight.setLED(false);
     m_robotDrive.drive(0, 0, 0, true, false);
   }

@@ -29,7 +29,7 @@ public class AutoAlignX extends ProfiledPIDCommand {
             // The motion profile constraints
             AutoConstants.kAutoControllerConstraints),
         // This should return the measurement
-        m_limelight::getDistanceToGoal,
+        m_limelight::getDistanceToGoalMeters,
         // This should return the goal (can also be a constant)
         0.35, // distance from limelight to pole TODO
         // This uses the output

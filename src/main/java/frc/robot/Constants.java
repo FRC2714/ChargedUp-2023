@@ -13,7 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.utils.ArmForwardKinematicPosition;
+import frc.robot.utils.ArmForwardKinematicPosition;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -200,13 +200,14 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static final double kGoalHeight = Units.inchesToMeters(24); //todo
+    public static final double kGoalHeight = Units.inchesToMeters(24);
   }
 
   public static final class CameraConstants {
-    public static final double kMountingAngle = 35; //todo
-    public static double kCameraHeight = Units.inchesToMeters(9.14); //todo
+    public static final double kMountingAngle = 35; // deg
+    public static double kCameraHeight = Units.inchesToMeters(9.14);
   }
+
   public static final class ArmConstants {
     //Spark IDs
     public static final int kLeftBaseJointMotorCanId = 9;
@@ -231,8 +232,8 @@ public final class Constants {
     public static final boolean kSecondJointInverted = false; //econd joint motor and encoder are NOT inverted
 
     //Controller Constants
-    public static final double kBaseJointMaxVelocity = 4000;
-    public static final double kBaseJointMaxAcceleration = 3000;
+    public static final double kBaseJointMaxVelocity = 5000;
+    public static final double kBaseJointMaxAcceleration = 4000;
     public static final double kBaseJointTolerance = 6;
     public static final double kBaseJointFF = 0.00008;
     public static final double kBaseJointP = 0.00000;
@@ -307,7 +308,7 @@ public final class Constants {
 
     //Stow position 
     public static final ArmForwardKinematicPosition kStowPosition = 
-      new ArmForwardKinematicPosition(76,110);
+      new ArmForwardKinematicPosition(142, -100);
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferConeIntakePosition = 
