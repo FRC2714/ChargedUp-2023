@@ -35,21 +35,21 @@ public class TurnWristToAngle extends PIDCommand {
   
   @Override
   public void initialize() {
-    System.out.println("turn wrist to angle start");
+    //System.out.println("turn wrist to angle start");
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    System.out.println("Setpoint: " + getController().getSetpoint());
-    System.out.println("Wrist: " + m_wrist.getAngleRadians());
-    System.out.println("Result: " + getController().atSetpoint());
+    // System.out.println("Setpoint: " + getController().getSetpoint());
+    // System.out.println("Wrist: " + m_wrist.getAngleRadians());
+    // System.out.println("Result: " + getController().atSetpoint());
     return getController().atSetpoint();
   }
 
   @Override
   public void end(boolean interrupted) {
-    System.out.println("turn wrist to angle finished");
+    //System.out.println("turn wrist to angle finished");
     m_wrist.setPower(0);
   }
 }

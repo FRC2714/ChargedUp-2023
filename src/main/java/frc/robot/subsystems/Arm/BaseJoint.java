@@ -46,7 +46,7 @@ public class BaseJoint extends SubsystemBase {
     BaseEncoder = RightBaseJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
     BaseEncoder.setPositionConversionFactor(ArmConstants.kBaseJointPositionConversionFactor);
     BaseEncoder.setInverted(ArmConstants.kBaseJointInverted); //must be inverted
-    BaseEncoder.setZeroOffset(1049.1048932);
+    BaseEncoder.setZeroOffset(1049.0689405);
     //todo set velocity conversion factor
 
     BaseJointPID = RightBaseJointMotor.getPIDController();

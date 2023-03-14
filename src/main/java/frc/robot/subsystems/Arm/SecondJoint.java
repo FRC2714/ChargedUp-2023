@@ -46,7 +46,7 @@ public class SecondJoint extends SubsystemBase {
     SecondJointEncoder.setPositionConversionFactor(ArmConstants.kSecondJointPositionConversionFactor);
     SecondJointEncoder.setInverted(ArmConstants.kSecondJointInverted); //must not be inverted
 
-    SecondJointEncoder.setZeroOffset(233.0048648);
+    SecondJointEncoder.setZeroOffset(230.2364949);
     //todo set velocity conversion factor
 
     SecondJointPID = RightSecondJointMotor.getPIDController();
