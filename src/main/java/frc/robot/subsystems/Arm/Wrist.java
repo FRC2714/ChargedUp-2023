@@ -70,8 +70,8 @@ public class Wrist extends SubsystemBase {
   public Command FlipWrist() {
     return new SelectCommand(
       Map.ofEntries(
-        Map.entry(FlipWristTarget.ZERO, new TurnWristToAngle(this, 0)),
-        Map.entry(FlipWristTarget.ONE_HUNDRED_EIGHTY, new TurnWristToAngle(this, 180))
+        Map.entry(FlipWristTarget.ZERO, new TurnWristToAngle(this, 178).andThen(new TurnWristToAngle(this, 0))),
+        Map.entry(FlipWristTarget.ONE_HUNDRED_EIGHTY, new TurnWristToAngle(this, 2).andThen(new TurnWristToAngle(this, 180)))
       ),
       () -> {
         double wristAngle = getAngleDegrees();
