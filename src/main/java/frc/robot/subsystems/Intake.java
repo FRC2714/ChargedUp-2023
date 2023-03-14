@@ -73,6 +73,7 @@ public class Intake extends SubsystemBase {
     pneumaticHub.enableCompressorAnalog(IntakeConstants.kCompressorMinPressure, IntakeConstants.kCompressorMaxPressure);
     
     PivotController = pivotMotor.getPIDController();
+    PivotController.setFeedbackDevice(pivotEncoder);
     PivotController.setP(0.00010, 0);
     PivotController.setSmartMotionMaxVelocity(500, 0);
     PivotController.setSmartMotionMaxAccel(500, 0);
