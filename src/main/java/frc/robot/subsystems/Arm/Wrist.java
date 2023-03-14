@@ -4,14 +4,20 @@
 
 package frc.robot.subsystems.Arm;
 
+import java.util.Map;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.SynchronousInterrupt;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -24,10 +30,9 @@ public class Wrist extends SubsystemBase {
   private AbsoluteEncoder WristEncoder;
 
   private double targetAngle = 0;
-  private double wristAngle;
   
 
-  /** Creates a new Claw. */
+  /** Creates a new Wrist. */
   public Wrist() {
     WristMotor = new CANSparkMax(WristConstants.kWristMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     WristMotor.setInverted(true);
@@ -46,8 +51,7 @@ public class Wrist extends SubsystemBase {
   }
 
   public double getAngleRadians() {
-    this.wristAngle = WristEncoder.getPosition() / WristConstants.kWristGearRatio;
-    return wristAngle;
+    return WristEncoder.getPosition() / WristConstants.kWristGearRatio;
   }
 
   public double getAngleDegrees() {
@@ -58,27 +62,35 @@ public class Wrist extends SubsystemBase {
     return Math.abs(getAngleRadians() - targetAngle) < Units.degreesToRadians(1);
   }
 
+  private enum FlipWristTarget {
+    ZERO,
+    ONE_HUNDRED_EIGHTY
+  }
+
   public Command FlipWrist() {
-    return new SequentialCommandGroup(
-      new WaitCommand(0.2).raceWith(new TurnWristToAngle(this, 90)),
-      new WaitCommand(1.5).raceWith(new TurnWristToAngle(this, getFlipTargetAngle()))
+    return new SelectCommand(
+      Map.ofEntries(
+        Map.entry(FlipWristTarget.ZERO, new TurnWristToAngle(this, 0)),
+        Map.entry(FlipWristTarget.ONE_HUNDRED_EIGHTY, new TurnWristToAngle(this, 180))
+      ),
+      () -> {
+        double wristAngle = getAngleDegrees();
+        System.out.println("wrist angle " + wristAngle);
+        if ((wristAngle >= 0 && wristAngle < 90) || (wristAngle <= 360 && wristAngle > 270)) { //when wrist is near 0
+          return FlipWristTarget.ONE_HUNDRED_EIGHTY;
+        } else {
+          return FlipWristTarget.ZERO;
+        }
+      }
     );
   }
 
-  public double getFlipTargetAngle() {
-    if ((wristAngle >= 0 && wristAngle < 90) || (wristAngle <= 360 && wristAngle > 270)) { //when wrist is near 0
-      return 180;
-    } else {
-      return 0;
-    }
-  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     //SmartDashboard.putNumber("wrist target angle", Units.radiansToDegrees(targetAngle));
     SmartDashboard.putNumber("Wrist Angle Degrees", getAngleDegrees());
-    SmartDashboard.putNumber("get flip target angle", getFlipTargetAngle());
 
   }
 }

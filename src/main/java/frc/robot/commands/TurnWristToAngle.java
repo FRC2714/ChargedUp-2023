@@ -29,8 +29,8 @@ public class TurnWristToAngle extends PIDCommand {
     // Configure additional PID options by calling `getController` here.
     this.m_wrist = m_wrist;
     addRequirements(m_wrist);
-    getController().disableContinuousInput();
-    getController().setTolerance(Units.degreesToRadians(2));
+    getController().enableContinuousInput(0, 2*Math.PI);
+    getController().setTolerance(Units.degreesToRadians(1));
   }
   
   @Override
@@ -41,6 +41,9 @@ public class TurnWristToAngle extends PIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    System.out.println("Setpoint: " + getController().getSetpoint());
+    System.out.println("Wrist: " + m_wrist.getAngleRadians());
+    System.out.println("Result: " + getController().atSetpoint());
     return getController().atSetpoint();
   }
 
