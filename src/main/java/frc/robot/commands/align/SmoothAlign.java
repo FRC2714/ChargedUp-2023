@@ -25,7 +25,7 @@ public class SmoothAlign extends CommandBase {
   private double kPXControllerCone = 0.8;
   private double kPYControllerCone = 1.1;
 
-  private double kPXControllerCube = 0.8;
+  private double kPXControllerCube = 0.65;
   private double kPYControllerCube = 1.1;
 
   private double kPThetaController = 1;

@@ -200,7 +200,7 @@ public class RobotContainer {
 			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.TWO));
 		// intake on A
 		m_operatorController.a()
-			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).andThen(m_claw.intakeConeCommand()));
+			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
 
 		//toggle claw intake on X
 		m_operatorController.x()
