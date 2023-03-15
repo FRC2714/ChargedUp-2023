@@ -44,7 +44,7 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
 		addCommands(
-			m_claw.intakeCubeCommand(),
+			m_claw.intakeOpenCommand(),
 			m_intake.deployCommand(),
 
 			m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
@@ -53,7 +53,7 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
       		new WaitCommand(5),
 
 			//Score First Cube
-			m_claw.shootCube(),
+			m_claw.scoreCube(),
       		new WaitCommand(0.2),
       		m_claw.stopOpen(),
       		m_armStateMachine.setTargetArmStateCommand(ArmState.STOW),

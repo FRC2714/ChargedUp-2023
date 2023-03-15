@@ -66,7 +66,7 @@ public class RobotContainer {
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake);
+	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake, m_claw);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -148,7 +148,7 @@ public class RobotContainer {
 
 		//toggle claw intake on X
 		m_driverController.x()
-			.toggleOnTrue(Commands.startEnd(m_claw::intakeClose, m_claw::intakeOpen, m_claw));
+			.onTrue(Commands.runOnce(m_claw::intakeAndToggle, m_claw));
 
 		//reset gyro on left
 		m_driverController.back()

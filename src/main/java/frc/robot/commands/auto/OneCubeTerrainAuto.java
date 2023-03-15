@@ -43,7 +43,7 @@ public class OneCubeTerrainAuto extends AutoBase {
     	AutoConstants.EventMap.put("deploy intake", m_intake.deployCommand());
 
 		addCommands(
-			m_claw.intakeCubeCommand(),
+			m_claw.intakeOpenCommand(),
 			m_intake.deployCommand(),
 
 			m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
@@ -52,7 +52,7 @@ public class OneCubeTerrainAuto extends AutoBase {
       		new WaitCommand(4),
 
 			//Score First Cube
-			m_claw.shootCube(),
+			m_claw.scoreCube(),
       		new WaitCommand(0.2),
       		m_claw.stopOpen(),
 

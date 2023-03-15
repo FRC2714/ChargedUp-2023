@@ -41,7 +41,7 @@ public class TwoCubeOpenAutoStop extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
     	AutoConstants.EventMap.put("intake cube", m_intake.intakeCube()
-			.andThen(m_claw.intakeCubeCommand()));
+			.andThen(m_claw.intakeOpenCommand()));
 
 		AutoConstants.EventMap.put("arm to front level 2", 
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.TWO)
@@ -50,7 +50,7 @@ public class TwoCubeOpenAutoStop extends AutoBase {
 			.andThen(m_intake.retractAndStop()));
 
 		addCommands(
-			m_claw.intakeCubeCommand(),
+			m_claw.intakeOpenCommand(),
 			m_intake.deployCommand(),
 
 			m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
@@ -59,7 +59,7 @@ public class TwoCubeOpenAutoStop extends AutoBase {
       		new WaitCommand(3.9),
 
 			//Score First Cube
-			m_claw.shootCube(),
+			m_claw.scoreCube(),
       		new WaitCommand(0.2),
       		m_claw.stopOpen(),
 
@@ -71,7 +71,7 @@ public class TwoCubeOpenAutoStop extends AutoBase {
 
 			//Score Second Cube
 			new WaitCommand(2),
-			m_claw.shootCube(),
+			m_claw.scoreCube(),
       		new WaitCommand(0.5),
       		m_claw.stopOpen()
 		);

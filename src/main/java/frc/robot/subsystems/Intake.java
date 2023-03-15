@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
   private DoubleSolenoid rightRetractionSolenoid;
   private DoubleSolenoid intakeSolenoid;
 
-  private PneumaticHub pneumaticHub;
+  
 
   private IntakeState intakeState = IntakeState.STOPPED;
 
@@ -49,9 +49,6 @@ public class Intake extends SubsystemBase {
 
     topMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
     bottomMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
-
-    pneumaticHub = new PneumaticHub(IntakeConstants.kPneumaticHubCanId);
-    pneumaticHub.enableCompressorAnalog(IntakeConstants.kCompressorMinPressure, IntakeConstants.kCompressorMaxPressure);
 
     leftRetractionSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kLeftRetractionSolenoidForwardChannel, IntakeConstants.kLeftRetractionSolenoidReverseChannel);
     rightRetractionSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, IntakeConstants.kRightRetractionSolenoidForwardChannel, IntakeConstants.kRightRetractionSolenoidReverseChannel);

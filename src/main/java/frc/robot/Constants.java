@@ -146,6 +146,12 @@ public final class Constants {
     public static final HashMap<String, Command> EventMap = new HashMap<>();
   }
 
+  public static final class PneumaticsConstants {
+    public static final int kPneumaticHubCanId = 1;
+    public static final double kCompressorMinPressure = 90;
+    public static final double kCompressorMaxPressure = 120;
+  }
+
   public static final class ClawConstants {
     public static final int kClawMotorCanId = 14;
 
@@ -155,17 +161,15 @@ public final class Constants {
     public static final int kClawMotorCurrentLimit = 20; //amps 
 
     public static final double kNominalVoltage = 10.5;
+
     public static final double kIntakeMotorSpeed = 1;
     public static final double kOuttakeMotorSpeed = -0.1;
+    public static final double kShootMotorSpeed = 0.6;
   }
 
   public static final class IntakeConstants {
     public static final int kTopMotorCanId = 13;
     public static final int kBottomMotorCanId = 15;
-
-    public static final int kPneumaticHubCanId = 1;
-    public static final double kCompressorMinPressure = 90;
-    public static final double kCompressorMaxPressure = 120;
 
     public static final int kLeftRetractionSolenoidForwardChannel = 2;
     public static final int kLeftRetractionSolenoidReverseChannel = 3;
