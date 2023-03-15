@@ -130,11 +130,11 @@ public class RobotContainer {
 			.onFalse(m_claw.stopOpen());
 
 		//intake on right trigger while held 
-		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
+		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
 			.whileTrue(m_intake.intakeCommand())
 			.whileFalse(m_intake.stopCommand());
 		//outtake on left trigger while held
-		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.2)
+		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
 			.whileTrue(m_intake.outtakeCommand())
 			.whileFalse(m_intake.stopCommand());
 
@@ -142,9 +142,9 @@ public class RobotContainer {
 		m_driverController.a()
 			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
 
+		//turn to 180 on y
 		m_driverController.y()
 			.onTrue(new TurnToAngle(m_robotDrive, 180));
-		
 
 		//toggle claw intake on X
 		m_driverController.x()
@@ -154,23 +154,15 @@ public class RobotContainer {
 		m_driverController.back()
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
+		//set x on right
 		m_driverController.povRight()
-			.onTrue(new IntakeCube(m_armStateMachine, m_claw, m_intake));
+			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
-		m_driverController.povDown()
-			.whileTrue(new TurnToAngle(m_robotDrive, 0));
-
+		//align to hp on up
 		m_driverController.povUp()
 			.whileTrue(new AlignToHP(m_robotDrive, m_limelight));
 
-		m_driverController.start()
-			.toggleOnTrue(Commands.startEnd(m_claw::shoot, m_claw::stop, m_claw));
-
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
-
-		//intake on right trigger while held 
-		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
-			.whileTrue(m_claw.stopOpen());
 
 		//manual raise arm on start
 		m_operatorController.start()
@@ -203,8 +195,8 @@ public class RobotContainer {
 			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
 
 		//toggle claw intake on X
-		m_operatorController.x()
-			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+		// m_operatorController.x()
+		// 	.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()
