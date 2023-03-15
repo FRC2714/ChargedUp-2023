@@ -40,13 +40,13 @@ import frc.robot.commands.auto.OneCubeTerrainAuto;
 import frc.robot.commands.auto.TwoCubeOpenAuto;
 import frc.robot.commands.auto.TwoCubeOpenAutoStop;
 import frc.robot.commands.auto.ComplexAuto;
-import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
+import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.Wrist;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
@@ -173,7 +173,7 @@ public class RobotContainer {
 
 		//manual raise arm on start
 		m_operatorController.start()
-			.onTrue(new WaitCommand(2).raceWith(new TurnWristToAngle(m_wrist, 0)));
+			.onTrue(m_claw.open());
 		//manual lower arm on back
 		m_operatorController.back()
 			.onTrue(new WaitCommand(2).raceWith(new TurnWristToAngle(m_wrist, 180)));
