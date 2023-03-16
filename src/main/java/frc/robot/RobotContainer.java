@@ -28,10 +28,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.IntakeCube;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TurnToAngle;
-import frc.robot.commands.align.AlignToHP;
 import frc.robot.commands.align.SmoothAlign;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.OneConeBalanceMiddleAuto;
@@ -137,6 +135,7 @@ public class RobotContainer {
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
 			.onTrue(m_intake.deployAndIntake())
 			.onFalse(m_intake.pivotToHold());
+
 		//outtake on left trigger while held
 		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
 			.whileTrue(m_intake.pivotThenOuttake())
@@ -146,7 +145,6 @@ public class RobotContainer {
 		m_driverController.b()
 			.onTrue(m_intake.pivotThenShoot())
 			.onFalse(m_intake.holdAndStop());
-
 
 		//turn to 180 on y
 		m_driverController.y()
@@ -160,13 +158,9 @@ public class RobotContainer {
 		m_driverController.back()
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
-		//set x on right
-		m_driverController.povRight()
-			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
-
 		//align to hp on up
 		m_driverController.povUp()
-			.whileTrue(new AlignToHP(m_robotDrive, m_limelight));
+			.whileTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 

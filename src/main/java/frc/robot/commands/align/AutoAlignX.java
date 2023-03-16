@@ -31,7 +31,7 @@ public class AutoAlignX extends ProfiledPIDCommand {
         // This should return the measurement
         m_limelight::getDistanceToGoalMeters,
         // This should return the goal (can also be a constant)
-        0.35, // distance from limelight to pole TODO
+        0.35,
         // This uses the output
         (output, setpoint) -> m_robotDrive.drive(output, 0, 0, true, false)
           // Use the output (and setpoint, if desired) here

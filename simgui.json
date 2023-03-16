@@ -1,6 +1,11 @@
 {
   "HALProvider": {
     "Other Devices": {
+      "ADIS16470[0]": {
+        "header": {
+          "open": true
+        }
+      },
       "window": {
         "visible": false
       }

@@ -12,7 +12,6 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.align.SmoothAlign;
 import frc.robot.subsystems.Arm.Arm;
@@ -34,8 +33,8 @@ public class TwoCargoOpenAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"2CargoOPENAuto",
 			new PathConstraints(
-			2.2,
-			2.0));
+			2.5,
+			2.5));
 
 	public TwoCargoOpenAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
 		super(m_robotDrive);
@@ -44,13 +43,15 @@ public class TwoCargoOpenAuto extends AutoBase {
 
     	AutoConstants.EventMap.put("intake cube", m_intake.deployAndIntake());
 
+		AutoConstants.EventMap.put("retract intake", m_intake.pivotToHold());
+
 		addCommands(
 			m_claw.intakeCloseCommand(),
 
 			m_armStateMachine.setCargoTypeCommand(CargoType.CONE),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK),
-      		new WaitCommand(5).raceWith(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine)),
+      		new WaitCommand(5.5).raceWith(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine)),
 
 			//Score First Cube
 			m_claw.scoreCone(),
