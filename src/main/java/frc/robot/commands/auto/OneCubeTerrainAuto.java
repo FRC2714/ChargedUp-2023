@@ -40,11 +40,11 @@ public class OneCubeTerrainAuto extends AutoBase {
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
-    	AutoConstants.EventMap.put("deploy intake", m_intake.deployCommand());
+    	AutoConstants.EventMap.put("deploy intake", m_intake.pivotToDeploy());
 
 		addCommands(
 			m_claw.intakeOpenCommand(),
-			m_intake.deployCommand(),
+			m_intake.pivotToDeploy(),
 
 			m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),

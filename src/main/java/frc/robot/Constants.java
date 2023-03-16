@@ -168,24 +168,16 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int kTopMotorCanId = 13;
-    public static final int kBottomMotorCanId = 15;
+    public static final int kIntakeMotorCanId = 13;
+    public static final int kPivotMotorCanId = 15;
 
-    public static final int kLeftRetractionSolenoidForwardChannel = 2;
-    public static final int kLeftRetractionSolenoidReverseChannel = 3;
+    public static final int kIntakeMotorCurrentLimit = 30;
+    public static final int kPivotMotorCurrentLimit = 30;
 
-    public static final int kRightRetractionSolenoidForwardChannel = 4;
-    public static final int kRightRetractionSolenoidReverseChannel = 5;
-
-    public static final int kIntakeSolenoidForwardChannel = 1;
-    public static final int kIntakeSolenoidReverseChannel = 0;
-
-    public static final int kTopMotorCurrentLimit = 30;
-    public static final int kBottomMotorCurrentLimit = 30;
-
-    public static final double kNominalVoltage = 11.0;
+    public static final double kNominalVoltage = 12.8;
     public static final double kIntakeMotorSpeed = 0.85;
-    public static final double kOuttakeMotorSpeed = -0.85;
+    public static final double kOuttakeMotorSpeed = 0.7;
+    public static final double kShootMotorSpeed = 1.0;
   }
 
   public static final class LEDConstants {
@@ -270,9 +262,9 @@ public final class Constants {
     
     //Transfer to back transition
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 150);
+      new ArmForwardKinematicPosition(60, 150);
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate2Position = 
-      new ArmForwardKinematicPosition(50, 90);
+      new ArmForwardKinematicPosition(60, 90);
 
     //Transfer to transfer transition
     public static final ArmForwardKinematicPosition kTransferToTransferIntermediatePosition = 

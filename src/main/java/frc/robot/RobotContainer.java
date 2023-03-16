@@ -99,10 +99,12 @@ public class RobotContainer {
 		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
 		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
 		m_limelight.setLEDCommand(false).schedule();
+		//m_intake.pivotToHold().schedule();
 	}
 
 	public void setAutoDefaultStates() {
 		m_limelight.setLEDCommand(false).schedule();
+		//m_intake.pivotToHold().schedule();
 	}
 
 	/**
@@ -131,16 +133,18 @@ public class RobotContainer {
 
 		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
-			.whileTrue(m_intake.intakeCommand())
-			.whileFalse(m_intake.stopCommand());
+			.onTrue(m_intake.deployAndIntake())
+			.onFalse(m_intake.pivotToHold());
 		//outtake on left trigger while held
 		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
-			.whileTrue(m_intake.outtakeCommand())
-			.whileFalse(m_intake.stopCommand());
+			.whileTrue(m_intake.pivotThenOuttake())
+			.whileFalse(m_intake.holdAndStop());
 
-		//toggle intake deploy on A
-		m_driverController.a()
-			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
+		//shoot on b
+		m_driverController.b()
+			.onTrue(m_intake.pivotThenShoot())
+			.onFalse(m_intake.holdAndStop());
+
 
 		//turn to 180 on y
 		m_driverController.y()
@@ -200,11 +204,11 @@ public class RobotContainer {
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()));
+			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE));
 
 		// cube mode on left bumper
 		m_operatorController.leftBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
+			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE));
 	}
 
 	/**

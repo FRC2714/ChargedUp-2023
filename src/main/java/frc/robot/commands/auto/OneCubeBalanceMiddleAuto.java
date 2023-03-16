@@ -45,7 +45,7 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 
 		addCommands(
 			m_claw.intakeOpenCommand(),
-			m_intake.deployCommand(),
+			m_intake.pivotToDeploy(),
 
 			m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
@@ -58,7 +58,7 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
       		m_claw.stopOpen(),
       		m_armStateMachine.setTargetArmStateCommand(ArmState.STOW),
 			new WaitCommand(2),
-			m_intake.retractCommand(),
+			m_intake.pivotToRetract(),
 			autoBuilder.fullAuto(autoPathGroup),
 			new AutoBalance(m_robotDrive)
 		);

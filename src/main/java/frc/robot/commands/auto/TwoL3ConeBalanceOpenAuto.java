@@ -42,7 +42,7 @@ public class TwoL3ConeBalanceOpenAuto extends AutoBase {
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 		AutoConstants.EventMap.put("arm to tuck", m_armStateMachine.setTargetArmStateCommand(ArmState.STOW));
-		AutoConstants.EventMap.put("intake cone", m_intake.intakeCone());
+		//AutoConstants.EventMap.put("intake cone", m_intake.intakeCone());
 		AutoConstants.EventMap.put("retract and stop intake", m_intake.retractAndStop());
 		//AutoConstants.EventMap.put("cone transfer", new ConeTransfer());
 

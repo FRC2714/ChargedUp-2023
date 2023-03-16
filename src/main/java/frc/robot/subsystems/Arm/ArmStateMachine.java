@@ -224,7 +224,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.BackToTransfer(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.BackToTransfer(ArmConstants.kTransferCubeIntakePosition));
+                return m_intake.pivotToDeploy().andThen(m_arm.BackToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
           case TRANSFER: { //when current arm state = TRANSFER
@@ -232,7 +232,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.setForwardKinematicsCommand(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.TransferToTransfer(ArmConstants.kTransferCubeIntakePosition));
+                return m_intake.pivotToDeploy().andThen(m_arm.TransferToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
           case FRONT: { //when current arm state = FRONT
@@ -240,7 +240,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.FrontToTransfer(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.FrontToTransfer(ArmConstants.kTransferCubeIntakePosition));
+                return m_intake.pivotToDeploy().andThen(m_arm.FrontToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
           case STOW: { //when current arm state = STOW
@@ -248,7 +248,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.StowToTransfer(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.StowToTransfer(ArmConstants.kTransferCubeIntakePosition));
+                return m_intake.pivotToDeploy().andThen(m_arm.StowToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
         }
