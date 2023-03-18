@@ -51,11 +51,13 @@ public class TwoCargoOpenAuto extends AutoBase {
 			m_armStateMachine.setCargoTypeCommand(CargoType.CONE),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK),
-      		new WaitCommand(5.5).raceWith(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine)),
+			new WaitCommand(2).raceWith(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine)),
+			new WaitCommand(3.8),
 
 			//Score First Cube
 			m_claw.scoreCone(),
       		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
+			new WaitCommand(1.25),
 
 			//Follow Path
 			autoBuilder.fullAuto(autoPathGroup),

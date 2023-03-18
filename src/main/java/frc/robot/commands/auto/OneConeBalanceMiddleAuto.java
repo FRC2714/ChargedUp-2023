@@ -47,7 +47,8 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 			m_armStateMachine.setCargoTypeCommand(CargoType.CONE),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK),
-      		new WaitCommand(5.5).raceWith(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine)),
+			new WaitCommand(2).raceWith(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine)),
+      		new WaitCommand(4.8),
 
 			//Score First Cube
 			m_claw.scoreCone(),

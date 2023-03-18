@@ -96,13 +96,14 @@ public class RobotContainer {
 
 	public void setTeleopDefaultStates() {
 		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
-		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
+		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).schedule();
 		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
 		m_limelight.setLEDCommand(false).schedule();
 		//m_intake.pivotToHold().schedule();
 	}
 
 	public void setAutoDefaultStates() {
+		new InstantCommand(() -> m_robotDrive.zeroHeading());
 		m_limelight.setLEDCommand(false).schedule();
 		//m_intake.pivotToHold().schedule();
 	}
