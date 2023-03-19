@@ -72,7 +72,7 @@ public class DriveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Robot Heading", getHeading());
-    SmartDashboard.putNumber("Robot Pitch", getPitchDegrees());
+    SmartDashboard.putString("DIRECTION TO ZERO", getDirectionToZero());
     // Update the odometry in the periodic block
     m_odometry.update(
         Rotation2d.fromDegrees(m_gyro.getAngle()),
@@ -242,6 +242,14 @@ public class DriveSubsystem extends SubsystemBase {
    */
   public double getHeading() {
     return Rotation2d.fromDegrees(m_gyro.getAngle()).getDegrees();
+  }
+
+  public String getDirectionToZero() {
+    if(getHeading() > 0) {
+      return "SPIN RIGHT";
+    } else {
+      return "SPIN LEFT";
+    }
   }
 
   public double getHeadingRadians() {

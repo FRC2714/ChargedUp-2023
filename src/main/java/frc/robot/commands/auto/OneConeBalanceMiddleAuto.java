@@ -12,7 +12,8 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.AutoConstants;
+import frc.robot.commands.AutoBalance;
+import frc.robot.commands.align.SmoothAlign;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
@@ -27,39 +28,35 @@ import frc.robot.subsystems.Limelight;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class OneCubeTerrainAuto extends AutoBase {
+public class OneConeBalanceMiddleAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"2CubeOPENAuto",
+			"1ConeBalanceMIDDLE",
 			new PathConstraints(
-			2,
+			1.2,
 			2.0));
 
-	public OneCubeTerrainAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
+	public OneConeBalanceMiddleAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
 		super(m_robotDrive);
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
-    	AutoConstants.EventMap.put("deploy intake", m_intake.pivotToDeploy());
-
 		addCommands(
-			m_claw.intakeOpenCommand(),
-			m_intake.pivotToDeploy(),
+			m_claw.intakeCloseCommand(),
 
-			m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
+			m_armStateMachine.setCargoTypeCommand(CargoType.CONE),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK),
-      		new WaitCommand(4),
+			new WaitCommand(2).raceWith(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine)),
+      		new WaitCommand(4.8),
 
 			//Score First Cube
-			m_claw.scoreCube(),
-      		new WaitCommand(0.2),
-      		m_claw.stopOpen(),
-
+			m_claw.scoreCone(),
       		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
-
-			//Follow Path
-			autoBuilder.fullAuto(autoPathGroup)
+			new WaitCommand(2),
+			autoBuilder.fullAuto(autoPathGroup),
+			new AutoBalance(m_robotDrive)
 		);
+
 	}
 }

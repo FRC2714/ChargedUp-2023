@@ -146,6 +146,12 @@ public final class Constants {
     public static final HashMap<String, Command> EventMap = new HashMap<>();
   }
 
+  public static final class PneumaticsConstants {
+    public static final int kPneumaticHubCanId = 1;
+    public static final double kCompressorMinPressure = 90;
+    public static final double kCompressorMaxPressure = 120;
+  }
+
   public static final class ClawConstants {
     public static final int kClawMotorCanId = 14;
 
@@ -155,33 +161,23 @@ public final class Constants {
     public static final int kClawMotorCurrentLimit = 20; //amps 
 
     public static final double kNominalVoltage = 10.5;
+
     public static final double kIntakeMotorSpeed = 1;
     public static final double kOuttakeMotorSpeed = -0.1;
+    public static final double kShootMotorSpeed = -0.4;
   }
 
   public static final class IntakeConstants {
-    public static final int kTopMotorCanId = 13;
-    public static final int kBottomMotorCanId = 15;
+    public static final int kIntakeMotorCanId = 13;
+    public static final int kPivotMotorCanId = 15;
 
-    public static final int kPneumaticHubCanId = 1;
-    public static final double kCompressorMinPressure = 90;
-    public static final double kCompressorMaxPressure = 120;
+    public static final int kIntakeMotorCurrentLimit = 30;
+    public static final int kPivotMotorCurrentLimit = 30;
 
-    public static final int kLeftRetractionSolenoidForwardChannel = 2;
-    public static final int kLeftRetractionSolenoidReverseChannel = 3;
-
-    public static final int kRightRetractionSolenoidForwardChannel = 4;
-    public static final int kRightRetractionSolenoidReverseChannel = 5;
-
-    public static final int kIntakeSolenoidForwardChannel = 1;
-    public static final int kIntakeSolenoidReverseChannel = 0;
-
-    public static final int kTopMotorCurrentLimit = 30;
-    public static final int kBottomMotorCurrentLimit = 30;
-
-    public static final double kNominalVoltage = 11.0;
+    public static final double kNominalVoltage = 12.8;
     public static final double kIntakeMotorSpeed = 0.85;
-    public static final double kOuttakeMotorSpeed = -0.85;
+    public static final double kOuttakeMotorSpeed = 0.7;
+    public static final double kShootMotorSpeed = 1.0;
   }
 
   public static final class LEDConstants {
@@ -225,7 +221,7 @@ public final class Constants {
     public static final double kBaseJointPositionConversionFactor = (2*Math.PI) * kBaseJointGearRatio; //Radians * Gear ratio
     public static final double kSecondJointPositionConversionFactor = (2*Math.PI) * kSecondJointGearRatio;
 
-    public static final double kBaseJointKinematicOffset = 105; //difference from kinematic 0 to sparkmax 0 approx 45 deg
+    public static final double kBaseJointKinematicOffset = 45; //difference from kinematic 0 to sparkmax 0 approx 45 deg
     public static final double kSecondJointKinematicOffset = 630; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
     public static final boolean kBaseJointInverted = true; //both base joint motor and encoder are inverted
@@ -235,18 +231,18 @@ public final class Constants {
     public static final double kBaseJointMaxVelocity = 5000;
     public static final double kBaseJointMaxAcceleration = 4000;
     public static final double kBaseJointTolerance = 6;
-    public static final double kBaseJointFF = 0.00008;
+    public static final double kBaseJointFF = 0.00007;
     public static final double kBaseJointP = 0.00000;
     public static final double kBaseJointI = 0;
     public static final double kBaseJointD = 0.0000;
 
     public static final double kSecondJointMaxVelocity = 5000;
-    public static final double kSecondJointMaxAcceleration = 3500;
+    public static final double kSecondJointMaxAcceleration = 3400;
     public static final double kSecondJointTolerance = 6;
     public static final double kSecondJointFF = 0.00004;
     public static final double kSecondJointP = 0.00006;
     public static final double kSecondJointI = 0.0;
-    public static final double kSecondJointD = 0.00020;
+    public static final double kSecondJointD = 0.00015;
 
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 40; //amps
@@ -266,9 +262,9 @@ public final class Constants {
     
     //Transfer to back transition
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 150);
+      new ArmForwardKinematicPosition(60, 150);
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate2Position = 
-      new ArmForwardKinematicPosition(50, 90);
+      new ArmForwardKinematicPosition(60, 90);
 
     //Transfer to transfer transition
     public static final ArmForwardKinematicPosition kTransferToTransferIntermediatePosition = 
@@ -308,7 +304,7 @@ public final class Constants {
 
     //Stow position 
     public static final ArmForwardKinematicPosition kStowPosition = 
-      new ArmForwardKinematicPosition(142, -100);
+      new ArmForwardKinematicPosition(142, -98);
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferConeIntakePosition = 

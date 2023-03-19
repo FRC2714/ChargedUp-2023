@@ -12,10 +12,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.TurnToAngle;
-import frc.robot.commands.align.AutoAlignY;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
@@ -44,8 +41,8 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
 		addCommands(
-			m_claw.intakeCubeCommand(),
-			m_intake.deployCommand(),
+			m_claw.intakeOpenCommand(),
+			m_intake.pivotToDeploy(),
 
 			m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
@@ -53,12 +50,14 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
       		new WaitCommand(5),
 
 			//Score First Cube
-			m_claw.shootCube(),
+			m_claw.scoreCube(),
       		new WaitCommand(0.2),
       		m_claw.stopOpen(),
       		m_armStateMachine.setTargetArmStateCommand(ArmState.STOW),
 			new WaitCommand(2),
-			m_intake.retractCommand(),
+			m_intake.pivotToRetract(),
+
+			//drive and balance
 			autoBuilder.fullAuto(autoPathGroup),
 			new AutoBalance(m_robotDrive)
 		);

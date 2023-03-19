@@ -18,6 +18,7 @@ public class ArmStateMachine extends SubsystemBase {
   private Arm m_arm;
   private LEDs m_leds;
   private Intake m_intake;
+  private Claw m_claw;
   
   public enum ArmState {
     BACK, TRANSFER, FRONT, STOW
@@ -41,10 +42,11 @@ public class ArmStateMachine extends SubsystemBase {
   public CargoType cargoType = CargoType.CONE; // default of cube
 
   /** Creates a new StateMachine. */
-  public ArmStateMachine(Arm m_arm, LEDs m_leds, Intake m_intake) {
+  public ArmStateMachine(Arm m_arm, LEDs m_leds, Intake m_intake, Claw m_claw) {
     this.m_arm = m_arm;
     this.m_leds = m_leds;
     this.m_intake = m_intake;
+    this.m_claw = m_claw;
   }
 
   private void setTargetArmState(ArmState targetArmState) {
@@ -112,7 +114,7 @@ public class ArmStateMachine extends SubsystemBase {
                   case ONE:
                     return m_arm.BackToBack(ArmConstants.kBackConeL1Position);
                   case INTAKE:
-                    return m_arm.setForwardKinematicsCommand(ArmConstants.kBackIntakePosition);
+                    return m_arm.setForwardKinematicsCommand(ArmConstants.kBackIntakePosition).andThen(m_claw.intakeOpenCommand());
                 }
               }
               case CUBE: {
@@ -124,7 +126,7 @@ public class ArmStateMachine extends SubsystemBase {
                   case ONE:
                     return m_arm.BackToBack(ArmConstants.kBackCubeL1Position);
                   case INTAKE:
-                    return m_arm.BackToBack(ArmConstants.kBackIntakePosition);
+                    return m_arm.BackToBack(ArmConstants.kBackIntakePosition).andThen(m_claw.intakeOpenCommand());
                 }
               }
             }
@@ -222,7 +224,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.BackToTransfer(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.BackToTransfer(ArmConstants.kTransferCubeIntakePosition));
+                return m_intake.pivotToDeploy().andThen(m_arm.BackToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
           case TRANSFER: { //when current arm state = TRANSFER
@@ -230,7 +232,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.setForwardKinematicsCommand(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.TransferToTransfer(ArmConstants.kTransferCubeIntakePosition));
+                return m_intake.pivotToDeploy().andThen(m_arm.TransferToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
           case FRONT: { //when current arm state = FRONT
@@ -238,7 +240,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.FrontToTransfer(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.FrontToTransfer(ArmConstants.kTransferCubeIntakePosition));
+                return m_intake.pivotToDeploy().andThen(m_arm.FrontToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
           case STOW: { //when current arm state = STOW
@@ -246,7 +248,7 @@ public class ArmStateMachine extends SubsystemBase {
               case CONE:
                 return m_arm.StowToTransfer(ArmConstants.kTransferConeIntakePosition);
               case CUBE:
-                return m_intake.deployCommand().andThen(m_arm.StowToTransfer(ArmConstants.kTransferCubeIntakePosition));
+                return m_intake.pivotToDeploy().andThen(m_arm.StowToTransfer(ArmConstants.kTransferCubeIntakePosition));
             }
           }
         }

@@ -8,22 +8,27 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClawConstants;
+import frc.robot.Constants.PneumaticsConstants;
 
 public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
 
   private DoubleSolenoid clawSolenoid;
-  
-  private boolean isOpen;
+
+  private PneumaticHub pneumaticHub;
 
   /** Creates a new Claw. */
   public Claw() {
+    pneumaticHub = new PneumaticHub(PneumaticsConstants.kPneumaticHubCanId);
+    pneumaticHub.enableCompressorAnalog(PneumaticsConstants.kCompressorMinPressure, PneumaticsConstants.kCompressorMaxPressure);
+
     clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
 
@@ -41,46 +46,50 @@ public class Claw extends SubsystemBase {
   }
 
   public void shoot() {
-    clawMotor.setVoltage(6*ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
+    clawMotor.setVoltage(ClawConstants.kShootMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
   public void stop() {
     clawMotor.set(0);
   }
 
-  public void close() {
-    clawSolenoid.set(Value.kReverse);
-    isOpen = false;
-  }
-  
   public void open() {
     clawSolenoid.set(Value.kForward);
-    isOpen = true;
   }
 
-  public boolean getState() {
-    return isOpen;
+  public void close() {
+    clawSolenoid.set(Value.kReverse);
+  }
+
+  public void toggle() {
+    clawSolenoid.toggle();
+  }
+  
+  public boolean isOpen() {
+    return clawSolenoid.get() == Value.kForward;
+  }
+
+  public void intakeAndToggle() {
+    toggle();
+    intake();
   }
 
   public void intakeClose() {
     close();
     intake();
   }
+
   public void intakeOpen() {
     open();
     intake();
   }
 
-  public Command intakeConeCommand() {
-    return (
-      new InstantCommand(() -> close())).andThen(
-      new InstantCommand(() -> intake()));
+  public Command intakeOpenCommand() {
+    return new InstantCommand(() -> intakeOpen());
   }
 
-  public Command intakeCubeCommand() {
-    return (
-      new InstantCommand(() -> open())).andThen(
-      new InstantCommand(() -> intake()));
+  public Command intakeCloseCommand() {
+    return new InstantCommand(() -> intakeClose());
   }
 
   public Command stopOpen() {
@@ -95,7 +104,7 @@ public class Claw extends SubsystemBase {
       new InstantCommand(() -> open()));
   }
 
-  public Command shootCube() {
+  public Command scoreCube() {
     return 
       new InstantCommand(() -> shoot()).andThen(
       new InstantCommand(() -> open())); 
