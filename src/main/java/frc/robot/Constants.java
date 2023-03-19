@@ -164,7 +164,7 @@ public final class Constants {
 
     public static final double kIntakeMotorSpeed = 1;
     public static final double kOuttakeMotorSpeed = -0.1;
-    public static final double kShootMotorSpeed = -0.6;
+    public static final double kShootMotorSpeed = -0.4;
   }
 
   public static final class IntakeConstants {
