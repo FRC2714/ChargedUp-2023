@@ -37,13 +37,13 @@ public class BaseJoint extends SubsystemBase {
     RightBaseJointMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
     LeftBaseJointMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
 
-    RightBaseJointMotor.setInverted(ArmConstants.kBaseJointInverted); //must be inverted
+    RightBaseJointMotor.setInverted(ArmConstants.kBaseJointEncoderInverted); //must be inverted
     RightBaseJointMotor.setIdleMode(IdleMode.kBrake);
     LeftBaseJointMotor.setIdleMode(IdleMode.kBrake);
 
     BaseEncoder = RightBaseJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
     BaseEncoder.setPositionConversionFactor(ArmConstants.kBaseJointPositionConversionFactor);
-    BaseEncoder.setInverted(ArmConstants.kBaseJointInverted); //must be inverted
+    BaseEncoder.setInverted(ArmConstants.kBaseJointEncoderInverted); //must be inverted
     BaseEncoder.setZeroOffset(1049.0689405);
     //todo set velocity conversion factor
 

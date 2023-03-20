@@ -23,6 +23,9 @@
   },
   "NetworkTables": {
     "transitory": {
+      "FMSInfo": {
+        "open": true
+      },
       "SmartDashboard": {
         "PPSwerveControllerCommand": {
           "open": true
