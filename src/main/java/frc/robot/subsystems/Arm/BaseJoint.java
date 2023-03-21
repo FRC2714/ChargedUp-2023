@@ -11,7 +11,7 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,6 +19,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.utils.controller.AsymmetricTrapezoidProfile;
 import frc.utils.controller.ProfiledPositionController;
 import frc.utils.controller.AsymmetricTrapezoidProfile.Constraints;
+import frc.utils.controller.AsymmetricTrapezoidProfile.State;
 
 
 public class BaseJoint extends SubsystemBase {
@@ -31,6 +32,9 @@ public class BaseJoint extends SubsystemBase {
   private Constraints BaseJointConstraints;
 
   private double targetAngle;
+  private State targetState = new State(0, 0);
+
+  private ArmFeedforward basejointFeedForward = new ArmFeedforward(0, 0, 0);
   
   /** Creates a new BaseJoint. */
   public BaseJoint() {
@@ -92,9 +96,13 @@ public class BaseJoint extends SubsystemBase {
     this.targetAngle = targetAngleRadians;
     SmartDashboard.putNumber("BaseJoint Target Kinematic Angle", Units.radiansToDegrees(targetAngleRadians));
     //SmartDashboard.putNumber("BaseJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
-    //BaseJointController.set(targetAngleRadians);
-    //TODO
+    targetState = new State(targetAngleRadians, 0);
   }
+
+  public void setTargetState(State targetState) {
+    this.targetState = targetState;
+  }
+  
 
   public boolean nearSetpoint() {
     return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(4);
@@ -110,6 +118,14 @@ public class BaseJoint extends SubsystemBase {
 
   @Override
   public void periodic() {
+    BaseJointController.setReference(
+      targetAngle,
+      getKinematicAngle(),
+      (targetState) -> basejointFeedForward.calculate(targetState.position, targetState.velocity));
+    
+    SmartDashboard.putNumber("targetState position", Units.radiansToDegrees(targetState.position));
+    SmartDashboard.putNumber("targetState velocity", targetState.velocity);
+
     SmartDashboard.putNumber("BaseJoint Encoder", BaseEncoder.getPosition());
     SmartDashboard.putBoolean("BaseJoint nearSetpoint", nearSetpoint());
     SmartDashboard.putNumber("BaseJoint Kinematic Angle", Units.radiansToDegrees(getKinematicAngle()));
