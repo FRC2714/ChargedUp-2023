@@ -11,9 +11,12 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 
 import java.util.function.Function;
 
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
+
 public class ProfiledPositionController implements Sendable {
   private double m_dt = 0.02;
-  private final Controller m_positionController;
+  private final SparkMaxPIDController m_positionController;
   private AsymmetricTrapezoidProfile.Constraints m_profileConstraints;
   private AsymmetricTrapezoidProfile.State m_setpoint = new AsymmetricTrapezoidProfile.State();
   private AsymmetricTrapezoidProfile.State m_goal = new AsymmetricTrapezoidProfile.State();
@@ -25,7 +28,7 @@ public class ProfiledPositionController implements Sendable {
   private double m_maximumInput = 0.0;
 
   public ProfiledPositionController(
-      Controller positionController,
+    SparkMaxPIDController positionController,
       AsymmetricTrapezoidProfile.Constraints constraints,
       double loopPeriod) {
     m_positionController = positionController;
@@ -34,20 +37,20 @@ public class ProfiledPositionController implements Sendable {
   }
 
   public ProfiledPositionController(
-      Controller positionController, AsymmetricTrapezoidProfile.Constraints constraints) {
+    SparkMaxPIDController positionController, AsymmetricTrapezoidProfile.Constraints constraints) {
     m_positionController = positionController;
     m_profileConstraints = constraints;
   }
 
   public ProfiledPositionController(
-      Controller positionController, TrapezoidProfile.Constraints constraints, double loopPeriod) {
+    SparkMaxPIDController positionController, TrapezoidProfile.Constraints constraints, double loopPeriod) {
     m_positionController = positionController;
     m_profileConstraints = new AsymmetricTrapezoidProfile.Constraints(constraints);
     m_dt = loopPeriod;
   }
 
   public ProfiledPositionController(
-      Controller positionController, TrapezoidProfile.Constraints constraints) {
+    SparkMaxPIDController positionController, TrapezoidProfile.Constraints constraints) {
     m_positionController = positionController;
     m_profileConstraints = new AsymmetricTrapezoidProfile.Constraints(constraints);
   }
@@ -96,7 +99,7 @@ public class ProfiledPositionController implements Sendable {
       double measurement,
       Function<AsymmetricTrapezoidProfile.State, Double> feedforward) {
     if (reference != m_goal.position) {
-      if (m_positionController.isContinuousInputEnabled()) {
+      if (m_positionController.getPositionPIDWrappingEnabled()) {
         // Get error which is smallest distance between goal and measurement
         double errorBound = (m_maximumInput - m_minimumInput) / 2.0;
         double goalMinDistance =
@@ -119,21 +122,32 @@ public class ProfiledPositionController implements Sendable {
     var profile = new AsymmetricTrapezoidProfile(m_profileConstraints, m_goal, m_setpoint);
     m_setpoint = profile.calculate(m_dt);
     m_feedforward_volts = feedforward.apply(m_setpoint);
-    m_positionController.setReference(m_setpoint.position, m_feedforward_volts);
+
+    if (m_positionController.getPositionPIDWrappingEnabled()) {
+      /*
+       * Spark Max can't automatically wrap smartly, so we must 'unwrap'
+       * the values manually to set the correct target.
+       */
+      double angleMod = MathUtil.inputModulus(measurement, m_minimumInput, m_maximumInput);
+      reference = reference + measurement - angleMod;
+    }
+    m_positionController.setReference(m_setpoint.position, ControlType.kPosition, 0, m_feedforward_volts);
   }
 
   public void enableContinuousInput(double minimumInput, double maximumInput) {
-    m_positionController.enableContinuousInput(minimumInput, maximumInput);
+    m_positionController.setPositionPIDWrappingEnabled(true);
+    m_positionController.setPositionPIDWrappingMinInput(minimumInput);
+    m_positionController.setPositionPIDWrappingMinInput(maximumInput);
     m_minimumInput = minimumInput;
     m_maximumInput = maximumInput;
   }
 
   public void disableContinuousInput() {
-    m_positionController.disableContinuousInput();
+    m_positionController.setPositionPIDWrappingEnabled(false);
   }
 
   public boolean isContinuousInputEnabled() {
-    return m_positionController.isContinuousInputEnabled();
+    return m_positionController.getPositionPIDWrappingEnabled();
   }
 
   public boolean atGoal() {

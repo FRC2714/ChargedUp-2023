@@ -7,15 +7,18 @@ package frc.robot.subsystems.Arm;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+import frc.utils.controller.AsymmetricTrapezoidProfile;
+import frc.utils.controller.ProfiledPositionController;
+import frc.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 
 
 public class BaseJoint extends SubsystemBase {
@@ -23,7 +26,8 @@ public class BaseJoint extends SubsystemBase {
   private CANSparkMax LeftBaseJointMotor;
   private AbsoluteEncoder BaseEncoder;
 
-  private ProfiledPIDController BaseJointController;
+  private ProfiledPositionController BaseJointController;
+  private SparkMaxPIDController sparkMaxPIDController;
   private Constraints BaseJointConstraints;
 
   private double targetAngle;
@@ -50,9 +54,9 @@ public class BaseJoint extends SubsystemBase {
     RightBaseJointMotor.burnFlash();
     LeftBaseJointMotor.burnFlash();
 
-    BaseJointConstraints = new Constraints(0, 0);
-    BaseJointController = new ProfiledPIDController(0, 0, 0, BaseJointConstraints);
-    BaseJointController.setTolerance(0);
+    BaseJointConstraints = new Constraints(0, 0, 0);
+    sparkMaxPIDController = RightBaseJointMotor.getPIDController();
+    BaseJointController = new ProfiledPositionController(sparkMaxPIDController, BaseJointConstraints);
     BaseJointController.disableContinuousInput();
   }
 
@@ -88,15 +92,16 @@ public class BaseJoint extends SubsystemBase {
     this.targetAngle = targetAngleRadians;
     SmartDashboard.putNumber("BaseJoint Target Kinematic Angle", Units.radiansToDegrees(targetAngleRadians));
     //SmartDashboard.putNumber("BaseJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
-    BaseJointController.setGoal(targetAngleRadians);
+    //BaseJointController.set(targetAngleRadians);
+    //TODO
   }
 
   public boolean nearSetpoint() {
     return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(4);
   }
 
-  public boolean atSetpoint() {
-    return BaseJointController.atSetpoint();
+  public boolean atGoal() {
+    return BaseJointController.atGoal();
   }
 
   public void disable() {
