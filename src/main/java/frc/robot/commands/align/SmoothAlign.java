@@ -84,7 +84,7 @@ public class SmoothAlign extends CommandBase {
         yController.calculate(m_limelight.getXOffsetRadians()), 
         thetaController.calculate(m_robotDrive.getHeadingRadians()), 
         true,
-        true);
+        false);
   }
 
   // Called once the command ends or is interrupted.

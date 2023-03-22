@@ -24,8 +24,8 @@ public class AlignToHP extends CommandBase {
   private double xOffsetMeters = 0.50;
   private double yOffsetDegrees = Units.degreesToRadians(-22);
 
-  //private double thetaControllerkP
-
+  //TODO point of interest tracking
+  
   /** Creates a new SmoothAlign. */
   public AlignToHP(DriveSubsystem m_robotDrive, Limelight m_limelight) {
     this.m_robotDrive = m_robotDrive;
@@ -52,8 +52,8 @@ public class AlignToHP extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_limelight.setLED(true);
     m_limelight.setAprilTagPipeline();
+    m_limelight.setLED(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -64,7 +64,7 @@ public class AlignToHP extends CommandBase {
         -yController.calculate(m_limelight.getXOffsetRadians()), 
         thetaController.calculate(m_robotDrive.getHeadingRadians()), 
         true,
-        true);
+        false);
   }
 
   // Called once the command ends or is interrupted.
