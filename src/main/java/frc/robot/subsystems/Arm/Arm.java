@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.utils.ArmForwardKinematicPosition;
 
 public class Arm extends SubsystemBase {
@@ -30,8 +29,8 @@ public class Arm extends SubsystemBase {
   private double baseJointLength = ArmConstants.kBaseJointLength;//meters
   private double secondJointLength = ArmConstants.kSecondJointLength;
 
-  private double baseJointAngle; //units are wrong, convert to radians?? need to make them relative to ground
-  private double secondJointAngle;
+  private double q1; //units are wrong, convert to radians?? need to make them relative to ground
+  private double q2;
 
   private double targetX;
   private double targetY;
@@ -97,38 +96,37 @@ public class Arm extends SubsystemBase {
   }
 
   private void calculateQ2() {
-    secondJointAngle = -Math.abs(Math.acos(
-        ((targetX * targetX) + (targetY * targetY) - (baseJointLength * baseJointLength) - (secondJointLength * secondJointLength)) /
-            (2 * baseJointLength * secondJointLength)));
+    // secondJointAngle = -Math.acos(
+    //     -((Math.pow(baseJointLength, 2)) + (Math.pow(secondJointLength, 2) - (Math.pow(targetX, 2)) - (Math.pow(targetY, 2)))) /
+    //         (2 * baseJointLength * secondJointLength)) + (2*Math.PI);
+
+    //second solution
+    q2 = Math.acos((-baseJointLength*baseJointLength - secondJointLength*secondJointLength + targetX*targetX + targetY*targetY)/(2*baseJointLength*secondJointLength));
   }
 
   private void calculateQ1() {
-    baseJointAngle = Math.abs(
-        Math.atan(targetX / targetY) +
-            Math.atan((secondJointLength * Math.sin(secondJointAngle)) / (baseJointLength + secondJointLength * Math.sin(secondJointAngle))));
+    // baseJointAngle = 
+    //     Math.atan(targetX / targetY) -
+    //     Math.atan((secondJointLength * Math.sin(secondJointAngle)) / (baseJointLength + secondJointLength * Math.cos(secondJointAngle)));
+
+    q1 = - Math.atan2(targetY, targetX) - Math.atan2(secondJointLength*Math.sin(q2), baseJointLength+secondJointLength*Math.cos(q2)) + Math.PI/2.0;
   }
 
   private void calculateInverseKinematics() {
-    calculateQ1();
     calculateQ2();
+    calculateQ1();
   }
 
   private void setInverseKinematics() {
-    baseJoint.setTargetKinematicAngle(baseJointAngle);
-    secondJoint.setTargetKinematicAngle(secondJointAngle);
+    baseJoint.setTargetKinematicAngle(q1);
+    secondJoint.setTargetKinematicAngle(q2);
   }
 
   private void estimateCurrentXY() {
-    estimatedX = baseJointLength*Math.cos(baseJoint.getKinematicAngle()) + secondJointLength*Math.cos(baseJoint.getKinematicAngle()+secondJoint.getKinematicAngle());
-    estimatedY = secondJointLength*Math.sin(secondJoint.getKinematicAngle()) + secondJointLength*Math.sin(baseJoint.getKinematicAngle()+secondJoint.getKinematicAngle());
+    estimatedX = baseJointLength*Math.sin(baseJoint.getKinematicAngle()) + secondJointLength*Math.sin(baseJoint.getKinematicAngle()+secondJoint.getKinematicAngle());
+    estimatedY = secondJointLength*Math.cos(secondJoint.getKinematicAngle()) + secondJointLength*Math.cos(baseJoint.getKinematicAngle()+secondJoint.getKinematicAngle());
     SmartDashboard.putNumber("Arm Estimated X", Units.metersToInches(estimatedX));
     SmartDashboard.putNumber("Arm Estimated Y", Units.metersToInches(estimatedY));
-  }
-
-  public ArmState estimateCurrentArmState() {
-    if (secondJoint.getKinematicAngle() < 0) {return ArmState.BACK;} //if second joint is -, arm state is BACK
-    else if (secondJoint.getKinematicAngle() > 0 && baseJoint.getKinematicAngle() < 100) {return ArmState.TRANSFER;}
-    else {return ArmState.FRONT;}
   }
 
   public void raiseCurrentPosition(double degrees) {
