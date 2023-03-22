@@ -32,7 +32,7 @@ public class BaseJoint extends SubsystemBase {
   private Constraints BaseJointConstraints;
 
   private double targetAngle;
-  private State targetState = new State(0, 0);
+  private State targetState = new State();
 
   private ArmFeedforward basejointFeedForward = new ArmFeedforward(0, 0, 0);
   
@@ -71,7 +71,7 @@ public class BaseJoint extends SubsystemBase {
     kinematicAngle /= ArmConstants.kBaseJointGearRatio; //divide by gear ratio
 
     //convert 0,360 to -180,180
-    kinematicAngle -= (2*Math.PI);
+    //kinematicAngle -= (Math.PI);
 
     return kinematicAngle;
   }
@@ -103,7 +103,6 @@ public class BaseJoint extends SubsystemBase {
     this.targetState = targetState;
   }
   
-
   public boolean nearSetpoint() {
     return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(4);
   }
@@ -118,13 +117,13 @@ public class BaseJoint extends SubsystemBase {
 
   @Override
   public void periodic() {
-    BaseJointController.setReference(
-      targetAngle,
-      getKinematicAngle(),
-      (targetState) -> basejointFeedForward.calculate(targetState.position, targetState.velocity));
+    // BaseJointController.setReference(
+    //   targetAngle,
+    //   getKinematicAngle(),
+    //   (targetState) -> basejointFeedForward.calculate(targetState.position, targetState.velocity));
     
-    SmartDashboard.putNumber("targetState position", Units.radiansToDegrees(targetState.position));
-    SmartDashboard.putNumber("targetState velocity", targetState.velocity);
+    // SmartDashboard.putNumber("targetState position", Units.radiansToDegrees(targetState.position));
+    // SmartDashboard.putNumber("targetState velocity", targetState.velocity);
 
     SmartDashboard.putNumber("BaseJoint Encoder", BaseEncoder.getPosition());
     SmartDashboard.putBoolean("BaseJoint nearSetpoint", nearSetpoint());

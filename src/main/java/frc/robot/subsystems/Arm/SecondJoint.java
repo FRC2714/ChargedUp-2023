@@ -7,6 +7,7 @@ package frc.robot.subsystems.Arm;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkMax.IdleMode;
 
@@ -24,6 +25,8 @@ public class SecondJoint extends SubsystemBase {
 
   private ProfiledPIDController SecondJointController;
   private Constraints SecondJointConstraints;
+
+  private SparkMaxPIDController SecondJointPID;
 
   private double targetAngle;
   
@@ -53,28 +56,39 @@ public class SecondJoint extends SubsystemBase {
     SecondJointController = new ProfiledPIDController(0, 0, 0, SecondJointConstraints);
     SecondJointController.setTolerance(0);
     SecondJointController.disableContinuousInput();
+
+    SecondJointPID = RightSecondJointMotor.getPIDController();
+    SecondJointPID.setPositionPIDWrappingEnabled(false);
+    SecondJointPID.setFeedbackDevice(SecondJointEncoder);
+    SecondJointPID.setFF(ArmConstants.kSecondJointFF, 0);
+    SecondJointPID.setP(ArmConstants.kSecondJointP, 0);
+    SecondJointPID.setI(ArmConstants.kSecondJointI, 0);
+    SecondJointPID.setD(ArmConstants.kSecondJointD, 0);
+    SecondJointPID.setSmartMotionMaxVelocity(ArmConstants.kSecondJointMaxVelocity, 0);
+    SecondJointPID.setSmartMotionMaxAccel(ArmConstants.kSecondJointMaxAcceleration, 0);
+    SecondJointPID.setSmartMotionAllowedClosedLoopError(ArmConstants.kSecondJointTolerance, 0);
   }
 
   private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
     double kinematicAngle = sparkAngle;
 
-    kinematicAngle -= ArmConstants.kBaseJointKinematicOffset; //subtract kinematic offset
-    kinematicAngle /= ArmConstants.kBaseJointGearRatio; //divide by gear ratio
+    kinematicAngle -= ArmConstants.kSecondJointKinematicOffset; //subtract kinematic offset
+    kinematicAngle /= ArmConstants.kSecondJointGearRatio; //divide by gear ratio
 
     //convert 0,360 to -180,180
-    kinematicAngle -= (2*Math.PI);
+    //kinematicAngle -= (Math.PI);
 
-    return kinematicAngle;
+    return -kinematicAngle;
   }
 
   private double convertAngleFromKinematicToSparkMax(double kinematicAngle) {
-    double sparkAngle = kinematicAngle;
+    double sparkAngle = -kinematicAngle;
 
     //convert -180,180 to 0,360
-    sparkAngle += (2*Math.PI);
+    //sparkAngle += (2*Math.PI);
 
-    sparkAngle *= ArmConstants.kBaseJointGearRatio; //multiply by gear ratio
-    sparkAngle += ArmConstants.kBaseJointKinematicOffset; //add kinematic offset
+    sparkAngle *= ArmConstants.kSecondJointGearRatio; //multiply by gear ratio
+    sparkAngle += ArmConstants.kSecondJointKinematicOffset; //add kinematic offset
 
     return sparkAngle;
   }
@@ -86,7 +100,8 @@ public class SecondJoint extends SubsystemBase {
   public void setTargetKinematicAngle(double targetAngleRadians) {
     this.targetAngle = targetAngleRadians;
     SmartDashboard.putNumber("BaseJoint Target Kinematic Angle", Units.radiansToDegrees(targetAngleRadians));
-    //SmartDashboard.putNumber("BaseJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
+    SmartDashboard.putNumber("BaseJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
+    SecondJointPID.setReference(convertAngleFromKinematicToSparkMax(targetAngle), CANSparkMax.ControlType.kSmartMotion, 0);
     SecondJointController.setGoal(targetAngleRadians);
   }
 
