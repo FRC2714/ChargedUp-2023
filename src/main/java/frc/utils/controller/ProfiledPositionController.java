@@ -8,6 +8,7 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.Function;
 
@@ -94,6 +95,11 @@ public class ProfiledPositionController implements Sendable {
     // builder.addDoubleProperty("goal", () -> getGoal().position, this::setGoal);
   }
 
+  public void postData() {
+    SmartDashboard.putNumber("position goal", getGoal().position);
+    //SmartDashboard.putNumber("velocity goal", getGoal().velocity);
+  }
+
   public void setReference(
       double reference,
       double measurement,
@@ -123,14 +129,14 @@ public class ProfiledPositionController implements Sendable {
     m_setpoint = profile.calculate(m_dt);
     m_feedforward_volts = feedforward.apply(m_setpoint);
 
-    if (m_positionController.getPositionPIDWrappingEnabled()) {
-      /*
-       * Spark Max can't automatically wrap smartly, so we must 'unwrap'
-       * the values manually to set the correct target.
-       */
-      double angleMod = MathUtil.inputModulus(measurement, m_minimumInput, m_maximumInput);
-      reference = reference + measurement - angleMod;
-    }
+    // if (m_positionController.getPositionPIDWrappingEnabled()) {
+    //   /*
+    //    * Spark Max can't automatically wrap smartly, so we must 'unwrap'
+    //    * the values manually to set the correct target.
+    //    */
+    //   double angleMod = MathUtil.inputModulus(measurement, m_minimumInput, m_maximumInput);
+    //   reference = reference + measurement - angleMod;
+    // }
     m_positionController.setReference(m_setpoint.position, ControlType.kPosition, 0, m_feedforward_volts);
   }
 

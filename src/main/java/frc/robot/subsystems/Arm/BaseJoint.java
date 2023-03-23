@@ -35,6 +35,8 @@ public class BaseJoint extends SubsystemBase {
   private State targetState = new State();
 
   private ArmFeedforward basejointFeedForward = new ArmFeedforward(0, 0, 0);
+
+  private SparkMaxPIDController BaseJointPID;
   
   /** Creates a new BaseJoint. */
   public BaseJoint() {
@@ -55,6 +57,7 @@ public class BaseJoint extends SubsystemBase {
     BaseEncoder.setZeroOffset(1049.0689405);
     //todo set velocity conversion factor
 
+
     RightBaseJointMotor.burnFlash();
     LeftBaseJointMotor.burnFlash();
 
@@ -62,6 +65,17 @@ public class BaseJoint extends SubsystemBase {
     sparkMaxPIDController = RightBaseJointMotor.getPIDController();
     BaseJointController = new ProfiledPositionController(sparkMaxPIDController, BaseJointConstraints);
     BaseJointController.disableContinuousInput();
+
+    BaseJointPID = RightBaseJointMotor.getPIDController();
+    BaseJointPID.setPositionPIDWrappingEnabled(false);
+    BaseJointPID.setFeedbackDevice(BaseEncoder);
+    BaseJointPID.setFF(ArmConstants.kBaseJointFF, 0);
+    BaseJointPID.setP(ArmConstants.kBaseJointP, 0);
+    BaseJointPID.setI(ArmConstants.kBaseJointI, 0);
+    BaseJointPID.setD(ArmConstants.kBaseJointD, 0);
+    BaseJointPID.setSmartMotionMaxVelocity(ArmConstants.kBaseJointMaxVelocity, 0);
+    BaseJointPID.setSmartMotionMaxAccel(ArmConstants.kBaseJointMaxAcceleration, 0);
+    BaseJointPID.setSmartMotionAllowedClosedLoopError(ArmConstants.kBaseJointTolerance, 0);
   }
 
   private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
@@ -80,7 +94,7 @@ public class BaseJoint extends SubsystemBase {
     double sparkAngle = kinematicAngle;
 
     //convert -180,180 to 0,360
-    sparkAngle += (2*Math.PI);
+    //sparkAngle += (2*Math.PI);
 
     sparkAngle *= ArmConstants.kBaseJointGearRatio; //multiply by gear ratio
     sparkAngle += ArmConstants.kBaseJointKinematicOffset; //add kinematic offset
@@ -96,7 +110,8 @@ public class BaseJoint extends SubsystemBase {
     this.targetAngle = targetAngleRadians;
     SmartDashboard.putNumber("BaseJoint Target Kinematic Angle", Units.radiansToDegrees(targetAngleRadians));
     //SmartDashboard.putNumber("BaseJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
-    targetState = new State(targetAngleRadians, 0);
+    BaseJointPID.setReference(convertAngleFromKinematicToSparkMax(targetAngle), CANSparkMax.ControlType.kSmartMotion, 0);
+    //targetState = new State(targetAngleRadians, 0);
   }
 
   public void setTargetState(State targetState) {
