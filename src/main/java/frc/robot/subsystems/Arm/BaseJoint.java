@@ -16,7 +16,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-import frc.utils.controller.AsymmetricTrapezoidProfile;
 import frc.utils.controller.ProfiledPositionController;
 import frc.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 import frc.utils.controller.AsymmetricTrapezoidProfile.State;
@@ -61,10 +60,10 @@ public class BaseJoint extends SubsystemBase {
     RightBaseJointMotor.burnFlash();
     LeftBaseJointMotor.burnFlash();
 
-    BaseJointConstraints = new Constraints(0, 0, 0);
-    sparkMaxPIDController = RightBaseJointMotor.getPIDController();
-    BaseJointController = new ProfiledPositionController(sparkMaxPIDController, BaseJointConstraints);
-    BaseJointController.disableContinuousInput();
+    // BaseJointConstraints = new Constraints(0, 0, 0);
+    // sparkMaxPIDController = RightBaseJointMotor.getPIDController();
+    // BaseJointController = new ProfiledPositionController(sparkMaxPIDController, BaseJointConstraints);
+    // BaseJointController.disableContinuousInput();
 
     BaseJointPID = RightBaseJointMotor.getPIDController();
     BaseJointPID.setPositionPIDWrappingEnabled(false);

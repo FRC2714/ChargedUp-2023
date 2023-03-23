@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Arm;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -86,8 +88,8 @@ public class Arm extends SubsystemBase {
     return new InstantCommand(() -> setForwardKinematics(forwardKinematicsPosition));
   }
 
-  public Command setForwardKinematicsUntil(Boolean condition, ArmForwardKinematicPosition forwardKinematicsPosition) {
-    return new WaitUntilCommand(() -> condition).deadlineWith(setForwardKinematicsCommand(forwardKinematicsPosition));
+  private Command setForwardKinematicsUntil(BooleanSupplier condition, ArmForwardKinematicPosition forwardKinematicsPosition) {
+    return new WaitUntilCommand(condition).deadlineWith(setForwardKinematicsCommand(forwardKinematicsPosition));
   }
 
   public void setTargetPosition(double X, double Y) {

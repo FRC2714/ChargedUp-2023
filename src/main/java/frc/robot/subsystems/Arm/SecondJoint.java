@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -99,7 +98,7 @@ public class SecondJoint extends SubsystemBase {
     //convert -180,180 to 0,360
     //sparkAngle += (2*Math.PI);
 
-    sparkAngle *= ArmConstants.kSecondJointGearRatio; //multiply by gear ratio
+    //sparkAngle *= ArmConstants.kSecondJointGearRatio; //multiply by gear ratio
     sparkAngle += ArmConstants.kSecondJointKinematicOffset; //add kinematic offset
 
     return sparkAngle;
@@ -132,7 +131,7 @@ public class SecondJoint extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SecondJointController.setReference(targetAngle + Math.PI, 
+    SecondJointController.setReference(convertAngleFromKinematicToSparkMax(targetAngle), 
     getKinematicAngle(), 
     (setpoint) -> secondJointFeedForward.calculate(setpoint.position, setpoint.velocity));
     
