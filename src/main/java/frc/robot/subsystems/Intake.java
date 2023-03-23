@@ -37,9 +37,8 @@ public class Intake extends SubsystemBase {
 
   private SparkMaxPIDController flywheelPID;
 
-  
-
-  private InterpolatingTreeMap flywheelVelocity = new InterpolatingTreeMap();
+  private InterpolatingTreeMap velocityMap = new InterpolatingTreeMap();
+  private InterpolatingTreeMap pivotMap = new InterpolatingTreeMap();
 
   private double pivotGearRatio = 50;
   private double deployAngleDegrees = 230;
@@ -86,26 +85,42 @@ public class Intake extends SubsystemBase {
   }
 
   private void populateVelocityMap() {
-    flywheelVelocity.put(5.5, 2400.0);
-    flywheelVelocity.put(7.5, 2500.0);
+    velocityMap.put(0.0, 0.0);
+    velocityMap.put(5.0, 500.0);
   }
 
-  public double getTargetRpm() {
+  private double getFlywheelTargetVelocity() {
     return m_limelight.targetVisible()
-        ? flywheelVelocity.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()) + 0)
+        ? velocityMap.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()) + 0)
         : 0;
+  }
+
+  private void populatePivotMap() {
+    pivotMap.put(0.0, 150.0);
+    pivotMap.put(5.0, 170.0);
+  }
+
+  private double getTargetPivot() {
+    return m_limelight.targetVisible()
+        ? pivotMap.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()))
+        : holdAngleDegrees;
+  }
+
+  public void setDynamicShooter() {
+    setFlywheelTargetVelocity(getFlywheelTargetVelocity());
+    new PivotIntake(this, getPivotAngleRadians());
   }
 
   public enum IntakeState {
     INTAKING, OUTTAKING, STOPPED
   }
 
-  public void setFlywheelTarget(double targetRPM) {
+  public void setFlywheelTargetVelocity(double targetRPM) {
     flywheelPID.setReference(targetRPM, ControlType.kVelocity);
   }
 
   private void intake() {
-    setFlywheelTarget(0);
+    setFlywheelTargetVelocity(0);
     intakeMotor.setVoltage(IntakeConstants.kIntakeMotorSpeed*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.INTAKING) {
       intakeRunningTimer.reset();
@@ -115,7 +130,7 @@ public class Intake extends SubsystemBase {
   }
 
   private void outtake(double power) {
-    setFlywheelTarget(0);
+    setFlywheelTargetVelocity(0);
     intakeMotor.setVoltage(-power*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.OUTTAKING) {
       intakeRunningTimer.reset();
@@ -125,11 +140,9 @@ public class Intake extends SubsystemBase {
   }
 
   private void stop() {
-    setFlywheelTarget(0);
+    setFlywheelTargetVelocity(0);
     intakeMotor.set(0);
   }
-
-
 
   public double getPivotAngleRadians() {
     return pivotEncoder.getPosition() / pivotGearRatio;
