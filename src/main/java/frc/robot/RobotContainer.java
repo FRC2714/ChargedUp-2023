@@ -32,13 +32,13 @@ import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.SmoothAlign;
 import frc.robot.commands.auto.NothingAuto;
-import frc.robot.commands.auto.OneConeBalanceMiddleAuto;
-import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
-import frc.robot.commands.auto.OneCubeTerrainAuto;
-import frc.robot.commands.auto.TwoCargoOpenAuto;
-import frc.robot.commands.auto.TwoCubeOpenAuto;
-import frc.robot.commands.auto.TwoCubeOpenAutoStop;
-import frc.robot.commands.auto.ComplexAuto;
+import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
+import frc.robot.commands.auto.MIDDLE.OneCubeBalanceMiddleAuto;
+import frc.robot.commands.auto.OPEN.TwoCargoOpenAuto;
+import frc.robot.commands.auto.OPEN.TwoCubeOpenAuto;
+import frc.robot.commands.auto.OPEN.TwoCubeOpenAutoStop;
+import frc.robot.commands.auto.TERRAIN.OneCubeTerrainAuto;
+import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
@@ -258,7 +258,7 @@ public class RobotContainer {
 	}
 
 	public Command getComplexAuto() {
-		return new ComplexAuto(m_robotDrive);
+		return new PathTestAuto(m_robotDrive);
 	}
 
 	public Command getOneCubeBalanceMiddleAuto() {
