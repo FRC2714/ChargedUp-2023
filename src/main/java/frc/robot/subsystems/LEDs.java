@@ -43,11 +43,7 @@ public class LEDs extends SubsystemBase {
   }
 
   public Command setColorCargoType(CargoType cargoType) {
-    if (cargoType == CargoType.CONE) {
-      return new InstantCommand(() -> setYellow());
-    } else {
-      return new InstantCommand(() -> setPurple());
-    }
+    return cargoType == CargoType.CONE ? new InstantCommand(() -> setYellow()) : new InstantCommand(() -> setPurple());
   }
 
   @Override
