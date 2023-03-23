@@ -62,7 +62,7 @@ public class RobotContainer {
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 	private final Limelight m_limelight = new Limelight();
 	private final Arm m_arm = new Arm();
-	private final Intake m_intake = new Intake();
+	private final Intake m_intake = new Intake(m_limelight);
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	

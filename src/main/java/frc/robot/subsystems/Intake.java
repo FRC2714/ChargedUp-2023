@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
@@ -20,12 +22,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.commands.PivotIntake;
+import frc.robot.utils.InterpolatingTreeMap;
 
 public class Intake extends SubsystemBase {
+  private Limelight m_limelight;
+
   private CANSparkMax intakeMotor;
   private CANSparkMax pivotMotor;
 
+  private CANSparkMax topFlywheelMotor;
+  private CANSparkMax bottomFlywheelMotor;
+
   private AbsoluteEncoder pivotEncoder;
+
+  private SparkMaxPIDController flywheelPID;
+
+  
+
+  private InterpolatingTreeMap flywheelVelocity = new InterpolatingTreeMap();
 
   private double pivotGearRatio = 50;
   private double deployAngleDegrees = 230;
@@ -34,12 +48,14 @@ public class Intake extends SubsystemBase {
   private double shootAngleDegrees = 150;
   private double outtakeAngleDegrees = 200;
 
-  private IntakeState intakeState = IntakeState.STOPPED;
+  private static IntakeState intakeState = IntakeState.STOPPED;
 
   private Timer intakeRunningTimer = new Timer();
 
   /** Creates a new Intake. */
-  public Intake() {
+  public Intake(Limelight m_limelight) {
+    this.m_limelight = m_limelight;
+    
     intakeMotor = new CANSparkMax(IntakeConstants.kIntakeMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     pivotMotor = new CANSparkMax(IntakeConstants.kPivotMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     intakeMotor.setInverted(true);
@@ -56,13 +72,40 @@ public class Intake extends SubsystemBase {
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(2*Math.PI*pivotGearRatio);
     pivotEncoder.setInverted(true);
+
+    topFlywheelMotor = new CANSparkMax(IntakeConstants.kIntakeMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    bottomFlywheelMotor = new CANSparkMax(IntakeConstants.kIntakeMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    bottomFlywheelMotor.follow(topFlywheelMotor, true);
+
+    intakeMotor.setIdleMode(IdleMode.kCoast);
+    pivotMotor.setIdleMode(IdleMode.kCoast);
+
+    flywheelPID = topFlywheelMotor.getPIDController();
+    flywheelPID.setFF(0); 
+
+  }
+
+  private void populateVelocityMap() {
+    flywheelVelocity.put(5.5, 2400.0);
+    flywheelVelocity.put(7.5, 2500.0);
+  }
+
+  public double getTargetRpm() {
+    return m_limelight.targetVisible()
+        ? flywheelVelocity.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()) + 0)
+        : 0;
   }
 
   public enum IntakeState {
     INTAKING, OUTTAKING, STOPPED
   }
 
+  public void setFlywheelTarget(double targetRPM) {
+    flywheelPID.setReference(targetRPM, ControlType.kVelocity);
+  }
+
   private void intake() {
+    setFlywheelTarget(0);
     intakeMotor.setVoltage(IntakeConstants.kIntakeMotorSpeed*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.INTAKING) {
       intakeRunningTimer.reset();
@@ -72,6 +115,7 @@ public class Intake extends SubsystemBase {
   }
 
   private void outtake(double power) {
+    setFlywheelTarget(0);
     intakeMotor.setVoltage(-power*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.OUTTAKING) {
       intakeRunningTimer.reset();
@@ -81,8 +125,11 @@ public class Intake extends SubsystemBase {
   }
 
   private void stop() {
+    setFlywheelTarget(0);
     intakeMotor.set(0);
   }
+
+
 
   public double getPivotAngleRadians() {
     return pivotEncoder.getPosition() / pivotGearRatio;
