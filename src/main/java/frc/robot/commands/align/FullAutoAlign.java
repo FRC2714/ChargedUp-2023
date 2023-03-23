@@ -5,7 +5,6 @@
 package frc.robot.commands.align;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
@@ -19,10 +18,9 @@ public class FullAutoAlign extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new WaitCommand(0.3).raceWith(new TurnToAngle(m_robotDrive, 0)),
-      new WaitCommand(0.6).raceWith(new AutoAlignY(m_robotDrive, m_limelight)),
-      new WaitCommand(1).raceWith(new AutoAlignX(m_robotDrive, m_limelight)),
-      new AutoAlignY(m_robotDrive, m_limelight)
+      new TurnToAngle(m_robotDrive, 0),
+      new AutoAlignY(m_robotDrive, m_limelight),
+      new AutoAlignX(m_robotDrive, m_limelight)
     );
   }
 }
