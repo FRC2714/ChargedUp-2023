@@ -15,6 +15,8 @@ public class AlignToHP extends CommandBase {
   private DriveSubsystem m_robotDrive;
   private Limelight m_limelight;
 
+  private boolean isLeftSide;
+
   private ProfiledPIDController xController;
   private ProfiledPIDController yController;
   private ProfiledPIDController thetaController;
@@ -27,9 +29,11 @@ public class AlignToHP extends CommandBase {
   //TODO point of interest tracking
   
   /** Creates a new SmoothAlign. */
-  public AlignToHP(DriveSubsystem m_robotDrive, Limelight m_limelight) {
+  public AlignToHP(DriveSubsystem m_robotDrive, Limelight m_limelight, boolean isLeftSide) {
     this.m_robotDrive = m_robotDrive;
     this.m_limelight = m_limelight;
+
+    this.isLeftSide = isLeftSide;
 
     // Use addRequirements() here to declare subsystem dependencies.
     xController = new ProfiledPIDController(0.8, 0, 0, AutoConstants.kAutoControllerConstraints);
@@ -52,6 +56,11 @@ public class AlignToHP extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (isLeftSide) {
+      //set left pipeline
+    } else {
+      //set right pipeline
+    }
     m_limelight.setAprilTagPipeline();
     m_limelight.setLED(true);
   }

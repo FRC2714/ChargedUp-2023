@@ -33,7 +33,7 @@ public class Limelight extends SubsystemBase {
 		return Units.degreesToRadians(getXAngleOffsetDegrees());
 	}
 
-	public boolean targetVisible() {
+	public boolean isTargetVisible() {
 		return LimelightHelpers.getTV(limelightName);
 	}
 
