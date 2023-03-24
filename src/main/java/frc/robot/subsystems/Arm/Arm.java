@@ -19,14 +19,8 @@ import frc.robot.Constants.ArmConstants;
 import frc.utils.ArmForwardKinematicPosition;
 
 public class Arm extends SubsystemBase {
-  // private Joint baseJoint;
-  // private Joint secondJoint;
-
   private BaseJoint baseJoint= new BaseJoint();
   private SecondJoint secondJoint= new SecondJoint();
-
-  private ProfiledPIDController baseJointController;
-  private ProfiledPIDController secondJointController;
 
   private double baseJointLength = ArmConstants.kBaseJointLength;//meters
   private double secondJointLength = ArmConstants.kSecondJointLength;
@@ -40,48 +34,17 @@ public class Arm extends SubsystemBase {
   private double estimatedX;
   private double estimatedY;
 
-  /** Creates a new Superstructure. */
-  public Arm() {
-    baseJointController = new ProfiledPIDController(0, 0, 0, new Constraints(0, 0));
-    secondJointController = new ProfiledPIDController(0, 0, 0, new Constraints(0, 0));
-
-    // baseJoint = new Joint(
-    //   ArmConstants.kRightBaseJointMotorCanId, 
-    //   ArmConstants.kLeftBaseJointMotorCanId, 
-    //   true, 
-    //   ArmConstants.kBaseJointMotorInverted, 
-    //   ArmConstants.kBaseJointPositionConversionFactor, 
-    //   ArmConstants.kBaseJointEncoderInverted,
-    //   ArmConstants.kBaseJointEncoderZeroOffset,
-    //   baseJointController,
-    //   4,
-    //   ArmConstants.kBaseJointKinematicOffset,
-    //   ArmConstants.kBaseJointGearRatio);
-
-    // secondJoint = new Joint(
-    //   ArmConstants.kRightSecondJointMotorCanId, 
-    
-    //   ArmConstants.kLeftSecondJointMotorCanId, 
-    //   false, 
-    //   ArmConstants.kSecondJointMotorInverted, 
-    //   ArmConstants.kSecondJointPositionConversionFactor, 
-    //   ArmConstants.kSecondJointEncoderInverted,
-    //   ArmConstants.kSecondJointEncoderZeroOffset,
-    //   secondJointController,
-    //   8,
-    //   ArmConstants.kSecondJointKinematicOffset,
-    //   ArmConstants.kSecondJointGearRatio);
-
-  }
+  /** Creates a new Arm. */
+  public Arm() {}
 
   private void setForwardKinematics(double baseJointAngle, double secondAngle) {
     baseJoint.setTargetKinematicAngle(baseJointAngle);
-    secondJoint.setTargetKinematicAngle(secondAngle);
+    secondJoint.setTargetKinematicAngleRadians(secondAngle);
   }
 
   private void setForwardKinematics(ArmForwardKinematicPosition forwardKinematicsPosition) {
     baseJoint.setTargetKinematicAngle(forwardKinematicsPosition.getBaseAngleRadians());
-    secondJoint.setTargetKinematicAngle(forwardKinematicsPosition.getSecondAngleRadians());
+    secondJoint.setTargetKinematicAngleRadians(forwardKinematicsPosition.getSecondAngleRadians());
   }
 
   public InstantCommand setForwardKinematicsCommand(ArmForwardKinematicPosition forwardKinematicsPosition) {
@@ -121,7 +84,7 @@ public class Arm extends SubsystemBase {
 
   private void setInverseKinematics() {
     baseJoint.setTargetKinematicAngle(q1);
-    secondJoint.setTargetKinematicAngle(q2);
+    secondJoint.setTargetKinematicAngleRadians(q2);
   }
 
   private void estimateCurrentXY() {
@@ -262,8 +225,5 @@ public class Arm extends SubsystemBase {
 
     SmartDashboard.putNumber("BaseJoint Kinematic Angle", Units.radiansToDegrees(baseJoint.getKinematicAngle()));
     SmartDashboard.putNumber("SecondJoint Kinematic Angle", Units.radiansToDegrees(secondJoint.getKinematicAngle()));
-
-    //SmartDashboard.putNumber("BaseJoint Target Angle", Units.radiansToDegrees(baseJoint.getTargetKinematicAngle()));
-    //SmartDashboard.putNumber("SecondJoint Target Angle", Units.radiansToDegrees(secondJoint.getTargetKinematicAngle()));
   }
 }
