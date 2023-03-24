@@ -4,6 +4,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
@@ -13,19 +14,21 @@ import frc.robot.subsystems.Limelight;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class EstimatePose extends InstantCommand {
   DriveSubsystem m_drivetrain;
-  Limelight m_limelight;
+  Limelight m_backLimelight;
+  Limelight m_frontLimelight;
 
-  public EstimatePose(DriveSubsystem m_drivetrain, Limelight m_limelight) {
+  public EstimatePose(DriveSubsystem m_drivetrain, Limelight m_backLimelight, Limelight m_frontLimelight) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.m_drivetrain = m_drivetrain;
-    this.m_limelight = m_limelight;
+    this.m_backLimelight = m_backLimelight;
+    this.m_frontLimelight = m_frontLimelight;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //m_limelight.setLED(true);
+    // if both limelight estimates are close, reset odometry
     m_drivetrain.resetOdometry(
-      m_limelight.getBotPose2d());
+      m_backLimelight.getBotPose2d());
   }
 }

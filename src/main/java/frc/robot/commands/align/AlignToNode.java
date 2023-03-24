@@ -13,7 +13,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 
-public class SmoothAlign extends CommandBase {
+public class AlignToNode extends CommandBase {
   private DriveSubsystem m_robotDrive;
   private Limelight m_limelight;
   private ArmStateMachine m_armStateMachine;
@@ -36,7 +36,7 @@ public class SmoothAlign extends CommandBase {
   //private double thetaControllerkP
 
   /** Creates a new SmoothAlign. */
-  public SmoothAlign(DriveSubsystem m_robotDrive, Limelight m_limelight, ArmStateMachine m_armStateMachine) {
+  public AlignToNode(DriveSubsystem m_robotDrive, Limelight m_limelight, ArmStateMachine m_armStateMachine) {
     this.m_robotDrive = m_robotDrive;
     this.m_limelight = m_limelight;
     this.m_armStateMachine = m_armStateMachine;

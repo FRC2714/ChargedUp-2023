@@ -16,7 +16,9 @@ public class Limelight extends SubsystemBase {
 	private Field2d m_field = new Field2d();
 
 	private String limelightName = "limelight";
-	public Limelight() {
+
+	public Limelight(String limelightName) {
+		this.limelightName = limelightName;
 		SmartDashboard.putData("Field Position", m_field);
 	}
 

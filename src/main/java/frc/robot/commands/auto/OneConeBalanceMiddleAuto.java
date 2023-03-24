@@ -13,7 +13,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.align.SmoothAlign;
+import frc.robot.commands.align.AlignToNode;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
@@ -47,7 +47,7 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 			m_armStateMachine.setCargoTypeCommand(CargoType.CONE),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK),
-			new WaitCommand(2).raceWith(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine)),
+			new WaitCommand(2).raceWith(new AlignToNode(m_robotDrive, m_limelight, m_armStateMachine)),
       		new WaitCommand(4.8),
 
 			//Score First Cube
