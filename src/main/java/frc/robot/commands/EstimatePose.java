@@ -26,6 +26,6 @@ public class EstimatePose extends InstantCommand {
   public void initialize() {
     //m_limelight.setLED(true);
     m_drivetrain.resetOdometry(
-      m_limelight.getBotPose());
+      m_limelight.getBotPose2d());
   }
 }
