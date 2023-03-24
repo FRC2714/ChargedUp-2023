@@ -35,9 +35,6 @@ import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
 import frc.robot.commands.auto.MIDDLE.OneCubeBalanceMiddleAuto;
 import frc.robot.commands.auto.OPEN.TwoCargoOpenAuto;
-import frc.robot.commands.auto.OPEN.TwoCubeOpenAuto;
-import frc.robot.commands.auto.OPEN.TwoCubeOpenAutoStop;
-import frc.robot.commands.auto.TERRAIN.OneCubeTerrainAuto;
 import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
@@ -269,19 +266,7 @@ public class RobotContainer {
 		return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
 	}
 
-	public Command getTwoCubeOpenAuto() {
-		return new TwoCubeOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
-	}
-
 	public Command getTwoCargoOpenAuto() {
 		return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
-	}
-
-	public Command getTwoCubeOpenAutoStop() {
-		return new TwoCubeOpenAutoStop(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
-	}
-
-	public Command getOneCubeTerrainAuto() {
-		return new OneCubeTerrainAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
 	}
 }
