@@ -6,8 +6,6 @@ package frc.robot.subsystems.Arm;
 
 import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -38,12 +36,12 @@ public class Arm extends SubsystemBase {
   public Arm() {}
 
   private void setForwardKinematics(double baseJointAngle, double secondAngle) {
-    baseJoint.setTargetKinematicAngle(baseJointAngle);
+    baseJoint.setTargetKinematicAngleRadians(baseJointAngle);
     secondJoint.setTargetKinematicAngleRadians(secondAngle);
   }
 
   private void setForwardKinematics(ArmForwardKinematicPosition forwardKinematicsPosition) {
-    baseJoint.setTargetKinematicAngle(forwardKinematicsPosition.getBaseAngleRadians());
+    baseJoint.setTargetKinematicAngleRadians(forwardKinematicsPosition.getBaseAngleRadians());
     secondJoint.setTargetKinematicAngleRadians(forwardKinematicsPosition.getSecondAngleRadians());
   }
 
@@ -83,7 +81,7 @@ public class Arm extends SubsystemBase {
   }
 
   private void setInverseKinematics() {
-    baseJoint.setTargetKinematicAngle(q1);
+    baseJoint.setTargetKinematicAngleRadians(q1);
     secondJoint.setTargetKinematicAngleRadians(q2);
   }
 

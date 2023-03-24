@@ -7,7 +7,6 @@ package frc.robot.subsystems.Arm;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
@@ -16,7 +15,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-import frc.utils.controller.ProfiledPositionController;
+import frc.utils.controller.AsymmetricProfiledPIDController;
 import frc.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 import frc.utils.controller.AsymmetricTrapezoidProfile.State;
 
@@ -24,18 +23,12 @@ import frc.utils.controller.AsymmetricTrapezoidProfile.State;
 public class BaseJoint extends SubsystemBase {
   private CANSparkMax RightBaseJointMotor;
   private CANSparkMax LeftBaseJointMotor;
-  private AbsoluteEncoder BaseEncoder;
+  private AbsoluteEncoder BaseJointEncoder;
 
-  private ProfiledPositionController BaseJointController;
-  private SparkMaxPIDController sparkMaxPIDController;
-  private Constraints BaseJointConstraints;
+  private Constraints FarConstraints = new Constraints(10, 7, 4);
+  private Constraints CloseConstraints = new Constraints(15, 15, 10);
 
-  private double targetAngle;
-  private State targetState = new State();
-
-  private ArmFeedforward basejointFeedForward = new ArmFeedforward(0, 0, 0);
-
-  private SparkMaxPIDController BaseJointPID;
+  private AsymmetricProfiledPIDController BaseJointController = new AsymmetricProfiledPIDController(0,0,0, FarConstraints);
   
   /** Creates a new BaseJoint. */
   public BaseJoint() {
@@ -50,31 +43,16 @@ public class BaseJoint extends SubsystemBase {
     RightBaseJointMotor.setIdleMode(IdleMode.kBrake);
     LeftBaseJointMotor.setIdleMode(IdleMode.kBrake);
 
-    BaseEncoder = RightBaseJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    BaseEncoder.setPositionConversionFactor(ArmConstants.kBaseJointPositionConversionFactor);
-    BaseEncoder.setInverted(ArmConstants.kBaseJointEncoderInverted); //must be inverted
-    BaseEncoder.setZeroOffset(1049.0689405);
+    BaseJointEncoder = RightBaseJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    BaseJointEncoder.setPositionConversionFactor(ArmConstants.kBaseJointPositionConversionFactor);
+    BaseJointEncoder.setInverted(ArmConstants.kBaseJointEncoderInverted); //must be inverted
+    BaseJointEncoder.setZeroOffset(1049.0689405);
     //todo set velocity conversion factor
-
 
     RightBaseJointMotor.burnFlash();
     LeftBaseJointMotor.burnFlash();
 
-    // BaseJointConstraints = new Constraints(0, 0, 0);
-    // sparkMaxPIDController = RightBaseJointMotor.getPIDController();
-    // BaseJointController = new ProfiledPositionController(sparkMaxPIDController, BaseJointConstraints);
-    // BaseJointController.disableContinuousInput();
-
-    BaseJointPID = RightBaseJointMotor.getPIDController();
-    BaseJointPID.setPositionPIDWrappingEnabled(false);
-    BaseJointPID.setFeedbackDevice(BaseEncoder);
-    BaseJointPID.setFF(ArmConstants.kBaseJointFF, 0);
-    BaseJointPID.setP(ArmConstants.kBaseJointP, 0);
-    BaseJointPID.setI(ArmConstants.kBaseJointI, 0);
-    BaseJointPID.setD(ArmConstants.kBaseJointD, 0);
-    BaseJointPID.setSmartMotionMaxVelocity(ArmConstants.kBaseJointMaxVelocity, 0);
-    BaseJointPID.setSmartMotionMaxAccel(ArmConstants.kBaseJointMaxAcceleration, 0);
-    BaseJointPID.setSmartMotionAllowedClosedLoopError(ArmConstants.kBaseJointTolerance, 0);
+    BaseJointController.disableContinuousInput();
   }
 
   private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
@@ -83,64 +61,41 @@ public class BaseJoint extends SubsystemBase {
     kinematicAngle -= ArmConstants.kBaseJointKinematicOffset; //subtract kinematic offset
     kinematicAngle /= ArmConstants.kBaseJointGearRatio; //divide by gear ratio
 
-    //convert 0,360 to -180,180
-    //kinematicAngle -= (Math.PI);
-
     return kinematicAngle;
   }
 
-  private double convertAngleFromKinematicToSparkMax(double kinematicAngle) {
-    double sparkAngle = kinematicAngle;
-
-    //convert -180,180 to 0,360
-    //sparkAngle += (2*Math.PI);
-
-    sparkAngle *= ArmConstants.kBaseJointGearRatio; //multiply by gear ratio
-    sparkAngle += ArmConstants.kBaseJointKinematicOffset; //add kinematic offset
-
-    return sparkAngle;
-  }
-
   public double getKinematicAngle() {
-    return convertAngleFromSparkMaxToKinematic(BaseEncoder.getPosition());
+    return convertAngleFromSparkMaxToKinematic(BaseJointEncoder.getPosition());
   }
 
-  public void setTargetKinematicAngle(double targetAngleRadians) {
-    this.targetAngle = targetAngleRadians;
-    SmartDashboard.putNumber("BaseJoint Target Kinematic Angle", Units.radiansToDegrees(targetAngleRadians));
-    //SmartDashboard.putNumber("BaseJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
-    BaseJointPID.setReference(convertAngleFromKinematicToSparkMax(targetAngle), CANSparkMax.ControlType.kSmartMotion, 0);
-    //targetState = new State(targetAngleRadians, 0);
-  }
+  public void setTargetKinematicAngleRadians(double targetAngleRadians) {
+    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) > Units.degreesToRadians(20)) ? FarConstraints : CloseConstraints;
+    BaseJointController.setConstraints(selectedConstraint);
+    SmartDashboard.putString("base joint selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
 
-  public void setTargetState(State targetState) {
-    this.targetState = targetState;
+    BaseJointController.setGoal(new State(targetAngleRadians, 0));
   }
   
   public boolean nearSetpoint() {
-    return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(4);
+    return Math.abs(getKinematicAngle() - BaseJointController.getGoal().position) < Units.degreesToRadians(4);
   }
 
-  public boolean atGoal() {
+  public boolean atSetpoint() {
     return BaseJointController.atGoal();
   }
 
-  public void disable() {
-    RightBaseJointMotor.set(0);
+  private void setVoltage() {
+    RightBaseJointMotor.setVoltage(
+      BaseJointController.calculate(getKinematicAngle()));
   }
 
   @Override
   public void periodic() {
-    // BaseJointController.setReference(
-    //   targetAngle,
-    //   getKinematicAngle(),
-    //   (targetState) -> basejointFeedForward.calculate(targetState.position, targetState.velocity));
-    
-    // SmartDashboard.putNumber("targetState position", Units.radiansToDegrees(targetState.position));
-    // SmartDashboard.putNumber("targetState velocity", targetState.velocity);
+    setVoltage();
 
-    SmartDashboard.putNumber("BaseJoint Encoder", BaseEncoder.getPosition());
-    SmartDashboard.putBoolean("BaseJoint nearSetpoint", nearSetpoint());
+    // SmartDashboard.putNumber("BaseJoint Encoder Position", BaseJointEncoder.getPosition());
+    // SmartDashboard.putNumber("BaseJoint Encoder Velocity", BaseJointEncoder.getVelocity());
+    // SmartDashboard.putBoolean("BaseJoint nearSetpoint", nearSetpoint());
     SmartDashboard.putNumber("BaseJoint Kinematic Angle", Units.radiansToDegrees(getKinematicAngle()));
   }
 }

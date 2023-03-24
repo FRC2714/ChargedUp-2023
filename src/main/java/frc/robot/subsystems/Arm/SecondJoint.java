@@ -25,14 +25,12 @@ public class SecondJoint extends SubsystemBase {
   private CANSparkMax LeftSecondJointMotor;
   private AbsoluteEncoder SecondJointEncoder;
 
-  private AsymmetricProfiledPIDController SecondJointController;
-
   private Constraints FarConstraints = new Constraints(10, 7, 4);
   private Constraints CloseConstraints = new Constraints(15, 15, 10);
 
-  //private ArmFeedforward secondJointFeedForward = new ArmFeedforward(0, 0.12, 4.38);
+  private AsymmetricProfiledPIDController SecondJointController = new AsymmetricProfiledPIDController(4,0,0, FarConstraints);
 
-  private double targetAngleRadians;
+  //private ArmFeedforward secondJointFeedForward = new ArmFeedforward(0, 0.12, 4.38);
   
   /** Creates a new SecondJoint. */
   public SecondJoint() {
@@ -59,7 +57,7 @@ public class SecondJoint extends SubsystemBase {
     RightSecondJointMotor.burnFlash();
     LeftSecondJointMotor.burnFlash();
 
-    SecondJointController = new AsymmetricProfiledPIDController(4,0,0, FarConstraints);
+    
     SecondJointController.disableContinuousInput();
     //SecondJointController.setTolerance(Units.degreesToRadians(2), 0);
   }
@@ -78,18 +76,15 @@ public class SecondJoint extends SubsystemBase {
   }
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
-    this.targetAngleRadians = targetAngleRadians;
-
     Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) > Units.degreesToRadians(45)) ? FarConstraints : CloseConstraints;
     SecondJointController.setConstraints(selectedConstraint);
-    SmartDashboard.putString("selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
+    SmartDashboard.putString("second joint selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
 
     SecondJointController.setGoal(new State(targetAngleRadians, 0));
-    SmartDashboard.putNumber("GOAL POSITION", Units.radiansToDegrees(SecondJointController.getGoal().position));
   }
 
   public boolean nearSetpoint() {
-    return Math.abs(getKinematicAngle() - targetAngleRadians) < Units.degreesToRadians(8);
+    return Math.abs(getKinematicAngle() - SecondJointController.getGoal().position) < Units.degreesToRadians(8);
   }
 
   public boolean atSetpoint() {
