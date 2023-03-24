@@ -72,9 +72,10 @@ public class Intake extends SubsystemBase {
     pivotEncoder.setPositionConversionFactor(2*Math.PI*pivotGearRatio);
     pivotEncoder.setInverted(true);
 
-    topFlywheelMotor = new CANSparkMax(IntakeConstants.kIntakeMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    bottomFlywheelMotor = new CANSparkMax(IntakeConstants.kIntakeMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    topFlywheelMotor = new CANSparkMax(16, CANSparkMaxLowLevel.MotorType.kBrushless);
+    bottomFlywheelMotor = new CANSparkMax(17, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor.follow(topFlywheelMotor, true);
+    topFlywheelMotor.setInverted(false);
 
     intakeMotor.setIdleMode(IdleMode.kCoast);
     pivotMotor.setIdleMode(IdleMode.kCoast);
