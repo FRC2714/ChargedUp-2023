@@ -17,6 +17,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+import frc.utils.controller.AsymmetricProfiledPIDController;
 import frc.utils.controller.ProfiledPositionController;
 import frc.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 import frc.utils.controller.AsymmetricTrapezoidProfile.State;
@@ -26,9 +27,11 @@ public class SecondJoint extends SubsystemBase {
   private CANSparkMax LeftSecondJointMotor;
   private AbsoluteEncoder SecondJointEncoder;
 
-  private ProfiledPositionController SecondJointController;
+  private AsymmetricProfiledPIDController SecondJointController;
   private SparkMaxPIDController sparkMaxPIDController;
-  private Constraints SecondJointConstraints;
+
+  private Constraints FarConstraints = new Constraints(10, 7, 4);
+  private Constraints CloseConstraints = new Constraints(10, 15, 10);
 
   private SparkMaxPIDController SecondJointPID;
 
@@ -62,10 +65,10 @@ public class SecondJoint extends SubsystemBase {
 
     RightSecondJointMotor.burnFlash();
     LeftSecondJointMotor.burnFlash();
+    
 
-    SecondJointConstraints = new Constraints(1, 1, 1);
     sparkMaxPIDController = RightSecondJointMotor.getPIDController();
-    SecondJointController = new ProfiledPositionController(sparkMaxPIDController, SecondJointConstraints);
+    SecondJointController = new AsymmetricProfiledPIDController(4,0,0, FarConstraints);
     SecondJointController.disableContinuousInput();
 
     // SecondJointPID = RightSecondJointMotor.getPIDController();
@@ -93,7 +96,7 @@ public class SecondJoint extends SubsystemBase {
   }
 
   private double convertAngleFromKinematicToSparkMax(double kinematicAngle) {
-    double sparkAngle = -kinematicAngle;
+    double sparkAngle = -kinematicAngle; //was negative
 
     //convert -180,180 to 0,360
     //sparkAngle += (2*Math.PI);
@@ -110,11 +113,14 @@ public class SecondJoint extends SubsystemBase {
 
   public void setTargetKinematicAngle(double targetAngleRadians) {
     this.targetAngle = targetAngleRadians;
-    SmartDashboard.putNumber("SecondJoint Target Kinematic Angle", Units.radiansToDegrees(targetAngleRadians));
-    //SmartDashboard.putNumber("SecondJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
-    //SecondJointPID.setReference(convertAngleFromKinematicToSparkMax(targetAngle), CANSparkMax.ControlType.kSmartMotion, 0);
-    //SecondJointController.setGoal(targetAngleRadians);
-    this.targetState = new State(targetAngleRadians, 0);
+
+
+    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) > Units.degreesToRadians(45)) ? FarConstraints : CloseConstraints;
+    SecondJointController.setConstraints(selectedConstraint);
+    SmartDashboard.putString("selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
+
+    SecondJointController.setGoal(new State(targetAngleRadians, 0));
+    SmartDashboard.putNumber("GOAL POSITION", Units.radiansToDegrees(SecondJointController.getGoal().position));
   }
 
   public boolean nearSetpoint() {
@@ -129,13 +135,16 @@ public class SecondJoint extends SubsystemBase {
     RightSecondJointMotor.set(0);
   }
 
+  private void setVoltage() {
+    RightSecondJointMotor.setVoltage(
+      SecondJointController.calculate(getKinematicAngle())
+      //secondJointFeedForward.calculate(SecondJointController.getSetpoint().position, 0)
+      );
+  }
+
   @Override
   public void periodic() {
-    SecondJointController.setReference(convertAngleFromKinematicToSparkMax(targetAngle), 
-    getKinematicAngle(), 
-    (setpoint) -> secondJointFeedForward.calculate(setpoint.position, setpoint.velocity));
-    
-    SecondJointController.postData();
+    setVoltage();
 
     SmartDashboard.putNumber("SecondJoint Encoder Position", SecondJointEncoder.getPosition());
     SmartDashboard.putNumber("SecondJoint Encoder Velocity", SecondJointEncoder.getVelocity());
