@@ -25,10 +25,10 @@ public class SecondJoint extends SubsystemBase {
   private CANSparkMax LeftSecondJointMotor;
   private AbsoluteEncoder SecondJointEncoder;
 
-  private Constraints FarConstraints = new Constraints(10, 7, 4);
+  private Constraints FarConstraints = new Constraints(12, 9, 6);
   private Constraints CloseConstraints = new Constraints(15, 15, 10);
 
-  private AsymmetricProfiledPIDController SecondJointController = new AsymmetricProfiledPIDController(4,0,0, FarConstraints);
+  private AsymmetricProfiledPIDController SecondJointController = new AsymmetricProfiledPIDController(5,0,0, FarConstraints);
 
   //private ArmFeedforward secondJointFeedForward = new ArmFeedforward(0, 0.12, 4.38);
   

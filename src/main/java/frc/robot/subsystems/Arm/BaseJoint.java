@@ -25,10 +25,10 @@ public class BaseJoint extends SubsystemBase {
   private CANSparkMax LeftBaseJointMotor;
   private AbsoluteEncoder BaseJointEncoder;
 
-  private Constraints FarConstraints = new Constraints(10, 7, 4);
-  private Constraints CloseConstraints = new Constraints(15, 15, 10);
+  private Constraints FarConstraints = new Constraints(8, 6, 4);
+  private Constraints CloseConstraints = new Constraints(7.5, 7.5, 5);
 
-  private AsymmetricProfiledPIDController BaseJointController = new AsymmetricProfiledPIDController(0,0,0, FarConstraints);
+  private AsymmetricProfiledPIDController BaseJointController = new AsymmetricProfiledPIDController(5,0,0, FarConstraints);
   
   /** Creates a new BaseJoint. */
   public BaseJoint() {
