@@ -98,7 +98,7 @@ public class Intake extends SubsystemBase {
   }
 
   private double getDynamicFlywheelVelocity() {
-    return m_limelight.targetVisible()
+    return m_limelight.isTargetVisible()
         ? velocityMap.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()) + 0)
         : 0;
   }
@@ -109,7 +109,7 @@ public class Intake extends SubsystemBase {
   }
 
   private double getDynamicPivot() {
-    return m_limelight.targetVisible()
+    return m_limelight.isTargetVisible()
         ? pivotMap.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()))
         : holdAngleDegrees;
   }

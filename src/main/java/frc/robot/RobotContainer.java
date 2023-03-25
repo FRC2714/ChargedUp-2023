@@ -30,12 +30,11 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TurnToAngle;
-import frc.robot.commands.align.SmoothAlign;
+import frc.robot.commands.align.AlignToNode;
 import frc.robot.commands.auto.NothingAuto;
-import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
-import frc.robot.commands.auto.MIDDLE.OneCubeBalanceMiddleAuto;
-import frc.robot.commands.auto.OPEN.TwoCargoOpenAuto;
 import frc.robot.commands.auto.PathTestAuto;
+import frc.robot.commands.auto.MIDDLE.*;
+import frc.robot.commands.auto.OPEN.*;
 import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
@@ -57,9 +56,10 @@ import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 public class RobotContainer {
 	// The robot's subsystems
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-	private final Limelight m_limelight = new Limelight();
+	private final Limelight m_backLimelight = new Limelight("back");
+	private final Limelight m_frontLimelight = new Limelight("front");
 	private final Arm m_arm = new Arm();
-	private final Intake m_intake = new Intake(m_limelight);
+	private final Intake m_intake = new Intake(m_frontLimelight);
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
@@ -95,13 +95,13 @@ public class RobotContainer {
 		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
 		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).schedule();
 		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
-		m_limelight.setLEDCommand(false).schedule();
+		m_backLimelight.setLEDCommand(false).schedule();
 		//m_intake.pivotToHold().schedule();
 	}
 
 	public void setAutoDefaultStates() {
 		new InstantCommand(() -> m_robotDrive.zeroHeading());
-		m_limelight.setLEDCommand(false).schedule();
+		m_backLimelight.setLEDCommand(false).schedule();
 		//m_intake.pivotToHold().schedule();
 	}
 
@@ -122,7 +122,7 @@ public class RobotContainer {
 			
 		//zero heading then autoalign on right bumper
 		m_driverController.rightBumper()
-			.whileTrue(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine));
+			.whileTrue(new AlignToNode(m_robotDrive, m_backLimelight, m_armStateMachine));
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
@@ -259,14 +259,14 @@ public class RobotContainer {
 	}
 
 	public Command getOneCubeBalanceMiddleAuto() {
-		return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
+		return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_backLimelight);
 	}
 
 	public Command getOneConeBalanceMiddleAuto() {
-		return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
+		return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_backLimelight);
 	}
 
 	public Command getTwoCargoOpenAuto() {
-		return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
+		return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_backLimelight);
 	}
 }
