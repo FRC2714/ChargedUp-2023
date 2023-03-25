@@ -12,16 +12,17 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.commands.PivotIntake;
 import frc.robot.utils.InterpolatingTreeMap;
 
 public class Intake extends SubsystemBase {
@@ -41,11 +42,14 @@ public class Intake extends SubsystemBase {
   private InterpolatingTreeMap pivotMap = new InterpolatingTreeMap();
 
   private double pivotGearRatio = 50;
-  private double deployAngleDegrees = 230;
-  private double holdAngleDegrees = 114;
-  private double retractAngleDegrees = 35;
-  private double shootAngleDegrees = 150;
-  private double outtakeAngleDegrees = 200;
+
+  private double deployAngleDegrees = 200;
+  private double holdAngleDegrees = 55;
+  private double retractAngleDegrees = 20;
+  private double shootAngleDegrees = 120;
+  private double outtakeAngleDegrees = 180;
+
+  private PIDController pivotController = new PIDController(0, 0, 0);
 
   private static IntakeState intakeState = IntakeState.STOPPED;
 
@@ -71,18 +75,21 @@ public class Intake extends SubsystemBase {
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(2*Math.PI*pivotGearRatio);
     pivotEncoder.setInverted(true);
+    pivotEncoder.setZeroOffset(200);
 
     topFlywheelMotor = new CANSparkMax(16, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor = new CANSparkMax(17, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor.follow(topFlywheelMotor, true);
     topFlywheelMotor.setInverted(false);
 
-    intakeMotor.setIdleMode(IdleMode.kCoast);
-    pivotMotor.setIdleMode(IdleMode.kCoast);
+    topFlywheelMotor.setIdleMode(IdleMode.kCoast);
+    bottomFlywheelMotor.setIdleMode(IdleMode.kCoast);
 
     flywheelPID = topFlywheelMotor.getPIDController();
     flywheelPID.setFF(0); 
 
+    pivotController.disableContinuousInput();
+    pivotController.setTolerance(Units.degreesToRadians(4));
   }
 
   private void populateVelocityMap() {
@@ -90,7 +97,7 @@ public class Intake extends SubsystemBase {
     velocityMap.put(5.0, 500.0);
   }
 
-  private double getFlywheelTargetVelocity() {
+  private double getDynamicFlywheelVelocity() {
     return m_limelight.targetVisible()
         ? velocityMap.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()) + 0)
         : 0;
@@ -101,15 +108,15 @@ public class Intake extends SubsystemBase {
     pivotMap.put(5.0, 170.0);
   }
 
-  private double getTargetPivot() {
+  private double getDynamicPivot() {
     return m_limelight.targetVisible()
         ? pivotMap.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()))
         : holdAngleDegrees;
   }
 
   public void setDynamicShooter() {
-    setFlywheelTargetVelocity(getFlywheelTargetVelocity());
-    new PivotIntake(this, getPivotAngleRadians());
+    setFlywheelTargetVelocity(getDynamicFlywheelVelocity());
+    setPivotTarget(getDynamicPivot());
   }
 
   public enum IntakeState {
@@ -121,7 +128,8 @@ public class Intake extends SubsystemBase {
   }
 
   private void intake() {
-    setFlywheelTargetVelocity(0);
+    //setFlywheelTargetVelocity(0);
+    topFlywheelMotor.set(0.4);
     intakeMotor.setVoltage(IntakeConstants.kIntakeMotorSpeed*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.INTAKING) {
       intakeRunningTimer.reset();
@@ -131,7 +139,8 @@ public class Intake extends SubsystemBase {
   }
 
   private void outtake(double power) {
-    setFlywheelTargetVelocity(0);
+    //setFlywheelTargetVelocity(0);
+    topFlywheelMotor.set(-0.4);
     intakeMotor.setVoltage(-power*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.OUTTAKING) {
       intakeRunningTimer.reset();
@@ -141,29 +150,31 @@ public class Intake extends SubsystemBase {
   }
 
   private void stop() {
-    setFlywheelTargetVelocity(0);
+    //setFlywheelTargetVelocity(0);
+    topFlywheelMotor.set(0);
     intakeMotor.set(0);
   }
 
   public double getPivotAngleRadians() {
-    return pivotEncoder.getPosition() / pivotGearRatio;
+    return pivotEncoder.getPosition() / pivotGearRatio - Units.degreesToRadians(37);
   }
 
   public void setPivotPower(double power) {
     pivotMotor.setVoltage(power * IntakeConstants.kNominalVoltage);
   }
 
-  public boolean atSetpoint(double targetAngleDegrees) {
-    return Math.abs(getPivotAngleRadians() - Units.degreesToRadians(targetAngleDegrees)) < Units.degreesToRadians(2);
+  public void setPivotTarget(double targetAngleDegrees) {
+    if (pivotController.getP() == 0) { pivotController.setP(0.22);} //prevent jumping on enable
+    pivotController.setSetpoint(Units.degreesToRadians(targetAngleDegrees));
   }
 
-  public boolean getDeployed() {
-    return atSetpoint(deployAngleDegrees);
+  public boolean atSetpoint() {
+    return pivotController.atSetpoint();
   }
 
-  public boolean isConeDetected() {
-    return (intakeRunningTimer.get() > 0.1) && //excludes current spike when motor first starts
-      (intakeMotor.getOutputCurrent() > 19) && //cone intake current threshold
+  public boolean isCubeDetected() {
+    return (intakeRunningTimer.get() > 0.15) && //excludes current spike when motor first starts
+      (intakeMotor.getOutputCurrent() > 25) && //cube intake current threshold
       (intakeState == IntakeState.INTAKING);
   }
 
@@ -184,35 +195,36 @@ public class Intake extends SubsystemBase {
   }
 
   public Command pivotToDeploy() {
-    return new PivotIntake(this, deployAngleDegrees);
+    return new InstantCommand(() -> setPivotTarget(deployAngleDegrees));
   }
 
   public Command pivotToOuttake() {
-    return new PivotIntake(this, outtakeAngleDegrees);
+    return new InstantCommand(() -> setPivotTarget(outtakeAngleDegrees));
   }
 
   public Command pivotToRetract() {
-    return new PivotIntake(this, retractAngleDegrees);
+    return new InstantCommand(() -> setPivotTarget(retractAngleDegrees));
   }
 
   public Command pivotToHold() {
-    return new PivotIntake(this, holdAngleDegrees);
+    topFlywheelMotor.set(0);
+    return new InstantCommand(() -> setPivotTarget(holdAngleDegrees));
   }
 
   public Command pivotToShoot() {
-    return new PivotIntake(this, shootAngleDegrees);
+    return new InstantCommand(() -> setPivotTarget(shootAngleDegrees));
   }
 
   public Command deployAndIntake() {
-    return 
-      pivotToDeploy()
-      .alongWith(intakeCommand());
+    return new ParallelCommandGroup(
+      pivotToDeploy(),
+      intakeCommand());
   }
 
   public Command pivotThenOuttake() {
     return new SequentialCommandGroup(
       pivotToOuttake(),
-      //new WaitCommand(1),
+      new WaitUntilCommand(() -> atSetpoint()),
       outtakeCommand()
     );
   }
@@ -220,36 +232,28 @@ public class Intake extends SubsystemBase {
   public Command pivotThenShoot() {
     return new SequentialCommandGroup(
       pivotToShoot(),
-      shootCommand(),
-      new WaitCommand(1)
-    );
+      new WaitUntilCommand(() -> atSetpoint()),
+      shootCommand());
   }
 
   public Command holdAndStop() {
-    return 
-      pivotToHold()
-      .alongWith(stopCommand());
+    return new ParallelCommandGroup(
+      pivotToHold(),
+      stopCommand());
   }
 
   public Command retractAndStop() {
-    return 
-      pivotToRetract()
-      .alongWith(stopCommand());
-  }
-
-  private Command AutoConeIntake() {
-    return new SequentialCommandGroup(
-      new WaitCommand(0.25),
-      pivotToRetract(),
-      new WaitCommand(1),
+    return new ParallelCommandGroup(
+      pivotToRetract(), 
       stopCommand());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //if(isConeDetected()) {AutoConeIntake().schedule();}
-
+    if(isCubeDetected()) {pivotToHold().schedule();}
+    
+    setPivotPower(pivotController.calculate(getPivotAngleRadians()));
     SmartDashboard.putNumber("Intake Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
   }
 }
