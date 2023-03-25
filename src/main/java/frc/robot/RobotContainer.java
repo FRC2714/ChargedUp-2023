@@ -33,7 +33,6 @@ import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autoalign;
 import frc.robot.commands.IntakeCube;
 import frc.robot.commands.TurnToAngle;
-import frc.robot.commands.TurnWristToAngle;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
 import frc.robot.commands.auto.OneCubeTerrainAuto;
@@ -47,7 +46,6 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.Claw;
-import frc.robot.subsystems.Arm.Wrist;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
 import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
@@ -66,7 +64,6 @@ public class RobotContainer {
 	private final Arm m_arm = new Arm();
 	private final Intake m_intake = new Intake();
 	private final Claw m_claw = new Claw();
-	private final Wrist m_wrist = new Wrist();
 	private final LEDs m_leds = new LEDs();
 	
 	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake, m_claw);
@@ -172,11 +169,10 @@ public class RobotContainer {
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
 		//manual raise arm on start
-		m_operatorController.start()
-			.onTrue(m_claw.open());
-		//manual lower arm on back
-		m_operatorController.back()
-			.onTrue(new WaitCommand(2).raceWith(new TurnWristToAngle(m_wrist, 180)));
+		// m_operatorController.start()
+
+		// //manual lower arm on back
+		// m_operatorController.back()
 
 		// TUCK on up
 		m_operatorController.povUp()
@@ -202,8 +198,7 @@ public class RobotContainer {
 			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
 
 		//toggle claw intake on X
-		m_operatorController.x()
-			.onTrue(m_wrist.FlipWrist());
+		// m_operatorController.x()
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()
