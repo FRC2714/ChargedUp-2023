@@ -7,103 +7,104 @@ package frc.robot.subsystems.Arm;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
+import frc.utils.controller.AsymmetricProfiledPIDController;
+import frc.utils.controller.AsymmetricTrapezoidProfile.Constraints;
+import frc.utils.controller.AsymmetricTrapezoidProfile.State;
 
 public class SecondJoint extends SubsystemBase {
-  private CANSparkMax SecondJointMotor;
+  private CANSparkMax RightSecondJointMotor;
+  private CANSparkMax LeftSecondJointMotor;
   private AbsoluteEncoder SecondJointEncoder;
-  private SparkMaxPIDController SecondJointPID;
 
-  private double targetAngle;
-  private double currentSparkAngle;
-  private double currentKinematicAngle;
+  private Constraints FarConstraints = new Constraints(12, 9, 6);
+  private Constraints CloseConstraints = new Constraints(15, 15, 10);
+
+  private AsymmetricProfiledPIDController SecondJointController = new AsymmetricProfiledPIDController(5,0,0, FarConstraints);
+
+  //private ArmFeedforward secondJointFeedForward = new ArmFeedforward(0, 0.12, 4.38);
   
   /** Creates a new SecondJoint. */
   public SecondJoint() {
-    SecondJointMotor = new CANSparkMax(ArmConstants.kSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    SecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
+    RightSecondJointMotor = new CANSparkMax(ArmConstants.kRightSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    LeftSecondJointMotor = new CANSparkMax(ArmConstants.kLeftSecondJointMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    LeftSecondJointMotor.follow(RightSecondJointMotor, false);
 
-    SecondJointMotor.setInverted(true);
-    SecondJointMotor.setIdleMode(IdleMode.kBrake);
+    RightSecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
+    LeftSecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
 
-    SecondJointEncoder = SecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    RightSecondJointMotor.setInverted(false); //was true
+    RightSecondJointMotor.setIdleMode(IdleMode.kBrake);
+    LeftSecondJointMotor.setIdleMode(IdleMode.kBrake);
+    
+    SecondJointEncoder = RightSecondJointMotor.getAbsoluteEncoder(Type.kDutyCycle);
     SecondJointEncoder.setPositionConversionFactor(ArmConstants.kSecondJointPositionConversionFactor);
-    SecondJointEncoder.setInverted(ArmConstants.kSecondJointInverted); //must not be inverted
+    SecondJointEncoder.setInverted(ArmConstants.kSecondJointEncoderInverted);
+    SecondJointEncoder.setZeroOffset(230.2364949);
     //todo set velocity conversion factor
 
-    SecondJointPID = SecondJointMotor.getPIDController();
-    SecondJointPID.setPositionPIDWrappingEnabled(false);
-    SecondJointPID.setFeedbackDevice(SecondJointEncoder);
-    SecondJointPID.setFF(ArmConstants.kSecondJointFF, 0);
-    SecondJointPID.setP(ArmConstants.kSecondJointP, 0);
-    SecondJointPID.setI(ArmConstants.kSecondJointI, 0);
-    SecondJointPID.setD(ArmConstants.kSecondJointD, 0);
-    SecondJointPID.setSmartMotionMaxVelocity(ArmConstants.kSecondJointMaxVelocity, 0);
-    SecondJointPID.setSmartMotionMaxAccel(ArmConstants.kSecondJointMaxAcceleration, 0);
-    SecondJointPID.setSmartMotionAllowedClosedLoopError(ArmConstants.kSecondJointTolerance, 0);
+    // RightSecondJointMotor.setSoftLimit(SoftLimitDirection.kReverse, 20);
+    // RightSecondJointMotor.setSoftLimit(SoftLimitDirection.kForward, 1240);
+
+    RightSecondJointMotor.burnFlash();
+    LeftSecondJointMotor.burnFlash();
+
+    
+    SecondJointController.disableContinuousInput();
+    //SecondJointController.setTolerance(Units.degreesToRadians(2), 0);
   }
 
-  public double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
-    sparkAngle -= ArmConstants.kSecondJointKinematicOffset; //subtract kinematic offset
-    sparkAngle /= ArmConstants.kSecondJointGearRatio; //divide by gear ratio
-    //convert 0,360 to -180,180
-    if ((sparkAngle) > Math.PI) { //when angle > 180, convert to -, then negate
-      sparkAngle = -((sparkAngle) - (2*Math.PI));
-      currentKinematicAngle = sparkAngle;
-      //SmartDashboard.putNumber("SecondJoint Calculated Kinematic Angle > 180", Units.radiansToDegrees(currentKinematicAngle));
-    } else { //when angle < 180, convert to +, then negate
-      currentKinematicAngle = -sparkAngle;
-      //SmartDashboard.putNumber("SecondJoint Calculated Kinematic Angle < 180", Units.radiansToDegrees(currentKinematicAngle));
-    }
-    return currentKinematicAngle;
-  }
+  private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
+    double kinematicAngle = sparkAngle;
 
-  public double convertAngleFromKinematicToSparkMax(double kinematicAngle) {
-    //convert -180,180 to 0,360
-    kinematicAngle += Math.PI;
-    if (kinematicAngle < 0) { //when angle is -, convert to 180,360 then negate
-      kinematicAngle = -(kinematicAngle + (Math.PI));
-      //SmartDashboard.putNumber("SecondJoint Calculated SparkMax Position < 0", Units.radiansToDegrees(currentSparkAngle));
-    } else { //when angle is +, convert to 0,180 then negate
-      kinematicAngle = -(kinematicAngle - Math.PI);
-      //SmartDashboard.putNumber("SecondJoint Calculated SparkMax Position > 0", Units.radiansToDegrees(currentSparkAngle));
-    }
-    kinematicAngle *= ArmConstants.kSecondJointGearRatio; //multiply by gear ratio
-    kinematicAngle += ArmConstants.kSecondJointKinematicOffset; //add kinematic offset
-    currentSparkAngle = kinematicAngle;
-    return currentSparkAngle;
+    kinematicAngle -= ArmConstants.kSecondJointKinematicOffset; //subtract kinematic offset
+    kinematicAngle /= ArmConstants.kSecondJointGearRatio; //divide by gear ratio
+
+    return -kinematicAngle;
   }
 
   public double getKinematicAngle() {
     return convertAngleFromSparkMaxToKinematic(SecondJointEncoder.getPosition());
   }
 
-  public void setTargetKinematicAngle(double targetAngle) {
-    this.targetAngle = targetAngle;
-    SmartDashboard.putNumber("SecondJoint Target Kinematic Angle", Units.radiansToDegrees(targetAngle));
-    //SmartDashboard.putNumber("SecondJoint Target SparkMax Position", convertAngleFromKinematicToSparkMax(targetAngle));
-    SecondJointPID.setReference(convertAngleFromKinematicToSparkMax(targetAngle), CANSparkMax.ControlType.kSmartMotion, 0);
+  public void setTargetKinematicAngleRadians(double targetAngleRadians) {
+    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) > Units.degreesToRadians(45)) ? FarConstraints : CloseConstraints;
+    SecondJointController.setConstraints(selectedConstraint);
+    SmartDashboard.putString("second joint selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
+
+    SecondJointController.setGoal(new State(targetAngleRadians, 0));
+  }
+
+  public boolean nearSetpoint() {
+    return Math.abs(getKinematicAngle() - SecondJointController.getGoal().position) < Units.degreesToRadians(8);
   }
 
   public boolean atSetpoint() {
-    return Math.abs(getKinematicAngle() - targetAngle) < Units.degreesToRadians(8);
+    return SecondJointController.atGoal();
   }
 
-  public void disable() {
-    SecondJointMotor.set(0);
+  private void setVoltage() {
+    RightSecondJointMotor.setVoltage(
+      SecondJointController.calculate(getKinematicAngle())
+      //secondJointFeedForward.calculate(SecondJointController.getSetpoint().position, 0)
+      );
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("SecondJoint Encoder", SecondJointEncoder.getPosition());
-    SmartDashboard.putBoolean("SecondJoint atSetpoint", atSetpoint());
+    setVoltage();
+
+    // SmartDashboard.putNumber("SecondJoint Encoder Position", SecondJointEncoder.getPosition());
+    // SmartDashboard.putNumber("SecondJoint Encoder Velocity", SecondJointEncoder.getVelocity());
+    // SmartDashboard.putBoolean("SecondJoint nearSetpoint", nearSetpoint());
     SmartDashboard.putNumber("SecondJoint Kinematic Angle", Units.radiansToDegrees(getKinematicAngle()));
   }
 }
