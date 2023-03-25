@@ -7,8 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
@@ -34,9 +33,9 @@ public class Intake extends SubsystemBase {
   private CANSparkMax topFlywheelMotor;
   private CANSparkMax bottomFlywheelMotor;
 
-  private AbsoluteEncoder pivotEncoder;
+  private RelativeEncoder flywheelEncoder;
 
-  private SparkMaxPIDController flywheelPID;
+  private AbsoluteEncoder pivotEncoder;
 
   private InterpolatingTreeMap velocityMap = new InterpolatingTreeMap();
   private InterpolatingTreeMap pivotMap = new InterpolatingTreeMap();
@@ -50,6 +49,7 @@ public class Intake extends SubsystemBase {
   private double outtakeAngleDegrees = 180;
 
   private PIDController pivotController = new PIDController(0, 0, 0);
+  private PIDController flywheelController = new PIDController(0, 0, 0);
 
   private static IntakeState intakeState = IntakeState.STOPPED;
 
@@ -85,8 +85,8 @@ public class Intake extends SubsystemBase {
     topFlywheelMotor.setIdleMode(IdleMode.kCoast);
     bottomFlywheelMotor.setIdleMode(IdleMode.kCoast);
 
-    flywheelPID = topFlywheelMotor.getPIDController();
-    flywheelPID.setFF(0); 
+    flywheelEncoder = topFlywheelMotor.getEncoder();
+    pivotEncoder.setVelocityConversionFactor(2*Math.PI*1.0);//gear ratio
 
     pivotController.disableContinuousInput();
     pivotController.setTolerance(Units.degreesToRadians(4));
@@ -123,8 +123,16 @@ public class Intake extends SubsystemBase {
     INTAKING, OUTTAKING, STOPPED
   }
 
+  public double getFlywheelVelocity() {
+    return flywheelEncoder.getVelocity() / 1.0;//gear ratio
+  }
+
   public void setFlywheelTargetVelocity(double targetRPM) {
-    flywheelPID.setReference(targetRPM, ControlType.kVelocity);
+    flywheelController.setSetpoint(targetRPM);
+  }
+
+  private void setCalculatedFlywheelVoltage() {
+    topFlywheelMotor.setVoltage(flywheelController.calculate(getFlywheelVelocity()));
   }
 
   private void intake() {
@@ -254,6 +262,8 @@ public class Intake extends SubsystemBase {
     if(isCubeDetected()) {pivotToHold().schedule();}
     
     setPivotPower(pivotController.calculate(getPivotAngleRadians()));
+    setCalculatedFlywheelVoltage();
+    
     SmartDashboard.putNumber("Intake Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
   }
 }
