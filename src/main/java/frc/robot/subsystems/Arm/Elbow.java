@@ -26,11 +26,11 @@ public class Elbow extends SubsystemBase {
   private AbsoluteEncoder ElbowEncoder;
 
   private Constraints FarConstraints = new Constraints(12, 9, 6);
-  private Constraints CloseConstraints = new Constraints(15, 15, 10);
+  private Constraints CloseConstraints = new Constraints(36, 36, 24);
 
-  private AsymmetricProfiledPIDController ElbowController = new AsymmetricProfiledPIDController(5,0,0, FarConstraints);
+  private AsymmetricProfiledPIDController ElbowController = new AsymmetricProfiledPIDController(0,0,0, FarConstraints);
 
-  //private ArmFeedforward elbowFeedForward = new ArmFeedforward(0, 0.12, 4.38);
+  private ArmFeedforward ElbowFeedForward = new ArmFeedforward(0, 0.35, 4.38, 0.03);
   
   /** Creates a new Elbow. */
   public Elbow() {
@@ -48,7 +48,7 @@ public class Elbow extends SubsystemBase {
     ElbowEncoder = RightElbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
     ElbowEncoder.setPositionConversionFactor(ArmConstants.kElbowPositionConversionFactor);
     ElbowEncoder.setInverted(ArmConstants.kElbowEncoderInverted);
-    ElbowEncoder.setZeroOffset(230.2364949);
+    ElbowEncoder.setZeroOffset(ArmConstants.kElbowEncoderZeroOffset);
     //todo set velocity conversion factor
 
     // RightElbowMotor.setSoftLimit(SoftLimitDirection.kReverse, 20);
@@ -68,7 +68,7 @@ public class Elbow extends SubsystemBase {
     kinematicAngle -= ArmConstants.kElbowKinematicOffset; //subtract kinematic offset
     kinematicAngle /= ArmConstants.kElbowGearRatio; //divide by gear ratio
 
-    return -kinematicAngle;
+    return kinematicAngle;
   }
 
   public double getKinematicAngle() {
@@ -76,7 +76,8 @@ public class Elbow extends SubsystemBase {
   }
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
-    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) > Units.degreesToRadians(45)) ? FarConstraints : CloseConstraints;
+    if(ElbowController.getP() == 0) {ElbowController.setP(5);}
+    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) > Units.degreesToRadians(20)) ? FarConstraints : CloseConstraints;
     ElbowController.setConstraints(selectedConstraint);
     SmartDashboard.putString("second joint selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
 
@@ -93,8 +94,8 @@ public class Elbow extends SubsystemBase {
 
   private void setCalculatedVoltage() {
     RightElbowMotor.setVoltage(
-      ElbowController.calculate(getKinematicAngle())
-      //elbowFeedForward.calculate(ElbowController.getSetpoint().position, 0)
+      ElbowController.calculate(getKinematicAngle()) +
+      ElbowFeedForward.calculate(ElbowController.getSetpoint().position, 0)
       );
   }
 
@@ -105,6 +106,7 @@ public class Elbow extends SubsystemBase {
     // SmartDashboard.putNumber("Elbow Encoder Position", ElbowEncoder.getPosition());
     // SmartDashboard.putNumber("Elbow Encoder Velocity", ElbowEncoder.getVelocity());
     // SmartDashboard.putBoolean("Elbow nearSetpoint", nearSetpoint());
+    SmartDashboard.putNumber("elbow feedforward", ElbowFeedForward.calculate(ElbowController.getSetpoint().position, 0));
     SmartDashboard.putNumber("Elbow Kinematic Angle", Units.radiansToDegrees(getKinematicAngle()));
   }
 }

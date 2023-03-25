@@ -25,10 +25,12 @@ public class Shoulder extends SubsystemBase {
   private CANSparkMax LeftShoulderMotor;
   private AbsoluteEncoder ShoulderEncoder;
 
-  private Constraints FarConstraints = new Constraints(8, 6, 4);
-  private Constraints CloseConstraints = new Constraints(7.5, 7.5, 5);
+  private Constraints FarConstraints = new Constraints(10, 8, 6);
+  private Constraints CloseConstraints = new Constraints(18, 18, 15);
 
-  private AsymmetricProfiledPIDController ShoulderController = new AsymmetricProfiledPIDController(5,0,0, FarConstraints);
+  private AsymmetricProfiledPIDController ShoulderController = new AsymmetricProfiledPIDController(0,0,0, FarConstraints);
+
+  private ArmFeedforward ShoulderFeedForward = new ArmFeedforward(0, 0.47, 4.68, 0.04);
   
   /** Creates a new Shoulder. */
   public Shoulder() {
@@ -69,7 +71,8 @@ public class Shoulder extends SubsystemBase {
   }
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
-    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) > Units.degreesToRadians(20)) ? FarConstraints : CloseConstraints;
+    if(ShoulderController.getP() == 0) {ShoulderController.setP(5);}
+    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) > Units.degreesToRadians(10)) ? FarConstraints : CloseConstraints;
     ShoulderController.setConstraints(selectedConstraint);
     SmartDashboard.putString("base joint selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
 
@@ -86,7 +89,9 @@ public class Shoulder extends SubsystemBase {
 
   private void setCalculatedVoltage() {
     RightShoulderMotor.setVoltage(
-      ShoulderController.calculate(getKinematicAngle()));
+      ShoulderController.calculate(getKinematicAngle()) + 
+      ShoulderFeedForward.calculate(ShoulderController.getSetpoint().position, 0)
+      );
   }
 
   @Override
