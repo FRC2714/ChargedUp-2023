@@ -6,84 +6,90 @@ package frc.robot.subsystems.Arm;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClawConstants;
+import frc.robot.Constants.PneumaticsConstants;
 
 public class Claw extends SubsystemBase {
-  private CANSparkMax ClawMotor;
-  private RelativeEncoder ClawEncoder;
-  private SparkMaxPIDController ClawPID;
+  private CANSparkMax clawMotor;
 
-  private double openPosition = 0;
-  private double closePosition = 32;
-  private double maxPosition = 0;
+  private DoubleSolenoid clawSolenoid;
+
+  private PneumaticHub pneumaticHub;
 
   /** Creates a new Claw. */
   public Claw() {
-    ClawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    ClawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
+    pneumaticHub = new PneumaticHub(PneumaticsConstants.kPneumaticHubCanId);
+    pneumaticHub.enableCompressorAnalog(PneumaticsConstants.kCompressorMinPressure, PneumaticsConstants.kCompressorMaxPressure);
 
-    ClawMotor.enableVoltageCompensation(ClawConstants.kNominalVoltage);
+    clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
 
-    ClawEncoder = ClawMotor.getEncoder();
-    ClawEncoder.setPosition(0);
-    ClawEncoder.setPositionConversionFactor(60); //claw gear ratio
+    clawMotor.enableVoltageCompensation(ClawConstants.kNominalVoltage);
 
-    ClawPID = ClawMotor.getPIDController();
-    ClawPID.setFeedbackDevice(ClawEncoder);
-    ClawPID.setFF(0, 0);
-    ClawPID.setP(0, 0);
-    ClawPID.setI(0, 0);
-    ClawPID.setD(0, 0);
+    clawSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kClawSolenoidForwardChannel, ClawConstants.kClawSolenoidReverseChannel);
+  }
 
-    ClawPID.setPositionPIDWrappingEnabled(false);
-    ClawPID.setPositionPIDWrappingMinInput(0);
-    ClawPID.setPositionPIDWrappingMaxInput(maxPosition);
+  public void intake() {
+    clawMotor.setVoltage(ClawConstants.kIntakeMotorSpeed*ClawConstants.kNominalVoltage);
+  }
+
+  public void outtake() {
+    clawMotor.setVoltage(ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
+  }
+
+  public void shoot() {
+    clawMotor.setVoltage(ClawConstants.kShootMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
   public void stop() {
-    ClawMotor.set(0);
+    clawMotor.set(0);
   }
 
-  public double getPosition() {
-    return ClawEncoder.getPosition();
+  public void open() {
+    clawSolenoid.set(Value.kForward);
   }
 
-  private void setTargetPosition(double position) {
-    ClawPID.setReference(position, ControlType.kPosition);
+  public void close() {
+    clawSolenoid.set(Value.kReverse);
   }
 
-  public Command open() {
-    return new InstantCommand(() -> setTargetPosition(openPosition));
+  public void toggle() {
+    clawSolenoid.toggle();
+  }
+  
+  public boolean isOpen() {
+    return clawSolenoid.get() == Value.kForward;
   }
 
-
-  public Command close() {
-    return new InstantCommand(() -> setTargetPosition(closePosition));
+  public void intakeAndToggle() {
+    toggle();
+    intake();
   }
 
   public void intakeClose() {
     close();
+    intake();
   }
+
   public void intakeOpen() {
     open();
+    intake();
   }
 
-  public Command intakeConeCommand() {
-    return (
-      new InstantCommand(() -> close()));
+  public Command intakeOpenCommand() {
+    return new InstantCommand(() -> intakeOpen());
   }
 
-  public Command intakeCubeCommand() {
-    return (
-      new InstantCommand(() -> open()));
+  public Command intakeCloseCommand() {
+    return new InstantCommand(() -> intakeClose());
   }
 
   public Command stopOpen() {
@@ -98,14 +104,14 @@ public class Claw extends SubsystemBase {
       new InstantCommand(() -> open()));
   }
 
-  public Command shootCube() {
+  public Command scoreCube() {
     return 
-      new InstantCommand(() -> open()); 
+      new InstantCommand(() -> shoot()).andThen(
+      new InstantCommand(() -> open())); 
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Claw Position", getPosition());
   }
 }
