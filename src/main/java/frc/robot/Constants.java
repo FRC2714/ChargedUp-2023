@@ -13,7 +13,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.utils.ArmForwardKinematicPosition;
+import frc.robot.utils.ArmForwardKinematicPosition;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -140,7 +140,16 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     
+    public static final TrapezoidProfile.Constraints kAutoControllerConstraints = new TrapezoidProfile.Constraints(
+        kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
+    
     public static final HashMap<String, Command> EventMap = new HashMap<>();
+  }
+
+  public static final class PneumaticsConstants {
+    public static final int kPneumaticHubCanId = 1;
+    public static final double kCompressorMinPressure = 90;
+    public static final double kCompressorMaxPressure = 120;
   }
 
   public static final class ClawConstants {
@@ -152,33 +161,23 @@ public final class Constants {
     public static final int kClawMotorCurrentLimit = 20; //amps 
 
     public static final double kNominalVoltage = 10.5;
+
     public static final double kIntakeMotorSpeed = 1;
     public static final double kOuttakeMotorSpeed = -0.1;
+    public static final double kShootMotorSpeed = -0.4;
   }
 
   public static final class IntakeConstants {
-    public static final int kTopMotorCanId = 13;
-    public static final int kBottomMotorCanId = 15;
+    public static final int kIntakeMotorCanId = 13;
+    public static final int kPivotMotorCanId = 15;
 
-    public static final int kPneumaticHubCanId = 1;
-    public static final double kCompressorMinPressure = 90;
-    public static final double kCompressorMaxPressure = 120;
+    public static final int kIntakeMotorCurrentLimit = 30;
+    public static final int kPivotMotorCurrentLimit = 30;
 
-    public static final int kLeftRetractionSolenoidForwardChannel = 2;
-    public static final int kLeftRetractionSolenoidReverseChannel = 3;
-
-    public static final int kRightRetractionSolenoidForwardChannel = 4;
-    public static final int kRightRetractionSolenoidReverseChannel = 5;
-
-    public static final int kIntakeSolenoidForwardChannel = 1;
-    public static final int kIntakeSolenoidReverseChannel = 0;
-
-    public static final int kTopMotorCurrentLimit = 30;
-    public static final int kBottomMotorCurrentLimit = 30;
-
-    public static final double kNominalVoltage = 11.0;
+    public static final double kNominalVoltage = 12.8;
     public static final double kIntakeMotorSpeed = 0.85;
-    public static final double kOuttakeMotorSpeed = -0.85;
+    public static final double kOuttakeMotorSpeed = 0.7;
+    public static final double kShootMotorSpeed = 1.0;
   }
 
   public static final class LEDConstants {
@@ -197,23 +196,12 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static final double kGoalHeight = Units.inchesToMeters(0); //todo
+    public static final double kGoalHeight = Units.inchesToMeters(24);
   }
 
   public static final class CameraConstants {
-    public static final double kMountingAngle = 0; //todo
-    public static double kCameraHeight = Units.inchesToMeters(0); //todo
-  }
-
-  public static final class WristConstants {
-    public static final int kWristMotorCanId = 16;
-
-    public static final double kWristGearRatio = 60;
-
-    public static final double kWristPositionConversionFactor = (2*Math.PI) * kWristGearRatio;
-
-    public static final boolean kWristInverted = false; //CW +
-
+    public static final double kMountingAngle = 35; // deg
+    public static double kCameraHeight = Units.inchesToMeters(9.14);
   }
 
   public static final class ArmConstants {
@@ -237,9 +225,8 @@ public final class Constants {
 
     public static final double kBaseJointEncoderZeroOffset = 1049.0689405;
     public static final double kSecondJointEncoderZeroOffset = 230.2364949;
-
-    public static final double kBaseJointKinematicOffset = 180; //difference from kinematic 0 to sparkmax 0 approx 45 deg
-    public static final double kSecondJointKinematicOffset = 635; //difference from kinematic 0 to sparkmax 0 approx 160 deg
+    public static final double kBaseJointKinematicOffset = 45; //difference from kinematic 0 to sparkmax 0 approx 45 deg
+    public static final double kSecondJointKinematicOffset = 630; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
     public static final boolean kBaseJointMotorInverted = true; //base joint encoder inverted
     public static final boolean kBaseJointEncoderInverted = true; //base joint motor inverted
@@ -249,20 +236,20 @@ public final class Constants {
 
     //Controller Constants
     public static final double kBaseJointMaxVelocity = 5000;
-    public static final double kBaseJointMaxAcceleration = 2000;
+    public static final double kBaseJointMaxAcceleration = 4000;
     public static final double kBaseJointTolerance = 6;
     public static final double kBaseJointFF = 0.00007;
     public static final double kBaseJointP = 0.00000;
     public static final double kBaseJointI = 0;
     public static final double kBaseJointD = 0.0000;
 
-    public static final double kSecondJointMaxVelocity = 5000;
-    public static final double kSecondJointMaxAcceleration = 2500;
+    public static final double kSecondJointMaxVelocity = 5500;
+    public static final double kSecondJointMaxAcceleration = 4000;
     public static final double kSecondJointTolerance = 6;
-    public static final double kSecondJointFF = 0.00012;
-    public static final double kSecondJointP = 0.00000;
+    public static final double kSecondJointFF = 0.00008;
+    public static final double kSecondJointP = 0.00006;
     public static final double kSecondJointI = 0.0;
-    public static final double kSecondJointD = 0.0000;
+    public static final double kSecondJointD = 0.00012;
 
     //Current Limits
     public static final int kBaseJointMotorCurrentLimit = 40; //amps
@@ -282,9 +269,9 @@ public final class Constants {
     
     //Transfer to back transition
     public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 150);
+      new ArmForwardKinematicPosition(60, 150);
     public static final ArmForwardKinematicPosition kTransferToBackIntermediate2Position = 
-      new ArmForwardKinematicPosition(50, 90);
+      new ArmForwardKinematicPosition(60, 90);
 
     //Transfer to transfer transition
     public static final ArmForwardKinematicPosition kTransferToTransferIntermediatePosition = 
@@ -324,7 +311,7 @@ public final class Constants {
 
     //Stow position 
     public static final ArmForwardKinematicPosition kStowPosition = 
-      new ArmForwardKinematicPosition(85,115);
+      new ArmForwardKinematicPosition(142, -98);
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferConeIntakePosition = 
@@ -337,9 +324,9 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kBackConeL1Position =
       new ArmForwardKinematicPosition(130, -120);
     public static final ArmForwardKinematicPosition kBackConeL2Position = 
-      new ArmForwardKinematicPosition(90, -83);
+      new ArmForwardKinematicPosition(101, -90);
     public static final ArmForwardKinematicPosition kBackConeL3Position = 
-      new ArmForwardKinematicPosition(50, -10);
+      new ArmForwardKinematicPosition(54, -14);
 
     //Back Cube Score positions
     public static final ArmForwardKinematicPosition kBackCubeL1Position = 
@@ -357,7 +344,7 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kFrontCubeL2Position = 
       new ArmForwardKinematicPosition(110, 81);
     public static final ArmForwardKinematicPosition kFrontCubeL3Position = 
-      new ArmForwardKinematicPosition(120, 44);
+      new ArmForwardKinematicPosition(140, 15);
     
 
     //Arm Intake positions

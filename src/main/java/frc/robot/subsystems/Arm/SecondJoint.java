@@ -39,7 +39,7 @@ public class SecondJoint extends SubsystemBase {
     LeftSecondJointMotor.follow(RightSecondJointMotor, false);
 
     RightSecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
-    LeftSecondJointMotor.setSmartCurrentLimit(ArmConstants.kBaseJointMotorCurrentLimit);
+    LeftSecondJointMotor.setSmartCurrentLimit(ArmConstants.kSecondJointMotorCurrentLimit);
 
     RightSecondJointMotor.setInverted(false); //was true
     RightSecondJointMotor.setIdleMode(IdleMode.kBrake);

@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.auto;
+package frc.robot.commands.auto.OPEN;
 
 import java.util.List;
 
@@ -14,8 +14,9 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.Autoalign;
 import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.align.AutoAlignY;
+import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.Claw;
@@ -42,11 +43,11 @@ public class TwoL3ConeBalanceOpenAuto extends AutoBase {
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 		AutoConstants.EventMap.put("arm to tuck", m_armStateMachine.setTargetArmStateCommand(ArmState.STOW));
-		AutoConstants.EventMap.put("intake cone", m_intake.intakeCone());
+		//AutoConstants.EventMap.put("intake cone", m_intake.intakeCone());
 		AutoConstants.EventMap.put("retract and stop intake", m_intake.retractAndStop());
 		//AutoConstants.EventMap.put("cone transfer", new ConeTransfer());
 
-        AutoConstants.EventMap.put("auto align", new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)));
+        AutoConstants.EventMap.put("auto align", new AutoAlignY(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)));
 		AutoConstants.EventMap.put("arm to cone level 3", 
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).andThen(
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK)).withTimeout(3.0));
@@ -54,8 +55,8 @@ public class TwoL3ConeBalanceOpenAuto extends AutoBase {
 		AutoConstants.EventMap.put("zero heading", new TurnToAngle(m_robotDrive, 0).raceWith(new WaitCommand(0.3)));
 
 		addCommands(
-			m_claw.intakeConeCommand(),
-			new Autoalign(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)),
+			m_claw.intakeCloseCommand(),
+			new AutoAlignY(m_robotDrive, m_limelight).raceWith(new WaitCommand(0.4)),
 			m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE),
 			m_armStateMachine.setTargetArmStateCommand(ArmState.BACK).withTimeout(3.0),
 			m_claw.scoreCone(),

@@ -24,9 +24,9 @@ public class IntakeCube extends SequentialCommandGroup {
 
     addCommands(
       m_armStateMachine.setCargoTypeCommand(CargoType.CUBE),
-      m_intake.intakeCube(),
+      //m_intake.intakeCube(),
       m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
-      m_claw.intakeCubeCommand(),
+      m_claw.intakeOpenCommand(),
       new WaitCommand(4)
     );
   }

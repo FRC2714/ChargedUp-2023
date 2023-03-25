@@ -1,10 +1,18 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "SPARK MAX [16]": {
+      "ADIS16470[0]": {
         "header": {
           "open": true
         }
+      },
+      "window": {
+        "visible": false
+      }
+    },
+    "RoboRIO": {
+      "window": {
+        "visible": true
       }
     }
   },

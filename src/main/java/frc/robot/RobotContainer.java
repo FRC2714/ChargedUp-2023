@@ -22,23 +22,24 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.AutoBalance;
-import frc.robot.commands.Autoalign;
-import frc.robot.commands.IntakeCube;
+import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TurnToAngle;
+import frc.robot.commands.align.SmoothAlign;
 import frc.robot.commands.auto.NothingAuto;
-import frc.robot.commands.auto.OneCubeBalanceMiddleAuto;
-import frc.robot.commands.auto.OneCubeTerrainAuto;
-import frc.robot.commands.auto.TwoCubeOpenAuto;
-import frc.robot.commands.auto.TwoCubeOpenAutoStop;
-import frc.robot.commands.auto.ComplexAuto;
+import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
+import frc.robot.commands.auto.MIDDLE.OneCubeBalanceMiddleAuto;
+import frc.robot.commands.auto.OPEN.TwoCargoOpenAuto;
+import frc.robot.commands.auto.OPEN.TwoCubeOpenAuto;
+import frc.robot.commands.auto.OPEN.TwoCubeOpenAutoStop;
+import frc.robot.commands.auto.TERRAIN.OneCubeTerrainAuto;
+import frc.robot.commands.auto.PathTestAuto;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
@@ -96,13 +97,16 @@ public class RobotContainer {
 
 	public void setTeleopDefaultStates() {
 		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
-		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE).schedule();
-		m_armStateMachine.setTargetArmStateCommand(ArmState.STOW).schedule();
+		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).schedule();
+		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
 		m_limelight.setLEDCommand(false).schedule();
+		//m_intake.pivotToHold().schedule();
 	}
 
 	public void setAutoDefaultStates() {
+		new InstantCommand(() -> m_robotDrive.zeroHeading());
 		m_limelight.setLEDCommand(false).schedule();
+		//m_intake.pivotToHold().schedule();
 	}
 
 	/**
@@ -122,49 +126,43 @@ public class RobotContainer {
 			
 		//zero heading then autoalign on right bumper
 		m_driverController.rightBumper()
-			.whileTrue(
-				new WaitCommand(0.3).deadlineWith(
-				new TurnToAngle(m_robotDrive, 0))
-			.andThen(new Autoalign(m_robotDrive, m_limelight)));
+			.whileTrue(new SmoothAlign(m_robotDrive, m_limelight, m_armStateMachine));
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(m_armStateMachine.scoreCommand(m_armStateMachine.getCargoType()))
+			.onTrue(new ScoreCommand(m_armStateMachine, m_claw))
 			.onFalse(m_claw.stopOpen());
 
 		//intake on right trigger while held 
-		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.2)
-			.whileTrue(m_intake.intakeCommand())
-			.whileFalse(m_intake.stopCommand());
-		//outtake on left trigger while held
-		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.2)
-			.whileTrue(m_intake.outtakeCommand())
-			.whileFalse(m_intake.stopCommand());
+		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
+			.onTrue(m_intake.deployAndIntake())
+			.onFalse(m_intake.pivotToHold());
 
-		//toggle intake deploy on A
-		m_driverController.a()
-			.toggleOnTrue(Commands.startEnd(m_intake::deploy, m_intake::retract, m_intake));
-		
+		//outtake on left trigger while held
+		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
+			.whileTrue(m_intake.pivotThenOuttake())
+			.whileFalse(m_intake.holdAndStop());
+
+		//shoot on b
+		m_driverController.b()
+			.onTrue(m_intake.pivotThenShoot())
+			.onFalse(m_intake.holdAndStop());
+
+		//turn to 180 on y
+		m_driverController.y()
+			.onTrue(new TurnToAngle(m_robotDrive, 180));
 
 		//toggle claw intake on X
 		m_driverController.x()
-			.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+			.onTrue(Commands.runOnce(m_claw::intakeAndToggle, m_claw));
 
 		//reset gyro on left
-		m_driverController.povLeft()
+		m_driverController.back()
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
-		m_driverController.povRight()
-			.onTrue(new IntakeCube(m_armStateMachine, m_claw, m_intake));
-
-		m_driverController.povDown()
-			.whileTrue(new AutoBalance(m_robotDrive));
-
+		//align to hp on up
 		m_driverController.povUp()
-			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
-
-		m_driverController.back()
-			.toggleOnTrue(Commands.startEnd(m_claw::open, m_claw::stop, m_claw));
+			.whileTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
@@ -199,14 +197,15 @@ public class RobotContainer {
 
 		//toggle claw intake on X
 		// m_operatorController.x()
+		// 	.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE).andThen(m_intake.closeCommand()));
+			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE));
 
 		// cube mode on left bumper
 		m_operatorController.leftBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE).andThen(m_intake.openCommand()));
+			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE));
 	}
 
 	/**
@@ -259,15 +258,23 @@ public class RobotContainer {
 	}
 
 	public Command getComplexAuto() {
-		return new ComplexAuto(m_robotDrive);
+		return new PathTestAuto(m_robotDrive);
 	}
 
 	public Command getOneCubeBalanceMiddleAuto() {
 		return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
 	}
 
+	public Command getOneConeBalanceMiddleAuto() {
+		return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
+	}
+
 	public Command getTwoCubeOpenAuto() {
 		return new TwoCubeOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
+	}
+
+	public Command getTwoCargoOpenAuto() {
+		return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_limelight);
 	}
 
 	public Command getTwoCubeOpenAutoStop() {

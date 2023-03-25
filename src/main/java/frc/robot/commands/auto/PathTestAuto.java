@@ -18,7 +18,7 @@ import frc.robot.subsystems.DriveSubsystem;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class ComplexAuto extends AutoBase {
+public class PathTestAuto extends AutoBase {
 	DriveSubsystem m_robotDrive;
 
 	List<PathPlannerTrajectory> autoPathGroup =
@@ -28,7 +28,7 @@ public class ComplexAuto extends AutoBase {
 			AutoConstants.kMaxSpeedMetersPerSecond,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
 
-	public ComplexAuto(DriveSubsystem m_robotDrive) {
+	public PathTestAuto(DriveSubsystem m_robotDrive) {
 		super(m_robotDrive);
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder(); 

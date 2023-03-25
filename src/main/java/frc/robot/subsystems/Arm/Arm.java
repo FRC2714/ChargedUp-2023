@@ -14,7 +14,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
-import frc.utils.ArmForwardKinematicPosition;
+import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
+import frc.robot.utils.ArmForwardKinematicPosition;
 
 public class Arm extends SubsystemBase {
   private BaseJoint baseJoint= new BaseJoint();
