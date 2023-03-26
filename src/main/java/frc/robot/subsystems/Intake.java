@@ -26,7 +26,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.utils.InterpolatingTreeMap;
 
 public class Intake extends SubsystemBase {
-  private Limelight m_limelight;
+  private Limelight m_frontLimelight;
 
   private CANSparkMax intakeMotor;
   private CANSparkMax pivotMotor;
@@ -59,8 +59,8 @@ public class Intake extends SubsystemBase {
   private Timer intakeRunningTimer = new Timer();
 
   /** Creates a new Intake. */
-  public Intake(Limelight m_limelight) {
-    this.m_limelight = m_limelight;
+  public Intake(Limelight m_frontLimelight) {
+    this.m_frontLimelight = m_frontLimelight;
     
     intakeMotor = new CANSparkMax(IntakeConstants.kIntakeMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     pivotMotor = new CANSparkMax(IntakeConstants.kPivotMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -93,27 +93,32 @@ public class Intake extends SubsystemBase {
 
     pivotController.disableContinuousInput();
     pivotController.setTolerance(Units.degreesToRadians(4));
+
+    m_frontLimelight.setAprilTagPipeline();
+
+    populateVelocityMap();
+    populatePivotMap();
   }
 
   private void populateVelocityMap() {
     velocityMap.put(0.0, 0.0);
-    velocityMap.put(5.0, 500.0);
+    velocityMap.put(5.0, 1000.0);
   }
 
   private double getDynamicFlywheelVelocity() {
-    return m_limelight.isTargetVisible()
-        ? velocityMap.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()) + 0)
+    return m_frontLimelight.isTargetVisible()
+        ? velocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
         : 0;
   }
 
   private void populatePivotMap() {
-    pivotMap.put(0.0, 150.0);
-    pivotMap.put(5.0, 170.0);
+    pivotMap.put(0.0, 0.0);
+    pivotMap.put(10.0, 120.0);
   }
 
   private double getDynamicPivot() {
-    return m_limelight.isTargetVisible()
-        ? pivotMap.getInterpolated(Units.metersToFeet(m_limelight.getDistanceToGoalMeters()))
+    return m_frontLimelight.isTargetVisible()
+        ? pivotMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
         : holdAngleDegrees;
   }
 
@@ -275,11 +280,16 @@ public class Intake extends SubsystemBase {
     && (pivotController.getSetpoint() != Units.degreesToRadians(holdAngleDegrees)) 
     && (flywheelController.getSetpoint() != 0)) {pivotToHold().schedule();}
     
+    setDynamicShooter();
     setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();
     
     SmartDashboard.putNumber("Intake Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
 
     SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
+    SmartDashboard.putNumber("interpolated velocity", getDynamicFlywheelVelocity());
+    SmartDashboard.putNumber("interpolated pivot", getDynamicPivot());
+    SmartDashboard.putNumber("front distance from goal", Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()));
+    SmartDashboard.putBoolean("target visible", m_frontLimelight.isTargetVisible());
   }
 }

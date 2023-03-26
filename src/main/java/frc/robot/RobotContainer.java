@@ -56,8 +56,8 @@ import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 public class RobotContainer {
 	// The robot's subsystems
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-	private final Limelight m_backLimelight = new Limelight("back");
-	private final Limelight m_frontLimelight = new Limelight("front");
+	private final Limelight m_backLimelight = new Limelight("limelight-back");
+	private final Limelight m_frontLimelight = new Limelight("limelight-front");
 	private final Arm m_arm = new Arm();
 	private final Intake m_intake = new Intake(m_frontLimelight);
 	private final Claw m_claw = new Claw();

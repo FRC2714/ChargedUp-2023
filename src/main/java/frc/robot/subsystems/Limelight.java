@@ -69,7 +69,7 @@ public class Limelight extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		m_field.setRobotPose(getBotPose2d());
+		//m_field.setRobotPose(getBotPose2d());
 		SmartDashboard.putNumber("distance to goal", getDistanceToGoalMeters());
 	}
 }
