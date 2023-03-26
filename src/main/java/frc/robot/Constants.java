@@ -206,47 +206,54 @@ public final class Constants {
 
   public static final class ArmConstants {
     //Spark IDs
-    public static final int kLeftBaseJointMotorCanId = 9;
-    public static final int kRightBaseJointMotorCanId = 10;
-    public static final int kSecondJointMotorCanId = 11;
+    public static final int kRightShoulderMotorCanId = 10;
+    public static final int kLeftShoulderMotorCanId = 9;
+
+    public static final int kRightElbowMotorCanId = 11;
+    public static final int kLeftElbowMotorCanId = 12;
 
     //Physical constants
-    public static final double kBaseJointGearRatio = 240;
-    public static final double kSecondJointGearRatio = 225;
+    public static final double kShoulderGearRatio = 240;
+    public static final double kElbowGearRatio = 225;
 
-    public static final double kBaseJointLength = Units.inchesToMeters(28);
-    public static final double kSecondJointLength = Units.inchesToMeters(25);
+    public static final double kShoulderLength = Units.inchesToMeters(28);
+    public static final double kElbowLength = Units.inchesToMeters(25);
 
     //Encoder Conversion
-    public static final double kBaseJointPositionConversionFactor = (2*Math.PI) * kBaseJointGearRatio; //Radians * Gear ratio
-    public static final double kSecondJointPositionConversionFactor = (2*Math.PI) * kSecondJointGearRatio;
+    public static final double kShoulderPositionConversionFactor = (2*Math.PI) * kShoulderGearRatio; //Radians * Gear ratio
+    public static final double kElbowPositionConversionFactor = (2*Math.PI) * kElbowGearRatio;
 
-    public static final double kBaseJointKinematicOffset = 45; //difference from kinematic 0 to sparkmax 0 approx 45 deg
-    public static final double kSecondJointKinematicOffset = 630; //difference from kinematic 0 to sparkmax 0 approx 160 deg
+    public static final double kShoulderEncoderZeroOffset = 1049.0689405;
+    public static final double kElbowEncoderZeroOffset = 1209.691;
+    public static final double kShoulderKinematicOffset = 180; //difference from kinematic 0 to sparkmax 0 approx 45 deg
+    public static final double kElbowKinematicOffset = 753; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
-    public static final boolean kBaseJointInverted = true; //both base joint motor and encoder are inverted
-    public static final boolean kSecondJointInverted = false; //econd joint motor and encoder are NOT inverted
+    public static final boolean kShoulderMotorInverted = true; //base joint encoder inverted
+    public static final boolean kShoulderEncoderInverted = true; //base joint motor inverted
+
+    public static final boolean kElbowMotorInverted = true; //second joint encoder inverted
+    public static final boolean kElbowEncoderInverted = true; //second joint motor and encoder are NOT inverted
 
     //Controller Constants
-    public static final double kBaseJointMaxVelocity = 5000;
-    public static final double kBaseJointMaxAcceleration = 4000;
-    public static final double kBaseJointTolerance = 6;
-    public static final double kBaseJointFF = 0.00007;
-    public static final double kBaseJointP = 0.00000;
-    public static final double kBaseJointI = 0;
-    public static final double kBaseJointD = 0.0000;
+    public static final double kShoulderMaxVelocity = 5000;
+    public static final double kShoulderMaxAcceleration = 4000;
+    public static final double kShoulderTolerance = 6;
+    public static final double kShoulderFF = 0.00007;
+    public static final double kShoulderP = 0.00000;
+    public static final double kShoulderI = 0;
+    public static final double kShoulderD = 0.0000;
 
-    public static final double kSecondJointMaxVelocity = 5500;
-    public static final double kSecondJointMaxAcceleration = 4000;
-    public static final double kSecondJointTolerance = 6;
-    public static final double kSecondJointFF = 0.00008;
-    public static final double kSecondJointP = 0.00006;
-    public static final double kSecondJointI = 0.0;
-    public static final double kSecondJointD = 0.00012;
+    public static final double kElbowMaxVelocity = 5500;
+    public static final double kElbowMaxAcceleration = 4000;
+    public static final double kElbowTolerance = 6;
+    public static final double kElbowFF = 0.00008;
+    public static final double kElbowP = 0.00006;
+    public static final double kElbowI = 0.0;
+    public static final double kElbowD = 0.00012;
 
     //Current Limits
-    public static final int kBaseJointMotorCurrentLimit = 40; //amps
-    public static final int kSecondJointMotorCurrentLimit = 50; //amps
+    public static final int kShoulderMotorCurrentLimit = 40; //amps
+    public static final int kElbowMotorCurrentLimit = 15; //amps PREVENT ENDCAP ROUNDOUT
 
     //Back to back transition
     public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
@@ -304,14 +311,14 @@ public final class Constants {
 
     //Stow position 
     public static final ArmForwardKinematicPosition kStowPosition = 
-      new ArmForwardKinematicPosition(142, -98);
+      new ArmForwardKinematicPosition(120, -65);
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferConeIntakePosition = 
-      new ArmForwardKinematicPosition(85,150);
+      new ArmForwardKinematicPosition(82,135);
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferCubeIntakePosition = 
-      new ArmForwardKinematicPosition(103,130);
+      new ArmForwardKinematicPosition(82,135);
 
     //Back Cone Score positions
     public static final ArmForwardKinematicPosition kBackConeL1Position =
@@ -331,13 +338,13 @@ public final class Constants {
 
     //Front Cone Score positions
     public static final ArmForwardKinematicPosition kFrontConeL2Position = 
-      new ArmForwardKinematicPosition(125, 42);
+      new ArmForwardKinematicPosition(120, 42);
 
     //Front Cube Score positions
     public static final ArmForwardKinematicPosition kFrontCubeL2Position = 
       new ArmForwardKinematicPosition(110, 81);
     public static final ArmForwardKinematicPosition kFrontCubeL3Position = 
-      new ArmForwardKinematicPosition(140, 15);
+      new ArmForwardKinematicPosition(120, 15);
     
 
     //Arm Intake positions

@@ -35,7 +35,7 @@ import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.commands.auto.MIDDLE.*;
 import frc.robot.commands.auto.OPEN.*;
-import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
@@ -163,11 +163,10 @@ public class RobotContainer {
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
 		//manual raise arm on start
-		m_operatorController.start()
-			.onTrue(new InstantCommand(() -> m_arm.raiseCurrentPosition(3)));
-		//manual lower arm on back
-		m_operatorController.back()
-			.onTrue(new InstantCommand(() -> m_arm.lowerCurrentPosition(3)));
+		// m_operatorController.start()
+
+		// //manual lower arm on back
+		// m_operatorController.back()
 
 		// TUCK on up
 		m_operatorController.povUp()

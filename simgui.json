@@ -19,7 +19,8 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/Auton Selection": "String Chooser"
+      "/SmartDashboard/Auton Selection": "String Chooser",
+      "/SmartDashboard/Field Position": "Field2d"
     },
     "windows": {
       "/SmartDashboard/Auton Selection": {
@@ -31,6 +32,9 @@
   },
   "NetworkTables": {
     "transitory": {
+      "FMSInfo": {
+        "open": true
+      },
       "SmartDashboard": {
         "PPSwerveControllerCommand": {
           "open": true
@@ -41,8 +45,5 @@
         "open": true
       }
     }
-  },
-  "NetworkTables View": {
-    "visible": false
   }
 }

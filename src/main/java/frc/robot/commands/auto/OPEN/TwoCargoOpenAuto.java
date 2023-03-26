@@ -20,7 +20,7 @@ import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
-import frc.robot.subsystems.Claw;
+import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Limelight;
@@ -32,7 +32,7 @@ import frc.robot.subsystems.Limelight;
 public class TwoCargoOpenAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"2CargoOPENAuto",
+			"2CargoOPEN",
 			new PathConstraints(
 			2.5,
 			2.5));
