@@ -11,6 +11,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
@@ -42,14 +43,16 @@ public class Intake extends SubsystemBase {
 
   private double pivotGearRatio = 50;
 
-  private double deployAngleDegrees = 200;
-  private double holdAngleDegrees = 55;
-  private double retractAngleDegrees = 20;
-  private double shootAngleDegrees = 120;
-  private double outtakeAngleDegrees = 180;
+  private double deployAngleDegrees = 120;
+  private double holdAngleDegrees = -30;
+  private double retractAngleDegrees = -90;
+  private double shootAngleDegrees = 45;
+  private double outtakeAngleDegrees = 90;
 
   private PIDController pivotController = new PIDController(0, 0, 0);
-  private PIDController flywheelController = new PIDController(0, 0, 0);
+  private PIDController flywheelController = new PIDController(0.5, 0, 0);
+
+  private ArmFeedforward pivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
 
   private static IntakeState intakeState = IntakeState.STOPPED;
 
@@ -128,7 +131,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setFlywheelTargetVelocity(double targetRPM) {
-    flywheelController.setSetpoint(targetRPM);
+    flywheelController.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(targetRPM));
   }
 
   private void setCalculatedFlywheelVoltage() {
@@ -136,8 +139,8 @@ public class Intake extends SubsystemBase {
   }
 
   private void intake() {
-    //setFlywheelTargetVelocity(0);
-    topFlywheelMotor.set(0.4);
+    setFlywheelTargetVelocity(100);
+    //topFlywheelMotor.set(0.4);
     intakeMotor.setVoltage(IntakeConstants.kIntakeMotorSpeed*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.INTAKING) {
       intakeRunningTimer.reset();
@@ -147,8 +150,8 @@ public class Intake extends SubsystemBase {
   }
 
   private void outtake(double power) {
-    //setFlywheelTargetVelocity(0);
-    topFlywheelMotor.set(-0.4);
+    setFlywheelTargetVelocity(-100);
+    //topFlywheelMotor.set(-0.4);
     intakeMotor.setVoltage(-power*IntakeConstants.kNominalVoltage);
     if (intakeState != IntakeState.OUTTAKING) {
       intakeRunningTimer.reset();
@@ -159,20 +162,29 @@ public class Intake extends SubsystemBase {
 
   private void stop() {
     //setFlywheelTargetVelocity(0);
-    topFlywheelMotor.set(0);
+    //topFlywheelMotor.set(0);
+    setFlywheelTargetVelocity(0);
     intakeMotor.set(0);
   }
 
   public double getPivotAngleRadians() {
-    return pivotEncoder.getPosition() / pivotGearRatio - Units.degreesToRadians(37);
+    return pivotEncoder.getPosition() / pivotGearRatio - Units.degreesToRadians(37 + 86);
   }
 
   public void setPivotPower(double power) {
     pivotMotor.setVoltage(power * IntakeConstants.kNominalVoltage);
   }
 
+  public void setCalculatedPivotVoltage() {
+    // pivotMotor.setVoltage(
+    //   pivotController.calculate(getPivotAngleRadians())
+    //     + pivotFeedforward.calculate(pivotController.getSetpoint(), 0)
+    //   );
+    setPivotPower(pivotController.calculate(getPivotAngleRadians()));
+  }
+
   public void setPivotTarget(double targetAngleDegrees) {
-    if (pivotController.getP() == 0) { pivotController.setP(0.22);} //prevent jumping on enable
+    if (pivotController.getP() == 0) { pivotController.setP(0.2);} //prevent jumping on enable
     pivotController.setSetpoint(Units.degreesToRadians(targetAngleDegrees));
   }
 
@@ -215,7 +227,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command pivotToHold() {
-    topFlywheelMotor.set(0);
+    flywheelController.setSetpoint(0);
     return new InstantCommand(() -> setPivotTarget(holdAngleDegrees));
   }
 
@@ -259,11 +271,15 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(isCubeDetected()) {pivotToHold().schedule();}
+    if(isCubeDetected() 
+    && (pivotController.getSetpoint() != Units.degreesToRadians(holdAngleDegrees)) 
+    && (flywheelController.getSetpoint() != 0)) {pivotToHold().schedule();}
     
-    setPivotPower(pivotController.calculate(getPivotAngleRadians()));
+    setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();
     
     SmartDashboard.putNumber("Intake Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
+
+    SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
   }
 }
