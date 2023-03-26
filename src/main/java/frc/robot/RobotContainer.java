@@ -98,8 +98,8 @@ public class RobotContainer {
 	}
 
 	public void setTeleopDefaultStates() {
-		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
-		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).schedule();
+		m_superstructure.setCargoTypeCommand(CargoType.CONE).schedule();
+		m_superstructure.setScoreLevelCommand(ScoreLevel.INTAKE).schedule();
 		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
 		m_backLimelight.setLEDCommand(false).schedule();
 		//m_intake.pivotToHold().schedule();
@@ -189,13 +189,13 @@ public class RobotContainer {
 
 		// level 3 on Y
 		m_operatorController.y()
-			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE));
+			.onTrue(m_superstructure.setScoreLevelCommand(ScoreLevel.THREE));
 		// level 2 on B
 		m_operatorController.b()
-			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.TWO));
+			.onTrue(m_superstructure.setScoreLevelCommand(ScoreLevel.TWO));
 		// intake on A
 		m_operatorController.a()
-			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
+			.onTrue(m_superstructure.setScoreLevelCommand(ScoreLevel.INTAKE));
 
 		//toggle claw intake on X
 		//m_operatorController.x()
@@ -203,11 +203,11 @@ public class RobotContainer {
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE));
+			.onTrue(m_superstructure.setCargoTypeCommand(CargoType.CONE));
 
 		// cube mode on left bumper
 		m_operatorController.leftBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE));
+			.onTrue(m_superstructure.setCargoTypeCommand(CargoType.CUBE));
 	}
 
 	/**

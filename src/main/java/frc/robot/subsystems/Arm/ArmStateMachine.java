@@ -27,6 +27,7 @@ public class ArmStateMachine extends SubsystemBase {
   //m_arm.estimateCurrentArmState()??
 
   public ArmState targetArmState = ArmState.BACK; // default to TRANSFER 
+  
   public ScoreLevel scoreLevel = ScoreLevel.THREE; // default to THREE
 
   public CargoType cargoType = CargoType.CONE; // default of cube
@@ -46,28 +47,12 @@ public class ArmStateMachine extends SubsystemBase {
     }
   }
 
-  private void setScoreLevel(ScoreLevel scoreLevel) {
-    this.scoreLevel = scoreLevel;
-  }
-
   private void callArmCommand() {
     getArmCommand().withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
   }
 
-  public void setCargoType(CargoType cargoType) {
-    this.cargoType = cargoType;
-  }
-
   public Command setTargetArmStateCommand(ArmState targetArmState) {
     return new InstantCommand(() -> setTargetArmState(targetArmState));
-  }
-
-  public Command setTargetScoreLevelCommand(ScoreLevel targetScoreLevel) {
-    return new InstantCommand(() -> setScoreLevel(targetScoreLevel));
-  }
-
-  public Command setCargoTypeCommand(CargoType cargoType) {
-    return new InstantCommand(() -> setCargoType(cargoType));
   }
 
   public Command nothingCommand() {

@@ -5,7 +5,6 @@
 package frc.robot.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.Arm.ArmStateMachine;
 
 public class ShooterStateMachine extends SubsystemBase {
   /** Creates a new ShooterStateMachine. */
