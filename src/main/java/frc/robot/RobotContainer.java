@@ -38,7 +38,7 @@ import frc.robot.commands.auto.OPEN.*;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Infrastructure;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Arm.Arm;
@@ -61,11 +61,11 @@ public class RobotContainer {
 	private final Limelight m_backLimelight = new Limelight("limelight-back");
 	private final Limelight m_frontLimelight = new Limelight("limelight-front");
 	private final Arm m_arm = new Arm();
-	private final Intake m_intake = new Intake(m_frontLimelight);
+	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake, m_claw);
+	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_shooter, m_claw);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -133,18 +133,18 @@ public class RobotContainer {
 
 		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
-			.onTrue(m_intake.deployAndIntake())
-			.onFalse(m_intake.pivotToHold());
+			.onTrue(m_shooter.deployAndIntake())
+			.onFalse(m_shooter.pivotToHold());
 
 		//outtake on left trigger while held
 		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
-			.whileTrue(m_intake.pivotThenOuttake())
-			.whileFalse(m_intake.holdAndStop());
+			.whileTrue(m_shooter.pivotThenOuttake())
+			.whileFalse(m_shooter.holdAndStop());
 
 		//shoot on b
 		m_driverController.b()
-			.onTrue(m_intake.pivotThenShoot())
-			.onFalse(m_intake.holdAndStop());
+			.onTrue(m_shooter.pivotThenShoot())
+			.onFalse(m_shooter.holdAndStop());
 
 		//turn to 180 on y
 		m_driverController.y()
@@ -260,14 +260,14 @@ public class RobotContainer {
 	}
 
 	public Command getOneCubeBalanceMiddleAuto() {
-		return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_backLimelight);
+		return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
 	}
 
 	public Command getOneConeBalanceMiddleAuto() {
-		return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_backLimelight);
+		return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
 	}
 
 	public Command getTwoCargoOpenAuto() {
-		return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_backLimelight);
+		return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
 	}
 }

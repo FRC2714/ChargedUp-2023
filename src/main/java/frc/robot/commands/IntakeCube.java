@@ -10,14 +10,14 @@ import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class IntakeCube extends SequentialCommandGroup {
   /** Creates a new CubeTransfer. */
-  public IntakeCube(ArmStateMachine m_armStateMachine, Claw m_claw, Intake m_intake) {
+  public IntakeCube(ArmStateMachine m_armStateMachine, Claw m_claw, Shooter m_intake) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addRequirements(m_armStateMachine, m_claw, m_intake);

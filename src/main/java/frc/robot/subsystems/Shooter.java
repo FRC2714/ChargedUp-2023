@@ -22,13 +22,13 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.utils.InterpolatingTreeMap;
 
-public class Intake extends SubsystemBase {
+public class Shooter extends SubsystemBase {
   private Limelight m_frontLimelight;
 
-  private CANSparkMax intakeMotor;
+  private CANSparkMax kickerMotor;
   private CANSparkMax pivotMotor;
 
   private CANSparkMax topFlywheelMotor;
@@ -54,26 +54,30 @@ public class Intake extends SubsystemBase {
 
   private ArmFeedforward pivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
 
-  private static IntakeState intakeState = IntakeState.STOPPED;
+  public enum ShooterState {
+    INTAKING, OUTTAKING, STOPPED
+  }
 
-  private Timer intakeRunningTimer = new Timer();
+  private static ShooterState shooterState = ShooterState.STOPPED;
 
-  /** Creates a new Intake. */
-  public Intake(Limelight m_frontLimelight) {
+  private Timer shooterRunningTimer = new Timer();
+
+  /** Creates a new Shooter. */
+  public Shooter(Limelight m_frontLimelight) {
     this.m_frontLimelight = m_frontLimelight;
     
-    intakeMotor = new CANSparkMax(IntakeConstants.kIntakeMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    pivotMotor = new CANSparkMax(IntakeConstants.kPivotMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    intakeMotor.setInverted(true);
+    kickerMotor = new CANSparkMax(ShooterConstants.kKickerMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    pivotMotor = new CANSparkMax(ShooterConstants.kPivotMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    kickerMotor.setInverted(true);
     pivotMotor.setInverted(false);
 
-    intakeMotor.setIdleMode(IdleMode.kBrake);
+    kickerMotor.setIdleMode(IdleMode.kBrake);
     pivotMotor.setIdleMode(IdleMode.kBrake);
-    intakeMotor.setSmartCurrentLimit(IntakeConstants.kIntakeMotorCurrentLimit);
-    pivotMotor.setSmartCurrentLimit(IntakeConstants.kPivotMotorCurrentLimit);
+    kickerMotor.setSmartCurrentLimit(ShooterConstants.kKickerMotorCurrentLimit);
+    pivotMotor.setSmartCurrentLimit(ShooterConstants.kPivotMotorCurrentLimit);
 
-    intakeMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
-    pivotMotor.enableVoltageCompensation(IntakeConstants.kNominalVoltage);
+    kickerMotor.enableVoltageCompensation(ShooterConstants.kNominalVoltage);
+    pivotMotor.enableVoltageCompensation(ShooterConstants.kNominalVoltage);
 
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(2*Math.PI*pivotGearRatio);
@@ -127,10 +131,6 @@ public class Intake extends SubsystemBase {
     setPivotTarget(getDynamicPivot());
   }
 
-  public enum IntakeState {
-    INTAKING, OUTTAKING, STOPPED
-  }
-
   public double getFlywheelVelocity() {
     return flywheelEncoder.getVelocity() / 1.0;//gear ratio
   }
@@ -146,22 +146,22 @@ public class Intake extends SubsystemBase {
   private void intake() {
     setFlywheelTargetVelocity(100);
     //topFlywheelMotor.set(0.4);
-    intakeMotor.setVoltage(IntakeConstants.kIntakeMotorSpeed*IntakeConstants.kNominalVoltage);
-    if (intakeState != IntakeState.INTAKING) {
-      intakeRunningTimer.reset();
-      intakeRunningTimer.start();
-      intakeState = IntakeState.INTAKING;
+    kickerMotor.setVoltage(ShooterConstants.kIntakeMotorSpeed*ShooterConstants.kNominalVoltage);
+    if (shooterState != ShooterState.INTAKING) {
+      shooterRunningTimer.reset();
+      shooterRunningTimer.start();
+      shooterState = ShooterState.INTAKING;
     }
   }
 
   private void outtake(double power) {
     setFlywheelTargetVelocity(-100);
     //topFlywheelMotor.set(-0.4);
-    intakeMotor.setVoltage(-power*IntakeConstants.kNominalVoltage);
-    if (intakeState != IntakeState.OUTTAKING) {
-      intakeRunningTimer.reset();
-      intakeRunningTimer.start();
-      intakeState = IntakeState.OUTTAKING;
+    kickerMotor.setVoltage(-power*ShooterConstants.kNominalVoltage);
+    if (shooterState != ShooterState.OUTTAKING) {
+      shooterRunningTimer.reset();
+      shooterRunningTimer.start();
+      shooterState = ShooterState.OUTTAKING;
     }
   }
 
@@ -169,7 +169,7 @@ public class Intake extends SubsystemBase {
     //setFlywheelTargetVelocity(0);
     //topFlywheelMotor.set(0);
     setFlywheelTargetVelocity(0);
-    intakeMotor.set(0);
+    kickerMotor.set(0);
   }
 
   public double getPivotAngleRadians() {
@@ -177,7 +177,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setPivotPower(double power) {
-    pivotMotor.setVoltage(power * IntakeConstants.kNominalVoltage);
+    pivotMotor.setVoltage(power * ShooterConstants.kNominalVoltage);
   }
 
   public void setCalculatedPivotVoltage() {
@@ -198,21 +198,21 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isCubeDetected() {
-    return (intakeRunningTimer.get() > 0.15) && //excludes current spike when motor first starts
-      (intakeMotor.getOutputCurrent() > 25) && //cube intake current threshold
-      (intakeState == IntakeState.INTAKING);
+    return (shooterRunningTimer.get() > 0.15) && //excludes current spike when motor first starts
+      (kickerMotor.getOutputCurrent() > 25) && //cube shooter current threshold
+      (shooterState == ShooterState.INTAKING);
   }
 
-  public Command intakeCommand() {
+  public Command shooterCommand() {
     return new InstantCommand(() -> intake());
   }
 
   public Command outtakeCommand() {
-    return new InstantCommand(() -> outtake(IntakeConstants.kOuttakeMotorSpeed));
+    return new InstantCommand(() -> outtake(ShooterConstants.kOuttakeMotorSpeed));
   }
 
   public Command shootCommand() {
-    return new InstantCommand(() -> outtake(IntakeConstants.kShootMotorSpeed));
+    return new InstantCommand(() -> outtake(ShooterConstants.kShootMotorSpeed));
   }
 
   public Command stopCommand() {
@@ -243,7 +243,7 @@ public class Intake extends SubsystemBase {
   public Command deployAndIntake() {
     return new ParallelCommandGroup(
       pivotToDeploy(),
-      intakeCommand());
+      shooterCommand());
   }
 
   public Command pivotThenOuttake() {
@@ -284,7 +284,7 @@ public class Intake extends SubsystemBase {
     setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();
     
-    SmartDashboard.putNumber("Intake Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
+    SmartDashboard.putNumber("Shooter Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
 
     SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
     SmartDashboard.putNumber("interpolated velocity", getDynamicFlywheelVelocity());

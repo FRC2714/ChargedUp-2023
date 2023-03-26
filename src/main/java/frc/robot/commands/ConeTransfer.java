@@ -10,7 +10,7 @@ import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -18,7 +18,7 @@ import frc.robot.subsystems.Intake;
 public class ConeTransfer extends SequentialCommandGroup {
   
   /** Creates a new ConeTransfer. */
-  public ConeTransfer(ArmStateMachine m_armStateMachine, Claw m_claw, Intake m_intake) {
+  public ConeTransfer(ArmStateMachine m_armStateMachine, Claw m_claw, Shooter m_intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_armStateMachine, m_claw, m_intake);
     // Add your commands in the addCommands() call, e.g.

@@ -167,11 +167,11 @@ public final class Constants {
     public static final double kShootMotorSpeed = -0.4;
   }
 
-  public static final class IntakeConstants {
-    public static final int kIntakeMotorCanId = 13;
+  public static final class ShooterConstants {
+    public static final int kKickerMotorCanId = 13;
     public static final int kPivotMotorCanId = 15;
 
-    public static final int kIntakeMotorCurrentLimit = 30;
+    public static final int kKickerMotorCurrentLimit = 30;
     public static final int kPivotMotorCurrentLimit = 30;
 
     public static final double kNominalVoltage = 12.8;

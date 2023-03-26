@@ -22,7 +22,7 @@ import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Limelight;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -37,7 +37,7 @@ public class TwoCargoOpenAuto extends AutoBase {
 			2.5,
 			2.5));
 
-	public TwoCargoOpenAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Intake m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
+	public TwoCargoOpenAuto(DriveSubsystem m_robotDrive, ArmStateMachine m_armStateMachine, Shooter m_intake, Arm m_arm, Claw m_claw, Limelight m_limelight) {
 		super(m_robotDrive);
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();

@@ -10,13 +10,13 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.LEDs;
 
 public class ArmStateMachine extends SubsystemBase {
   private Arm m_arm;
   private LEDs m_leds;
-  private Intake m_intake;
+  private Shooter m_intake;
   private Claw m_claw;
   
   public enum ArmState {
@@ -40,7 +40,7 @@ public class ArmStateMachine extends SubsystemBase {
   public CargoType cargoType = CargoType.CONE; // default of cube
 
   /** Creates a new StateMachine. */
-  public ArmStateMachine(Arm m_arm, LEDs m_leds, Intake m_intake, Claw m_claw) {
+  public ArmStateMachine(Arm m_arm, LEDs m_leds, Shooter m_intake, Claw m_claw) {
     this.m_arm = m_arm;
     this.m_leds = m_leds;
     this.m_intake = m_intake;
@@ -375,7 +375,6 @@ public class ArmStateMachine extends SubsystemBase {
     }
     return nothingCommand();
   }
-
   
   @Override
   public void periodic() {
