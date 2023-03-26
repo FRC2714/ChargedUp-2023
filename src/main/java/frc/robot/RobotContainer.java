@@ -38,14 +38,16 @@ import frc.robot.commands.auto.OPEN.*;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Infrastructure;
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
-import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
-import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
+import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterStateMachine;
+import frc.robot.subsystems.Superstructure.CargoType;
+import frc.robot.subsystems.Superstructure.ScoreLevel;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -66,6 +68,8 @@ public class RobotContainer {
 	private final LEDs m_leds = new LEDs();
 	
 	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_shooter, m_claw);
+	private final ShooterStateMachine m_shooterStateMachine = new ShooterStateMachine();
+	private final Superstructure m_superstructure = new Superstructure(m_armStateMachine, m_shooterStateMachine);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -124,11 +128,11 @@ public class RobotContainer {
 			
 		//zero heading then autoalign on right bumper
 		m_driverController.rightBumper()
-			.whileTrue(new AlignToNode(m_robotDrive, m_backLimelight, m_armStateMachine));
+			.whileTrue(new AlignToNode(m_robotDrive, m_backLimelight, m_superstructure));
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(new ScoreCommand(m_armStateMachine, m_claw))
+			.onTrue(new ScoreCommand(m_superstructure, m_claw))
 			.onFalse(m_claw.stopOpen());
 
 		//intake on right trigger while held 
@@ -259,15 +263,15 @@ public class RobotContainer {
 		return new PathTestAuto(m_robotDrive);
 	}
 
-	public Command getOneCubeBalanceMiddleAuto() {
-		return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
-	}
+	// public Command getOneCubeBalanceMiddleAuto() {
+	// 	return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
+	// }
 
-	public Command getOneConeBalanceMiddleAuto() {
-		return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
-	}
+	// public Command getOneConeBalanceMiddleAuto() {
+	// 	return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
+	// }
 
-	public Command getTwoCargoOpenAuto() {
-		return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
-	}
+	// public Command getTwoCargoOpenAuto() {
+	// 	return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
+	// }
 }
