@@ -21,13 +21,8 @@ public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
 
   private DoubleSolenoid clawSolenoid;
-
-  private PneumaticHub pneumaticHub;
-
   /** Creates a new Claw. */
   public Claw() {
-    
-
     clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
 
