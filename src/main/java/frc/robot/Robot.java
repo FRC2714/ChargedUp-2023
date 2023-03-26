@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -43,6 +45,15 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("2 Cargo Open", m_robotContainer.getTwoCargoOpenAuto());
 
     SmartDashboard.putData("Auton Selection", autoChooser);
+
+    //TODO set lower resolution + decrease bandwidth
+    // UsbCamera camera = new UsbCamera("Fisheye", 0);
+    // camera.setResolution(640, 480);
+    // camera.setFPS(30);
+    // CameraServer.addCamera(camera);
+    // CameraServer.startAutomaticCapture(camera);
+
+    //CameraServer.startAutomaticCapture();
   }
 
   /**
