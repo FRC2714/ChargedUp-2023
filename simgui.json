@@ -19,7 +19,8 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/Auton Selection": "String Chooser"
+      "/SmartDashboard/Auton Selection": "String Chooser",
+      "/SmartDashboard/Field Position": "Field2d"
     },
     "windows": {
       "/SmartDashboard/Auton Selection": {

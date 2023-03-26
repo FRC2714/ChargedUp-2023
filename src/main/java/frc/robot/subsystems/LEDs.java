@@ -15,7 +15,7 @@ public class LEDs extends SubsystemBase {
   private Spark Blinkin;
   private Spark Blinkin2;
 
-  /** Creates a new Blinkin. */
+  /** Creates a new LEDs. */
   public LEDs() {
     Blinkin = new Spark(LEDConstants.kBlinkinPort);
     Blinkin2 = new Spark(LEDConstants.kBlinkin2Port);
