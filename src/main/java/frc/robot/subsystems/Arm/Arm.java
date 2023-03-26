@@ -217,10 +217,7 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    estimateCurrentXY();
-    calculateInverseKinematics(estimatedX, estimatedY);
-
-    SmartDashboard.putNumber("Shoulder Kinematic Angle", Units.radiansToDegrees(shoulder.getKinematicAngle()));
-    SmartDashboard.putNumber("Elbow Kinematic Angle", Units.radiansToDegrees(elbow.getKinematicAngle()));
+    // estimateCurrentXY();
+    // calculateInverseKinematics(estimatedX, estimatedY);
   }
 }

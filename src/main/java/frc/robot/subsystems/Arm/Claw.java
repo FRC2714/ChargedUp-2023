@@ -26,8 +26,7 @@ public class Claw extends SubsystemBase {
 
   /** Creates a new Claw. */
   public Claw() {
-    pneumaticHub = new PneumaticHub(PneumaticsConstants.kPneumaticHubCanId);
-    pneumaticHub.enableCompressorAnalog(PneumaticsConstants.kCompressorMinPressure, PneumaticsConstants.kCompressorMaxPressure);
+    
 
     clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);

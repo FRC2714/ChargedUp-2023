@@ -71,10 +71,11 @@ public class Shoulder extends SubsystemBase {
   }
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
+    SmartDashboard.putNumber("Shoulder Target Angle", Units.radiansToDegrees(targetAngleRadians));
     if(ShoulderController.getP() == 0) {ShoulderController.setP(5);}
     Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(15)) ? CloseConstraints : FarConstraints;
     ShoulderController.setConstraints(selectedConstraint);
-    SmartDashboard.putString("base joint selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
+    SmartDashboard.putString("Shoulder Selected Constraint", selectedConstraint.equals(FarConstraints) ? "FAR" : "CLOSE");
 
     ShoulderController.setGoal(new State(targetAngleRadians, 0));
   }
@@ -88,10 +89,12 @@ public class Shoulder extends SubsystemBase {
   }
 
   private void setCalculatedVoltage() {
-    RightShoulderMotor.setVoltage(
+    double voltage = 
       ShoulderController.calculate(getKinematicAngle()) + 
-      ShoulderFeedForward.calculate(ShoulderController.getSetpoint().position, 0)
-      );
+      ShoulderFeedForward.calculate(ShoulderController.getSetpoint().position, 0);
+    SmartDashboard.putNumber("Shoulder Voltage", voltage);
+
+    RightShoulderMotor.setVoltage(voltage);
   }
 
   @Override
@@ -100,7 +103,8 @@ public class Shoulder extends SubsystemBase {
 
     // SmartDashboard.putNumber("Shoulder Encoder Position", ShoulderEncoder.getPosition());
     // SmartDashboard.putNumber("Shoulder Encoder Velocity", ShoulderEncoder.getVelocity());
-    // SmartDashboard.putBoolean("Shoulder nearSetpoint", nearSetpoint());
+    
+    SmartDashboard.putBoolean("Shoulder nearSetpoint", nearSetpoint());
     SmartDashboard.putNumber("Shoulder Kinematic Angle", Units.radiansToDegrees(getKinematicAngle()));
   }
 }

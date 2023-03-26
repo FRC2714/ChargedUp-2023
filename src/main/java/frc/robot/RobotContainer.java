@@ -37,6 +37,7 @@ import frc.robot.commands.auto.MIDDLE.*;
 import frc.robot.commands.auto.OPEN.*;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Infrastructure;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Limelight;
@@ -55,6 +56,7 @@ import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
 
 public class RobotContainer {
 	// The robot's subsystems
+	private final Infrastructure m_infrastructure = new Infrastructure();
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 	private final Limelight m_backLimelight = new Limelight("limelight-back");
 	private final Limelight m_frontLimelight = new Limelight("limelight-front");

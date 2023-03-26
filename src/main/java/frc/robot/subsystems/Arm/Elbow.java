@@ -76,10 +76,11 @@ public class Elbow extends SubsystemBase {
   }
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
+    SmartDashboard.putNumber("Elbow Target Angle", Units.radiansToDegrees(targetAngleRadians));
     if(ElbowController.getP() == 0) {ElbowController.setP(5);}
     Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(30)) ? CloseConstraints : FarConstraints;
     ElbowController.setConstraints(selectedConstraint);
-    SmartDashboard.putString("second joint selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
+    SmartDashboard.putString("Elbow Selected Constraint", selectedConstraint.equals(FarConstraints) ? "FAR" : "CLOSE");
 
     ElbowController.setGoal(new State(targetAngleRadians, 0));
   }
@@ -93,10 +94,12 @@ public class Elbow extends SubsystemBase {
   }
 
   private void setCalculatedVoltage() {
-    RightElbowMotor.setVoltage(
+    double voltage =
       ElbowController.calculate(getKinematicAngle()) +
-      ElbowFeedForward.calculate(ElbowController.getSetpoint().position, 0)
-      );
+      ElbowFeedForward.calculate(ElbowController.getSetpoint().position, 0);
+    SmartDashboard.putNumber("Elbow Voltage", voltage);
+
+    RightElbowMotor.setVoltage(voltage);
   }
 
   @Override
@@ -105,8 +108,8 @@ public class Elbow extends SubsystemBase {
 
     // SmartDashboard.putNumber("Elbow Encoder Position", ElbowEncoder.getPosition());
     // SmartDashboard.putNumber("Elbow Encoder Velocity", ElbowEncoder.getVelocity());
-    // SmartDashboard.putBoolean("Elbow nearSetpoint", nearSetpoint());
-    SmartDashboard.putNumber("elbow feedforward", ElbowFeedForward.calculate(ElbowController.getSetpoint().position, 0));
+    
+    SmartDashboard.putBoolean("Elbow nearSetpoint", nearSetpoint());
     SmartDashboard.putNumber("Elbow Kinematic Angle", Units.radiansToDegrees(getKinematicAngle()));
   }
 }
