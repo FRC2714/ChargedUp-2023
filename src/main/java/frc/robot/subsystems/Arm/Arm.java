@@ -56,30 +56,30 @@ public class Arm extends SubsystemBase {
   public void setTargetPosition(double X, double Y) {
     targetX = X;
     targetY = Y;
+    calculateInverseKinematics(X, Y);
+    //setInverseKinematics();
   }
 
-  private void calculateQ2() {
-    // elbowAngle = -Math.acos(
-    //     -((Math.pow(shoulderLength, 2)) + (Math.pow(elbowLength, 2) - (Math.pow(targetX, 2)) - (Math.pow(targetY, 2)))) /
-    //         (2 * shoulderLength * elbowLength)) + (2*Math.PI);
+  private void calculateQ2(double targetX, double targetY) {
+    q2 = -Math.acos((shoulderLength*shoulderLength + elbowLength*elbowLength - targetX*targetX - targetY*targetY)/(-2*shoulderLength*elbowLength)) + 2*Math.PI;
 
-    //second solution
-    q2 = Math.acos((-shoulderLength*shoulderLength - elbowLength*elbowLength + targetX*targetX + targetY*targetY)/(2*shoulderLength*elbowLength));
-    SmartDashboard.putNumber("q2", q2);
+    //other solution
+    //q2 = Math.acos((-shoulderLength*shoulderLength - elbowLength*elbowLength + targetX*targetX + targetY*targetY)/(2*shoulderLength*elbowLength));
+    SmartDashboard.putNumber("q2", Units.radiansToDegrees(q2));
   }
 
-  private void calculateQ1() {
+  private void calculateQ1(double targetX, double targetY) {
     // shoulderAngle = 
     //     Math.atan(targetX / targetY) -
     //     Math.atan((elbowLength * Math.sin(elbowAngle)) / (shoulderLength + elbowLength * Math.cos(elbowAngle)));
 
-    q1 = - Math.atan2(targetY, targetX) - Math.atan2(elbowLength*Math.sin(q2), shoulderLength+elbowLength*Math.cos(q2)) + Math.PI/2.0;
-    SmartDashboard.putNumber("q1", q1);
+    q1 = -Math.atan2(targetY, targetX) - Math.atan((elbowLength*Math.sin(q2))/(shoulderLength + elbowLength*Math.cos(q2))) + Math.PI/2.0;
+    SmartDashboard.putNumber("q1", Units.radiansToDegrees(q1));
   }
 
-  private void calculateInverseKinematics() {
-    calculateQ2();
-    calculateQ1();
+  private void calculateInverseKinematics(double targetX, double targetY) {
+    calculateQ2(targetX, targetY);
+    calculateQ1(targetX, targetY);
   }
 
   private void setInverseKinematics() {
@@ -89,7 +89,7 @@ public class Arm extends SubsystemBase {
 
   private void estimateCurrentXY() {
     estimatedX = shoulderLength*Math.sin(shoulder.getKinematicAngle()) + elbowLength*Math.sin(shoulder.getKinematicAngle()+elbow.getKinematicAngle());
-    estimatedY = elbowLength*Math.cos(elbow.getKinematicAngle()) + elbowLength*Math.cos(shoulder.getKinematicAngle()+elbow.getKinematicAngle());
+    estimatedY = shoulderLength*Math.cos(elbow.getKinematicAngle()) + elbowLength*Math.cos(shoulder.getKinematicAngle()+elbow.getKinematicAngle());
     SmartDashboard.putNumber("Arm Estimated X", Units.metersToInches(estimatedX));
     SmartDashboard.putNumber("Arm Estimated Y", Units.metersToInches(estimatedY));
   }
@@ -217,8 +217,8 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    calculateInverseKinematics();
     estimateCurrentXY();
+    calculateInverseKinematics(estimatedX, estimatedY);
 
     SmartDashboard.putNumber("Shoulder Kinematic Angle", Units.radiansToDegrees(shoulder.getKinematicAngle()));
     SmartDashboard.putNumber("Elbow Kinematic Angle", Units.radiansToDegrees(elbow.getKinematicAngle()));

@@ -192,8 +192,8 @@ public class RobotContainer {
 			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
 
 		//toggle claw intake on X
-		// m_operatorController.x()
-		// 	.toggleOnTrue(Commands.startEnd(m_claw::intakeOpen, m_claw::intakeClose, m_claw));
+		//m_operatorController.x()
+			//.onTrue(new InstantCommand(() -> m_arm.setTargetPosition(30.0, 28.0)));
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()

@@ -77,7 +77,7 @@ public class Elbow extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     if(ElbowController.getP() == 0) {ElbowController.setP(5);}
-    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) > Units.degreesToRadians(20)) ? FarConstraints : CloseConstraints;
+    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(30)) ? CloseConstraints : FarConstraints;
     ElbowController.setConstraints(selectedConstraint);
     SmartDashboard.putString("second joint selected constraint", selectedConstraint.equals(FarConstraints) ? "FAR CONSTRAINT" : "CLOSE CONSTRAINT");
 
