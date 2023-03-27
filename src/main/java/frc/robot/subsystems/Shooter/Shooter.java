@@ -42,13 +42,7 @@ public class Shooter extends SubsystemBase {
   private InterpolatingTreeMap velocityMap = new InterpolatingTreeMap();
   private InterpolatingTreeMap pivotMap = new InterpolatingTreeMap();
 
-  private double pivotGearRatio = 50;
-
-  private double deployAngleDegrees = 120;
-  private double holdAngleDegrees = -30;
-  private double retractAngleDegrees = -90;
-  private double shootAngleDegrees = 45;
-  private double outtakeAngleDegrees = 90;
+  
 
   private PIDController pivotController = new PIDController(0, 0, 0);
   private PIDController flywheelController = new PIDController(0.5, 0, 0);
@@ -62,6 +56,9 @@ public class Shooter extends SubsystemBase {
   private static ShooterState shooterState = ShooterState.STOPPED;
 
   private Timer shooterRunningTimer = new Timer();
+
+  private boolean isAutoHoldEnabled = true;
+  private boolean isDynamicEnabled = false;
 
   /** Creates a new Shooter. */
   public Shooter(Limelight m_frontLimelight) {
@@ -81,12 +78,12 @@ public class Shooter extends SubsystemBase {
     pivotMotor.enableVoltageCompensation(ShooterConstants.kNominalVoltage);
 
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    pivotEncoder.setPositionConversionFactor(2*Math.PI*pivotGearRatio);
+    pivotEncoder.setPositionConversionFactor(ShooterConstants.kPivotPositionConversionFactor);
     pivotEncoder.setInverted(true);
     pivotEncoder.setZeroOffset(200);
 
-    topFlywheelMotor = new CANSparkMax(16, CANSparkMaxLowLevel.MotorType.kBrushless);
-    bottomFlywheelMotor = new CANSparkMax(17, CANSparkMaxLowLevel.MotorType.kBrushless);
+    topFlywheelMotor = new CANSparkMax(ShooterConstants.kTopFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    bottomFlywheelMotor = new CANSparkMax(ShooterConstants.kBottomFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor.follow(topFlywheelMotor, true);
     topFlywheelMotor.setInverted(false);
 
@@ -99,8 +96,6 @@ public class Shooter extends SubsystemBase {
     pivotController.disableContinuousInput();
     pivotController.setTolerance(Units.degreesToRadians(4));
 
-    m_frontLimelight.setAprilTagPipeline();
-
     populateVelocityMap();
     populatePivotMap();
   }
@@ -110,26 +105,36 @@ public class Shooter extends SubsystemBase {
     velocityMap.put(5.0, 1000.0);
   }
 
+  private void populatePivotMap() {
+    pivotMap.put(0.0, 0.0);
+    pivotMap.put(10.0, 120.0);
+  }
+
   private double getDynamicFlywheelVelocity() {
     return m_frontLimelight.isTargetVisible()
         ? velocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
         : 0;
   }
 
-  private void populatePivotMap() {
-    pivotMap.put(0.0, 0.0);
-    pivotMap.put(10.0, 120.0);
-  }
-
   private double getDynamicPivot() {
     return m_frontLimelight.isTargetVisible()
         ? pivotMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
-        : holdAngleDegrees;
+        : ShooterConstants.kPivotHoldAngleDegrees;
+  }
+
+  public void setDynamicEnabled(boolean isDynamicEnabled) {
+    this.isDynamicEnabled = isDynamicEnabled;
+  }
+
+  public InstantCommand setDynamicEnabledCommand(boolean isDynamicEnabled) {
+    return new InstantCommand(() -> setDynamicEnabled(isDynamicEnabled));
   }
 
   public void setDynamicShooter() {
-    setFlywheelTargetVelocity(getDynamicFlywheelVelocity());
-    setPivotTarget(getDynamicPivot());
+    if(isDynamicEnabled) {
+      setFlywheelTargetVelocity(getDynamicFlywheelVelocity());
+      setPivotTarget(getDynamicPivot());
+    }
   }
 
   public double getFlywheelVelocity() {
@@ -166,7 +171,7 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  private void stop() {
+  public void stop() {
     //setFlywheelTargetVelocity(0);
     //topFlywheelMotor.set(0);
     setFlywheelTargetVelocity(0);
@@ -174,7 +179,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getPivotAngleRadians() {
-    return pivotEncoder.getPosition() / pivotGearRatio - Units.degreesToRadians(37 + 86);
+    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(37 + 86);
   }
 
   public void setPivotPower(double power) {
@@ -204,7 +209,15 @@ public class Shooter extends SubsystemBase {
       (shooterState == ShooterState.INTAKING);
   }
 
-  public Command shooterCommand() {
+  public void AutoHold() {
+    if(isAutoHoldEnabled
+      && isCubeDetected() 
+      && (pivotController.getSetpoint() != Units.degreesToRadians(ShooterConstants.kPivotHoldAngleDegrees)) 
+      && (flywheelController.getSetpoint() != 0)) 
+    {pivotToHold().schedule();}
+  }
+
+  public Command intakeCommand() {
     return new InstantCommand(() -> intake());
   }
 
@@ -220,77 +233,74 @@ public class Shooter extends SubsystemBase {
     return new InstantCommand(() -> stop());
   }
 
-  public Command pivotToDeploy() {
-    return new InstantCommand(() -> setPivotTarget(deployAngleDegrees));
+  public Command pivotToIntake() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotIntakeAngleDegrees)),
+      new WaitUntilCommand(() -> atSetpoint())
+    );
   }
 
   public Command pivotToOuttake() {
-    return new InstantCommand(() -> setPivotTarget(outtakeAngleDegrees));
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotOuttakeAngleDegrees)),
+      new WaitUntilCommand(() -> atSetpoint())
+    );
   }
 
   public Command pivotToRetract() {
-    return new InstantCommand(() -> setPivotTarget(retractAngleDegrees));
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotRetractAngleDegrees)),
+      new WaitUntilCommand(() -> atSetpoint())
+    );
   }
 
   public Command pivotToHold() {
     flywheelController.setSetpoint(0);
-    return new InstantCommand(() -> setPivotTarget(holdAngleDegrees));
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotHoldAngleDegrees)),
+      new WaitUntilCommand(() -> atSetpoint())
+    );
   }
 
-  public Command pivotToShoot() {
-    return new InstantCommand(() -> setPivotTarget(shootAngleDegrees));
+  public Command setPivotTargetShoot() {
+    return new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotShootAngleDegrees));
   }
 
-  public Command deployAndIntake() {
+  public Command intakeSequence() {
     return new ParallelCommandGroup(
-      pivotToDeploy(),
-      shooterCommand());
+      pivotToIntake(),
+      intakeCommand());
   }
 
-  public Command pivotThenOuttake() {
+  public Command outtakeSequence() {
     return new SequentialCommandGroup(
       pivotToOuttake(),
-      new WaitUntilCommand(() -> atSetpoint()),
       outtakeCommand()
     );
   }
 
-  public Command pivotThenShoot() {
+  public Command shootSequence() {
     return new SequentialCommandGroup(
-      pivotToShoot(),
+      setPivotTargetShoot(),
       new WaitUntilCommand(() -> atSetpoint()),
       shootCommand());
-  }
-
-  public Command holdAndStop() {
-    return new ParallelCommandGroup(
-      pivotToHold(),
-      stopCommand());
-  }
-
-  public Command retractAndStop() {
-    return new ParallelCommandGroup(
-      pivotToRetract(), 
-      stopCommand());
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(isCubeDetected() 
-    && (pivotController.getSetpoint() != Units.degreesToRadians(holdAngleDegrees)) 
-    && (flywheelController.getSetpoint() != 0)) {pivotToHold().schedule();}
     
+    AutoHold();
     setDynamicShooter();
     setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();
     
     SmartDashboard.putNumber("Shooter Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
 
-    SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
-    SmartDashboard.putNumber("interpolated velocity", getDynamicFlywheelVelocity());
-    SmartDashboard.putNumber("interpolated pivot", getDynamicPivot());
-    SmartDashboard.putNumber("front distance from goal", Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()));
-    SmartDashboard.putBoolean("target visible", m_frontLimelight.isTargetVisible());
+    // SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
+    // SmartDashboard.putNumber("interpolated velocity", getDynamicFlywheelVelocity());
+    // SmartDashboard.putNumber("interpolated pivot", getDynamicPivot());
+    // SmartDashboard.putNumber("front distance from goal", Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()));
+    // SmartDashboard.putBoolean("target visible", m_frontLimelight.isTargetVisible());
   }
 }

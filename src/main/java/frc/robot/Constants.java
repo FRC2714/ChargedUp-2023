@@ -168,16 +168,35 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
+    //Spark IDs
     public static final int kKickerMotorCanId = 13;
     public static final int kPivotMotorCanId = 15;
 
+    public static final int kTopFlywheelMotorCanId = 16;
+    public static final int kBottomFlywheelMotorCanId = 17;
+
+    public static final double kPivotGearRatio = 50;
+    public static final double kPivotPositionConversionFactor = (2*Math.PI) * kPivotGearRatio;
+
+    //Current Limits
     public static final int kKickerMotorCurrentLimit = 30;
     public static final int kPivotMotorCurrentLimit = 30;
+    public static final int kTopFlywheelMotorCurrentLimit = 30;
+    public static final int kBottomFlywheelMotorCurrentLimit = 30;
 
     public static final double kNominalVoltage = 12.8;
+
+    //Kicker motor speeds
     public static final double kIntakeMotorSpeed = 0.85;
     public static final double kOuttakeMotorSpeed = 0.7;
     public static final double kShootMotorSpeed = 1.0;
+
+    //Preset Angles
+    public static final double kPivotIntakeAngleDegrees = 120;
+    public static final double kPivotHoldAngleDegrees = -30;
+    public static final double kPivotRetractAngleDegrees = -90;
+    public static final double kPivotShootAngleDegrees = 45;
+    public static final double kPivotOuttakeAngleDegrees = 90;
   }
 
   public static final class LEDConstants {

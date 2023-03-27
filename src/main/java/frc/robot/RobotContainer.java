@@ -20,7 +20,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -47,7 +49,8 @@ import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterStateMachine;
 import frc.robot.subsystems.Superstructure.CargoType;
-import frc.robot.subsystems.Superstructure.ScoreLevel;
+import frc.robot.subsystems.Superstructure.ScoreMode;
+import frc.robot.subsystems.Superstructure.ArmScoreLevel;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -67,8 +70,8 @@ public class RobotContainer {
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_shooter, m_claw);
-	private final ShooterStateMachine m_shooterStateMachine = new ShooterStateMachine();
+	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_claw);
+	private final ShooterStateMachine m_shooterStateMachine = new ShooterStateMachine(m_shooter);
 	private final Superstructure m_superstructure = new Superstructure(m_armStateMachine, m_shooterStateMachine);
 
 	// The driver's controller
@@ -98,15 +101,17 @@ public class RobotContainer {
 	}
 
 	public void setTeleopDefaultStates() {
-		m_superstructure.setCargoTypeCommand(CargoType.CONE).schedule();
-		m_superstructure.setScoreLevelCommand(ScoreLevel.INTAKE).schedule();
-		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
-		m_backLimelight.setLEDCommand(false).schedule();
-		//m_intake.pivotToHold().schedule();
-	}
+		new SequentialCommandGroup(
+			m_superstructure.setCargoTypeCommand(CargoType.CONE),
+			m_superstructure.setScoreLevelCommand(ArmScoreLevel.INTAKE),
+			m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
+			m_backLimelight.setLEDCommand(false),
+			m_frontLimelight.setLEDCommand(false)
+		).schedule();
+		}
 
 	public void setAutoDefaultStates() {
-		new InstantCommand(() -> m_robotDrive.zeroHeading());
+		new InstantCommand(() -> m_robotDrive.zeroHeading()).schedule();
 		m_backLimelight.setLEDCommand(false).schedule();
 		//m_intake.pivotToHold().schedule();
 	}
@@ -136,19 +141,21 @@ public class RobotContainer {
 			.onFalse(m_claw.stopOpen());
 
 		//intake on right trigger while held 
-		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
-			.onTrue(m_shooter.deployAndIntake())
-			.onFalse(m_shooter.pivotToHold());
+		// new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
+		// 	.onTrue(m_shooter.intakeSequence())
+		// 	.onFalse(m_shooter.pivotToHold());
 
-		//outtake on left trigger while held
-		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
-			.whileTrue(m_shooter.pivotThenOuttake())
-			.whileFalse(m_shooter.holdAndStop());
+		//TODO make seperate intake command
 
-		//shoot on b
-		m_driverController.b()
-			.onTrue(m_shooter.pivotThenShoot())
-			.onFalse(m_shooter.holdAndStop());
+		// //outtake on left trigger while held
+		// new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
+		// 	.whileTrue(m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER))
+		// 	.whileFalse(m_shooter.holdAndStop());
+
+		// //shoot on b
+		// m_driverController.b()
+		// 	.onTrue(m_shooter.shootSequence())
+		// 	.onFalse(m_shooter.holdAndStop());
 
 		//turn to 180 on y
 		m_driverController.y()
@@ -189,13 +196,13 @@ public class RobotContainer {
 
 		// level 3 on Y
 		m_operatorController.y()
-			.onTrue(m_superstructure.setScoreLevelCommand(ScoreLevel.THREE));
+			.onTrue(m_superstructure.setScoreLevelCommand(ArmScoreLevel.THREE));
 		// level 2 on B
 		m_operatorController.b()
-			.onTrue(m_superstructure.setScoreLevelCommand(ScoreLevel.TWO));
+			.onTrue(m_superstructure.setScoreLevelCommand(ArmScoreLevel.TWO));
 		// intake on A
 		m_operatorController.a()
-			.onTrue(m_superstructure.setScoreLevelCommand(ScoreLevel.INTAKE));
+			.onTrue(m_superstructure.setScoreLevelCommand(ArmScoreLevel.INTAKE));
 
 		//toggle claw intake on X
 		//m_operatorController.x()

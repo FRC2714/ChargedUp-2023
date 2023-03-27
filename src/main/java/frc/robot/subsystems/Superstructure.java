@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Arm.ArmStateMachine;
@@ -17,7 +19,7 @@ public class Superstructure extends SubsystemBase {
     ARM, SHOOTER
   }
 
-  public enum ScoreLevel {
+  public enum ArmScoreLevel {
     THREE, TWO, ONE, INTAKE
   }
 
@@ -25,8 +27,12 @@ public class Superstructure extends SubsystemBase {
     CONE, CUBE
   }
 
+  public enum ShooterScoreLevel {
+    INTAKE, OUTTAKE, SHOOT
+  }
+
   public ScoreMode scoreMode = ScoreMode.ARM;
-  public ScoreLevel scoreLevel = ScoreLevel.INTAKE;
+  public ArmScoreLevel scoreLevel = ArmScoreLevel.INTAKE;
   public CargoType cargoType = CargoType.CONE;
 
   /** Creates a new Superstructure. */
@@ -41,23 +47,30 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void setScoreMode(ScoreMode scoreMode) {
+    if(this.scoreMode != scoreMode) {
+      switch(scoreMode) {
+        case ARM: //transition
+        case SHOOTER: // transition
+      }
+    }
+
     this.scoreMode = scoreMode;
   }
 
-  public ScoreLevel getScoreMode() {
-    return this.scoreLevel;
+  public ScoreMode getScoreMode() {
+    return this.scoreMode;
   }
 
   //Score level
-  public InstantCommand setScoreLevelCommand(ScoreLevel targetScoreLevel) {
+  public InstantCommand setScoreLevelCommand(ArmScoreLevel targetScoreLevel) {
     return new InstantCommand(() -> setScoreLevel(targetScoreLevel));
   }
 
-  public void setScoreLevel(ScoreLevel scoreLevel) {
+  public void setScoreLevel(ArmScoreLevel scoreLevel) {
     this.scoreLevel = scoreLevel;
   }
 
-  public ScoreLevel getScoreLevel() {
+  public ArmScoreLevel getScoreLevel() {
     return this.scoreLevel;
   }
 
@@ -74,8 +87,18 @@ public class Superstructure extends SubsystemBase {
     return this.cargoType;
   }
 
+  public Command getCommand() {
+    switch (scoreMode) {
+      case ARM: return m_armStateMachine.getArmCommand(scoreLevel, cargoType);
+      case SHOOTER: return new InstantCommand();
+    }
+    return new InstantCommand();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putString("Score Level", scoreLevel.toString());
+    SmartDashboard.putString("Cargo Type", cargoType.toString());
   }
 }
