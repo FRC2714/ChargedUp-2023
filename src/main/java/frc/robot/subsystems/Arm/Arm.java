@@ -156,7 +156,7 @@ public class Arm extends SubsystemBase {
   //Transfer to Transfer
   public Command TransferToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> shoulder.nearSetpoint() && elbow.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToTransferIntermediatePosition)),
+      //new WaitUntilCommand(() -> shoulder.nearSetpoint() && elbow.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToTransferIntermediatePosition)),
       new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
   }
 

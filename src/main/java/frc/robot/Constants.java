@@ -330,13 +330,10 @@ public final class Constants {
 
     //Stow position 
     public static final ArmForwardKinematicPosition kStowPosition = 
-      new ArmForwardKinematicPosition(120, -65);
+      new ArmForwardKinematicPosition(120, -65); //123, -63
 
     //Transfer position
-    public static final ArmForwardKinematicPosition kTransferConeIntakePosition = 
-      new ArmForwardKinematicPosition(82,135);
-    //Transfer position
-    public static final ArmForwardKinematicPosition kTransferCubeIntakePosition = 
+    public static final ArmForwardKinematicPosition kTransferPosition = 
       new ArmForwardKinematicPosition(82,135);
 
     //Back Cone Score positions

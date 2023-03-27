@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Superstructure.CargoType;
+import frc.robot.utils.ArmForwardKinematicPosition;
 import frc.robot.subsystems.Superstructure.ArmScoreLevel;
 
 public class ArmStateMachine extends SubsystemBase {
@@ -28,7 +29,7 @@ public class ArmStateMachine extends SubsystemBase {
     this.m_arm = m_arm;
   }
 
-  private void setTargetArmState(ArmState targetArmState) {
+  public void setTargetArmState(ArmState targetArmState) {
     if(this.targetArmState != targetArmState || targetArmState != ArmState.STOW) {
       currentArmState = this.targetArmState;
       this.targetArmState = targetArmState;
@@ -45,6 +46,66 @@ public class ArmStateMachine extends SubsystemBase {
 
   private Command nothingCommand() {
     return new InstantCommand();
+  }
+
+  private ArmForwardKinematicPosition getBackScoreLevelPosition(ArmScoreLevel armScoreLevel, CargoType cargoType) {
+    switch (cargoType) { 
+      case CONE: {
+        switch (armScoreLevel) {
+          case THREE:
+            return ArmConstants.kBackConeL3Position;
+          case TWO:
+            return ArmConstants.kBackConeL2Position;
+          case ONE:
+            return ArmConstants.kBackConeL1Position;
+          case INTAKE:
+            return ArmConstants.kBackIntakePosition;
+        }
+      }
+      case CUBE: {
+        switch (armScoreLevel) {
+          case THREE:
+            return ArmConstants.kBackCubeL3Position;
+          case TWO:
+            return ArmConstants.kBackCubeL2Position;
+          case ONE:
+            return ArmConstants.kBackCubeL1Position;
+          case INTAKE:
+            return ArmConstants.kBackIntakePosition;
+        }
+      }
+    }
+    return ArmConstants.kStowPosition;
+  }
+
+  private ArmForwardKinematicPosition getFrontScoreLevelPosition(ArmScoreLevel armScoreLevel, CargoType cargoType) {
+    switch (cargoType) { 
+      case CONE: {
+        switch (armScoreLevel) {
+          case THREE:
+            return ArmConstants.kFrontConeL2Position;
+          case TWO:
+            return ArmConstants.kFrontConeL2Position;
+          case ONE:
+            return ArmConstants.kFrontConeL2Position;
+          case INTAKE:
+            return ArmConstants.kFrontIntakePosition;
+        }
+      }
+      case CUBE: {
+        switch (armScoreLevel) {
+          case THREE:
+            return ArmConstants.kFrontCubeL3Position;
+          case TWO:
+            return ArmConstants.kFrontCubeL2Position;
+          case ONE:
+            return ArmConstants.kFrontCubeL2Position;
+          case INTAKE:
+            return ArmConstants.kFrontIntakePosition;
+        }
+      }
+    }
+    return ArmConstants.kStowPosition;
   }
 
   public Command getArmCommand(ArmScoreLevel armScoreLevel, CargoType cargoType) {
@@ -80,254 +141,33 @@ public class ArmStateMachine extends SubsystemBase {
               }
             }
           }
-          case TRANSFER: { // When current is TRANSFER
-            switch (cargoType) { 
-              case CONE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.TransferToBack(ArmConstants.kBackConeL3Position);
-                  case TWO:
-                    return m_arm.TransferToBack(ArmConstants.kBackConeL2Position);
-                  case ONE:
-                    return m_arm.TransferToBack(ArmConstants.kBackConeL1Position);
-                  case INTAKE:
-                    return m_arm.TransferToBack(ArmConstants.kBackIntakePosition);
-                }
-              }
-              case CUBE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.TransferToBack(ArmConstants.kBackCubeL3Position);
-                  case TWO:
-                    return m_arm.TransferToBack(ArmConstants.kBackCubeL2Position);
-                  case ONE:
-                    return m_arm.TransferToBack(ArmConstants.kBackCubeL1Position);
-                  case INTAKE:
-                    return m_arm.TransferToBack(ArmConstants.kBackIntakePosition);
-                }
-              }
-            }
-          }
-          case FRONT: { // when current is FRONT
-            switch (cargoType) { 
-              case CONE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.FrontToBack(ArmConstants.kBackConeL3Position);
-                  case TWO:
-                    return m_arm.FrontToBack(ArmConstants.kBackConeL2Position);
-                  case ONE:
-                    return m_arm.FrontToBack(ArmConstants.kBackConeL1Position);
-                  case INTAKE:
-                    return m_arm.FrontToBack(ArmConstants.kBackIntakePosition);
-                }
-              }
-              case CUBE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.FrontToBack(ArmConstants.kBackCubeL3Position);
-                  case TWO:
-                    return m_arm.FrontToBack(ArmConstants.kBackCubeL2Position);
-                  case ONE:
-                    return m_arm.FrontToBack(ArmConstants.kBackCubeL1Position);
-                  case INTAKE:
-                    return m_arm.FrontToBack(ArmConstants.kBackIntakePosition);
-                }
-              }
-            }
-          }
-          case STOW: { // when current is STOW
-            switch (cargoType) { 
-              case CONE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.StowToBack(ArmConstants.kBackConeL3Position);
-                  case TWO:
-                    return m_arm.StowToBack(ArmConstants.kBackConeL2Position);
-                  case ONE:
-                    return m_arm.StowToBack(ArmConstants.kBackConeL1Position);
-                  case INTAKE:
-                    return m_arm.StowToBack(ArmConstants.kBackIntakePosition);
-                }
-              }
-              case CUBE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.StowToBack(ArmConstants.kBackCubeL3Position);
-                  case TWO:
-                    return m_arm.StowToBack(ArmConstants.kBackCubeL2Position);
-                  case ONE:
-                    return m_arm.StowToBack(ArmConstants.kBackCubeL1Position);
-                  case INTAKE:
-                    return m_arm.StowToBack(ArmConstants.kBackIntakePosition);
-                }
-              }
-            }
-          }
+          case TRANSFER: return m_arm.TransferToBack(getBackScoreLevelPosition(armScoreLevel, cargoType)); // When current is TRANSFER
+          case FRONT: return m_arm.FrontToBack(getBackScoreLevelPosition(armScoreLevel, cargoType)); // when current is FRONT
+          case STOW: return m_arm.StowToBack(getBackScoreLevelPosition(armScoreLevel, cargoType)); // when current is STOW
         }
       }
       case TRANSFER: { // when target arm state = TRANSFER
         switch (currentArmState) { 
-          case BACK: { //when current arm state = BACK
-            switch (cargoType) {
-              case CONE:
-                return m_arm.BackToTransfer(ArmConstants.kTransferConeIntakePosition);
-              case CUBE:
-                return m_arm.BackToTransfer(ArmConstants.kTransferCubeIntakePosition);
-            }
-          }
-          case TRANSFER: { //when current arm state = TRANSFER
-            switch (cargoType) {
-              case CONE:
-                return m_arm.setForwardKinematicsCommand(ArmConstants.kTransferConeIntakePosition);
-              case CUBE:
-                return m_arm.TransferToTransfer(ArmConstants.kTransferCubeIntakePosition);
-            }
-          }
-          case FRONT: { //when current arm state = FRONT
-            switch (cargoType) {
-              case CONE:
-                return m_arm.FrontToTransfer(ArmConstants.kTransferConeIntakePosition);
-              case CUBE:
-                return m_arm.FrontToTransfer(ArmConstants.kTransferCubeIntakePosition);
-            }
-          }
-          case STOW: { //when current arm state = STOW
-            switch (cargoType) {
-              case CONE:
-                return m_arm.StowToTransfer(ArmConstants.kTransferConeIntakePosition);
-              case CUBE:
-                return m_arm.StowToTransfer(ArmConstants.kTransferCubeIntakePosition);
-            }
-          }
+          case BACK: return m_arm.BackToTransfer(ArmConstants.kTransferPosition); //when current arm state = BACK
+          case TRANSFER: return nothingCommand(); //when current arm state = TRANSFER
+          case FRONT: return m_arm.FrontToTransfer(ArmConstants.kTransferPosition); //when current arm state = FRONT
+          case STOW: return m_arm.StowToTransfer(ArmConstants.kTransferPosition); //when current arm state = STOW
         }
       }
       case FRONT: { // when target arm state = FRONT
         switch (currentArmState) { 
-          case BACK: { // when current state is back
-            switch (cargoType) { 
-              case CONE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return nothingCommand();
-                  case TWO:
-                    return m_arm.BackToFront(ArmConstants.kFrontConeL2Position);
-                  case ONE:
-                    return nothingCommand();
-                  case INTAKE:
-                    return m_arm.BackToFront(ArmConstants.kFrontIntakePosition);
-                }
-              }
-              case CUBE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.BackToFront(ArmConstants.kFrontCubeL3Position);
-                  case TWO:
-                    return m_arm.BackToFront(ArmConstants.kFrontCubeL2Position);
-                  case ONE:
-                    return nothingCommand();
-                  case INTAKE:
-                    return m_arm.BackToFront(ArmConstants.kFrontIntakePosition);
-                }
-              }
-            }
-          }
-          case TRANSFER: { // when current state is transfer
-            switch (cargoType) { 
-              case CONE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return nothingCommand();
-                  case TWO:
-                    return m_arm.TransferToFront(ArmConstants.kFrontConeL2Position);
-                  case ONE:
-                    return nothingCommand();
-                  case INTAKE:
-                    return m_arm.TransferToFront(ArmConstants.kFrontIntakePosition);
-                }
-              }
-              case CUBE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.TransferToFront(ArmConstants.kFrontCubeL3Position);
-                  case TWO:
-                    return m_arm.TransferToFront(ArmConstants.kFrontCubeL2Position);
-                  case ONE:
-                    return nothingCommand();
-                  case INTAKE:
-                    return m_arm.TransferToFront(ArmConstants.kFrontIntakePosition);
-                }
-              }
-            }
-          }
-          case FRONT: {
-            switch (cargoType) {
-              case CONE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return nothingCommand();
-                  case TWO:
-                    return m_arm.FrontToFront(ArmConstants.kFrontConeL2Position);
-                  case ONE:
-                    return nothingCommand();
-                  case INTAKE:
-                    return m_arm.FrontToFront(ArmConstants.kFrontIntakePosition);
-                }
-              }
-              case CUBE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.FrontToFront(ArmConstants.kFrontCubeL3Position);
-                  case TWO:
-                    return m_arm.FrontToFront(ArmConstants.kFrontCubeL2Position);
-                  case ONE:
-                    return nothingCommand();
-                  case INTAKE:
-                    return m_arm.FrontToFront(ArmConstants.kFrontIntakePosition);
-                }
-              }
-            }
-          }
-          case STOW: {
-            switch (cargoType) {
-              case CONE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return nothingCommand();
-                  case TWO:
-                    return m_arm.StowToFront(ArmConstants.kFrontConeL2Position);
-                  case ONE:
-                    return nothingCommand();
-                  case INTAKE:
-                    return m_arm.StowToFront(ArmConstants.kFrontIntakePosition);
-                }
-              }
-              case CUBE: {
-                switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.StowToFront(ArmConstants.kFrontCubeL3Position);
-                  case TWO:
-                    return m_arm.StowToFront(ArmConstants.kFrontCubeL2Position);
-                  case ONE:
-                    return nothingCommand();
-                  case INTAKE:
-                    return m_arm.StowToFront(ArmConstants.kFrontIntakePosition);
-                }
-              }
-            }
-          }
+          case BACK: return m_arm.BackToFront(getFrontScoreLevelPosition(armScoreLevel, cargoType)); // when current state is back
+          case TRANSFER: return m_arm.TransferToFront(getFrontScoreLevelPosition(armScoreLevel, cargoType)); // when current state is transfer
+          case FRONT: return m_arm.FrontToFront(getFrontScoreLevelPosition(armScoreLevel, cargoType));
+          case STOW: return m_arm.StowToFront(getFrontScoreLevelPosition(armScoreLevel, cargoType));
         }
       }
       case STOW: {
         switch (currentArmState) {
-          case BACK:
-            return m_arm.BackToStow();
-          case TRANSFER:
-           return m_arm.TransferToStow();
-          case FRONT:
-            return m_arm.FrontToStow();
-          case STOW:
-            return nothingCommand();
+          case BACK: return m_arm.BackToStow();
+          case TRANSFER: return m_arm.TransferToStow();
+          case FRONT: return m_arm.FrontToStow();
+          case STOW: return nothingCommand();
         }
       }
     }

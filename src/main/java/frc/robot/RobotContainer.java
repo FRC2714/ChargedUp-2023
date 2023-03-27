@@ -35,8 +35,6 @@ import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToNode;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
-import frc.robot.commands.auto.MIDDLE.*;
-import frc.robot.commands.auto.OPEN.*;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Infrastructure;
 import frc.robot.subsystems.LEDs;
@@ -49,6 +47,7 @@ import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterStateMachine;
 import frc.robot.subsystems.Superstructure.CargoType;
+import frc.robot.subsystems.Superstructure.DPadInput;
 import frc.robot.subsystems.Superstructure.ScoreMode;
 import frc.robot.subsystems.Superstructure.ArmScoreLevel;
 
@@ -180,17 +179,19 @@ public class RobotContainer {
 		// m_operatorController.back()
 
 		// TUCK on up
-		// m_operatorController.povUp()
-		// 	.onTrue(m_superstructure.setTargetArmStateCommand(ArmState.STOW));
-		// // BACK on right
-		// m_operatorController.povRight()
-		// 	.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.BACK));
-		// // TRANSFER on down
-		// m_operatorController.povDown()
-		// 	.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER));
-		// // FRONT on left
-		// m_operatorController.povLeft()
-		// 	.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT));
+		m_operatorController.povUp()
+			.onTrue(m_superstructure.setSubsystemState(DPadInput.UP));
+		// TRANSFER on down
+		m_operatorController.povDown()
+			.onTrue(m_superstructure.setSubsystemState(DPadInput.DOWN));
+		// FRONT on left
+		m_operatorController.povLeft()
+		.onTrue(m_superstructure.setSubsystemState(DPadInput.LEFT));
+		// BACK on right
+		m_operatorController.povRight()
+			.onTrue(m_superstructure.setSubsystemState(DPadInput.RIGHT));
+		
+		
 
 		// level 3 on Y
 		m_operatorController.y()

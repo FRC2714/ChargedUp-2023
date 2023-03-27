@@ -26,6 +26,16 @@ public class ShooterStateMachine extends SubsystemBase {
     this.m_shooter = m_shooter;
   }
 
+  public Command setShooterStateCommand(ShooterState shooterState) {
+    return new InstantCommand(() -> setShooterState(shooterState));
+  }
+
+  private void setShooterState(ShooterState shooterState) {
+    if (this.shooterState != shooterState) {
+      this.shooterState = shooterState;
+    }
+  }
+
   public Command toRetract() {
     return new ParallelCommandGroup(
       m_shooter.setDynamicEnabledCommand(false),

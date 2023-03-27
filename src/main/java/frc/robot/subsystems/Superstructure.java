@@ -13,6 +13,7 @@ import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterStateMachine;
+import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterState;
 
 public class Superstructure extends SubsystemBase {
   Arm m_arm;
@@ -76,11 +77,23 @@ public class Superstructure extends SubsystemBase {
   }
 
   //Subsystem State
-  // public void setSubsystemState(DPadInput dPadInput) {
-  //   switch (dPadInput) {
-  //     case UP : ScoreMode
-  //   }
-  // }
+  public Command setSubsystemState(DPadInput dPadInput) {
+    switch (scoreMode) {
+      case ARM: switch (dPadInput) {
+        case UP: return m_armStateMachine.setTargetArmStateCommand(ArmState.STOW);
+        case DOWN: return m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER);
+        case LEFT: return m_armStateMachine.setTargetArmStateCommand(ArmState.BACK);
+        case RIGHT: return m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT);
+      }
+      case SHOOTER: switch (dPadInput) {
+        case UP: return m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD);
+        case DOWN: return m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT);
+        case LEFT: return m_shooterStateMachine.setShooterStateCommand(ShooterState.BACK);
+        case RIGHT: return m_shooterStateMachine.setShooterStateCommand(ShooterState.FRONT);
+      }
+    }
+    return new InstantCommand();
+  }
 
   // public void setArmScoreLevel(ArmScoreLevel scoreLevel) {
   //   this.armScoreLevel = scoreLevel;
