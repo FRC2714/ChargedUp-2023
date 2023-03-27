@@ -42,8 +42,6 @@ public class Shooter extends SubsystemBase {
   private InterpolatingTreeMap velocityMap = new InterpolatingTreeMap();
   private InterpolatingTreeMap pivotMap = new InterpolatingTreeMap();
 
-  
-
   private PIDController pivotController = new PIDController(0, 0, 0);
   private PIDController flywheelController = new PIDController(0.5, 0, 0);
 
@@ -57,8 +55,9 @@ public class Shooter extends SubsystemBase {
 
   private Timer shooterRunningTimer = new Timer();
 
-  private boolean isAutoHoldEnabled = true;
+  private boolean isShooterEnabled = false;
   private boolean isDynamicEnabled = false;
+  
 
   /** Creates a new Shooter. */
   public Shooter(Limelight m_frontLimelight) {
@@ -100,6 +99,7 @@ public class Shooter extends SubsystemBase {
     populatePivotMap();
   }
 
+  //Populate Maps
   private void populateVelocityMap() {
     velocityMap.put(0.0, 0.0);
     velocityMap.put(5.0, 1000.0);
@@ -110,16 +110,9 @@ public class Shooter extends SubsystemBase {
     pivotMap.put(10.0, 120.0);
   }
 
-  private double getDynamicFlywheelVelocity() {
-    return m_frontLimelight.isTargetVisible()
-        ? velocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
-        : 0;
-  }
-
-  private double getDynamicPivot() {
-    return m_frontLimelight.isTargetVisible()
-        ? pivotMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
-        : ShooterConstants.kPivotHoldAngleDegrees;
+  //enable funtions
+  public void setShooterEnabled(boolean isShooterEnabled) {
+    this.isShooterEnabled = isShooterEnabled;
   }
 
   public void setDynamicEnabled(boolean isDynamicEnabled) {
@@ -130,27 +123,79 @@ public class Shooter extends SubsystemBase {
     return new InstantCommand(() -> setDynamicEnabled(isDynamicEnabled));
   }
 
-  public void setDynamicShooter() {
-    if(isDynamicEnabled) {
-      setFlywheelTargetVelocity(getDynamicFlywheelVelocity());
-      setPivotTarget(getDynamicPivot());
+  //PIVOT
+  public double getPivotAngleRadians() {
+    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(37 + 86);
+  }
+
+  public void setTargetPivot(double targetAngleDegrees) {
+    if (pivotController.getP() == 0) { pivotController.setP(0.2);} //prevent jumping on enable
+    pivotController.setSetpoint(Units.degreesToRadians(targetAngleDegrees));
+  }
+
+  public double getPivotTarget() {
+    return pivotController.getSetpoint();
+  }
+
+  public boolean atPivotSetpoint() {
+    return pivotController.atSetpoint();
+  }
+
+  public void setCalculatedPivotVoltage() {
+    if (isShooterEnabled) {
+      pivotMotor.setVoltage((pivotController.calculate(getPivotAngleRadians() * ShooterConstants.kNominalVoltage)));
+    } else {
+      pivotMotor.setVoltage(0);
     }
   }
 
+  //FLYWHEEL
   public double getFlywheelVelocity() {
     return flywheelEncoder.getVelocity() / 1.0;//gear ratio
   }
 
-  public void setFlywheelTargetVelocity(double targetRPM) {
+  public void setTargetVelocity(double targetRPM) {
     flywheelController.setSetpoint(Units.rotationsPerMinuteToRadiansPerSecond(targetRPM));
   }
 
+  public double getVelocityTarget() {
+    return flywheelController.getSetpoint();
+  }
+
+  public boolean atVelocitySetpoint() {
+    return flywheelController.atSetpoint();
+  }
+
   private void setCalculatedFlywheelVoltage() {
-    topFlywheelMotor.setVoltage(flywheelController.calculate(getFlywheelVelocity()));
+    if (isShooterEnabled) {
+      topFlywheelMotor.setVoltage(flywheelController.calculate(getFlywheelVelocity()));
+    } else {
+      topFlywheelMotor.setVoltage(0);
+    }
+  }
+
+  //Dynamic
+  private double getDynamicPivot() {
+    return m_frontLimelight.isTargetVisible()
+        ? pivotMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
+        : ShooterConstants.kPivotHoldAngleDegrees;
+  }
+
+  private double getDynamicVelocity() {
+    return m_frontLimelight.isTargetVisible()
+        ? velocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
+        : 0;
+  }
+
+  public void setDynamicShooter() {
+    if(isDynamicEnabled) {
+      setTargetVelocity(getDynamicVelocity());
+      setTargetPivot(getDynamicPivot());
+    }
   }
 
   private void intake() {
-    setFlywheelTargetVelocity(100);
+    setTargetVelocity(100);
     //topFlywheelMotor.set(0.4);
     kickerMotor.setVoltage(ShooterConstants.kIntakeMotorSpeed*ShooterConstants.kNominalVoltage);
     if (shooterState != ShooterState.INTAKING) {
@@ -161,7 +206,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void outtake(double power) {
-    setFlywheelTargetVelocity(-100);
+    setTargetVelocity(-100);
     //topFlywheelMotor.set(-0.4);
     kickerMotor.setVoltage(-power*ShooterConstants.kNominalVoltage);
     if (shooterState != ShooterState.OUTTAKING) {
@@ -174,47 +219,8 @@ public class Shooter extends SubsystemBase {
   public void stop() {
     //setFlywheelTargetVelocity(0);
     //topFlywheelMotor.set(0);
-    setFlywheelTargetVelocity(0);
+    setTargetVelocity(0);
     kickerMotor.set(0);
-  }
-
-  public double getPivotAngleRadians() {
-    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(37 + 86);
-  }
-
-  public void setPivotPower(double power) {
-    pivotMotor.setVoltage(power * ShooterConstants.kNominalVoltage);
-  }
-
-  public void setCalculatedPivotVoltage() {
-    // pivotMotor.setVoltage(
-    //   pivotController.calculate(getPivotAngleRadians())
-    //     + pivotFeedforward.calculate(pivotController.getSetpoint(), 0)
-    //   );
-    setPivotPower(pivotController.calculate(getPivotAngleRadians()));
-  }
-
-  public void setPivotTarget(double targetAngleDegrees) {
-    if (pivotController.getP() == 0) { pivotController.setP(0.2);} //prevent jumping on enable
-    pivotController.setSetpoint(Units.degreesToRadians(targetAngleDegrees));
-  }
-
-  public boolean atSetpoint() {
-    return pivotController.atSetpoint();
-  }
-
-  public boolean isCubeDetected() {
-    return (shooterRunningTimer.get() > 0.15) && //excludes current spike when motor first starts
-      (kickerMotor.getOutputCurrent() > 25) && //cube shooter current threshold
-      (shooterState == ShooterState.INTAKING);
-  }
-
-  public void AutoHold() {
-    if(isAutoHoldEnabled
-      && isCubeDetected() 
-      && (pivotController.getSetpoint() != Units.degreesToRadians(ShooterConstants.kPivotHoldAngleDegrees)) 
-      && (flywheelController.getSetpoint() != 0)) 
-    {pivotToHold().schedule();}
   }
 
   public Command intakeCommand() {
@@ -225,72 +231,68 @@ public class Shooter extends SubsystemBase {
     return new InstantCommand(() -> outtake(ShooterConstants.kOuttakeMotorSpeed));
   }
 
-  public Command shootCommand() {
-    return new InstantCommand(() -> outtake(ShooterConstants.kShootMotorSpeed));
-  }
-
   public Command stopCommand() {
     return new InstantCommand(() -> stop());
   }
 
   public Command pivotToIntake() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotIntakeAngleDegrees)),
-      new WaitUntilCommand(() -> atSetpoint())
-    );
+      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotIntakeAngleDegrees)),
+      new WaitUntilCommand(() -> atPivotSetpoint()));
   }
 
   public Command pivotToOuttake() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotOuttakeAngleDegrees)),
-      new WaitUntilCommand(() -> atSetpoint())
-    );
+      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotOuttakeAngleDegrees)),
+      new WaitUntilCommand(() -> atPivotSetpoint()));
   }
 
   public Command pivotToRetract() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotRetractAngleDegrees)),
-      new WaitUntilCommand(() -> atSetpoint())
-    );
+      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotRetractAngleDegrees)),
+      new WaitUntilCommand(() -> atPivotSetpoint()));
   }
 
   public Command pivotToHold() {
     flywheelController.setSetpoint(0);
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotHoldAngleDegrees)),
-      new WaitUntilCommand(() -> atSetpoint())
-    );
+      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotHoldAngleDegrees)),
+      new WaitUntilCommand(() -> atPivotSetpoint()));
   }
 
-  public Command setPivotTargetShoot() {
-    return new InstantCommand(() -> setPivotTarget(ShooterConstants.kPivotShootAngleDegrees));
+  public Command pivotToShoot() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotShootAngleDegrees)),
+      new WaitUntilCommand(() -> atPivotSetpoint()));
   }
 
   public Command intakeSequence() {
-    return new ParallelCommandGroup(
-      pivotToIntake(),
-      intakeCommand());
+    return new SequentialCommandGroup(
+      intakeCommand(),
+      pivotToIntake());
   }
 
   public Command outtakeSequence() {
     return new SequentialCommandGroup(
       pivotToOuttake(),
-      outtakeCommand()
-    );
+      outtakeCommand());
   }
 
-  public Command shootSequence() {
-    return new SequentialCommandGroup(
-      setPivotTargetShoot(),
-      new WaitUntilCommand(() -> atSetpoint()),
-      shootCommand());
+  public boolean isCurrentSpikeDetected() {
+    return (shooterRunningTimer.get() > 0.15) && //excludes current spike when motor first starts
+      (kickerMotor.getOutputCurrent() > 25) && //cube intake current threshold
+      (shooterState == ShooterState.INTAKING);
+  }
+
+  public boolean isCubeDetected() {
+    return isCurrentSpikeDetected() 
+      && (pivotController.getSetpoint() != Units.degreesToRadians(ShooterConstants.kPivotHoldAngleDegrees)) 
+      && (flywheelController.getSetpoint() != 0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
-    AutoHold();
     setDynamicShooter();
     setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();

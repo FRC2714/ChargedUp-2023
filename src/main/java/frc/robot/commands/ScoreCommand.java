@@ -5,10 +5,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Superstructure.CargoType;
 import frc.robot.subsystems.Superstructure.ScoreMode;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Arm.Claw;
 
 public class ScoreCommand extends CommandBase {
   private Superstructure m_superstructure;

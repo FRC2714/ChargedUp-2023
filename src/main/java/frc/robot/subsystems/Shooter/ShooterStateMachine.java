@@ -4,17 +4,19 @@
 
 package frc.robot.subsystems.Shooter;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Superstructure.ShooterScoreLevel;
 
 public class ShooterStateMachine extends SubsystemBase {
   Shooter m_shooter;
 
   public enum ShooterState {
-    RETRACT, HOLD, DYNAMIC, DOWN
+    RETRACT, HOLD, FRONT, BACK
   }
 
   public ShooterState shooterState = ShooterState.RETRACT;
@@ -45,30 +47,35 @@ public class ShooterStateMachine extends SubsystemBase {
     );
   }
 
-  public Command toDown(Command ScoreLevelPivotComand) {
+  public Command toFront(Command ScoreLevelPivotComand, boolean isDynamicEnabled) {
     return new ParallelCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false),
+      m_shooter.setDynamicEnabledCommand(isDynamicEnabled),
       ScoreLevelPivotComand
     );
+  }
+
+  private Command nothingCommand() {
+    return new InstantCommand();
   }
 
   public Command getShooterCommand(ShooterScoreLevel shooterScorelevel) {
     switch(shooterState) {
       case RETRACT: return toRetract();
       case HOLD: return toHold();
-      case DYNAMIC: return toDynamic();
-      case DOWN: 
+      case BACK: return toDynamic();
+      case FRONT: 
         switch(shooterScorelevel) {
-          case INTAKE: return toDown(m_shooter.intakeSequence());
-          case OUTTAKE: return toDown(m_shooter.outtakeSequence());
-          case SHOOT: return toDown(m_shooter.shootSequence());
+          case INTAKE: return toFront(m_shooter.intakeSequence(), false);
+          case OUTTAKE: return toFront(m_shooter.outtakeSequence(), false);
+          case DYNAMIC: return toFront(nothingCommand(), true);
         };
     }
-    return new InstantCommand();
+    return nothingCommand();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    
   }
 }

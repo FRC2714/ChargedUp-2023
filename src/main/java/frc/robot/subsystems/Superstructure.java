@@ -8,15 +8,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
+import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
+import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterStateMachine;
 
 public class Superstructure extends SubsystemBase {
+  Arm m_arm;
+  Shooter m_shooter;
+
   ArmStateMachine m_armStateMachine;
   ShooterStateMachine m_shooterStateMachine;
-
-  public enum ScoreMode{
+  
+  public enum ScoreMode {
     ARM, SHOOTER
+  }
+
+  public enum DPadInput {
+    UP, DOWN, LEFT, RIGHT
   }
 
   public enum ArmScoreLevel {
@@ -28,17 +38,21 @@ public class Superstructure extends SubsystemBase {
   }
 
   public enum ShooterScoreLevel {
-    INTAKE, OUTTAKE, SHOOT
+    INTAKE, OUTTAKE, DYNAMIC
   }
 
   public ScoreMode scoreMode = ScoreMode.ARM;
-  public ArmScoreLevel scoreLevel = ArmScoreLevel.INTAKE;
+  public ArmScoreLevel armScoreLevel = ArmScoreLevel.INTAKE;
   public CargoType cargoType = CargoType.CONE;
+  public ShooterScoreLevel shooterScoreLevel = ShooterScoreLevel.INTAKE;
 
   /** Creates a new Superstructure. */
-  public Superstructure(ArmStateMachine m_armStateMachine, ShooterStateMachine m_shooterStateMachine) {
-    this.m_armStateMachine = m_armStateMachine;
-    this.m_shooterStateMachine = m_shooterStateMachine;
+  public Superstructure(Arm m_arm, Shooter m_shooter) {
+    this.m_arm = m_arm;
+    this.m_shooter = m_shooter;
+
+    m_armStateMachine = new ArmStateMachine(m_arm);
+	  m_shooterStateMachine = new ShooterStateMachine(m_shooter);
   }
 
   //Score mode
@@ -61,20 +75,35 @@ public class Superstructure extends SubsystemBase {
     return this.scoreMode;
   }
 
+  //Subsystem State
+  // public void setSubsystemState(DPadInput dPadInput) {
+  //   switch (dPadInput) {
+  //     case UP : ScoreMode
+  //   }
+  // }
+
+  // public void setArmScoreLevel(ArmScoreLevel scoreLevel) {
+  //   this.armScoreLevel = scoreLevel;
+  // }
+
+  // public ArmScoreLevel getArmScoreLevel() {
+  //   return this.armScoreLevel;
+  // }
+
   //Score level
   public InstantCommand setScoreLevelCommand(ArmScoreLevel targetScoreLevel) {
-    return new InstantCommand(() -> setScoreLevel(targetScoreLevel));
+    return new InstantCommand(() -> setArmScoreLevel(targetScoreLevel));
   }
 
-  public void setScoreLevel(ArmScoreLevel scoreLevel) {
-    this.scoreLevel = scoreLevel;
+  public void setArmScoreLevel(ArmScoreLevel scoreLevel) {
+    this.armScoreLevel = scoreLevel;
   }
 
-  public ArmScoreLevel getScoreLevel() {
-    return this.scoreLevel;
+  public ArmScoreLevel getArmScoreLevel() {
+    return this.armScoreLevel;
   }
 
-  //Cargot type
+  //Cargo type
   public InstantCommand setCargoTypeCommand(CargoType cargoType) {
     return new InstantCommand(() -> setCargoType(cargoType));
   }
@@ -89,8 +118,8 @@ public class Superstructure extends SubsystemBase {
 
   public Command getCommand() {
     switch (scoreMode) {
-      case ARM: return m_armStateMachine.getArmCommand(scoreLevel, cargoType);
-      case SHOOTER: return new InstantCommand();
+      case ARM: return m_armStateMachine.getArmCommand(armScoreLevel, cargoType);
+      case SHOOTER: return m_shooterStateMachine.getShooterCommand(shooterScoreLevel);
     }
     return new InstantCommand();
   }
@@ -98,7 +127,7 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putString("Score Level", scoreLevel.toString());
+    SmartDashboard.putString("Score Level", armScoreLevel.toString());
     SmartDashboard.putString("Cargo Type", cargoType.toString());
   }
 }

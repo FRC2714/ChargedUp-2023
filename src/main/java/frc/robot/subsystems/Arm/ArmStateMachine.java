@@ -15,7 +15,6 @@ import frc.robot.subsystems.Superstructure.ArmScoreLevel;
 
 public class ArmStateMachine extends SubsystemBase {
   private Arm m_arm;
-  private Claw m_claw;
   
   public enum ArmState {
     BACK, TRANSFER, FRONT, STOW
@@ -25,9 +24,8 @@ public class ArmStateMachine extends SubsystemBase {
   public ArmState targetArmState = ArmState.BACK; // default to TRANSFER 
 
   /** Creates a new StateMachine. */
-  public ArmStateMachine(Arm m_arm, Claw m_claw) {
+  public ArmStateMachine(Arm m_arm) {
     this.m_arm = m_arm;
-    this.m_claw = m_claw;
   }
 
   private void setTargetArmState(ArmState targetArmState) {
@@ -65,7 +63,7 @@ public class ArmStateMachine extends SubsystemBase {
                   case ONE:
                     return m_arm.BackToBack(ArmConstants.kBackConeL1Position);
                   case INTAKE:
-                    return m_arm.setForwardKinematicsCommand(ArmConstants.kBackIntakePosition).andThen(m_claw.intakeOpenCommand());
+                    return m_arm.setForwardKinematicsCommand(ArmConstants.kBackIntakePosition);
                 }
               }
               case CUBE: {
@@ -77,7 +75,7 @@ public class ArmStateMachine extends SubsystemBase {
                   case ONE:
                     return m_arm.BackToBack(ArmConstants.kBackCubeL1Position);
                   case INTAKE:
-                    return m_arm.BackToBack(ArmConstants.kBackIntakePosition).andThen(m_claw.intakeOpenCommand());
+                    return m_arm.BackToBack(ArmConstants.kBackIntakePosition);
                 }
               }
             }

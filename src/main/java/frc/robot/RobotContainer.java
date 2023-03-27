@@ -37,7 +37,6 @@ import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.commands.auto.MIDDLE.*;
 import frc.robot.commands.auto.OPEN.*;
-import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Infrastructure;
 import frc.robot.subsystems.LEDs;
@@ -45,6 +44,7 @@ import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
+import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterStateMachine;
@@ -70,9 +70,7 @@ public class RobotContainer {
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_claw);
-	private final ShooterStateMachine m_shooterStateMachine = new ShooterStateMachine(m_shooter);
-	private final Superstructure m_superstructure = new Superstructure(m_armStateMachine, m_shooterStateMachine);
+	private final Superstructure m_superstructure = new Superstructure(m_arm, m_shooter);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -104,7 +102,7 @@ public class RobotContainer {
 		new SequentialCommandGroup(
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
 			m_superstructure.setScoreLevelCommand(ArmScoreLevel.INTAKE),
-			m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
+			//m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
 			m_backLimelight.setLEDCommand(false),
 			m_frontLimelight.setLEDCommand(false)
 		).schedule();
@@ -182,17 +180,17 @@ public class RobotContainer {
 		// m_operatorController.back()
 
 		// TUCK on up
-		m_operatorController.povUp()
-			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.STOW));
-		// BACK on right
-		m_operatorController.povRight()
-			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.BACK));
-		// TRANSFER on down
-		m_operatorController.povDown()
-			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER));
-		// FRONT on left
-		m_operatorController.povLeft()
-			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT));
+		// m_operatorController.povUp()
+		// 	.onTrue(m_superstructure.setTargetArmStateCommand(ArmState.STOW));
+		// // BACK on right
+		// m_operatorController.povRight()
+		// 	.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.BACK));
+		// // TRANSFER on down
+		// m_operatorController.povDown()
+		// 	.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER));
+		// // FRONT on left
+		// m_operatorController.povLeft()
+		// 	.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT));
 
 		// level 3 on Y
 		m_operatorController.y()
