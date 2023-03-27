@@ -38,7 +38,7 @@ public class ShooterStateMachine extends SubsystemBase {
 
   public Command toRetract() {
     return new ParallelCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false),
+      m_shooter.setDynamicEnabledCommand(false, false),
       m_shooter.stopCommand(),
       m_shooter.pivotToRetract()
     );
@@ -46,20 +46,14 @@ public class ShooterStateMachine extends SubsystemBase {
 
   public Command toHold() {
     return new ParallelCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false),
+      m_shooter.setDynamicEnabledCommand(false, false),
       m_shooter.pivotToHold()
     );
   }
 
-  public Command toDynamic() {
+  public Command toFront(Command ScoreLevelPivotComand) {
     return new ParallelCommandGroup(
-      m_shooter.setDynamicEnabledCommand(true)
-    );
-  }
-
-  public Command toFront(Command ScoreLevelPivotComand, boolean isDynamicEnabled) {
-    return new ParallelCommandGroup(
-      m_shooter.setDynamicEnabledCommand(isDynamicEnabled),
+      m_shooter.setDynamicEnabledCommand(false, false),
       ScoreLevelPivotComand
     );
   }
@@ -72,12 +66,12 @@ public class ShooterStateMachine extends SubsystemBase {
     switch(shooterState) {
       case RETRACT: return toRetract();
       case HOLD: return toHold();
-      case BACK: return toDynamic();
+      case BACK: return m_shooter.setDynamicEnabledCommand(true, true);
       case FRONT: 
         switch(shooterScorelevel) {
-          case INTAKE: return toFront(m_shooter.intakeSequence(), false);
-          case OUTTAKE: return toFront(m_shooter.outtakeSequence(), false);
-          case DYNAMIC: return toFront(nothingCommand(), true);
+          case INTAKE: return toFront(m_shooter.intakeSequence());
+          case OUTTAKE: return toFront(m_shooter.outtakeSequence());
+          case DYNAMIC: return m_shooter.setDynamicEnabledCommand(true, false);
         };
     }
     return nothingCommand();

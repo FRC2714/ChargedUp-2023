@@ -115,12 +115,17 @@ public class Shooter extends SubsystemBase {
     this.isShooterEnabled = isShooterEnabled;
   }
 
-  public void setDynamicEnabled(boolean isDynamicEnabled) {
+  public void setDynamicEnabled(boolean isDynamicEnabled, boolean isDynamicReversed) {
+    if (isDynamicReversed) {
+      //populate reverse shooter maps
+    } else {
+      //populate forward shooter maps
+    }
     this.isDynamicEnabled = isDynamicEnabled;
   }
 
-  public InstantCommand setDynamicEnabledCommand(boolean isDynamicEnabled) {
-    return new InstantCommand(() -> setDynamicEnabled(isDynamicEnabled));
+  public InstantCommand setDynamicEnabledCommand(boolean isDynamicEnabled, boolean isDynamicReversed) {
+    return new InstantCommand(() -> setDynamicEnabled(isDynamicEnabled, isDynamicReversed));
   }
 
   //PIVOT
