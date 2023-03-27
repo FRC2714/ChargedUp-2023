@@ -22,7 +22,6 @@ import frc.utils.controller.AsymmetricTrapezoidProfile.State;
 
 public class Elbow extends SubsystemBase {
   private CANSparkMax RightElbowMotor;
-  private CANSparkMax LeftElbowMotor;
   private AbsoluteEncoder ElbowEncoder;
 
   private Constraints FarConstraints = new Constraints(12, 9, 6);
@@ -35,19 +34,15 @@ public class Elbow extends SubsystemBase {
   /** Creates a new Elbow. */
   public Elbow() {
     RightElbowMotor = new CANSparkMax(ArmConstants.kRightElbowMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    LeftElbowMotor = new CANSparkMax(ArmConstants.kLeftElbowMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    LeftElbowMotor.follow(RightElbowMotor, false);
 
     RightElbowMotor.setSmartCurrentLimit(ArmConstants.kElbowMotorCurrentLimit);
-    LeftElbowMotor.setSmartCurrentLimit(ArmConstants.kElbowMotorCurrentLimit);
 
     RightElbowMotor.setInverted(false); //was true
     RightElbowMotor.setIdleMode(IdleMode.kBrake);
-    LeftElbowMotor.setIdleMode(IdleMode.kBrake);
     
     ElbowEncoder = RightElbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
     ElbowEncoder.setPositionConversionFactor(ArmConstants.kElbowPositionConversionFactor);
-    ElbowEncoder.setInverted(ArmConstants.kElbowEncoderInverted);
+    ElbowEncoder.setInverted(false);
     ElbowEncoder.setZeroOffset(ArmConstants.kElbowEncoderZeroOffset);
     //todo set velocity conversion factor
 
@@ -55,7 +50,6 @@ public class Elbow extends SubsystemBase {
     // RightElbowMotor.setSoftLimit(SoftLimitDirection.kForward, 1240);
 
     RightElbowMotor.burnFlash();
-    LeftElbowMotor.burnFlash();
 
     
     ElbowController.disableContinuousInput();
@@ -77,7 +71,7 @@ public class Elbow extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Elbow Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    if(ElbowController.getP() == 0) {ElbowController.setP(5);}
+    if(ElbowController.getP() == 0) {ElbowController.setP(1);}
     Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(30)) ? CloseConstraints : FarConstraints;
     ElbowController.setConstraints(selectedConstraint);
     SmartDashboard.putString("Elbow Selected Constraint", selectedConstraint.equals(FarConstraints) ? "FAR" : "CLOSE");

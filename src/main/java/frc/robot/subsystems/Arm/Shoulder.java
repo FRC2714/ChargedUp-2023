@@ -48,7 +48,7 @@ public class Shoulder extends SubsystemBase {
     ShoulderEncoder = RightShoulderMotor.getAbsoluteEncoder(Type.kDutyCycle);
     ShoulderEncoder.setPositionConversionFactor(ArmConstants.kShoulderPositionConversionFactor);
     ShoulderEncoder.setInverted(ArmConstants.kShoulderEncoderInverted); //must be inverted
-    ShoulderEncoder.setZeroOffset(1049.0689405);
+    ShoulderEncoder.setZeroOffset(ArmConstants.kShoulderEncoderZeroOffset);
     //todo set velocity conversion factor
 
     RightShoulderMotor.burnFlash();

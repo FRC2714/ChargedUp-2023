@@ -65,7 +65,7 @@ public class Intake extends SubsystemBase {
     intakeMotor = new CANSparkMax(IntakeConstants.kIntakeMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     pivotMotor = new CANSparkMax(IntakeConstants.kPivotMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     intakeMotor.setInverted(true);
-    pivotMotor.setInverted(false);
+    pivotMotor.setInverted(true);//was false
 
     intakeMotor.setIdleMode(IdleMode.kBrake);
     pivotMotor.setIdleMode(IdleMode.kBrake);
@@ -77,8 +77,10 @@ public class Intake extends SubsystemBase {
 
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(2*Math.PI*pivotGearRatio);
-    pivotEncoder.setInverted(true);
-    pivotEncoder.setZeroOffset(200);
+    pivotEncoder.setInverted(false);//was true
+    pivotEncoder.setZeroOffset(240);
+
+    pivotMotor.burnFlash();
 
     topFlywheelMotor = new CANSparkMax(16, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor = new CANSparkMax(17, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -173,7 +175,7 @@ public class Intake extends SubsystemBase {
   }
 
   public double getPivotAngleRadians() {
-    return pivotEncoder.getPosition() / pivotGearRatio - Units.degreesToRadians(37 + 86);
+    return pivotEncoder.getPosition() / pivotGearRatio - Units.degreesToRadians(129.55);
   }
 
   public void setPivotPower(double power) {
@@ -280,9 +282,9 @@ public class Intake extends SubsystemBase {
     && (pivotController.getSetpoint() != Units.degreesToRadians(holdAngleDegrees)) 
     && (flywheelController.getSetpoint() != 0)) {pivotToHold().schedule();}
     
-    setDynamicShooter();
-    setCalculatedPivotVoltage();
-    setCalculatedFlywheelVoltage();
+    //setDynamicShooter();
+    //setCalculatedPivotVoltage();
+    //setCalculatedFlywheelVoltage();
     
     SmartDashboard.putNumber("Intake Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
 

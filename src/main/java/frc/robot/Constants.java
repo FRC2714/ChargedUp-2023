@@ -223,10 +223,10 @@ public final class Constants {
     public static final double kShoulderPositionConversionFactor = (2*Math.PI) * kShoulderGearRatio; //Radians * Gear ratio
     public static final double kElbowPositionConversionFactor = (2*Math.PI) * kElbowGearRatio;
 
-    public static final double kShoulderEncoderZeroOffset = 1049.0689405;
-    public static final double kElbowEncoderZeroOffset = 1209.691;
-    public static final double kShoulderKinematicOffset = 180; //difference from kinematic 0 to sparkmax 0 approx 45 deg
-    public static final double kElbowKinematicOffset = 753; //difference from kinematic 0 to sparkmax 0 approx 160 deg
+    public static final double kShoulderEncoderZeroOffset = 313.4707425;
+    public static final double kElbowEncoderZeroOffset = 1372.4290450;
+    public static final double kShoulderKinematicOffset = 162; //difference from kinematic 0 to sparkmax 0 approx 45 deg
+    public static final double kElbowKinematicOffset = 637; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
     public static final boolean kShoulderMotorInverted = true; //base joint encoder inverted
     public static final boolean kShoulderEncoderInverted = true; //base joint motor inverted
