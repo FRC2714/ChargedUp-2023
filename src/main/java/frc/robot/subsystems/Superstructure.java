@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -17,6 +19,7 @@ import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterStateMachine;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterState;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 
 public class Superstructure extends SubsystemBase {
   Arm m_arm;
@@ -101,7 +104,7 @@ public class Superstructure extends SubsystemBase {
 
   //Subsystem State
   public Command setSubsystemState(DPadInput dPadInput) {
-    switch (scoreMode) {
+    switch (getScoreMode()) {
       case ARM: switch (dPadInput) {
         case UP: return m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, armScoreLevel, cargoType);
         case DOWN: return m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER, armScoreLevel, cargoType);

@@ -53,60 +53,44 @@ public class ArmStateMachine extends SubsystemBase {
     switch (cargoType) { 
       case CONE: {
         switch (armScoreLevel) {
-          case THREE:
-            return ArmConstants.kBackConeL3Position;
-          case TWO:
-            return ArmConstants.kBackConeL2Position;
-          case ONE:
-            return ArmConstants.kBackConeL1Position;
-          case INTAKE:
-            return ArmConstants.kBackIntakePosition;
+          case THREE: return ArmConstants.kBackConeL3Position;
+          case TWO: return ArmConstants.kBackConeL2Position;
+          case ONE: return ArmConstants.kBackConeL1Position;
+          case INTAKE: return ArmConstants.kBackIntakePosition;
         }
       }
       case CUBE: {
         switch (armScoreLevel) {
-          case THREE:
-            return ArmConstants.kBackCubeL3Position;
-          case TWO:
-            return ArmConstants.kBackCubeL2Position;
-          case ONE:
-            return ArmConstants.kBackCubeL1Position;
-          case INTAKE:
-            return ArmConstants.kBackIntakePosition;
+          case THREE: return ArmConstants.kBackCubeL3Position;
+          case TWO: return ArmConstants.kBackCubeL2Position;
+          case ONE: return ArmConstants.kBackCubeL1Position;
+          case INTAKE: return ArmConstants.kBackIntakePosition;
         }
       }
     }
-    return ArmConstants.kStowPosition;
+    return ArmConstants.kBackIntakePosition;
   }
 
   private ArmForwardKinematicPosition getFrontScoreLevelPosition(ArmScoreLevel armScoreLevel, CargoType cargoType) {
     switch (cargoType) { 
       case CONE: {
         switch (armScoreLevel) {
-          case THREE:
-            return ArmConstants.kFrontConeL2Position;
-          case TWO:
-            return ArmConstants.kFrontConeL2Position;
-          case ONE:
-            return ArmConstants.kFrontConeL2Position;
-          case INTAKE:
-            return ArmConstants.kFrontIntakePosition;
+          case THREE: return ArmConstants.kFrontConeL2Position;
+          case TWO: return ArmConstants.kFrontConeL2Position;
+          case ONE: return ArmConstants.kFrontConeL2Position;
+          case INTAKE: return ArmConstants.kFrontIntakePosition;
         }
       }
       case CUBE: {
         switch (armScoreLevel) {
-          case THREE:
-            return ArmConstants.kFrontCubeL3Position;
-          case TWO:
-            return ArmConstants.kFrontCubeL2Position;
-          case ONE:
-            return ArmConstants.kFrontCubeL2Position;
-          case INTAKE:
-            return ArmConstants.kFrontIntakePosition;
+          case THREE: return ArmConstants.kFrontCubeL3Position;
+          case TWO: return ArmConstants.kFrontCubeL2Position;
+          case ONE: return ArmConstants.kFrontCubeL2Position;
+          case INTAKE: return ArmConstants.kFrontIntakePosition;
         }
       }
     }
-    return ArmConstants.kStowPosition;
+    return ArmConstants.kFrontIntakePosition;
   }
 
   public Command getArmCommand(ArmScoreLevel armScoreLevel, CargoType cargoType) {
@@ -118,26 +102,18 @@ public class ArmStateMachine extends SubsystemBase {
               // when current is back
               case CONE: {
                 switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.BackToBack(ArmConstants.kBackConeL3Position);
-                  case TWO:
-                    return m_arm.setForwardKinematicsCommand(ArmConstants.kBackConeL2Position);
-                  case ONE:
-                    return m_arm.BackToBack(ArmConstants.kBackConeL1Position);
-                  case INTAKE:
-                    return m_arm.setForwardKinematicsCommand(ArmConstants.kBackIntakePosition);
+                  case THREE: return m_arm.BackToBack(ArmConstants.kBackConeL3Position);
+                  case TWO: return m_arm.setForwardKinematicsCommand(ArmConstants.kBackConeL2Position);
+                  case ONE: return m_arm.BackToBack(ArmConstants.kBackConeL1Position);
+                  case INTAKE: return m_arm.setForwardKinematicsCommand(ArmConstants.kBackIntakePosition);
                 }
               }
               case CUBE: {
                 switch (armScoreLevel) {
-                  case THREE:
-                    return m_arm.BackToBack(ArmConstants.kBackCubeL3Position);
-                  case TWO:
-                    return m_arm.BackToBack(ArmConstants.kBackCubeL2Position);
-                  case ONE:
-                    return m_arm.BackToBack(ArmConstants.kBackCubeL1Position);
-                  case INTAKE:
-                    return m_arm.BackToBack(ArmConstants.kBackIntakePosition);
+                  case THREE: return m_arm.BackToBack(ArmConstants.kBackCubeL3Position);
+                  case TWO: return m_arm.BackToBack(ArmConstants.kBackCubeL2Position);
+                  case ONE: return m_arm.BackToBack(ArmConstants.kBackCubeL1Position);
+                  case INTAKE: return m_arm.BackToBack(ArmConstants.kBackIntakePosition);
                 }
               }
             }

@@ -303,6 +303,7 @@ public class Shooter extends SubsystemBase {
     setCalculatedFlywheelVoltage();
     
     SmartDashboard.putNumber("Shooter Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
+    SmartDashboard.putNumber("Shooter Target Pivot", Units.radiansToDegrees(getPivotTarget()));
 
     // SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
     // SmartDashboard.putNumber("interpolated velocity", getDynamicFlywheelVelocity());

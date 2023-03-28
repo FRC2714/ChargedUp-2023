@@ -65,7 +65,7 @@ public class ShooterStateMachine extends SubsystemBase {
   }
 
   public Command getShooterCommand(ShooterScoreLevel shooterScorelevel) {
-    switch(shooterState) {
+    switch(shooterState) { //TODO UPDATE THIS VARIABLE
       case RETRACT: return toRetract();
       case HOLD: return toHold();
       case BACK: return m_shooter.setDynamicEnabledCommand(true, true);
@@ -78,7 +78,7 @@ public class ShooterStateMachine extends SubsystemBase {
     }
     return nothingCommand();
   }
-
+      
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
