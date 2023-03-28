@@ -25,6 +25,8 @@ public class Claw extends SubsystemBase {
   public Claw() {
     clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
+    clawMotor.setInverted(false);
+    clawMotor.burnFlash();
 
     clawMotor.enableVoltageCompensation(ClawConstants.kNominalVoltage);
 

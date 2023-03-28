@@ -21,10 +21,10 @@ import frc.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 import frc.utils.controller.AsymmetricTrapezoidProfile.State;
 
 public class Elbow extends SubsystemBase {
-  private CANSparkMax RightElbowMotor;
+  private CANSparkMax ElbowMotor;
   private AbsoluteEncoder ElbowEncoder;
 
-  private Constraints FarConstraints = new Constraints(12, 9, 6);
+  private Constraints FarConstraints = new Constraints(12, 12, 9);
   private Constraints CloseConstraints = new Constraints(36, 36, 24);
 
   private AsymmetricProfiledPIDController ElbowController = new AsymmetricProfiledPIDController(0,0,0, FarConstraints);
@@ -33,23 +33,23 @@ public class Elbow extends SubsystemBase {
   
   /** Creates a new Elbow. */
   public Elbow() {
-    RightElbowMotor = new CANSparkMax(ArmConstants.kRightElbowMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    ElbowMotor = new CANSparkMax(ArmConstants.kRightElbowMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    RightElbowMotor.setSmartCurrentLimit(ArmConstants.kElbowMotorCurrentLimit);
+    ElbowMotor.setSmartCurrentLimit(ArmConstants.kElbowMotorCurrentLimit);
 
-    RightElbowMotor.setInverted(false); //was true
-    RightElbowMotor.setIdleMode(IdleMode.kBrake);
+    ElbowMotor.setInverted(ArmConstants.kElbowMotorInverted);
+    ElbowMotor.setIdleMode(IdleMode.kBrake);
     
-    ElbowEncoder = RightElbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
+    ElbowEncoder = ElbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
     ElbowEncoder.setPositionConversionFactor(ArmConstants.kElbowPositionConversionFactor);
-    ElbowEncoder.setInverted(false);
+    ElbowEncoder.setInverted(ArmConstants.kElbowEncoderInverted);
     ElbowEncoder.setZeroOffset(ArmConstants.kElbowEncoderZeroOffset);
     //todo set velocity conversion factor
 
     // RightElbowMotor.setSoftLimit(SoftLimitDirection.kReverse, 20);
     // RightElbowMotor.setSoftLimit(SoftLimitDirection.kForward, 1240);
 
-    RightElbowMotor.burnFlash();
+    ElbowMotor.burnFlash();
 
     
     ElbowController.disableContinuousInput();
@@ -59,7 +59,7 @@ public class Elbow extends SubsystemBase {
   private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
     double kinematicAngle = sparkAngle;
 
-    kinematicAngle -= ArmConstants.kElbowKinematicOffset; //subtract kinematic offset
+    kinematicAngle -= 762.0; //subtract kinematic offset 762.0
     kinematicAngle /= ArmConstants.kElbowGearRatio; //divide by gear ratio
 
     return kinematicAngle;
@@ -71,7 +71,7 @@ public class Elbow extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Elbow Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    if(ElbowController.getP() == 0) {ElbowController.setP(1);}
+    if(ElbowController.getP() == 0) {ElbowController.setP(7);}
     Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(30)) ? CloseConstraints : FarConstraints;
     ElbowController.setConstraints(selectedConstraint);
     SmartDashboard.putString("Elbow Selected Constraint", selectedConstraint.equals(FarConstraints) ? "FAR" : "CLOSE");
@@ -88,12 +88,12 @@ public class Elbow extends SubsystemBase {
   }
 
   private void setCalculatedVoltage() {
-    double voltage =
-      ElbowController.calculate(getKinematicAngle()) +
-      ElbowFeedForward.calculate(ElbowController.getSetpoint().position, 0);
+    double voltage = 
+      ElbowController.calculate(getKinematicAngle())
+      + ElbowFeedForward.calculate(ElbowController.getSetpoint().position, 0);
     SmartDashboard.putNumber("Elbow Voltage", voltage);
 
-    RightElbowMotor.setVoltage(voltage);
+    ElbowMotor.setVoltage(voltage);
   }
 
   @Override
