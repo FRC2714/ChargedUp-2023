@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
@@ -59,12 +61,22 @@ public class Superstructure extends SubsystemBase {
 
   public Command armToShooter() {
     return new SequentialCommandGroup(
-      //m_armStateMachine.set();
+      m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, armScoreLevel, cargoType),
+      new WaitUntilCommand(3),
+      
+      m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD, shooterScoreLevel),
+      new InstantCommand(() -> m_shooter.setShooterEnabled(true))
     );
   }
 
   public Command shooterToArm() {
-    return new SequentialCommandGroup(null);
+    return new SequentialCommandGroup(
+      m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT, shooterScoreLevel),
+      new WaitUntilCommand(() -> m_shooter.atPivotSetpoint()),
+      new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
+
+      m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, armScoreLevel, cargoType)
+    );
   }
 
   //Score mode
@@ -75,8 +87,8 @@ public class Superstructure extends SubsystemBase {
   public void setScoreMode(ScoreMode scoreMode) {
     if(this.scoreMode != scoreMode) {
       switch(scoreMode) {
-        case ARM: //transition
-        case SHOOTER: // transition
+        case ARM: shooterToArm().withInterruptBehavior(InterruptionBehavior.kCancelIncoming).schedule();
+        case SHOOTER: armToShooter().withInterruptBehavior(InterruptionBehavior.kCancelIncoming).schedule();
       }
     }
 
@@ -91,28 +103,20 @@ public class Superstructure extends SubsystemBase {
   public Command setSubsystemState(DPadInput dPadInput) {
     switch (scoreMode) {
       case ARM: switch (dPadInput) {
-        case UP: return m_armStateMachine.setTargetArmStateCommand(ArmState.STOW);
-        case DOWN: return m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER);
-        case LEFT: return m_armStateMachine.setTargetArmStateCommand(ArmState.BACK);
-        case RIGHT: return m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT);
+        case UP: return m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, armScoreLevel, cargoType);
+        case DOWN: return m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER, armScoreLevel, cargoType);
+        case LEFT: return m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT, armScoreLevel, cargoType);
+        case RIGHT: return m_armStateMachine.setTargetArmStateCommand(ArmState.BACK, armScoreLevel, cargoType);
       }
       case SHOOTER: switch (dPadInput) {
-        case UP: return m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD);
-        case DOWN: return m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT);
-        case LEFT: return m_shooterStateMachine.setShooterStateCommand(ShooterState.BACK);
-        case RIGHT: return m_shooterStateMachine.setShooterStateCommand(ShooterState.FRONT);
+        case UP: return m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD, shooterScoreLevel);
+        case DOWN: return m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT, shooterScoreLevel);
+        case LEFT: return m_shooterStateMachine.setShooterStateCommand(ShooterState.FRONT, shooterScoreLevel);
+        case RIGHT: return m_shooterStateMachine.setShooterStateCommand(ShooterState.BACK, shooterScoreLevel);
       }
     }
     return new InstantCommand();
   }
-
-  // public void setArmScoreLevel(ArmScoreLevel scoreLevel) {
-  //   this.armScoreLevel = scoreLevel;
-  // }
-
-  // public ArmScoreLevel getArmScoreLevel() {
-  //   return this.armScoreLevel;
-  // }
 
   //Score level
   public InstantCommand setScoreLevelCommand(ArmScoreLevel targetScoreLevel) {
@@ -140,7 +144,7 @@ public class Superstructure extends SubsystemBase {
     return this.cargoType;
   }
 
-  public Command getCommand() {
+  public Command getSubsystemCommand() {
     switch (scoreMode) {
       case ARM: return m_armStateMachine.getArmCommand(armScoreLevel, cargoType);
       case SHOOTER: return m_shooterStateMachine.getShooterCommand(shooterScoreLevel);
@@ -151,6 +155,7 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putString("Score Mode", scoreMode.toString());
     SmartDashboard.putString("Score Level", armScoreLevel.toString());
     SmartDashboard.putString("Cargo Type", cargoType.toString());
   }

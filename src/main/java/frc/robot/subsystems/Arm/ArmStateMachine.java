@@ -29,10 +29,11 @@ public class ArmStateMachine extends SubsystemBase {
     this.m_arm = m_arm;
   }
 
-  public void setTargetArmState(ArmState targetArmState) {
+  public void setTargetArmState(ArmState targetArmState, ArmScoreLevel armScoreLevel, CargoType cargoType) {
     if(this.targetArmState != targetArmState || targetArmState != ArmState.STOW) {
       currentArmState = this.targetArmState;
       this.targetArmState = targetArmState;
+      getArmCommand(armScoreLevel, cargoType).withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
     }
   }
 
@@ -40,8 +41,8 @@ public class ArmStateMachine extends SubsystemBase {
   //   getArmCommand().withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
   // }
 
-  public Command setTargetArmStateCommand(ArmState targetArmState) {
-    return new InstantCommand(() -> setTargetArmState(targetArmState));
+  public Command setTargetArmStateCommand(ArmState targetArmState, ArmScoreLevel armScoreLevel, CargoType cargoType) {
+    return new InstantCommand(() -> setTargetArmState(targetArmState, armScoreLevel, cargoType));
   }
 
   private Command nothingCommand() {

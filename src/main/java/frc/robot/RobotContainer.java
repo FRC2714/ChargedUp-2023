@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -41,11 +40,8 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.Arm;
-import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.Claw;
-import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Shooter.ShooterStateMachine;
 import frc.robot.subsystems.Superstructure.CargoType;
 import frc.robot.subsystems.Superstructure.DPadInput;
 import frc.robot.subsystems.Superstructure.ScoreMode;
@@ -172,11 +168,13 @@ public class RobotContainer {
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
-		//manual raise arm on start
-		// m_operatorController.start()
+		//set arm on start
+		m_operatorController.start()
+			.onTrue(m_superstructure.setScoreModeCommand(ScoreMode.ARM));
 
-		// //manual lower arm on back
-		// m_operatorController.back()
+		//set shooter on back
+		m_operatorController.back()
+			.onTrue(m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER));
 
 		// TUCK on up
 		m_operatorController.povUp()
@@ -190,7 +188,7 @@ public class RobotContainer {
 		// BACK on right
 		m_operatorController.povRight()
 			.onTrue(m_superstructure.setSubsystemState(DPadInput.RIGHT));
-		
+	
 		
 
 		// level 3 on Y

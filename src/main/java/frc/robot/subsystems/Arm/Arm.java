@@ -117,6 +117,7 @@ public class Arm extends SubsystemBase {
     return new SequentialCommandGroup(
       new WaitUntilCommand(() -> elbow.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kBackToBackIntermediatePosition)),
       new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
+      //new WaitUntilCommand(() -> shoulder.atSetpoint() && elbow.atSetpoint()));
   }
 
   //Back to Transfer

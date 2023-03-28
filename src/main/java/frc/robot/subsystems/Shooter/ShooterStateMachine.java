@@ -5,6 +5,7 @@
 package frc.robot.subsystems.Shooter;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -26,13 +27,14 @@ public class ShooterStateMachine extends SubsystemBase {
     this.m_shooter = m_shooter;
   }
 
-  public Command setShooterStateCommand(ShooterState shooterState) {
-    return new InstantCommand(() -> setShooterState(shooterState));
+  public Command setShooterStateCommand(ShooterState shooterState, ShooterScoreLevel scoreLevel) {
+    return new InstantCommand(() -> setShooterState(shooterState, scoreLevel));
   }
 
-  private void setShooterState(ShooterState shooterState) {
+  public void setShooterState(ShooterState shooterState, ShooterScoreLevel scoreLevel) {
     if (this.shooterState != shooterState) {
       this.shooterState = shooterState;
+      getShooterCommand(scoreLevel).schedule();
     }
   }
 
@@ -80,6 +82,6 @@ public class ShooterStateMachine extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
+    SmartDashboard.putString("Shooter State", shooterState.toString());
   }
 }
