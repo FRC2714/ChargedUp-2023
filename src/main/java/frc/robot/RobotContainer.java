@@ -200,7 +200,7 @@ public class RobotContainer {
 			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.UP));
 		// level 2 on B
 		m_operatorController.b()
-			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.RIGHT));
+			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.LEFT));
 		// intake on A
 		m_operatorController.a()
 			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.DOWN));

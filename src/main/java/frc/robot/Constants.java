@@ -146,7 +146,9 @@ public final class Constants {
     public static final HashMap<String, Command> EventMap = new HashMap<>();
   }
 
-  public static final class PneumaticsConstants {
+  public static final class InfrastructureConstants {
+    public static final int kPowerDistributionHubCanId = 1;
+    
     public static final int kPneumaticHubCanId = 1;
     public static final double kCompressorMinPressure = 90;
     public static final double kCompressorMaxPressure = 120;

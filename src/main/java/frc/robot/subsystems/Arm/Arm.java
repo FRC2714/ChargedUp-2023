@@ -4,22 +4,19 @@
 
 package frc.robot.subsystems.Arm;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.utils.ArmForwardKinematicPosition;
 
 public class Arm {
-  private Shoulder shoulder = new Shoulder();
-  private Elbow elbow = new Elbow();
+  private Shoulder m_shoulder = new Shoulder();
+  private Elbow m_elbow = new Elbow();
 
   private double shoulderLength = ArmConstants.kShoulderLength;//meters
   private double elbowLength = ArmConstants.kElbowLength;
@@ -37,21 +34,17 @@ public class Arm {
   public Arm() {}
 
   private void setForwardKinematics(double shoulderAngle, double secondAngle) {
-    shoulder.setTargetKinematicAngleRadians(shoulderAngle);
-    elbow.setTargetKinematicAngleRadians(secondAngle);
+    m_shoulder.setTargetKinematicAngleRadians(shoulderAngle);
+    m_elbow.setTargetKinematicAngleRadians(secondAngle);
   }
 
   private void setForwardKinematics(ArmForwardKinematicPosition forwardKinematicsPosition) {
-    shoulder.setTargetKinematicAngleRadians(forwardKinematicsPosition.getBaseAngleRadians());
-    elbow.setTargetKinematicAngleRadians(forwardKinematicsPosition.getSecondAngleRadians());
+    m_shoulder.setTargetKinematicAngleRadians(forwardKinematicsPosition.getBaseAngleRadians());
+    m_elbow.setTargetKinematicAngleRadians(forwardKinematicsPosition.getSecondAngleRadians());
   }
 
   public InstantCommand setForwardKinematicsCommand(ArmForwardKinematicPosition forwardKinematicsPosition) {
     return new InstantCommand(() -> setForwardKinematics(forwardKinematicsPosition));
-  }
-
-  private Command setForwardKinematicsUntil(BooleanSupplier condition, ArmForwardKinematicPosition forwardKinematicsPosition) {
-    return new WaitUntilCommand(condition).deadlineWith(setForwardKinematicsCommand(forwardKinematicsPosition));
   }
 
   public void setTargetPosition(double X, double Y) {
@@ -84,30 +77,30 @@ public class Arm {
   }
 
   private void setInverseKinematics() {
-    shoulder.setTargetKinematicAngleRadians(q1);
-    elbow.setTargetKinematicAngleRadians(q2);
+    m_shoulder.setTargetKinematicAngleRadians(q1);
+    m_elbow.setTargetKinematicAngleRadians(q2);
   }
 
   private void estimateCurrentXY() {
-    estimatedX = shoulderLength*Math.sin(shoulder.getKinematicAngle()) + elbowLength*Math.sin(shoulder.getKinematicAngle()+elbow.getKinematicAngle());
-    estimatedY = shoulderLength*Math.cos(elbow.getKinematicAngle()) + elbowLength*Math.cos(shoulder.getKinematicAngle()+elbow.getKinematicAngle());
+    estimatedX = shoulderLength*Math.sin(m_shoulder.getKinematicAngle()) + elbowLength*Math.sin(m_shoulder.getKinematicAngle()+m_elbow.getKinematicAngle());
+    estimatedY = shoulderLength*Math.cos(m_elbow.getKinematicAngle()) + elbowLength*Math.cos(m_shoulder.getKinematicAngle()+m_elbow.getKinematicAngle());
     SmartDashboard.putNumber("Arm Estimated X", Units.metersToInches(estimatedX));
     SmartDashboard.putNumber("Arm Estimated Y", Units.metersToInches(estimatedY));
   }
 
   public void raiseCurrentPosition(double degrees) {
-    if(elbow.getKinematicAngle() < 0) { //when second joint is -
-      setForwardKinematics(shoulder.getKinematicAngle(), elbow.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
+    if(m_elbow.getKinematicAngle() < 0) { //when second joint is -
+      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
     } else {
-      setForwardKinematics(shoulder.getKinematicAngle(), elbow.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
+      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
     }
   }
 
   public void lowerCurrentPosition(double degrees) {
-    if(elbow.getKinematicAngle() > 0) { //when second joint is +
-      setForwardKinematics(shoulder.getKinematicAngle(), elbow.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
+    if(m_elbow.getKinematicAngle() > 0) { //when second joint is +
+      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
     } else {
-      setForwardKinematics(shoulder.getKinematicAngle(), elbow.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
+      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
     }
   }
 
@@ -116,8 +109,8 @@ public class Arm {
   //Back to Back
   public Command BackToBack(ArmForwardKinematicPosition backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> elbow.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kBackToBackIntermediatePosition)),
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_elbow.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kBackToBackIntermediatePosition)),
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
       //new WaitUntilCommand(() -> shoulder.atSetpoint() && elbow.atSetpoint()));
   }
 
@@ -125,21 +118,21 @@ public class Arm {
   public Command BackToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     CommandBase sequence = new SequentialCommandGroup(
       //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kBackToTransferIntermediatePosition)),
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
-    sequence.addRequirements(shoulder, elbow);
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
+    sequence.addRequirements(m_shoulder, m_elbow);
     return sequence;
   }
 
   //Back to Front
   public Command BackToFront(ArmForwardKinematicPosition frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(frontScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(frontScoreLevelPosition)));
   }
 
   //Back to Stow
   public Command BackToStow() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowPosition)));
   }
 
   //Transfer to Back
@@ -147,21 +140,21 @@ public class Arm {
     return new SequentialCommandGroup(
       //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToBackIntermediatePosition)),
       //new WaitUntilCommand(() -> shoulder.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToBackIntermediate2Position)),
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
   }
 
   //Transfer to Front
   public Command TransferToFront(ArmForwardKinematicPosition frontScoreLevelPosition) {
     return new SequentialCommandGroup(
       //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToFrontIntermediatePosition)),
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(frontScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(frontScoreLevelPosition)));
   }
 
   //Transfer to Transfer
   public Command TransferToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     return new SequentialCommandGroup(
       //new WaitUntilCommand(() -> shoulder.nearSetpoint() && elbow.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToTransferIntermediatePosition)),
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
   }
 
   //Transfer to stow
@@ -169,13 +162,13 @@ public class Arm {
     return new SequentialCommandGroup(
       //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToStowIntermediatePosition)),
       //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToStowIntermediate2Position)),
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowPosition)));
   }
 
   //Front to Back
   public Command FrontToBack(ArmForwardKinematicPosition backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
   }
 
   //Front to Transfer
@@ -183,25 +176,25 @@ public class Arm {
     return new SequentialCommandGroup(
       //new WaitUntilCommand(() -> shoulder.atSetpoint() && elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kFrontToTransferIntermediatePosition)),
       //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kFrontToTransferIntermediate2Position)),
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
   }
 
   //Front to Front
   public Command FrontToFront(ArmForwardKinematicPosition frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(frontScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(frontScoreLevelPosition)));
   }
 
   //Front to Stow
   public Command FrontToStow() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowPosition)));
   }
 
   //Stow to Back
   public Command StowToBack(ArmForwardKinematicPosition backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
   }
 
   //Stow to transfer
@@ -209,13 +202,13 @@ public class Arm {
     return new SequentialCommandGroup(
       //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowToTransferIntermediatePosition)),
       //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowToTransferIntermediate2Position)),
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
   }
 
   //stow to front
   public Command StowToFront(ArmForwardKinematicPosition frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(frontScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(frontScoreLevelPosition)));
   }
 
   public void updateTelemetry() {
