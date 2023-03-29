@@ -9,37 +9,55 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.Superstructure.ShooterScoreLevel;
 
-public class ShooterStateMachine extends SubsystemBase {
+public class ShooterStateMachine {
   Shooter m_shooter;
 
   public enum ShooterState {
     RETRACT, HOLD, FRONT, BACK
   }
 
+  public enum ShooterScoreLevel {
+    INTAKE, OUTTAKE, DYNAMIC
+  }
+
   public ShooterState shooterState = ShooterState.RETRACT;
+  public ShooterScoreLevel scoreLevel = ShooterScoreLevel.INTAKE;
 
   /** Creates a new ShooterStateMachine. */
   public ShooterStateMachine(Shooter m_shooter) {
     this.m_shooter = m_shooter;
   }
 
-  public Command setShooterStateCommand(ShooterState shooterState, ShooterScoreLevel scoreLevel) {
-    return new InstantCommand(() -> setShooterState(shooterState, scoreLevel));
+  public Command setShooterStateCommand(ShooterState shooterState) {
+    return new InstantCommand(() -> setShooterState(shooterState));
   }
 
-  public void setShooterState(ShooterState shooterState, ShooterScoreLevel scoreLevel) {
+  public void setShooterState(ShooterState shooterState) {
     if (this.shooterState != shooterState) {
       this.shooterState = shooterState;
       getShooterCommand(scoreLevel).schedule();
     }
   }
 
+  //Score level
+  public InstantCommand setShooterScoreLevelCommand(ShooterScoreLevel scoreLevel) {
+    return new InstantCommand(() -> setShooterScoreLevel(scoreLevel));
+  }
+
+  public void setShooterScoreLevel(ShooterScoreLevel scoreLevel) {
+    this.scoreLevel = scoreLevel;
+  }
+
+  public ShooterScoreLevel getShooterScoreLevel() {
+    return this.scoreLevel;
+  }
+
   public Command toRetract() {
-    return new ParallelCommandGroup(
+    return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, false),
       m_shooter.stopCommand(),
       m_shooter.pivotToRetract()
@@ -47,14 +65,14 @@ public class ShooterStateMachine extends SubsystemBase {
   }
 
   public Command toHold() {
-    return new ParallelCommandGroup(
+    return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, false),
       m_shooter.pivotToHold()
     );
   }
 
   public Command toFront(Command ScoreLevelPivotComand) {
-    return new ParallelCommandGroup(
+    return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, false),
       ScoreLevelPivotComand
     );
@@ -79,8 +97,7 @@ public class ShooterStateMachine extends SubsystemBase {
     return nothingCommand();
   }
       
-  @Override
-  public void periodic() {
+  public void updateTelemetry() {
     // This method will be called once per scheduler run
     SmartDashboard.putString("Shooter State", shooterState.toString());
   }

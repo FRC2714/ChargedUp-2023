@@ -59,7 +59,7 @@ public class Elbow extends SubsystemBase {
   private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
     double kinematicAngle = sparkAngle;
 
-    kinematicAngle -= 762.0; //subtract kinematic offset 762.0
+    kinematicAngle -= ArmConstants.kElbowKinematicOffset; //subtract kinematic offset 762.0
     kinematicAngle /= ArmConstants.kElbowGearRatio; //divide by gear ratio
 
     return kinematicAngle;

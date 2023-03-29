@@ -43,9 +43,8 @@ import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Superstructure.CargoType;
-import frc.robot.subsystems.Superstructure.DPadInput;
+import frc.robot.subsystems.Superstructure.ControllerInput;
 import frc.robot.subsystems.Superstructure.ScoreMode;
-import frc.robot.subsystems.Superstructure.ArmScoreLevel;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -94,10 +93,11 @@ public class RobotContainer {
 	}
 
 	public void setTeleopDefaultStates() {
+		System.out.println("setTeleopDefaultStates()");
 		new SequentialCommandGroup(
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
-			m_superstructure.setScoreLevelCommand(ArmScoreLevel.INTAKE),
-			//m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER),
+			m_superstructure.setScoreModeCommand(ScoreMode.ARM),
+			m_superstructure.setSubsystemState(ControllerInput.DOWN),
 			m_backLimelight.setLEDCommand(false),
 			m_frontLimelight.setLEDCommand(false)
 		).schedule();
@@ -107,6 +107,10 @@ public class RobotContainer {
 		new InstantCommand(() -> m_robotDrive.zeroHeading()).schedule();
 		m_backLimelight.setLEDCommand(false).schedule();
 		//m_intake.pivotToHold().schedule();
+	}
+
+	public void updateTelemetry() {
+		m_superstructure.updateTelemetry();
 	}
 
 	/**
@@ -178,28 +182,28 @@ public class RobotContainer {
 
 		// TUCK on up
 		m_operatorController.povUp()
-			.onTrue(m_superstructure.setSubsystemState(DPadInput.UP));
+			.onTrue(m_superstructure.setSubsystemState(ControllerInput.UP));
 		// TRANSFER on down
 		m_operatorController.povDown()
-			.onTrue(m_superstructure.setSubsystemState(DPadInput.DOWN));
+			.onTrue(m_superstructure.setSubsystemState(ControllerInput.DOWN));
 		// FRONT on left
 		m_operatorController.povLeft()
-		.onTrue(m_superstructure.setSubsystemState(DPadInput.LEFT));
+		.onTrue(m_superstructure.setSubsystemState(ControllerInput.LEFT));
 		// BACK on right
 		m_operatorController.povRight()
-			.onTrue(m_superstructure.setSubsystemState(DPadInput.RIGHT));
+			.onTrue(m_superstructure.setSubsystemState(ControllerInput.RIGHT));
 	
 		
 
 		// level 3 on Y
 		m_operatorController.y()
-			.onTrue(m_superstructure.setScoreLevelCommand(ArmScoreLevel.THREE));
+			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.UP));
 		// level 2 on B
 		m_operatorController.b()
-			.onTrue(m_superstructure.setScoreLevelCommand(ArmScoreLevel.TWO));
+			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.RIGHT));
 		// intake on A
 		m_operatorController.a()
-			.onTrue(m_superstructure.setScoreLevelCommand(ArmScoreLevel.INTAKE));
+			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.DOWN));
 
 		//toggle claw intake on X
 		//m_operatorController.x()

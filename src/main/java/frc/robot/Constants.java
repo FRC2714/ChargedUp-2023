@@ -245,7 +245,7 @@ public final class Constants {
     public static final double kShoulderEncoderZeroOffset = 313.4707425;
     public static final double kElbowEncoderZeroOffset = 41.4360188;
     public static final double kShoulderKinematicOffset = 162; //difference from kinematic 0 to sparkmax 0 approx 45 deg
-    public static final double kElbowKinematicOffset = 637; //difference from kinematic 0 to sparkmax 0 approx 160 deg
+    public static final double kElbowKinematicOffset = 762.0; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
     public static final boolean kShoulderMotorInverted = true; //base joint encoder inverted
     public static final boolean kShoulderEncoderInverted = true; //base joint motor inverted

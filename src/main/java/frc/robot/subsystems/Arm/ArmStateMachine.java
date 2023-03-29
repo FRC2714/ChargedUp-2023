@@ -6,43 +6,69 @@ package frc.robot.subsystems.Arm;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Superstructure.CargoType;
 import frc.robot.utils.ArmForwardKinematicPosition;
-import frc.robot.subsystems.Superstructure.ArmScoreLevel;
 
-public class ArmStateMachine extends SubsystemBase {
+public class ArmStateMachine {
   private Arm m_arm;
   
   public enum ArmState {
     BACK, TRANSFER, FRONT, STOW
   }
 
+  public enum ArmScoreLevel {
+    THREE, TWO, ONE, INTAKE
+  }
+
   public ArmState currentArmState = ArmState.BACK; //will default to TRANSFER 
   public ArmState targetArmState = ArmState.BACK; // default to TRANSFER 
+  public ArmScoreLevel armScoreLevel = ArmScoreLevel.INTAKE;
 
   /** Creates a new StateMachine. */
   public ArmStateMachine(Arm m_arm) {
     this.m_arm = m_arm;
   }
 
-  public void setTargetArmState(ArmState targetArmState, ArmScoreLevel armScoreLevel, CargoType cargoType) {
-    if(this.targetArmState != targetArmState || targetArmState != ArmState.STOW) {
-      currentArmState = this.targetArmState;
-      this.targetArmState = targetArmState;
-      getArmCommand(armScoreLevel, cargoType).withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
-    }
+  //Score level
+  public InstantCommand setArmScoreLevelCommand(ArmScoreLevel targetScoreLevel) {
+    return new InstantCommand(() -> setArmScoreLevel(targetScoreLevel));
   }
 
-  // private void callArmCommand() {
-  //   getArmCommand().withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
-  // }
+  public void setArmScoreLevel(ArmScoreLevel scoreLevel) {
+    this.armScoreLevel = scoreLevel;
+  }
 
-  public Command setTargetArmStateCommand(ArmState targetArmState, ArmScoreLevel armScoreLevel, CargoType cargoType) {
-    return new InstantCommand(() -> setTargetArmState(targetArmState, armScoreLevel, cargoType));
+  public ArmScoreLevel getArmScoreLevel() {
+    return this.armScoreLevel;
+  }
+
+  public void setTargetArmState(ArmState targetArmState, ArmScoreLevel armScoreLevel, CargoType cargoType) {
+    currentArmState = this.targetArmState;
+    this.targetArmState = targetArmState;
+  }
+
+  public Command setTargetArmStateCommand(ArmState targetArmState, CargoType cargoType) {
+    System.out.println("creating set target arm state command");
+    return new SequentialCommandGroup(
+      // new InstantCommand(() -> setTargetArmState(targetArmState, armScoreLevel, cargoType)),
+      new ConditionalCommand(
+        getArmCommand(armScoreLevel, cargoType).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
+        new InstantCommand(),
+        () -> {
+          System.out.println("setting target armstate");
+          setTargetArmState(targetArmState, armScoreLevel, cargoType);
+          return this.targetArmState != targetArmState || targetArmState != ArmState.STOW;
+        }
+      )
+    );
   }
 
   private Command nothingCommand() {
@@ -151,8 +177,7 @@ public class ArmStateMachine extends SubsystemBase {
     return nothingCommand();
   }
   
-  @Override
-  public void periodic() {
+  public void updateTelemetry() {
     //This method will be called once per scheduler run
     SmartDashboard.putString("Target Arm State", targetArmState.toString());
     SmartDashboard.putString("Current Arm State", currentArmState.toString());

@@ -242,7 +242,9 @@ public class Shooter extends SubsystemBase {
 
   public Command pivotToIntake() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotIntakeAngleDegrees)),
+      new InstantCommand(() -> {
+        setTargetPivot(ShooterConstants.kPivotIntakeAngleDegrees);
+      }),
       new WaitUntilCommand(() -> atPivotSetpoint()));
   }
 
