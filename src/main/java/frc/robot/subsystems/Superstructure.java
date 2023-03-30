@@ -34,6 +34,10 @@ public class Superstructure {
     ARM, SHOOTER
   }
 
+  public enum ScoreModeAction {
+    TO_ARM, TO_SHOOTER, DO_NOTHING
+  }
+
   public enum ControllerInput {
     UP, DOWN, LEFT, RIGHT
   }
@@ -59,10 +63,7 @@ public class Superstructure {
   public Command armToShooter() {
     return new SequentialCommandGroup(
       setSubsystemState(ControllerInput.UP),
-      new WaitUntilCommand(2),
-      
-      setScoreModeCommand(ScoreMode.SHOOTER),
-      new InstantCommand(() -> m_shooter.setShooterEnabled(true))
+      new WaitUntilCommand(2)
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
@@ -70,9 +71,7 @@ public class Superstructure {
     return new SequentialCommandGroup(
       setSubsystemState(ControllerInput.DOWN),
       new WaitUntilCommand(() -> m_shooter.atPivotSetpoint()),
-      new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
-
-      setScoreModeCommand(ScoreMode.ARM)
+      new InstantCommand(() -> m_shooter.setShooterEnabled(false))
     );
   }
 
@@ -80,12 +79,16 @@ public class Superstructure {
   public Command setScoreModeCommand(ScoreMode targetScoreMode) {
     return new SelectCommand(
       Map.ofEntries(
-        Map.entry(ScoreMode.ARM, shooterToArm()),
-        Map.entry(ScoreMode.SHOOTER, armToShooter())),
+        Map.entry(ScoreModeAction.TO_ARM, shooterToArm()),
+        Map.entry(ScoreModeAction.TO_SHOOTER, armToShooter()),
+        Map.entry(ScoreModeAction.DO_NOTHING, new InstantCommand())),
       () -> {
-        this.scoreMode = targetScoreMode;
-        return scoreMode;
-      });
+        if(this.scoreMode == targetScoreMode) {
+          return ScoreModeAction.DO_NOTHING;
+        } 
+        return targetScoreMode == ScoreMode.ARM ? ScoreModeAction.TO_ARM : ScoreModeAction.TO_SHOOTER;
+      }
+    ).andThen(new InstantCommand(() -> this.scoreMode = targetScoreMode));
   }
 
   public ScoreMode getScoreMode() {
@@ -110,6 +113,7 @@ public class Superstructure {
         Map.entry(ControllerInput.RIGHT, m_shooterStateMachine.setShooterStateCommand(ShooterState.BACK))),
       () -> dPadInput); 
     
+    System.out.println("Creating SelectCommand for arm vs shooter");
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armSelectCommand),

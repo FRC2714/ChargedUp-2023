@@ -96,7 +96,6 @@ public class RobotContainer {
 		System.out.println("setTeleopDefaultStates()");
 		new SequentialCommandGroup(
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
-			m_superstructure.setScoreModeCommand(ScoreMode.ARM),
 			m_superstructure.setSubsystemState(ControllerInput.DOWN),
 			m_backLimelight.setLEDCommand(false),
 			m_frontLimelight.setLEDCommand(false)
