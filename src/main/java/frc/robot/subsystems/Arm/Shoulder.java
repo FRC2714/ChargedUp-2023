@@ -86,7 +86,7 @@ public class Shoulder extends SubsystemBase {
     return Math.abs(getKinematicAngle() - ShoulderController.getGoal().position) < Units.degreesToRadians(4);
   }
 
-  public boolean atSetpoint() {
+  public boolean atGoal() {
     return ShoulderController.atGoal();
   }
 

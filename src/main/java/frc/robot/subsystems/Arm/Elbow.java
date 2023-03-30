@@ -84,7 +84,7 @@ public class Elbow extends SubsystemBase {
     return Math.abs(getKinematicAngle() - ElbowController.getGoal().position) < Units.degreesToRadians(8);
   }
 
-  public boolean atSetpoint() {
+  public boolean atGoal() {
     return ElbowController.atGoal();
   }
 

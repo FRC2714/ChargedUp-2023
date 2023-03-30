@@ -90,18 +90,22 @@ public class Arm {
 
   public void raiseCurrentPosition(double degrees) {
     if(m_elbow.getKinematicAngle() < 0) { //when second joint is -
-      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
+      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle() + Units.degreesToRadians(degrees)); // add degrees
     } else {
-      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
+      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle() - Units.degreesToRadians(degrees)); // subtract degrees
     }
   }
 
   public void lowerCurrentPosition(double degrees) {
     if(m_elbow.getKinematicAngle() > 0) { //when second joint is +
-      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle()+Units.degreesToRadians(degrees)); // add degrees
+      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle() + Units.degreesToRadians(degrees)); // add degrees
     } else {
-      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle()-Units.degreesToRadians(degrees)); // subtract degrees
+      setForwardKinematics(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle() - Units.degreesToRadians(degrees)); // subtract degrees
     }
+  }
+
+  public boolean isJointsAtGoal() {
+    return m_shoulder.atGoal() && m_elbow.atGoal();
   }
 
   ///////////////////////////TRANSITIONS/////////////////////////////////////////////////////

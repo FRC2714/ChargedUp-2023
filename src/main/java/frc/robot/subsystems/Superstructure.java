@@ -8,7 +8,6 @@ import java.util.Map;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -63,7 +62,8 @@ public class Superstructure {
   public Command armToShooter() {
     return new SequentialCommandGroup(
       setSubsystemState(ControllerInput.UP),
-      new WaitUntilCommand(2)
+      new WaitUntilCommand(() -> m_arm.isJointsAtGoal()),
+      new InstantCommand(() -> this.scoreMode = ScoreMode.SHOOTER)
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
@@ -71,8 +71,9 @@ public class Superstructure {
     return new SequentialCommandGroup(
       setSubsystemState(ControllerInput.DOWN),
       new WaitUntilCommand(() -> m_shooter.atPivotSetpoint()),
-      new InstantCommand(() -> m_shooter.setShooterEnabled(false))
-    );
+      new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
+      new InstantCommand(() -> this.scoreMode = ScoreMode.ARM)
+    ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
   //Score mode
@@ -83,12 +84,12 @@ public class Superstructure {
         Map.entry(ScoreModeAction.TO_SHOOTER, armToShooter()),
         Map.entry(ScoreModeAction.DO_NOTHING, new InstantCommand())),
       () -> {
-        if(this.scoreMode == targetScoreMode) {
+        if(getScoreMode() == targetScoreMode) {
           return ScoreModeAction.DO_NOTHING;
         } 
         return targetScoreMode == ScoreMode.ARM ? ScoreModeAction.TO_ARM : ScoreModeAction.TO_SHOOTER;
       }
-    ).andThen(new InstantCommand(() -> this.scoreMode = targetScoreMode));
+    );
   }
 
   public ScoreMode getScoreMode() {

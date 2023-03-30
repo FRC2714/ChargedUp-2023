@@ -36,11 +36,7 @@ public class ArmStateMachine {
 
   //Score level
   public InstantCommand setArmScoreLevelCommand(ArmScoreLevel targetScoreLevel) {
-    return new InstantCommand(() -> setArmScoreLevel(targetScoreLevel));
-  }
-
-  public void setArmScoreLevel(ArmScoreLevel scoreLevel) {
-    this.armScoreLevel = scoreLevel;
+    return new InstantCommand(() -> this.armScoreLevel = targetScoreLevel);
   }
 
   public ArmScoreLevel getArmScoreLevel() {
