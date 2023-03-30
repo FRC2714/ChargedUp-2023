@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
+import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmScoreLevel;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
 import frc.robot.subsystems.Shooter.Shooter;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 
 public class Superstructure {
   Arm m_arm;
+  Claw m_claw;
   Shooter m_shooter;
 
   ArmStateMachine m_armStateMachine;
@@ -51,8 +53,9 @@ public class Superstructure {
  
 
   /** Creates a new Superstructure. */
-  public Superstructure(Arm m_arm, Shooter m_shooter) {
+  public Superstructure(Arm m_arm, Claw m_claw, Shooter m_shooter) {
     this.m_arm = m_arm;
+    this.m_claw = m_claw;
     this.m_shooter = m_shooter;
 
     m_armStateMachine = new ArmStateMachine(m_arm);
@@ -156,6 +159,23 @@ public class Superstructure {
 
   public CargoType getCargoType() {
     return this.cargoType;
+  }
+
+  //Score Command
+  public Command ScoreCommand() {
+    final SelectCommand armScore = new SelectCommand(
+        Map.ofEntries(
+          Map.entry(CargoType.CONE, m_claw.scoreCone()),
+          Map.entry(CargoType.CUBE, m_claw.scoreCube())
+        ), 
+        () -> getCargoType());
+
+    return new SelectCommand(
+      Map.ofEntries(
+        Map.entry(ScoreMode.ARM, armScore),
+        Map.entry(ScoreMode.SHOOTER, m_shooter.kick())
+      ), 
+      () -> getScoreMode());
   }
 
   public void updateTelemetry() {

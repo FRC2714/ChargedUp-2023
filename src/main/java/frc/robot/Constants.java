@@ -202,8 +202,8 @@ public final class Constants {
   }
 
   public static final class LEDConstants {
-    public static final int kBlinkinPort = 0;
-    public static final int kBlinkin2Port = 1;
+    public static final int kArmBlinkinPort = 0;
+    public static final int kBaseBlinkinPort = 1;
 
     public static final double kPurpleWave = 0.29;
     public static final double kYellowWave = 0.09;

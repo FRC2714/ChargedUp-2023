@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.ScoreCommand;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToNode;
 import frc.robot.commands.auto.NothingAuto;
@@ -64,7 +63,7 @@ public class RobotContainer {
 	private final Claw m_claw = new Claw();
 	private final LEDs m_leds = new LEDs();
 	
-	private final Superstructure m_superstructure = new Superstructure(m_arm, m_shooter);
+	private final Superstructure m_superstructure = new Superstructure(m_arm, m_claw, m_shooter);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -133,7 +132,7 @@ public class RobotContainer {
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(new ScoreCommand(m_superstructure, m_claw))
+			.onTrue(m_superstructure.ScoreCommand())
 			.onFalse(m_claw.scoreCone());
 
 		//intake on right trigger while held 

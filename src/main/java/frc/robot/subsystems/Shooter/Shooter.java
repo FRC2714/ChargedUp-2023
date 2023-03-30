@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight;
@@ -126,6 +127,16 @@ public class Shooter extends SubsystemBase {
 
   public InstantCommand setDynamicEnabledCommand(boolean isDynamicEnabled, boolean isDynamicReversed) {
     return new InstantCommand(() -> setDynamicEnabled(isDynamicEnabled, isDynamicReversed));
+  }
+
+  //KICKER
+  public Command kick() {
+    return new SequentialCommandGroup(
+      new InstantCommand(() -> kickerMotor.set(-0.6)),
+      new WaitCommand(1),
+      new InstantCommand(() -> kickerMotor.set(0))
+    );
+    
   }
 
   //PIVOT

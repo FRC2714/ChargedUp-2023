@@ -12,26 +12,18 @@ import frc.robot.subsystems.Superstructure.CargoType;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class LEDs extends SubsystemBase {
-  private Spark Blinkin;
-  private Spark Blinkin2;
+  private Spark m_armBlinkin;
+  private Spark m_baseBlinkin;
 
   /** Creates a new LEDs. */
   public LEDs() {
-    Blinkin = new Spark(LEDConstants.kBlinkinPort);
-    Blinkin2 = new Spark(LEDConstants.kBlinkin2Port);
+    m_armBlinkin = new Spark(LEDConstants.kArmBlinkinPort);
+    m_baseBlinkin = new Spark(LEDConstants.kBaseBlinkinPort);
   }
 
   private void set(double val) {
-    Blinkin.set(val);
-    Blinkin2.set(val);
-  }
-
-  public void setPurpleWave() {
-    set(LEDConstants.kPurpleWave);
-  }
-
-  public void setYellowWave() {
-    set(LEDConstants.kYellowWave);
+    m_armBlinkin.set(val);
+    m_baseBlinkin.set(val);
   }
 
   public void setPurple() {
@@ -40,6 +32,14 @@ public class LEDs extends SubsystemBase {
 
   public void setYellow() {
     set(LEDConstants.kYellow);
+  }
+
+  public void setGreen() {
+    set(0.77);
+  }
+
+  public void setRed() {
+    set(0.61);
   }
 
   public Command setColorCargoType(CargoType cargoType) {
