@@ -35,7 +35,6 @@ import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Infrastructure;
-import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.Arm;
@@ -61,7 +60,6 @@ public class RobotContainer {
 	private final Arm m_arm = new Arm();
 	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	private final Claw m_claw = new Claw();
-	private final LEDs m_leds = new LEDs();
 	
 	private final Superstructure m_superstructure = new Superstructure(m_arm, m_claw, m_shooter);
 

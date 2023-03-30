@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -106,8 +104,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-
-    System.out.println("teleopInit()");
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

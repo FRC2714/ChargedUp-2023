@@ -4,26 +4,20 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.subsystems.Superstructure.CargoType;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
-public class LEDs extends SubsystemBase {
-  private Spark m_armBlinkin;
-  private Spark m_baseBlinkin;
+public class LED extends SubsystemBase {
+  private Spark blinkin;
 
   /** Creates a new LEDs. */
-  public LEDs() {
-    m_armBlinkin = new Spark(LEDConstants.kArmBlinkinPort);
-    m_baseBlinkin = new Spark(LEDConstants.kBaseBlinkinPort);
+  public LED(int BlinkinPort) {
+    blinkin = new Spark(BlinkinPort);
   }
 
   private void set(double val) {
-    m_armBlinkin.set(val);
-    m_baseBlinkin.set(val);
+    blinkin.set(val);
   }
 
   public void setPurple() {
@@ -40,10 +34,6 @@ public class LEDs extends SubsystemBase {
 
   public void setRed() {
     set(0.61);
-  }
-
-  public Command setColorCargoType(CargoType cargoType) {
-    return cargoType == CargoType.CONE ? new InstantCommand(() -> setYellow()) : new InstantCommand(() -> setPurple());
   }
 
   @Override

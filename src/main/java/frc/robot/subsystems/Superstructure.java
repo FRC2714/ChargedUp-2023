@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.Claw;
@@ -27,6 +28,9 @@ public class Superstructure {
   Arm m_arm;
   Claw m_claw;
   Shooter m_shooter;
+
+  LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
+  LED m_baseLED = new LED(LEDConstants.kBaseBlinkinPort);
 
   ArmStateMachine m_armStateMachine;
   ShooterStateMachine m_shooterStateMachine;
@@ -47,9 +51,8 @@ public class Superstructure {
     CONE, CUBE
   }
 
-  public ScoreMode scoreMode = ScoreMode.ARM;
-  
-  public CargoType cargoType = CargoType.CONE;
+  public ScoreMode scoreMode = ScoreMode.ARM; //default to arm
+  public CargoType cargoType = CargoType.CONE; //default to cone
  
 
   /** Creates a new Superstructure. */
@@ -153,8 +156,12 @@ public class Superstructure {
   }
 
   //Cargo type
-  public Command setCargoTypeCommand(CargoType cargoType) {
-    return new InstantCommand(() -> this.cargoType = cargoType);
+  public Command setCargoTypeCommand(CargoType targetCargoType) {
+    return new InstantCommand(() -> {
+      if(targetCargoType == CargoType.CONE) { m_baseLED.setYellow();} 
+      else { m_baseLED.setPurple();}
+      this.cargoType = targetCargoType;
+    });
   }
 
   public CargoType getCargoType() {
