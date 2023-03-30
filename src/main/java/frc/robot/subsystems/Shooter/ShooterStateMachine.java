@@ -6,7 +6,6 @@ package frc.robot.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -31,38 +30,26 @@ public class ShooterStateMachine {
   }
 
   public Command setShooterStateCommand(ShooterState shooterState) {
-    return new ConditionalCommand(
-        new InstantCommand(),
-        new InstantCommand(),
-        () -> {
-          System.out.println("setting target armstate");
-          setShooterState(shooterState);
-          getShooterCommand(scoreLevel).withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
-          return this.shooterState != shooterState;
+    return new InstantCommand(() -> {
+        System.out.println("setting target armstate");
+        if (this.shooterState != shooterState) {
+          this.shooterState = shooterState;
         }
+        getShooterCommand(scoreLevel).withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
+      }
     );
   }
 
-  public void setShooterState(ShooterState shooterState) {
-    if (this.shooterState != shooterState) {
-      this.shooterState = shooterState;
-    }
-  }
-
   //Score level
-  public InstantCommand setShooterScoreLevelCommand(ShooterScoreLevel scoreLevel) {
-    return new InstantCommand(() -> setShooterScoreLevel(scoreLevel));
-  }
-
-  public void setShooterScoreLevel(ShooterScoreLevel scoreLevel) {
-    this.scoreLevel = scoreLevel;
+  public Command setShooterScoreLevelCommand(ShooterScoreLevel scoreLevel) {
+    return new InstantCommand(() -> this.scoreLevel = scoreLevel);
   }
 
   public ShooterScoreLevel getShooterScoreLevel() {
     return this.scoreLevel;
   }
 
-  public Command toRetract() {
+  private Command toRetract() {
     return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, false),
       m_shooter.stopCommand(),
@@ -70,38 +57,37 @@ public class ShooterStateMachine {
     );
   }
 
-  public Command toHold() {
+  private Command toHold() {
     return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, false),
       m_shooter.pivotToHold()
     );
   }
 
-  public Command toFront(Command ScoreLevelPivotComand) {
+  private Command toFront(Command ScoreLevelPivotComand) {
     return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, false),
       ScoreLevelPivotComand
     );
   }
 
-  private Command nothingCommand() {
-    return new InstantCommand();
-  }
-
-  public Command getShooterCommand(ShooterScoreLevel shooterScorelevel) {
+  private Command getShooterCommand(ShooterScoreLevel shooterScorelevel) {
     System.out.println("get shooter command");
     switch(shooterState) { //TODO UPDATE THIS VARIABLE
       case RETRACT: return toRetract();
       case HOLD: return toHold();
       case BACK: return m_shooter.setDynamicEnabledCommand(true, true);
-      case FRONT: 
-        switch(shooterScorelevel) {
-          case INTAKE: return toFront(m_shooter.intakeSequence());
-          case OUTTAKE: return toFront(m_shooter.outtakeSequence());
-          case DYNAMIC: return m_shooter.setDynamicEnabledCommand(true, false);
-        };
+      case FRONT: switch(shooterScorelevel) {
+        case INTAKE: return toFront(m_shooter.intakeSequence());
+        case OUTTAKE: return toFront(m_shooter.outtakeSequence());
+        case DYNAMIC: return m_shooter.setDynamicEnabledCommand(true, false);
+      };
     }
-    return nothingCommand();
+    return new InstantCommand();
+  }
+
+  public void checkCube() {
+    if (m_shooter.isCubeDetected()) {setShooterStateCommand(ShooterState.HOLD);}
   }
       
   public void updateTelemetry() {

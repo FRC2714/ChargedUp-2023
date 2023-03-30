@@ -47,11 +47,11 @@ public class Shooter extends SubsystemBase {
 
   private ArmFeedforward pivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
 
-  public enum ShooterState {
+  public enum IntakeState {
     INTAKING, OUTTAKING, STOPPED
   }
 
-  private static ShooterState shooterState = ShooterState.STOPPED;
+  private static IntakeState shooterState = IntakeState.STOPPED;
 
   private Timer shooterRunningTimer = new Timer();
 
@@ -205,10 +205,10 @@ public class Shooter extends SubsystemBase {
     setTargetVelocity(100);
     //topFlywheelMotor.set(0.4);
     kickerMotor.setVoltage(ShooterConstants.kIntakeMotorSpeed*ShooterConstants.kNominalVoltage);
-    if (shooterState != ShooterState.INTAKING) {
+    if (shooterState != IntakeState.INTAKING) {
       shooterRunningTimer.reset();
       shooterRunningTimer.start();
-      shooterState = ShooterState.INTAKING;
+      shooterState = IntakeState.INTAKING;
     }
   }
 
@@ -216,10 +216,10 @@ public class Shooter extends SubsystemBase {
     setTargetVelocity(-100);
     //topFlywheelMotor.set(-0.4);
     kickerMotor.setVoltage(-power*ShooterConstants.kNominalVoltage);
-    if (shooterState != ShooterState.OUTTAKING) {
+    if (shooterState != IntakeState.OUTTAKING) {
       shooterRunningTimer.reset();
       shooterRunningTimer.start();
-      shooterState = ShooterState.OUTTAKING;
+      shooterState = IntakeState.OUTTAKING;
     }
   }
 
@@ -244,9 +244,7 @@ public class Shooter extends SubsystemBase {
 
   public Command pivotToIntake() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> {
-        setTargetPivot(ShooterConstants.kPivotIntakeAngleDegrees);
-      }),
+      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotIntakeAngleDegrees)),
       new WaitUntilCommand(() -> atPivotSetpoint()));
   }
 
@@ -290,7 +288,7 @@ public class Shooter extends SubsystemBase {
   public boolean isCurrentSpikeDetected() {
     return (shooterRunningTimer.get() > 0.15) && //excludes current spike when motor first starts
       (kickerMotor.getOutputCurrent() > 25) && //cube intake current threshold
-      (shooterState == ShooterState.INTAKING);
+      (shooterState == IntakeState.INTAKING);
   }
 
   public boolean isCubeDetected() {

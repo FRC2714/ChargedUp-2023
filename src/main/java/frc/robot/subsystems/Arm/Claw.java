@@ -35,10 +35,6 @@ public class Claw extends SubsystemBase {
     clawMotor.setVoltage(ClawConstants.kIntakeMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
-  public void outtake() {
-    clawMotor.setVoltage(ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
-  }
-
   public void shoot() {
     clawMotor.setVoltage(ClawConstants.kShootMotorSpeed*ClawConstants.kNominalVoltage);
   }
@@ -63,45 +59,39 @@ public class Claw extends SubsystemBase {
     return clawSolenoid.get() == Value.kForward;
   }
 
-  public void intakeAndToggle() {
-    toggle();
-    intake();
+  public Command intakeAndToggleCommand() {
+    return new InstantCommand(() -> {
+      toggle();
+      intake();
+    });
   }
 
-  public void intakeClose() {
-    close();
-    intake();
+  public Command intakeCube() {
+    return new InstantCommand(() -> {
+      open();
+      intake();
+    });
   }
 
-  public void intakeOpen() {
-    open();
-    intake();
-  }
-
-  public Command intakeOpenCommand() {
-    return new InstantCommand(() -> intakeOpen());
-  }
-
-  public Command intakeCloseCommand() {
-    return new InstantCommand(() -> intakeClose());
-  }
-
-  public Command stopOpen() {
-    return (
-      new InstantCommand(() -> stop())).andThen(
-      new InstantCommand(() -> open()));
+  public Command intakeCone() {
+    return new InstantCommand(() -> {
+      close();
+      intake();
+    });
   }
 
   public Command scoreCone() {
-    return (
-      new InstantCommand(() -> stop())).andThen(
-      new InstantCommand(() -> open()));
+    return new InstantCommand(() -> {
+      stop();
+      open();
+    });
   }
 
   public Command scoreCube() {
-    return 
-      new InstantCommand(() -> shoot()).andThen(
-      new InstantCommand(() -> open())); 
+    return new InstantCommand(() -> {
+      shoot();
+      open();
+    });
   }
 
   @Override

@@ -134,7 +134,7 @@ public class RobotContainer {
 		//hold to score on left bumper
 		m_driverController.leftBumper()
 			.onTrue(new ScoreCommand(m_superstructure, m_claw))
-			.onFalse(m_claw.stopOpen());
+			.onFalse(m_claw.scoreCone());
 
 		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
@@ -159,7 +159,7 @@ public class RobotContainer {
 
 		//toggle claw intake on X
 		m_driverController.x()
-			.onTrue(Commands.runOnce(m_claw::intakeAndToggle, m_claw));
+			.onTrue(m_claw.intakeAndToggleCommand());
 
 		//reset gyro on left
 		m_driverController.back()

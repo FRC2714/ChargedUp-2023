@@ -59,7 +59,7 @@ public class Superstructure {
 	  m_shooterStateMachine = new ShooterStateMachine(m_shooter);
   }
 
-  public Command armToShooter() {
+  private Command armToShooter() {
     return new SequentialCommandGroup(
       setSubsystemState(ControllerInput.UP),
       new WaitUntilCommand(() -> m_arm.isJointsAtGoal()),
@@ -67,7 +67,7 @@ public class Superstructure {
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
-  public Command shooterToArm() {
+  private Command shooterToArm() {
     return new SequentialCommandGroup(
       setSubsystemState(ControllerInput.DOWN),
       new WaitUntilCommand(() -> m_shooter.atPivotSetpoint()),
@@ -150,7 +150,7 @@ public class Superstructure {
   }
 
   //Cargo type
-  public InstantCommand setCargoTypeCommand(CargoType cargoType) {
+  public Command setCargoTypeCommand(CargoType cargoType) {
     return new InstantCommand(() -> this.cargoType = cargoType);
   }
 
@@ -159,6 +159,8 @@ public class Superstructure {
   }
 
   public void updateTelemetry() {
+    m_shooterStateMachine.checkCube();
+
     SmartDashboard.putString("Score Mode", scoreMode.toString());
     SmartDashboard.putString("Cargo Type", cargoType.toString());
 
