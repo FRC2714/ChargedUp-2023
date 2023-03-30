@@ -47,25 +47,14 @@ public class ArmStateMachine {
     return this.armScoreLevel;
   }
 
-  public void setTargetArmState(ArmState targetArmState, ArmScoreLevel armScoreLevel, CargoType cargoType) {
-    currentArmState = this.targetArmState;
-    this.targetArmState = targetArmState;
-  }
-
   public Command setTargetArmStateCommand(ArmState targetArmState, CargoType cargoType) {
-    System.out.println("creating set target arm state command");
-    return new SequentialCommandGroup(
-      // new InstantCommand(() -> setTargetArmState(targetArmState, armScoreLevel, cargoType)),
-      new ConditionalCommand(
-        getArmCommand(armScoreLevel, cargoType).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
-        new InstantCommand(),
-        () -> {
-          System.out.println("setting target armstate");
-          setTargetArmState(targetArmState, armScoreLevel, cargoType);
-          return this.targetArmState != targetArmState || targetArmState != ArmState.STOW;
-        }
-      )
-    );
+    return new InstantCommand(() -> {
+      if (this.targetArmState != targetArmState || targetArmState != ArmState.STOW) {
+        currentArmState = this.targetArmState;
+        this.targetArmState = targetArmState;
+        getArmCommand(armScoreLevel, cargoType).withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
+      }
+    });
   }
 
   private Command nothingCommand() {

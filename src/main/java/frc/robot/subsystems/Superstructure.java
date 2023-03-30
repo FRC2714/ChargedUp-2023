@@ -8,9 +8,11 @@ import java.util.Map;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmScoreLevel;
@@ -56,31 +58,34 @@ public class Superstructure {
 
   public Command armToShooter() {
     return new SequentialCommandGroup(
-      m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, cargoType),
-      new WaitUntilCommand(3),
+      setSubsystemState(ControllerInput.UP),
+      new WaitUntilCommand(2),
       
-      m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD),
+      setScoreModeCommand(ScoreMode.SHOOTER),
       new InstantCommand(() -> m_shooter.setShooterEnabled(true))
-    );
+    ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
   public Command shooterToArm() {
     return new SequentialCommandGroup(
-      m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT),
+      setSubsystemState(ControllerInput.DOWN),
       new WaitUntilCommand(() -> m_shooter.atPivotSetpoint()),
       new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
 
-      m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, cargoType)
+      setScoreModeCommand(ScoreMode.ARM)
     );
   }
 
   //Score mode
-  public InstantCommand setScoreModeCommand(ScoreMode scoreMode) {
-    return new InstantCommand(() -> setScoreMode(scoreMode));
-  }
-
-  public void setScoreMode(ScoreMode scoreMode) {
-    this.scoreMode = scoreMode;
+  public Command setScoreModeCommand(ScoreMode targetScoreMode) {
+    return new SelectCommand(
+      Map.ofEntries(
+        Map.entry(ScoreMode.ARM, shooterToArm()),
+        Map.entry(ScoreMode.SHOOTER, armToShooter())),
+      () -> {
+        this.scoreMode = targetScoreMode;
+        return scoreMode;
+      });
   }
 
   public ScoreMode getScoreMode() {
@@ -141,11 +146,7 @@ public class Superstructure {
 
   //Cargo type
   public InstantCommand setCargoTypeCommand(CargoType cargoType) {
-    return new InstantCommand(() -> setCargoType(cargoType));
-  }
-
-  public void setCargoType(CargoType cargoType) {
-    this.cargoType = cargoType;
+    return new InstantCommand(() -> this.cargoType = cargoType);
   }
 
   public CargoType getCargoType() {

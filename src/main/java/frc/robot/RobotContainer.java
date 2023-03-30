@@ -138,16 +138,16 @@ public class RobotContainer {
 			.onFalse(m_claw.stopOpen());
 
 		//intake on right trigger while held 
-		// new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
-		// 	.onTrue(m_shooter.intakeSequence())
-		// 	.onFalse(m_shooter.pivotToHold());
+		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
+			.onTrue(m_shooter.intakeSequence())
+			.onFalse(m_shooter.pivotToHold());
 
 		//TODO make seperate intake command
 
-		// //outtake on left trigger while held
-		// new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
-		// 	.whileTrue(m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER))
-		// 	.whileFalse(m_shooter.holdAndStop());
+		//outtake on left trigger while held
+		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
+			.whileTrue(m_shooter.outtakeSequence())
+			.whileFalse(m_shooter.pivotToHold().alongWith(m_shooter.stopCommand()));
 
 		// //shoot on b
 		// m_driverController.b()

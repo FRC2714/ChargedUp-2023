@@ -6,8 +6,10 @@ package frc.robot.subsystems.Shooter;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 
 public class ShooterStateMachine {
   Shooter m_shooter;
@@ -29,13 +31,21 @@ public class ShooterStateMachine {
   }
 
   public Command setShooterStateCommand(ShooterState shooterState) {
-    return new InstantCommand(() -> setShooterState(shooterState));
+    return new ConditionalCommand(
+        new InstantCommand(),
+        new InstantCommand(),
+        () -> {
+          System.out.println("setting target armstate");
+          setShooterState(shooterState);
+          getShooterCommand(scoreLevel).withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
+          return this.shooterState != shooterState;
+        }
+    );
   }
 
   public void setShooterState(ShooterState shooterState) {
     if (this.shooterState != shooterState) {
       this.shooterState = shooterState;
-      getShooterCommand(scoreLevel).schedule();
     }
   }
 
@@ -79,6 +89,7 @@ public class ShooterStateMachine {
   }
 
   public Command getShooterCommand(ShooterScoreLevel shooterScorelevel) {
+    System.out.println("get shooter command");
     switch(shooterState) { //TODO UPDATE THIS VARIABLE
       case RETRACT: return toRetract();
       case HOLD: return toHold();

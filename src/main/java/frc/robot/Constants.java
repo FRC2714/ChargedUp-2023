@@ -189,14 +189,14 @@ public final class Constants {
     public static final double kNominalVoltage = 12.8;
 
     //Kicker motor speeds
-    public static final double kIntakeMotorSpeed = 0.85;
+    public static final double kIntakeMotorSpeed = 0.5;
     public static final double kOuttakeMotorSpeed = 0.7;
     public static final double kShootMotorSpeed = 1.0;
 
     //Preset Angles
     public static final double kPivotIntakeAngleDegrees = 120;
     public static final double kPivotHoldAngleDegrees = -30;
-    public static final double kPivotRetractAngleDegrees = -90;
+    public static final double kPivotRetractAngleDegrees = -100;
     public static final double kPivotShootAngleDegrees = 45;
     public static final double kPivotOuttakeAngleDegrees = 90;
   }

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -44,7 +45,7 @@ public class Shooter extends SubsystemBase {
   private PIDController pivotController = new PIDController(0, 0, 0);
   private PIDController flywheelController = new PIDController(0.5, 0, 0);
 
-  //private ArmFeedforward pivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
+  private ArmFeedforward pivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
 
   public enum ShooterState {
     INTAKING, OUTTAKING, STOPPED
@@ -54,7 +55,7 @@ public class Shooter extends SubsystemBase {
 
   private Timer shooterRunningTimer = new Timer();
 
-  private boolean isShooterEnabled = false;
+  private boolean isShooterEnabled = true;
   private boolean isDynamicEnabled = false;
   
 
@@ -65,7 +66,7 @@ public class Shooter extends SubsystemBase {
     kickerMotor = new CANSparkMax(ShooterConstants.kKickerMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     pivotMotor = new CANSparkMax(ShooterConstants.kPivotMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     kickerMotor.setInverted(true);
-    pivotMotor.setInverted(false);
+    pivotMotor.setInverted(true);
 
     kickerMotor.setIdleMode(IdleMode.kBrake);
     pivotMotor.setIdleMode(IdleMode.kBrake);
@@ -77,8 +78,8 @@ public class Shooter extends SubsystemBase {
 
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(ShooterConstants.kPivotPositionConversionFactor);
-    pivotEncoder.setInverted(true);
-    pivotEncoder.setZeroOffset(200);
+    pivotEncoder.setInverted(false);
+    pivotEncoder.setZeroOffset(230);
 
     topFlywheelMotor = new CANSparkMax(ShooterConstants.kTopFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor = new CANSparkMax(ShooterConstants.kBottomFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -129,11 +130,11 @@ public class Shooter extends SubsystemBase {
 
   //PIVOT
   public double getPivotAngleRadians() {
-    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(37 + 86);
+    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(142);
   }
 
   public void setTargetPivot(double targetAngleDegrees) {
-    if (pivotController.getP() == 0) { pivotController.setP(0.2);} //prevent jumping on enable
+    if (pivotController.getP() == 0) { pivotController.setP(2.5);} //prevent jumping on enable 2.5
     pivotController.setSetpoint(Units.degreesToRadians(targetAngleDegrees));
   }
 
@@ -147,7 +148,9 @@ public class Shooter extends SubsystemBase {
 
   public void setCalculatedPivotVoltage() {
     if (isShooterEnabled) {
-      pivotMotor.setVoltage((pivotController.calculate(getPivotAngleRadians() * ShooterConstants.kNominalVoltage)));
+      pivotMotor.setVoltage(
+        pivotController.calculate(getPivotAngleRadians())
+        + pivotFeedforward.calculate(pivotController.getSetpoint(), 0));
     } else {
       pivotMotor.setVoltage(0);
     }
@@ -273,7 +276,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command intakeSequence() {
-    return new SequentialCommandGroup(
+    return new ParallelCommandGroup(
       intakeCommand(),
       pivotToIntake());
   }

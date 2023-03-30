@@ -71,7 +71,9 @@ public class Elbow extends SubsystemBase {
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Elbow Target Angle", Units.radiansToDegrees(targetAngleRadians));
     if(ElbowController.getP() == 0) {ElbowController.setP(7);}
-    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(30)) ? CloseConstraints : FarConstraints;
+    Constraints selectedConstraint = 
+      (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(30)) ? 
+      CloseConstraints : FarConstraints;
     ElbowController.setConstraints(selectedConstraint);
     SmartDashboard.putString("Elbow Selected Constraint", selectedConstraint.equals(FarConstraints) ? "FAR" : "CLOSE");
 
