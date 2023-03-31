@@ -64,6 +64,10 @@ public class ShooterStateMachine {
     );
   }
 
+  private Command toBack() {
+    return m_shooter.setDynamicEnabledCommand(true, true);
+  }
+
   private Command toFront(Command ScoreLevelPivotComand) {
     return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, false),
@@ -76,7 +80,7 @@ public class ShooterStateMachine {
     switch(shooterState) { //TODO UPDATE THIS VARIABLE
       case RETRACT: return toRetract();
       case HOLD: return toHold();
-      case BACK: return m_shooter.setDynamicEnabledCommand(true, true);
+      case BACK: return toBack();
       case FRONT: switch(shooterScorelevel) {
         case INTAKE: return toFront(m_shooter.intakeSequence());
         case OUTTAKE: return toFront(m_shooter.outtakeSequence());

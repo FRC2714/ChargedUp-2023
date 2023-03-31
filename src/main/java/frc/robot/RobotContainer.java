@@ -16,7 +16,6 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -29,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToNode;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
@@ -95,7 +93,8 @@ public class RobotContainer {
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
 			m_superstructure.setSubsystemState(DPAD.DOWN),
 			m_backLimelight.setLEDCommand(false),
-			m_frontLimelight.setLEDCommand(false)
+			m_frontLimelight.setLEDCommand(false),
+			new InstantCommand(() -> m_claw.open())
 		).schedule();
 		}
 
@@ -142,14 +141,9 @@ public class RobotContainer {
 			.whileTrue(m_superstructure.outtakeLeftTrigger())
 			.whileFalse(m_superstructure.setSubsystemState(DPAD.UP).alongWith(m_shooter.stopCommand()));
 
-		// //shoot on b
-		// m_driverController.b()
-		// 	.onTrue(m_shooter.shootSequence())
-		// 	.onFalse(m_shooter.holdAndStop());
-
-		//turn to 180 on y
-		// m_driverController.y()
-		// 	.onTrue(new TurnToAngle(m_robotDrive, 180));
+		//release cube on y
+		m_driverController.y()
+			.onTrue(m_shooter.kick());
 
 		//toggle claw intake on X
 		m_driverController.x()
@@ -160,7 +154,7 @@ public class RobotContainer {
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
 		//align to hp on up
-		m_driverController.povUp()
+		m_driverController.povRight()
 			.whileTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
@@ -185,8 +179,6 @@ public class RobotContainer {
 		// BACK on right
 		m_operatorController.povRight()
 			.onTrue(m_superstructure.setSubsystemState(DPAD.RIGHT));
-	
-		
 
 		// level 3 on Y
 		m_operatorController.y()

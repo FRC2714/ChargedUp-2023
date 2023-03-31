@@ -146,6 +146,10 @@ public final class Constants {
     public static final HashMap<String, Command> EventMap = new HashMap<>();
   }
 
+  public static final class GlobalConstants {
+    public static final boolean tuningMode = false;
+  }
+
   public static final class InfrastructureConstants {
     public static final int kPowerDistributionHubCanId = 1;
     
