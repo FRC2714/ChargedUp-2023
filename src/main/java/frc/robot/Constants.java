@@ -146,7 +146,13 @@ public final class Constants {
     public static final HashMap<String, Command> EventMap = new HashMap<>();
   }
 
-  public static final class PneumaticsConstants {
+  public static final class GlobalConstants {
+    public static final boolean tuningMode = false;
+  }
+
+  public static final class InfrastructureConstants {
+    public static final int kPowerDistributionHubCanId = 1;
+    
     public static final int kPneumaticHubCanId = 1;
     public static final double kCompressorMinPressure = 90;
     public static final double kCompressorMaxPressure = 120;
@@ -160,29 +166,48 @@ public final class Constants {
 
     public static final int kClawMotorCurrentLimit = 10; //amps 
 
-    public static final double kNominalVoltage = 10.5;
+    public static final double kNominalVoltage = 11;
 
     public static final double kIntakeMotorSpeed = 1;
     public static final double kOuttakeMotorSpeed = -0.1;
     public static final double kShootMotorSpeed = -0.4;
   }
 
-  public static final class IntakeConstants {
-    public static final int kIntakeMotorCanId = 13;
+  public static final class ShooterConstants {
+    //Spark IDs
+    public static final int kKickerMotorCanId = 13;
     public static final int kPivotMotorCanId = 15;
 
-    public static final int kIntakeMotorCurrentLimit = 30;
+    public static final int kTopFlywheelMotorCanId = 16;
+    public static final int kBottomFlywheelMotorCanId = 17;
+
+    public static final double kPivotGearRatio = 50;
+    public static final double kPivotPositionConversionFactor = (2*Math.PI) * kPivotGearRatio;
+
+    //Current Limits
+    public static final int kKickerMotorCurrentLimit = 30;
     public static final int kPivotMotorCurrentLimit = 30;
+    public static final int kTopFlywheelMotorCurrentLimit = 30;
+    public static final int kBottomFlywheelMotorCurrentLimit = 30;
 
     public static final double kNominalVoltage = 12.8;
-    public static final double kIntakeMotorSpeed = 0.85;
+
+    //Kicker motor speeds
+    public static final double kIntakeMotorSpeed = 0.5;
     public static final double kOuttakeMotorSpeed = 0.7;
     public static final double kShootMotorSpeed = 1.0;
+
+    //Preset Angles
+    public static final double kPivotIntakeAngleDegrees = 116.5;
+    public static final double kPivotHoldAngleDegrees = -40;
+    public static final double kPivotRetractAngleDegrees = -100;
+    public static final double kPivotShootAngleDegrees = 45;
+    public static final double kPivotOuttakeAngleDegrees = 90;
   }
 
   public static final class LEDConstants {
-    public static final int kBlinkinPort = 0;
-    public static final int kBlinkin2Port = 1;
+    public static final int kArmBlinkinPort = 0;
+    public static final int kBaseBlinkinPort = 1;
 
     public static final double kPurpleWave = 0.29;
     public static final double kYellowWave = 0.09;
@@ -226,7 +251,7 @@ public final class Constants {
     public static final double kShoulderEncoderZeroOffset = 313.4707425;
     public static final double kElbowEncoderZeroOffset = 41.4360188;
     public static final double kShoulderKinematicOffset = 162; //difference from kinematic 0 to sparkmax 0 approx 45 deg
-    public static final double kElbowKinematicOffset = 637; //difference from kinematic 0 to sparkmax 0 approx 160 deg
+    public static final double kElbowKinematicOffset = 762.0; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
     public static final boolean kShoulderMotorInverted = true; //base joint encoder inverted
     public static final boolean kShoulderEncoderInverted = true; //base joint motor inverted
@@ -235,25 +260,13 @@ public final class Constants {
     public static final boolean kElbowEncoderInverted = true; //second joint motor and encoder are NOT inverted
 
     //Controller Constants
-    public static final double kShoulderMaxVelocity = 5000;
-    public static final double kShoulderMaxAcceleration = 4000;
-    public static final double kShoulderTolerance = 6;
-    public static final double kShoulderFF = 0.00007;
-    public static final double kShoulderP = 0.00000;
-    public static final double kShoulderI = 0;
-    public static final double kShoulderD = 0.0000;
+    public static final double kShoulderP = 8;
 
-    public static final double kElbowMaxVelocity = 5500;
-    public static final double kElbowMaxAcceleration = 4000;
-    public static final double kElbowTolerance = 6;
-    public static final double kElbowFF = 0.00008;
-    public static final double kElbowP = 0.00006;
-    public static final double kElbowI = 0.0;
-    public static final double kElbowD = 0.00012;
+    public static final double kElbowP = 7;
 
     //Current Limits
     public static final int kShoulderMotorCurrentLimit = 40; //amps
-    public static final int kElbowMotorCurrentLimit = 15; //amps PREVENT ENDCAP ROUNDOUT
+    public static final int kElbowMotorCurrentLimit = 30; //amps
 
     //Back to back transition
     public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
@@ -311,13 +324,10 @@ public final class Constants {
 
     //Stow position 
     public static final ArmForwardKinematicPosition kStowPosition = 
-      new ArmForwardKinematicPosition(120, -65);
+      new ArmForwardKinematicPosition(126, -58); //123, -63
 
     //Transfer position
-    public static final ArmForwardKinematicPosition kTransferConeIntakePosition = 
-      new ArmForwardKinematicPosition(82,135);
-    //Transfer position
-    public static final ArmForwardKinematicPosition kTransferCubeIntakePosition = 
+    public static final ArmForwardKinematicPosition kTransferPosition = 
       new ArmForwardKinematicPosition(82,135);
 
     //Back Cone Score positions

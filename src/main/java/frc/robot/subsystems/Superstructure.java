@@ -1,0 +1,228 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import java.util.Map;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.robot.Constants.LEDConstants;
+import frc.robot.subsystems.Arm.Arm;
+import frc.robot.subsystems.Arm.ArmStateMachine;
+import frc.robot.subsystems.Arm.Claw;
+import frc.robot.subsystems.Arm.ArmStateMachine.ArmScoreLevel;
+import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
+import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Shooter.ShooterStateMachine;
+import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
+import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterState;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
+
+public class Superstructure {
+  Arm m_arm;
+  Claw m_claw;
+  Shooter m_shooter;
+
+  LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
+  LED m_baseLED = new LED(LEDConstants.kBaseBlinkinPort);
+
+  ArmStateMachine m_armStateMachine;
+  ShooterStateMachine m_shooterStateMachine;
+  
+  public enum ScoreMode {
+    ARM, SHOOTER
+  }
+
+  public enum ScoreModeAction {
+    TO_ARM, TO_SHOOTER, DO_NOTHING
+  }
+
+  public enum DPAD {
+    UP, DOWN, LEFT, RIGHT
+  }
+
+  public enum BUTTON {
+    Y, A, X, B
+  }
+
+  public enum CargoType {
+    CONE, CUBE
+  }
+
+  public ScoreMode scoreMode = ScoreMode.ARM; //default to arm
+  public CargoType cargoType = CargoType.CONE; //default to cone
+
+  /** Creates a new Superstructure. */
+  public Superstructure(Arm m_arm, Claw m_claw, Shooter m_shooter) {
+    this.m_arm = m_arm;
+    this.m_claw = m_claw;
+    this.m_shooter = m_shooter;
+
+    m_armStateMachine = new ArmStateMachine(m_arm);
+	  m_shooterStateMachine = new ShooterStateMachine(m_shooter);
+  }
+
+  private Command armToShooter() {
+    return new SequentialCommandGroup(
+      setSubsystemState(DPAD.UP),
+      new WaitUntilCommand(() -> m_arm.isShoulderAtGoal()),
+      new InstantCommand(() -> this.scoreMode = ScoreMode.SHOOTER),
+      new InstantCommand(() -> m_shooter.setShooterEnabled(true))
+    ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+  }
+
+  private Command shooterToArm() {
+    return new SequentialCommandGroup(
+      setSubsystemState(DPAD.DOWN),
+      new WaitUntilCommand(() -> m_shooter.atPivotSetpoint()),
+      new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
+      new InstantCommand(() -> this.scoreMode = ScoreMode.ARM)
+    ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+  }
+
+  //Score mode
+  public Command setScoreModeCommand(ScoreMode targetScoreMode) {
+    return new SelectCommand(
+      Map.ofEntries(
+        Map.entry(ScoreModeAction.TO_ARM, shooterToArm()),
+        Map.entry(ScoreModeAction.TO_SHOOTER, armToShooter()),
+        Map.entry(ScoreModeAction.DO_NOTHING, new InstantCommand())),
+      () -> {
+        if(getScoreMode() == targetScoreMode) {
+          return ScoreModeAction.DO_NOTHING;
+        } 
+        return targetScoreMode == ScoreMode.ARM ? ScoreModeAction.TO_ARM : ScoreModeAction.TO_SHOOTER;
+      }
+    );
+  }
+
+  public ScoreMode getScoreMode() {
+    return this.scoreMode;
+  }
+
+  //Subsystem State
+  public Command setSubsystemState(DPAD dPadInput) {
+    final SelectCommand armSelectCommand = new SelectCommand(
+      Map.ofEntries(
+        Map.entry(DPAD.UP, m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, cargoType)),
+        Map.entry(DPAD.DOWN, m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER, cargoType)),
+        Map.entry(DPAD.LEFT, m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT, cargoType)),
+        Map.entry(DPAD.RIGHT, m_armStateMachine.setTargetArmStateCommand(ArmState.BACK, cargoType))), 
+      () -> dPadInput);
+
+    final SelectCommand shooterSelectCommand = new SelectCommand(
+      Map.ofEntries(
+        Map.entry(DPAD.UP, m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD)),
+        Map.entry(DPAD.DOWN, m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT)),
+        Map.entry(DPAD.LEFT, m_shooterStateMachine.setShooterStateCommand(ShooterState.FRONT)),
+        Map.entry(DPAD.RIGHT, m_shooterStateMachine.setShooterStateCommand(ShooterState.BACK))),
+      () -> dPadInput); 
+    
+    return new SelectCommand(
+      Map.ofEntries(
+        Map.entry(ScoreMode.ARM, armSelectCommand),
+        Map.entry(ScoreMode.SHOOTER, shooterSelectCommand)), 
+      () -> getScoreMode());
+  }
+
+  //Score Level
+  public Command setScoreLevelCommand(BUTTON buttonInput) {
+    final SelectCommand armSelectCommand = new SelectCommand(
+        Map.ofEntries(
+          Map.entry(BUTTON.Y, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.THREE)),
+          Map.entry(BUTTON.B, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.TWO)),
+          Map.entry(BUTTON.A, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.INTAKE)),
+          Map.entry(BUTTON.X, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.ONE))
+          ), 
+        () -> buttonInput);
+
+    final SelectCommand shooterSelectCommand = new SelectCommand(
+      Map.ofEntries(
+        Map.entry(BUTTON.Y, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.DYNAMIC)),
+        Map.entry(BUTTON.B, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.OUTTAKE)),
+        Map.entry(BUTTON.A, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.INTAKE)),
+        Map.entry(BUTTON.X, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.DYNAMIC))
+        ),
+      () -> buttonInput);
+
+    return new SelectCommand(
+      Map.ofEntries(
+        Map.entry(ScoreMode.ARM, armSelectCommand),
+        Map.entry(ScoreMode.SHOOTER, shooterSelectCommand)), 
+      () -> getScoreMode());
+  }
+
+  //Cargo type
+  public Command setCargoTypeCommand(CargoType targetCargoType) {
+    return new InstantCommand(() -> {
+      if(targetCargoType == CargoType.CONE) { m_baseLED.setYellow();} 
+      else { m_baseLED.setPurple();}
+      this.cargoType = targetCargoType;
+    });
+  }
+
+  public CargoType getCargoType() {
+    return this.cargoType;
+  }
+
+  //Score Command
+  public Command ScoreCommand() {
+    final SelectCommand armScore = new SelectCommand(
+        Map.ofEntries(
+          Map.entry(CargoType.CONE, m_claw.scoreCone()),
+          Map.entry(CargoType.CUBE, m_claw.scoreCube())
+        ), 
+        () -> getCargoType()
+    );
+
+    return new SelectCommand(
+      Map.ofEntries(
+        Map.entry(ScoreMode.ARM, armScore),
+        Map.entry(ScoreMode.SHOOTER, m_shooter.kick())
+      ), 
+      () -> getScoreMode()
+    );
+  }
+
+
+  //INTAKE BINDINGS
+  public Command intakeRightTrigger() {
+    return new ConditionalCommand(
+      new InstantCommand(), 
+      new SequentialCommandGroup(
+        setScoreLevelCommand(BUTTON.A),
+        setSubsystemState(DPAD.LEFT)), 
+      () -> getScoreMode() != ScoreMode.SHOOTER
+    );
+  }
+
+  public Command outtakeLeftTrigger() {
+    return new ConditionalCommand(
+      new InstantCommand(), 
+      new SequentialCommandGroup(
+        setScoreLevelCommand(BUTTON.B),
+        setSubsystemState(DPAD.LEFT)), 
+      () -> getScoreMode() != ScoreMode.SHOOTER
+    );
+  }
+
+  public void updateTelemetry() {
+    if(m_shooter.isCubeDetected() && scoreMode == ScoreMode.SHOOTER) {
+      setSubsystemState(DPAD.UP).schedule();
+    }
+
+    SmartDashboard.putString("Score Mode", scoreMode.toString());
+    SmartDashboard.putString("Cargo Type", cargoType.toString());
+
+    m_arm.updateTelemetry();
+    m_armStateMachine.updateTelemetry();
+    m_shooterStateMachine.updateTelemetry();
+  }
+}

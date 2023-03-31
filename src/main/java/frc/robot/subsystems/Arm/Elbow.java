@@ -9,16 +9,15 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMax.SoftLimitDirection;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-import frc.utils.controller.AsymmetricProfiledPIDController;
-import frc.utils.controller.AsymmetricTrapezoidProfile.Constraints;
-import frc.utils.controller.AsymmetricTrapezoidProfile.State;
+import frc.robot.utils.controller.AsymmetricProfiledPIDController;
+import frc.robot.utils.controller.AsymmetricTrapezoidProfile.Constraints;
+import frc.robot.utils.controller.AsymmetricTrapezoidProfile.State;
 
 public class Elbow extends SubsystemBase {
   private CANSparkMax ElbowMotor;
@@ -59,7 +58,7 @@ public class Elbow extends SubsystemBase {
   private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
     double kinematicAngle = sparkAngle;
 
-    kinematicAngle -= 762.0; //subtract kinematic offset 762.0
+    kinematicAngle -= ArmConstants.kElbowKinematicOffset; //subtract kinematic offset 762.0
     kinematicAngle /= ArmConstants.kElbowGearRatio; //divide by gear ratio
 
     return kinematicAngle;
@@ -71,8 +70,10 @@ public class Elbow extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Elbow Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    if(ElbowController.getP() == 0) {ElbowController.setP(7);}
-    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(30)) ? CloseConstraints : FarConstraints;
+    if(ElbowController.getP() == 0) {ElbowController.setP(ArmConstants.kElbowP);}
+    Constraints selectedConstraint = 
+      (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(45)) ? 
+      CloseConstraints : FarConstraints;
     ElbowController.setConstraints(selectedConstraint);
     SmartDashboard.putString("Elbow Selected Constraint", selectedConstraint.equals(FarConstraints) ? "FAR" : "CLOSE");
 
@@ -83,7 +84,7 @@ public class Elbow extends SubsystemBase {
     return Math.abs(getKinematicAngle() - ElbowController.getGoal().position) < Units.degreesToRadians(8);
   }
 
-  public boolean atSetpoint() {
+  public boolean atGoal() {
     return ElbowController.atGoal();
   }
 

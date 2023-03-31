@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,9 +38,9 @@ public class Robot extends TimedRobot {
     // autoChooser.addOption("Test Auto", m_robotContainer.getTestAuto());
     // autoChooser.addOption("Complex Path", m_robotContainer.getComplexAuto());
 
-    autoChooser.addOption("1 Cube Balance Middle", m_robotContainer.getOneCubeBalanceMiddleAuto());
-    autoChooser.addOption("1 Cone Balance Middle", m_robotContainer.getOneConeBalanceMiddleAuto());
-    autoChooser.addOption("2 Cargo Open", m_robotContainer.getTwoCargoOpenAuto());
+    // autoChooser.addOption("1 Cube Balance Middle", m_robotContainer.getOneCubeBalanceMiddleAuto());
+    // autoChooser.addOption("1 Cone Balance Middle", m_robotContainer.getOneConeBalanceMiddleAuto());
+    // autoChooser.addOption("2 Cargo Open", m_robotContainer.getTwoCargoOpenAuto());
 
     SmartDashboard.putData("Auton Selection", autoChooser);
 
@@ -70,6 +68,8 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    m_robotContainer.updateTelemetry();
+    SmartDashboard.putData(CommandScheduler.getInstance());
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -105,6 +105,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

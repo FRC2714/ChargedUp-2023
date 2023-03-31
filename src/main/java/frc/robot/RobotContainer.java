@@ -16,11 +16,11 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -28,24 +28,20 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.ScoreCommand;
-import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToNode;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
-import frc.robot.commands.auto.MIDDLE.*;
-import frc.robot.commands.auto.OPEN.*;
-import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Infrastructure;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.Arm;
-import frc.robot.subsystems.Arm.ArmStateMachine;
-import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
-import frc.robot.subsystems.Arm.ArmStateMachine.ScoreLevel;
-import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
+import frc.robot.subsystems.Arm.Claw;
+import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Superstructure.BUTTON;
+import frc.robot.subsystems.Superstructure.CargoType;
+import frc.robot.subsystems.Superstructure.DPAD;
+import frc.robot.subsystems.Superstructure.ScoreMode;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -61,11 +57,10 @@ public class RobotContainer {
 	private final Limelight m_backLimelight = new Limelight("limelight-back");
 	private final Limelight m_frontLimelight = new Limelight("limelight-front");
 	private final Arm m_arm = new Arm();
-	private final Intake m_intake = new Intake(m_frontLimelight);
+	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	private final Claw m_claw = new Claw();
-	private final LEDs m_leds = new LEDs();
 	
-	private final ArmStateMachine m_armStateMachine = new ArmStateMachine(m_arm, m_leds, m_intake, m_claw);
+	private final Superstructure m_superstructure = new Superstructure(m_arm, m_claw, m_shooter);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -88,23 +83,29 @@ public class RobotContainer {
 					-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
 					-MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
 					-MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-					true, true),
+					true, false),
 				m_robotDrive));
-
 	}
 
 	public void setTeleopDefaultStates() {
-		m_armStateMachine.setCargoTypeCommand(CargoType.CONE).schedule();
-		m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE).schedule();
-		m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER).schedule();
+		System.out.println("setTeleopDefaultStates()");
+		new SequentialCommandGroup(
+			m_superstructure.setCargoTypeCommand(CargoType.CONE),
+			m_superstructure.setSubsystemState(DPAD.DOWN),
+			m_backLimelight.setLEDCommand(false),
+			m_frontLimelight.setLEDCommand(false),
+			new InstantCommand(() -> m_claw.open())
+		).schedule();
+		}
+
+	public void setAutoDefaultStates() {
+		new InstantCommand(() -> m_robotDrive.zeroHeading()).schedule();
 		m_backLimelight.setLEDCommand(false).schedule();
 		//m_intake.pivotToHold().schedule();
 	}
 
-	public void setAutoDefaultStates() {
-		new InstantCommand(() -> m_robotDrive.zeroHeading());
-		m_backLimelight.setLEDCommand(false).schedule();
-		//m_intake.pivotToHold().schedule();
+	public void updateTelemetry() {
+		m_superstructure.updateTelemetry();
 	}
 
 	/**
@@ -124,74 +125,70 @@ public class RobotContainer {
 			
 		//zero heading then autoalign on right bumper
 		m_driverController.rightBumper()
-			.whileTrue(new AlignToNode(m_robotDrive, m_backLimelight, m_armStateMachine));
+			.whileTrue(new AlignToNode(m_robotDrive, m_backLimelight, m_superstructure));
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(new ScoreCommand(m_armStateMachine, m_claw))
-			.onFalse(m_claw.stopOpen());
+			.onTrue(m_superstructure.ScoreCommand());
 
 		//intake on right trigger while held 
-		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
-			.onTrue(m_intake.deployAndIntake())
-			.onFalse(m_intake.pivotToHold());
+		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.25)
+			.onTrue(m_superstructure.intakeRightTrigger()) //intake sequence
+			.onFalse(m_superstructure.setSubsystemState(DPAD.UP)); //shooter to hold
 
 		//outtake on left trigger while held
-		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
-			.whileTrue(m_intake.pivotThenOuttake())
-			.whileFalse(m_intake.holdAndStop());
+		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.25)
+			.whileTrue(m_superstructure.outtakeLeftTrigger())
+			.whileFalse(m_superstructure.setSubsystemState(DPAD.UP).alongWith(m_shooter.stopCommand()));
 
-		//shoot on b
-		m_driverController.b()
-			.onTrue(m_intake.pivotThenShoot())
-			.onFalse(m_intake.holdAndStop());
-
-		//turn to 180 on y
+		//release cube on y
 		m_driverController.y()
-			.onTrue(new TurnToAngle(m_robotDrive, 180));
+			.onTrue(m_shooter.kick());
 
 		//toggle claw intake on X
 		m_driverController.x()
-			.onTrue(Commands.runOnce(m_claw::intakeAndToggle, m_claw));
+			.onTrue(m_claw.intakeAndToggleCommand());
 
 		//reset gyro on left
 		m_driverController.back()
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
 		//align to hp on up
-		m_driverController.povUp()
+		m_driverController.povRight()
 			.whileTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
-		//manual raise arm on start
-		// m_operatorController.start()
+		//set arm on start
+		m_operatorController.start()
+			.onTrue(m_superstructure.setScoreModeCommand(ScoreMode.ARM));
 
-		// //manual lower arm on back
-		// m_operatorController.back()
+		//set shooter on back
+		m_operatorController.back()
+			.onTrue(m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER));
 
 		// TUCK on up
 		m_operatorController.povUp()
-			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.STOW));
-		// BACK on right
-		m_operatorController.povRight()
-			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.BACK));
+			.onTrue(m_superstructure.setSubsystemState(DPAD.UP));
 		// TRANSFER on down
 		m_operatorController.povDown()
-			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER));
+			.onTrue(m_superstructure.setSubsystemState(DPAD.DOWN));
 		// FRONT on left
 		m_operatorController.povLeft()
-			.onTrue(m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT));
+		.onTrue(m_superstructure.setSubsystemState(DPAD.LEFT));
+		// BACK on right
+		m_operatorController.povRight()
+			.onTrue(m_superstructure.setSubsystemState(DPAD.RIGHT));
 
 		// level 3 on Y
 		m_operatorController.y()
-			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.THREE));
+			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.Y));
 		// level 2 on B
 		m_operatorController.b()
-			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.TWO));
+			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.B));
 		// intake on A
 		m_operatorController.a()
-			.onTrue(m_armStateMachine.setTargetScoreLevelCommand(ScoreLevel.INTAKE));
+			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.A));
 
 		//toggle claw intake on X
 		//m_operatorController.x()
@@ -199,11 +196,11 @@ public class RobotContainer {
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CONE));
+			.onTrue(m_superstructure.setCargoTypeCommand(CargoType.CONE));
 
 		// cube mode on left bumper
 		m_operatorController.leftBumper()
-			.onTrue(m_armStateMachine.setCargoTypeCommand(CargoType.CUBE));
+			.onTrue(m_superstructure.setCargoTypeCommand(CargoType.CUBE));
 	}
 
 	/**
@@ -259,15 +256,15 @@ public class RobotContainer {
 		return new PathTestAuto(m_robotDrive);
 	}
 
-	public Command getOneCubeBalanceMiddleAuto() {
-		return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_backLimelight);
-	}
+	// public Command getOneCubeBalanceMiddleAuto() {
+	// 	return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
+	// }
 
-	public Command getOneConeBalanceMiddleAuto() {
-		return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_backLimelight);
-	}
+	// public Command getOneConeBalanceMiddleAuto() {
+	// 	return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
+	// }
 
-	public Command getTwoCargoOpenAuto() {
-		return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_intake, m_arm, m_claw, m_backLimelight);
-	}
+	// public Command getTwoCargoOpenAuto() {
+	// 	return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
+	// }
 }

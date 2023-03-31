@@ -15,9 +15,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
-import frc.utils.controller.AsymmetricProfiledPIDController;
-import frc.utils.controller.AsymmetricTrapezoidProfile.Constraints;
-import frc.utils.controller.AsymmetricTrapezoidProfile.State;
+import frc.robot.utils.controller.AsymmetricProfiledPIDController;
+import frc.robot.utils.controller.AsymmetricTrapezoidProfile.Constraints;
+import frc.robot.utils.controller.AsymmetricTrapezoidProfile.State;
 
 
 public class Shoulder extends SubsystemBase {
@@ -72,8 +72,10 @@ public class Shoulder extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Shoulder Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    if(ShoulderController.getP() == 0) {ShoulderController.setP(8);}
-    Constraints selectedConstraint = (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(15)) ? CloseConstraints : FarConstraints;
+    if(ShoulderController.getP() == 0) {ShoulderController.setP(ArmConstants.kShoulderP);}
+    Constraints selectedConstraint = 
+      (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(20)) ? 
+      CloseConstraints : FarConstraints;
     ShoulderController.setConstraints(selectedConstraint);
     SmartDashboard.putString("Shoulder Selected Constraint", selectedConstraint.equals(FarConstraints) ? "FAR" : "CLOSE");
 
@@ -84,7 +86,7 @@ public class Shoulder extends SubsystemBase {
     return Math.abs(getKinematicAngle() - ShoulderController.getGoal().position) < Units.degreesToRadians(4);
   }
 
-  public boolean atSetpoint() {
+  public boolean atGoal() {
     return ShoulderController.atGoal();
   }
 

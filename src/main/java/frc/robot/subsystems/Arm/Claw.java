@@ -8,14 +8,12 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClawConstants;
-import frc.robot.Constants.PneumaticsConstants;
 
 public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
@@ -35,10 +33,6 @@ public class Claw extends SubsystemBase {
 
   public void intake() {
     clawMotor.setVoltage(ClawConstants.kIntakeMotorSpeed*ClawConstants.kNominalVoltage);
-  }
-
-  public void outtake() {
-    clawMotor.setVoltage(ClawConstants.kOuttakeMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
   public void shoot() {
@@ -65,45 +59,39 @@ public class Claw extends SubsystemBase {
     return clawSolenoid.get() == Value.kForward;
   }
 
-  public void intakeAndToggle() {
-    toggle();
-    intake();
+  public Command intakeAndToggleCommand() {
+    return new InstantCommand(() -> {
+      toggle();
+      intake();
+    });
   }
 
-  public void intakeClose() {
-    close();
-    intake();
+  public Command intakeCube() {
+    return new InstantCommand(() -> {
+      open();
+      intake();
+    });
   }
 
-  public void intakeOpen() {
-    open();
-    intake();
-  }
-
-  public Command intakeOpenCommand() {
-    return new InstantCommand(() -> intakeOpen());
-  }
-
-  public Command intakeCloseCommand() {
-    return new InstantCommand(() -> intakeClose());
-  }
-
-  public Command stopOpen() {
-    return (
-      new InstantCommand(() -> stop())).andThen(
-      new InstantCommand(() -> open()));
+  public Command intakeCone() {
+    return new InstantCommand(() -> {
+      close();
+      intake();
+    });
   }
 
   public Command scoreCone() {
-    return (
-      new InstantCommand(() -> stop())).andThen(
-      new InstantCommand(() -> open()));
+    return new InstantCommand(() -> {
+      stop();
+      open();
+    });
   }
 
   public Command scoreCube() {
-    return 
-      new InstantCommand(() -> shoot()).andThen(
-      new InstantCommand(() -> open())); 
+    return new InstantCommand(() -> {
+      shoot();
+      open();
+    });
   }
 
   @Override

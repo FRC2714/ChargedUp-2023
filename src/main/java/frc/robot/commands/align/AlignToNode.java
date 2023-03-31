@@ -10,13 +10,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Arm.ArmStateMachine;
-import frc.robot.subsystems.Arm.ArmStateMachine.CargoType;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.CargoType;
 
 public class AlignToNode extends CommandBase {
   private DriveSubsystem m_robotDrive;
   private Limelight m_limelight;
-  private ArmStateMachine m_armStateMachine;
+  private Superstructure m_superstructure;
 
   private ProfiledPIDController xController;
   private ProfiledPIDController yController;
@@ -36,10 +36,10 @@ public class AlignToNode extends CommandBase {
   //private double thetaControllerkP
 
   /** Creates a new SmoothAlign. */
-  public AlignToNode(DriveSubsystem m_robotDrive, Limelight m_limelight, ArmStateMachine m_armStateMachine) {
+  public AlignToNode(DriveSubsystem m_robotDrive, Limelight m_limelight, Superstructure m_superstructure) {
     this.m_robotDrive = m_robotDrive;
     this.m_limelight = m_limelight;
-    this.m_armStateMachine = m_armStateMachine;
+    this.m_superstructure = m_superstructure;
 
     // Use addRequirements() here to declare subsystem dependencies.
     xController = new ProfiledPIDController(kPXControllerCone, 0, 0, AutoConstants.kAutoControllerConstraints);
@@ -62,7 +62,7 @@ public class AlignToNode extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_armStateMachine.getCargoType() == CargoType.CONE) {
+    if (m_superstructure.getCargoType() == CargoType.CONE) {
       m_limelight.setRetroPipeline();
       xController.setGoal(xControllerGoalCone);
       xController.setP(kPXControllerCone);

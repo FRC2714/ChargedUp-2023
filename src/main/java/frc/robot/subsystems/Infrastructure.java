@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.PneumaticsConstants;
+import frc.robot.Constants.InfrastructureConstants;
 
 public class Infrastructure extends SubsystemBase {
   private final PneumaticHub m_pneumaticHub;
@@ -16,14 +16,14 @@ public class Infrastructure extends SubsystemBase {
 
   /** Creates a new Infrastructure. */
   public Infrastructure() {
-    m_pneumaticHub = new PneumaticHub(PneumaticsConstants.kPneumaticHubCanId);
-    m_powerDistributionHub = new PowerDistribution(1, ModuleType.kRev);
+    m_pneumaticHub = new PneumaticHub(InfrastructureConstants.kPneumaticHubCanId);
+    m_powerDistributionHub = new PowerDistribution(InfrastructureConstants.kPowerDistributionHubCanId, ModuleType.kRev);
 
     enableCompressorAnalog();
   }
 
   public void enableCompressorAnalog() {
-    m_pneumaticHub.enableCompressorAnalog(PneumaticsConstants.kCompressorMinPressure, PneumaticsConstants.kCompressorMaxPressure);
+    m_pneumaticHub.enableCompressorAnalog(InfrastructureConstants.kCompressorMinPressure, InfrastructureConstants.kCompressorMaxPressure);
   }
 
   public void disableCompressor() {
