@@ -72,9 +72,9 @@ public class Shoulder extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Shoulder Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    if(ShoulderController.getP() == 0) {ShoulderController.setP(8);}
+    if(ShoulderController.getP() == 0) {ShoulderController.setP(ArmConstants.kShoulderP);}
     Constraints selectedConstraint = 
-      (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(15)) ? 
+      (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(20)) ? 
       CloseConstraints : FarConstraints;
     ShoulderController.setConstraints(selectedConstraint);
     SmartDashboard.putString("Shoulder Selected Constraint", selectedConstraint.equals(FarConstraints) ? "FAR" : "CLOSE");

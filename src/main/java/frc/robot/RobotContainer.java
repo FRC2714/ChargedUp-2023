@@ -40,8 +40,9 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Superstructure.BUTTON;
 import frc.robot.subsystems.Superstructure.CargoType;
-import frc.robot.subsystems.Superstructure.ControllerInput;
+import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
 
 /*
@@ -84,16 +85,15 @@ public class RobotContainer {
 					-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
 					-MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
 					-MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
-					true, true),
+					true, false),
 				m_robotDrive));
-
 	}
 
 	public void setTeleopDefaultStates() {
 		System.out.println("setTeleopDefaultStates()");
 		new SequentialCommandGroup(
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
-			m_superstructure.setSubsystemState(ControllerInput.DOWN),
+			m_superstructure.setSubsystemState(DPAD.DOWN),
 			m_backLimelight.setLEDCommand(false),
 			m_frontLimelight.setLEDCommand(false)
 		).schedule();
@@ -130,20 +130,17 @@ public class RobotContainer {
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(m_superstructure.ScoreCommand())
-			.onFalse(m_claw.scoreCone());
+			.onTrue(m_superstructure.ScoreCommand());
 
 		//intake on right trigger while held 
-		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.3)
-			.onTrue(m_shooter.intakeSequence())
-			.onFalse(m_shooter.pivotToHold());
-
-		//TODO make seperate intake command
+		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.25)
+			.onTrue(m_superstructure.intakeRightTrigger()) //intake sequence
+			.onFalse(m_superstructure.setSubsystemState(DPAD.UP)); //shooter to hold
 
 		//outtake on left trigger while held
-		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.3)
-			.whileTrue(m_shooter.outtakeSequence())
-			.whileFalse(m_shooter.pivotToHold().alongWith(m_shooter.stopCommand()));
+		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.25)
+			.whileTrue(m_superstructure.outtakeLeftTrigger())
+			.whileFalse(m_superstructure.setSubsystemState(DPAD.UP).alongWith(m_shooter.stopCommand()));
 
 		// //shoot on b
 		// m_driverController.b()
@@ -151,8 +148,8 @@ public class RobotContainer {
 		// 	.onFalse(m_shooter.holdAndStop());
 
 		//turn to 180 on y
-		m_driverController.y()
-			.onTrue(new TurnToAngle(m_robotDrive, 180));
+		// m_driverController.y()
+		// 	.onTrue(new TurnToAngle(m_robotDrive, 180));
 
 		//toggle claw intake on X
 		m_driverController.x()
@@ -178,28 +175,28 @@ public class RobotContainer {
 
 		// TUCK on up
 		m_operatorController.povUp()
-			.onTrue(m_superstructure.setSubsystemState(ControllerInput.UP));
+			.onTrue(m_superstructure.setSubsystemState(DPAD.UP));
 		// TRANSFER on down
 		m_operatorController.povDown()
-			.onTrue(m_superstructure.setSubsystemState(ControllerInput.DOWN));
+			.onTrue(m_superstructure.setSubsystemState(DPAD.DOWN));
 		// FRONT on left
 		m_operatorController.povLeft()
-		.onTrue(m_superstructure.setSubsystemState(ControllerInput.LEFT));
+		.onTrue(m_superstructure.setSubsystemState(DPAD.LEFT));
 		// BACK on right
 		m_operatorController.povRight()
-			.onTrue(m_superstructure.setSubsystemState(ControllerInput.RIGHT));
+			.onTrue(m_superstructure.setSubsystemState(DPAD.RIGHT));
 	
 		
 
 		// level 3 on Y
 		m_operatorController.y()
-			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.UP));
+			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.Y));
 		// level 2 on B
 		m_operatorController.b()
-			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.LEFT));
+			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.B));
 		// intake on A
 		m_operatorController.a()
-			.onTrue(m_superstructure.setScoreLevelCommand(ControllerInput.DOWN));
+			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.A));
 
 		//toggle claw intake on X
 		//m_operatorController.x()

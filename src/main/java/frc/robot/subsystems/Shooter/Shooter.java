@@ -56,7 +56,7 @@ public class Shooter extends SubsystemBase {
 
   private Timer shooterRunningTimer = new Timer();
 
-  private boolean isShooterEnabled = true;
+  private boolean isShooterEnabled = false;
   private boolean isDynamicEnabled = false;
   
 

@@ -104,8 +104,8 @@ public class Arm {
     }
   }
 
-  public boolean isJointsAtGoal() {
-    return m_shoulder.atGoal() && m_elbow.atGoal();
+  public boolean isShoulderAtGoal() {
+    return m_shoulder.atGoal();
   }
 
   ///////////////////////////TRANSITIONS/////////////////////////////////////////////////////

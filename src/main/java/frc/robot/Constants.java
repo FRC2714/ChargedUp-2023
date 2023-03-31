@@ -162,7 +162,7 @@ public final class Constants {
 
     public static final int kClawMotorCurrentLimit = 10; //amps 
 
-    public static final double kNominalVoltage = 10.5;
+    public static final double kNominalVoltage = 11;
 
     public static final double kIntakeMotorSpeed = 1;
     public static final double kOuttakeMotorSpeed = -0.1;
@@ -195,7 +195,7 @@ public final class Constants {
 
     //Preset Angles
     public static final double kPivotIntakeAngleDegrees = 120;
-    public static final double kPivotHoldAngleDegrees = -30;
+    public static final double kPivotHoldAngleDegrees = -40;
     public static final double kPivotRetractAngleDegrees = -100;
     public static final double kPivotShootAngleDegrees = 45;
     public static final double kPivotOuttakeAngleDegrees = 90;
@@ -256,25 +256,13 @@ public final class Constants {
     public static final boolean kElbowEncoderInverted = true; //second joint motor and encoder are NOT inverted
 
     //Controller Constants
-    public static final double kShoulderMaxVelocity = 5000;
-    public static final double kShoulderMaxAcceleration = 4000;
-    public static final double kShoulderTolerance = 6;
-    public static final double kShoulderFF = 0.00007;
-    public static final double kShoulderP = 0.00000;
-    public static final double kShoulderI = 0;
-    public static final double kShoulderD = 0.0000;
+    public static final double kShoulderP = 8;
 
-    public static final double kElbowMaxVelocity = 5500;
-    public static final double kElbowMaxAcceleration = 4000;
-    public static final double kElbowTolerance = 6;
-    public static final double kElbowFF = 0.00008;
-    public static final double kElbowP = 0.00006;
-    public static final double kElbowI = 0.0;
-    public static final double kElbowD = 0.00012;
+    public static final double kElbowP = 7;
 
     //Current Limits
     public static final int kShoulderMotorCurrentLimit = 40; //amps
-    public static final int kElbowMotorCurrentLimit = 15; //amps PREVENT ENDCAP ROUNDOUT
+    public static final int kElbowMotorCurrentLimit = 30; //amps
 
     //Back to back transition
     public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
@@ -332,7 +320,7 @@ public final class Constants {
 
     //Stow position 
     public static final ArmForwardKinematicPosition kStowPosition = 
-      new ArmForwardKinematicPosition(120, -65); //123, -63
+      new ArmForwardKinematicPosition(126, -58); //123, -63
 
     //Transfer position
     public static final ArmForwardKinematicPosition kTransferPosition = 

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -43,8 +44,12 @@ public class Superstructure {
     TO_ARM, TO_SHOOTER, DO_NOTHING
   }
 
-  public enum ControllerInput {
+  public enum DPAD {
     UP, DOWN, LEFT, RIGHT
+  }
+
+  public enum BUTTON {
+    Y, A, X, B
   }
 
   public enum CargoType {
@@ -53,7 +58,6 @@ public class Superstructure {
 
   public ScoreMode scoreMode = ScoreMode.ARM; //default to arm
   public CargoType cargoType = CargoType.CONE; //default to cone
- 
 
   /** Creates a new Superstructure. */
   public Superstructure(Arm m_arm, Claw m_claw, Shooter m_shooter) {
@@ -67,15 +71,16 @@ public class Superstructure {
 
   private Command armToShooter() {
     return new SequentialCommandGroup(
-      setSubsystemState(ControllerInput.UP),
-      new WaitUntilCommand(() -> m_arm.isJointsAtGoal()),
-      new InstantCommand(() -> this.scoreMode = ScoreMode.SHOOTER)
+      setSubsystemState(DPAD.UP),
+      new WaitUntilCommand(() -> m_arm.isShoulderAtGoal()),
+      new InstantCommand(() -> this.scoreMode = ScoreMode.SHOOTER),
+      new InstantCommand(() -> m_shooter.setShooterEnabled(true))
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
   private Command shooterToArm() {
     return new SequentialCommandGroup(
-      setSubsystemState(ControllerInput.DOWN),
+      setSubsystemState(DPAD.DOWN),
       new WaitUntilCommand(() -> m_shooter.atPivotSetpoint()),
       new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
       new InstantCommand(() -> this.scoreMode = ScoreMode.ARM)
@@ -103,24 +108,23 @@ public class Superstructure {
   }
 
   //Subsystem State
-  public Command setSubsystemState(ControllerInput dPadInput) {
+  public Command setSubsystemState(DPAD dPadInput) {
     final SelectCommand armSelectCommand = new SelectCommand(
       Map.ofEntries(
-        Map.entry(ControllerInput.UP, m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, cargoType)),
-        Map.entry(ControllerInput.DOWN, m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER, cargoType)),
-        Map.entry(ControllerInput.LEFT, m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT, cargoType)),
-        Map.entry(ControllerInput.RIGHT, m_armStateMachine.setTargetArmStateCommand(ArmState.BACK, cargoType))), 
+        Map.entry(DPAD.UP, m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, cargoType)),
+        Map.entry(DPAD.DOWN, m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER, cargoType)),
+        Map.entry(DPAD.LEFT, m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT, cargoType)),
+        Map.entry(DPAD.RIGHT, m_armStateMachine.setTargetArmStateCommand(ArmState.BACK, cargoType))), 
       () -> dPadInput);
 
     final SelectCommand shooterSelectCommand = new SelectCommand(
       Map.ofEntries(
-        Map.entry(ControllerInput.UP, m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD)),
-        Map.entry(ControllerInput.DOWN, m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT)),
-        Map.entry(ControllerInput.LEFT, m_shooterStateMachine.setShooterStateCommand(ShooterState.FRONT)),
-        Map.entry(ControllerInput.RIGHT, m_shooterStateMachine.setShooterStateCommand(ShooterState.BACK))),
+        Map.entry(DPAD.UP, m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD)),
+        Map.entry(DPAD.DOWN, m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT)),
+        Map.entry(DPAD.LEFT, m_shooterStateMachine.setShooterStateCommand(ShooterState.FRONT)),
+        Map.entry(DPAD.RIGHT, m_shooterStateMachine.setShooterStateCommand(ShooterState.BACK))),
       () -> dPadInput); 
     
-    System.out.println("Creating SelectCommand for arm vs shooter");
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armSelectCommand),
@@ -129,22 +133,22 @@ public class Superstructure {
   }
 
   //Score Level
-  public Command setScoreLevelCommand(ControllerInput buttonInput) {
+  public Command setScoreLevelCommand(BUTTON buttonInput) {
     final SelectCommand armSelectCommand = new SelectCommand(
         Map.ofEntries(
-          Map.entry(ControllerInput.UP, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.THREE)),
-          Map.entry(ControllerInput.DOWN, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.TWO)),
-          Map.entry(ControllerInput.LEFT, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.INTAKE)),
-          Map.entry(ControllerInput.RIGHT, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.ONE))
+          Map.entry(BUTTON.Y, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.THREE)),
+          Map.entry(BUTTON.B, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.TWO)),
+          Map.entry(BUTTON.A, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.INTAKE)),
+          Map.entry(BUTTON.X, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.ONE))
           ), 
         () -> buttonInput);
 
     final SelectCommand shooterSelectCommand = new SelectCommand(
       Map.ofEntries(
-        Map.entry(ControllerInput.UP, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.DYNAMIC)),
-        Map.entry(ControllerInput.DOWN, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.INTAKE)),
-        Map.entry(ControllerInput.LEFT, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.OUTTAKE)),
-        Map.entry(ControllerInput.RIGHT, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.DYNAMIC))
+        Map.entry(BUTTON.Y, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.DYNAMIC)),
+        Map.entry(BUTTON.B, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.OUTTAKE)),
+        Map.entry(BUTTON.A, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.INTAKE)),
+        Map.entry(BUTTON.X, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.DYNAMIC))
         ),
       () -> buttonInput);
 
@@ -185,8 +189,34 @@ public class Superstructure {
       () -> getScoreMode());
   }
 
+
+  //INTAKE BINDINGS
+  public Command intakeRightTrigger() {
+    return new SequentialCommandGroup(
+      new ConditionalCommand(
+        new InstantCommand(), 
+        setScoreModeCommand(ScoreMode.SHOOTER), 
+        () -> getScoreMode() != ScoreMode.SHOOTER),
+      setScoreLevelCommand(BUTTON.A),
+      setSubsystemState(DPAD.LEFT)
+    );
+  }
+
+  public Command outtakeLeftTrigger() {
+    return new SequentialCommandGroup(
+      new ConditionalCommand(
+        new InstantCommand(), 
+        setScoreModeCommand(ScoreMode.SHOOTER), 
+        () -> getScoreMode() != ScoreMode.SHOOTER),
+      setScoreLevelCommand(BUTTON.B),
+      setSubsystemState(DPAD.LEFT)
+    );
+  }
+
   public void updateTelemetry() {
-    m_shooterStateMachine.checkCube();
+    if(m_shooter.isCubeDetected() && scoreMode == ScoreMode.SHOOTER) {
+      setSubsystemState(DPAD.UP).schedule();
+    }
 
     SmartDashboard.putString("Score Mode", scoreMode.toString());
     SmartDashboard.putString("Cargo Type", cargoType.toString());

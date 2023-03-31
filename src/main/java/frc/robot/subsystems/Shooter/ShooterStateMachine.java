@@ -85,10 +85,6 @@ public class ShooterStateMachine {
     }
     return new InstantCommand();
   }
-
-  public void checkCube() {
-    if (m_shooter.isCubeDetected()) {setShooterStateCommand(ShooterState.HOLD);}
-  }
       
   public void updateTelemetry() {
     // This method will be called once per scheduler run
