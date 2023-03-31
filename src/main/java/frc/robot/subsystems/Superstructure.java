@@ -179,37 +179,37 @@ public class Superstructure {
           Map.entry(CargoType.CONE, m_claw.scoreCone()),
           Map.entry(CargoType.CUBE, m_claw.scoreCube())
         ), 
-        () -> getCargoType());
+        () -> getCargoType()
+    );
 
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armScore),
         Map.entry(ScoreMode.SHOOTER, m_shooter.kick())
       ), 
-      () -> getScoreMode());
+      () -> getScoreMode()
+    );
   }
 
 
   //INTAKE BINDINGS
   public Command intakeRightTrigger() {
-    return new SequentialCommandGroup(
-      new ConditionalCommand(
-        new InstantCommand(), 
-        setScoreModeCommand(ScoreMode.SHOOTER), 
-        () -> getScoreMode() != ScoreMode.SHOOTER),
-      setScoreLevelCommand(BUTTON.A),
-      setSubsystemState(DPAD.LEFT)
+    return new ConditionalCommand(
+      new InstantCommand(), 
+      new SequentialCommandGroup(
+        setScoreLevelCommand(BUTTON.A),
+        setSubsystemState(DPAD.LEFT)), 
+      () -> getScoreMode() != ScoreMode.SHOOTER
     );
   }
 
   public Command outtakeLeftTrigger() {
-    return new SequentialCommandGroup(
-      new ConditionalCommand(
-        new InstantCommand(), 
-        setScoreModeCommand(ScoreMode.SHOOTER), 
-        () -> getScoreMode() != ScoreMode.SHOOTER),
-      setScoreLevelCommand(BUTTON.B),
-      setSubsystemState(DPAD.LEFT)
+    return new ConditionalCommand(
+      new InstantCommand(), 
+      new SequentialCommandGroup(
+        setScoreLevelCommand(BUTTON.B),
+        setSubsystemState(DPAD.LEFT)), 
+      () -> getScoreMode() != ScoreMode.SHOOTER
     );
   }
 

@@ -194,7 +194,7 @@ public final class Constants {
     public static final double kShootMotorSpeed = 1.0;
 
     //Preset Angles
-    public static final double kPivotIntakeAngleDegrees = 120;
+    public static final double kPivotIntakeAngleDegrees = 116.5;
     public static final double kPivotHoldAngleDegrees = -40;
     public static final double kPivotRetractAngleDegrees = -100;
     public static final double kPivotShootAngleDegrees = 45;
