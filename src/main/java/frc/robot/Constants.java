@@ -146,8 +146,8 @@ public final class Constants {
     public static final HashMap<String, Command> EventMap = new HashMap<>();
   }
 
-  public static final class GlobalConstants {
-    public static final boolean tuningMode = false;
+  public static final class TuningConstants {
+    public static final boolean tuningMode = true;
   }
 
   public static final class InfrastructureConstants {
@@ -336,7 +336,7 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kBackConeL2Position = 
       new ArmForwardKinematicPosition(101, -90);
     public static final ArmForwardKinematicPosition kBackConeL3Position = 
-      new ArmForwardKinematicPosition(54, -14);
+      new ArmForwardKinematicPosition(55, -20);
 
     //Back Cube Score positions
     public static final ArmForwardKinematicPosition kBackCubeL1Position = 

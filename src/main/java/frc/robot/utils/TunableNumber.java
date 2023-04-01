@@ -50,7 +50,7 @@ public class TunableNumber {
    */
   public void setDefault(double defaultValue) {
     this.defaultValue = defaultValue;
-    if (Constants.GlobalConstants.tuningMode) {
+    if (Constants.TuningConstants.tuningMode) {
       // This makes sure the data is on NetworkTables but will not change it
       SmartDashboard.putNumber(key,
           SmartDashboard.getNumber(key, defaultValue));
@@ -63,7 +63,7 @@ public class TunableNumber {
    * @return The current value
    */
   public double get() {
-    return Constants.GlobalConstants.tuningMode ? SmartDashboard.getNumber(key, defaultValue)
+    return Constants.TuningConstants.tuningMode ? SmartDashboard.getNumber(key, defaultValue)
         : defaultValue;
   }
 

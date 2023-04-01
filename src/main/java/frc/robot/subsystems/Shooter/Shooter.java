@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight;
 import frc.robot.utils.InterpolatingTreeMap;
+import frc.robot.utils.TunableNumber;
 
 public class Shooter extends SubsystemBase {
   private Limelight m_frontLimelight;
@@ -58,6 +59,9 @@ public class Shooter extends SubsystemBase {
 
   private boolean isShooterEnabled = false;
   private boolean isDynamicEnabled = false;
+
+  public TunableNumber tunableVelocity = new TunableNumber("VELOCITY TUNEABLE");
+  public TunableNumber tunablePivot = new TunableNumber("PIVOT TUNEABLE");
   
 
   /** Creates a new Shooter. */
@@ -98,6 +102,9 @@ public class Shooter extends SubsystemBase {
 
     populateVelocityMap();
     populatePivotMap();
+
+    tunablePivot.setDefault(ShooterConstants.kPivotHoldAngleDegrees);
+    tunableVelocity.setDefault(0);
   }
 
   //Populate Maps
@@ -190,6 +197,11 @@ public class Shooter extends SubsystemBase {
     } else {
       topFlywheelMotor.setVoltage(0);
     }
+  }
+
+  public void setTunable() {
+    setTargetVelocity(tunableVelocity.get());
+    setTargetPivot(tunablePivot.get());
   }
 
   //Dynamic
@@ -296,6 +308,13 @@ public class Shooter extends SubsystemBase {
       outtakeCommand());
   }
 
+  public Command shootSequnce() {
+    return new ParallelCommandGroup(
+      new InstantCommand(() -> setTargetVelocity(-500)),
+      pivotToShoot(),
+      kick());
+  }
+
   public boolean isCurrentSpikeDetected() {
     return (shooterRunningTimer.get() > 0.15) && //excludes current spike when motor first starts
       (kickerMotor.getOutputCurrent() > 25) && //cube intake current threshold
@@ -314,11 +333,14 @@ public class Shooter extends SubsystemBase {
     setDynamicShooter();
     setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();
+
+    SmartDashboard.putNumber("front limelight distance to goal", m_frontLimelight.getDistanceToGoalMeters());
     
     SmartDashboard.putNumber("Shooter Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
     SmartDashboard.putNumber("Shooter Target Pivot", Units.radiansToDegrees(getPivotTarget()));
 
-    // SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
+    SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
+    SmartDashboard.putNumber("Flywheel Target", flywheelController.getSetpoint());
     // SmartDashboard.putNumber("interpolated velocity", getDynamicFlywheelVelocity());
     // SmartDashboard.putNumber("interpolated pivot", getDynamicPivot());
     // SmartDashboard.putNumber("front distance from goal", Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()));

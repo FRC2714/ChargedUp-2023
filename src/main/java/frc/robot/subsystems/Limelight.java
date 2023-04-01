@@ -16,14 +16,17 @@ public class Limelight extends SubsystemBase {
 	private Field2d m_field = new Field2d();
 
 	private String limelightName = "limelight";
+	private double kCameraHeight, kMountingAngle;
 
-	public Limelight(String limelightName) {
+	public Limelight(String limelightName, double kCameraHeight, double kMountingAngle) {
 		this.limelightName = limelightName;
+		this.kCameraHeight = kCameraHeight;
+		this.kMountingAngle = kMountingAngle;
 		SmartDashboard.putData("Field Position", m_field);
 	}
 
 	public double getDistanceToGoalMeters() {
-		return (FieldConstants.kGoalHeight - CameraConstants.kCameraHeight)/Math.tan(Units.degreesToRadians(CameraConstants.kMountingAngle + getYAngleOffsetDegrees()));
+		return (FieldConstants.kGoalHeight - kCameraHeight)/Math.tan(Units.degreesToRadians(kMountingAngle + getYAngleOffsetDegrees()));
 	}
 
 	public double getYAngleOffsetDegrees() {
@@ -70,6 +73,5 @@ public class Limelight extends SubsystemBase {
 	@Override
 	public void periodic() {
 		//m_field.setRobotPose(getBotPose2d());
-		SmartDashboard.putNumber("distance to goal", getDistanceToGoalMeters());
 	}
 }

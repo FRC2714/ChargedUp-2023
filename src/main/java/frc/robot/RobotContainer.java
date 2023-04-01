@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.util.List;
 
+import javax.management.InstanceNotFoundException;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -15,6 +17,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -26,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.align.AlignToNode;
@@ -54,8 +58,8 @@ public class RobotContainer {
 	// The robot's subsystems
 	private final Infrastructure m_infrastructure = new Infrastructure();
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-	private final Limelight m_backLimelight = new Limelight("limelight-back");
-	private final Limelight m_frontLimelight = new Limelight("limelight-front");
+	private final Limelight m_backLimelight = new Limelight("limelight-back", CameraConstants.kCameraHeight, CameraConstants.kMountingAngle);
+	private final Limelight m_frontLimelight = new Limelight("limelight-front", Units.inchesToMeters(21.5), 0);
 	private final Arm m_arm = new Arm();
 	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	private final Claw m_claw = new Claw();
@@ -144,6 +148,11 @@ public class RobotContainer {
 		//release cube on y
 		m_driverController.y()
 			.onTrue(m_shooter.kick());
+
+		// m_driverController.b()
+		// 	.onTrue(new InstantCommand(() -> m_shooter.setTunable()));
+		m_driverController.b()
+			.onTrue(m_shooter.shootSequnce());
 
 		//toggle claw intake on X
 		m_driverController.x()
