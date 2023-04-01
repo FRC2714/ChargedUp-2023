@@ -221,12 +221,15 @@ public final class Constants {
   }
 
   public static final class FieldConstants {
-    public static final double kGoalHeight = Units.inchesToMeters(24);
+    public static final double kGoalHeight = 24; //inches
   }
 
   public static final class CameraConstants {
-    public static final double kMountingAngle = 35; // deg
-    public static double kCameraHeight = Units.inchesToMeters(9.14);
+    public static final double kBackLimelightMountingAngle = 35.0; //degrees
+    public static double kBackLimelightHeight = 9.14; //inches
+
+    public static final double kFrontLimelightMountingAngle = 0.0; //degrees
+    public static double kFrontLimelightHeight = 21.5; //inches
   }
 
   public static final class ArmConstants {

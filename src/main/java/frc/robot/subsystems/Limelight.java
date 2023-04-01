@@ -3,11 +3,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.CameraConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.utils.LimelightHelpers;
 
@@ -22,11 +20,17 @@ public class Limelight extends SubsystemBase {
 		this.limelightName = limelightName;
 		this.kCameraHeight = kCameraHeight;
 		this.kMountingAngle = kMountingAngle;
-		SmartDashboard.putData("Field Position", m_field);
+		//SmartDashboard.putData("Field Position", m_field);
+	}
+
+	public double getDistanceToGoalInches() {
+		return (FieldConstants.kGoalHeight - kCameraHeight) 
+			/ Math.tan(
+				Units.degreesToRadians(kMountingAngle + getYAngleOffsetDegrees()));
 	}
 
 	public double getDistanceToGoalMeters() {
-		return (FieldConstants.kGoalHeight - kCameraHeight)/Math.tan(Units.degreesToRadians(kMountingAngle + getYAngleOffsetDegrees()));
+		return Units.inchesToMeters(getDistanceToGoalInches());
 	}
 
 	public double getYAngleOffsetDegrees() {
@@ -50,6 +54,7 @@ public class Limelight extends SubsystemBase {
         else LimelightHelpers.setLEDMode_ForceOff(limelightName); // LED force off
     }
 
+	//Back Limelight
 	public void setRetroPipeline() {
 		LimelightHelpers.setPipelineIndex(limelightName, 0);
 	}
@@ -59,6 +64,19 @@ public class Limelight extends SubsystemBase {
 	}
 
 	public void setAprilTagFarPipeline() {
+		LimelightHelpers.setPipelineIndex(limelightName, 2);
+	}
+
+	//Front Limelight
+	public void setLevelThreeCubePipeline() {
+		LimelightHelpers.setPipelineIndex(limelightName, 0);
+	}
+
+	public void setLevelTwoCubePipeline() {
+		LimelightHelpers.setPipelineIndex(limelightName, 1);
+	}
+
+	public void setLevelOneCubePipeline() {
 		LimelightHelpers.setPipelineIndex(limelightName, 2);
 	}
 

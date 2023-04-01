@@ -58,8 +58,14 @@ public class RobotContainer {
 	// The robot's subsystems
 	private final Infrastructure m_infrastructure = new Infrastructure();
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-	private final Limelight m_backLimelight = new Limelight("limelight-back", CameraConstants.kCameraHeight, CameraConstants.kMountingAngle);
-	private final Limelight m_frontLimelight = new Limelight("limelight-front", Units.inchesToMeters(21.5), 0);
+	private final Limelight m_backLimelight = new Limelight(
+		"limelight-back", 
+		CameraConstants.kBackLimelightHeight, 
+		CameraConstants.kBackLimelightMountingAngle);
+	private final Limelight m_frontLimelight = new Limelight(
+		"limelight-front", 
+		CameraConstants.kFrontLimelightHeight, 
+		CameraConstants.kFrontLimelightMountingAngle);
 	private final Arm m_arm = new Arm();
 	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	private final Claw m_claw = new Claw();
