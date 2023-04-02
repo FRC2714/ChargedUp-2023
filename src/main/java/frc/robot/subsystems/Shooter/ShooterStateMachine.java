@@ -4,40 +4,45 @@
 
 package frc.robot.subsystems.Shooter;
 
+import java.util.Map;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.robot.subsystems.Limelight;
 
 public class ShooterStateMachine {
   Shooter m_shooter;
+  Limelight m_frontLimelight;
 
   public enum ShooterState {
-    RETRACT, HOLD, FRONT, BACK
+    RETRACT, HOLD, FRONT, DYNAMIC
   }
 
   public enum ShooterScoreLevel {
-    INTAKE, OUTTAKE, DYNAMIC
+    INTAKE, LOW, MIDDLE, HIGH
   }
 
   public ShooterState shooterState = ShooterState.RETRACT;
   public ShooterScoreLevel scoreLevel = ShooterScoreLevel.INTAKE;
 
   /** Creates a new ShooterStateMachine. */
-  public ShooterStateMachine(Shooter m_shooter) {
+  public ShooterStateMachine(Shooter m_shooter, Limelight m_frontLimelight) {
     this.m_shooter = m_shooter;
+    this.m_frontLimelight = m_frontLimelight;
   }
 
   public Command setShooterStateCommand(ShooterState shooterState) {
     return new InstantCommand(() -> {
-        System.out.println("setting target armstate");
-        if (this.shooterState != shooterState) {
-          this.shooterState = shooterState;
-        }
-        getShooterCommand(scoreLevel).withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
+      System.out.println("setting target armstate");
+      if (this.shooterState != shooterState) {
+        this.shooterState = shooterState;
       }
-    );
+      getShooterCommand(scoreLevel).withInterruptBehavior(InterruptionBehavior.kCancelSelf).schedule();
+    });
   }
 
   //Score level
@@ -49,44 +54,51 @@ public class ShooterStateMachine {
     return this.scoreLevel;
   }
 
-  private Command toRetract() {
+  private Command toRetract(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false, false),
+      m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       m_shooter.stopCommand(),
-      m_shooter.pivotToRetract()
-    );
+      m_shooter.pivotToRetract());
   }
 
-  private Command toHold() {
+  private Command toHold(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false, false),
-      m_shooter.pivotToHold()
-    );
+      m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
+      m_shooter.pivotToHold());
   }
 
-  private Command toBack() {
-    return m_shooter.setDynamicEnabledCommand(true, true);
-  }
-
-  private Command toFront(Command ScoreLevelPivotComand) {
+  private Command toDynamic(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false, false),
-      ScoreLevelPivotComand
-    );
+      new SelectCommand(
+        Map.ofEntries(
+          Map.entry(ShooterScoreLevel.HIGH, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
+          Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
+          Map.entry(ShooterScoreLevel.LOW, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
+          Map.entry(ShooterScoreLevel.INTAKE, new InstantCommand())
+        ), () -> shooterScorelevel),
+      m_shooter.setDynamicEnabledCommand(true, shooterScorelevel));
+  }
+
+  private Command toFront(ShooterScoreLevel shooterScorelevel) {
+    return new SequentialCommandGroup(
+      m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
+      new SelectCommand(
+        Map.ofEntries(
+          Map.entry(ShooterScoreLevel.HIGH, m_shooter.shootSequence()),
+          Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand()),
+          Map.entry(ShooterScoreLevel.LOW, m_shooter.outtakeSequence()),
+          Map.entry(ShooterScoreLevel.INTAKE, m_shooter.intakeSequence())
+        ), () -> shooterScorelevel));
   }
 
   private Command getShooterCommand(ShooterScoreLevel shooterScorelevel) {
     System.out.println("get shooter command");
     switch(shooterState) { //TODO UPDATE THIS VARIABLE
-      case RETRACT: return toRetract();
-      case HOLD: return toHold();
-      case BACK: return toBack();
-      case FRONT: switch(shooterScorelevel) {
-        case INTAKE: return toFront(m_shooter.intakeSequence());
-        case OUTTAKE: return toFront(m_shooter.outtakeSequence());
-        case DYNAMIC: return m_shooter.setDynamicEnabledCommand(true, false);
-      };
-    }
+      case RETRACT: return toRetract(shooterScorelevel);
+      case HOLD: return toHold(shooterScorelevel);
+      case DYNAMIC: return toDynamic(shooterScorelevel);
+      case FRONT: return toFront(shooterScorelevel);
+    };
     return new InstantCommand();
   }
       

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.utils.LimelightHelpers;
 
 
@@ -14,7 +15,7 @@ public class Limelight extends SubsystemBase {
 	private Field2d m_field = new Field2d();
 
 	private String limelightName = "limelight";
-	private double kCameraHeight, kMountingAngle;
+	private double kCameraHeight, kMountingAngle, GoalHeight = 0;
 
 	public Limelight(String limelightName, double kCameraHeight, double kMountingAngle) {
 		this.limelightName = limelightName;
@@ -24,9 +25,17 @@ public class Limelight extends SubsystemBase {
 	}
 
 	public double getDistanceToGoalInches() {
-		return (FieldConstants.kGoalHeight - kCameraHeight) 
+		return (GoalHeight - kCameraHeight) 
 			/ Math.tan(
 				Units.degreesToRadians(kMountingAngle + getYAngleOffsetDegrees()));
+	}
+
+	public void setGoalHeight(double GoalHeight) {
+		this.GoalHeight = GoalHeight;
+	}
+
+	public double getGoalHeight() {
+		return GoalHeight;
 	}
 
 	public double getDistanceToGoalMeters() {
@@ -56,6 +65,7 @@ public class Limelight extends SubsystemBase {
 
 	//Back Limelight
 	public void setRetroPipeline() {
+		setGoalHeight(LimelightConstants.kMiddleRetroTapeHeight);
 		LimelightHelpers.setPipelineIndex(limelightName, 0);
 	}
 
@@ -68,15 +78,18 @@ public class Limelight extends SubsystemBase {
 	}
 
 	//Front Limelight
-	public void setLevelThreeCubePipeline() {
+	public void setHighCubePipeline() {
+		setGoalHeight(LimelightConstants.kCubeHighHeight);
 		LimelightHelpers.setPipelineIndex(limelightName, 0);
 	}
 
-	public void setLevelTwoCubePipeline() {
+	public void setMiddleCubePipeline() {
+		setGoalHeight(LimelightConstants.kCubeMiddleHeight);
 		LimelightHelpers.setPipelineIndex(limelightName, 1);
 	}
 
-	public void setLevelOneCubePipeline() {
+	public void setLowCubePipeline() {
+		setGoalHeight(LimelightConstants.kCubeLowHeight);
 		LimelightHelpers.setPipelineIndex(limelightName, 2);
 	}
 

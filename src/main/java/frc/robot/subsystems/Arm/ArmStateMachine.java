@@ -20,7 +20,7 @@ public class ArmStateMachine {
   }
 
   public enum ArmScoreLevel {
-    THREE, TWO, ONE, INTAKE
+    HIGH, MIDDLE, LOW, INTAKE
   }
 
   public ArmState currentArmState = ArmState.BACK; //will default to TRANSFER 
@@ -55,17 +55,17 @@ public class ArmStateMachine {
     switch (cargoType) { 
       case CONE: {
         switch (armScoreLevel) {
-          case THREE: return ArmConstants.kBackConeL3Position;
-          case TWO: return ArmConstants.kBackConeL2Position;
-          case ONE: return ArmConstants.kBackConeL1Position;
+          case HIGH: return ArmConstants.kBackConeHighPosition;
+          case MIDDLE: return ArmConstants.kBackConeMiddlePosition;
+          case LOW: return ArmConstants.kBackConeLowPosition;
           case INTAKE: return ArmConstants.kBackIntakePosition;
         }
       }
       case CUBE: {
         switch (armScoreLevel) {
-          case THREE: return ArmConstants.kBackCubeL3Position;
-          case TWO: return ArmConstants.kBackCubeL2Position;
-          case ONE: return ArmConstants.kBackCubeL1Position;
+          case HIGH: return ArmConstants.kBackCubeHighPosition;
+          case MIDDLE: return ArmConstants.kBackCubeMiddlePosition;
+          case LOW: return ArmConstants.kBackCubeLowPosition;
           case INTAKE: return ArmConstants.kBackIntakePosition;
         }
       }
@@ -77,17 +77,17 @@ public class ArmStateMachine {
     switch (cargoType) { 
       case CONE: {
         switch (armScoreLevel) {
-          case THREE: return ArmConstants.kFrontConeL2Position;
-          case TWO: return ArmConstants.kFrontConeL2Position;
-          case ONE: return ArmConstants.kFrontConeL2Position;
+          case HIGH: return ArmConstants.kFrontConeMiddlePosition;
+          case MIDDLE: return ArmConstants.kFrontConeMiddlePosition;
+          case LOW: return ArmConstants.kFrontConeMiddlePosition;
           case INTAKE: return ArmConstants.kFrontIntakePosition;
         }
       }
       case CUBE: {
         switch (armScoreLevel) {
-          case THREE: return ArmConstants.kFrontCubeL3Position;
-          case TWO: return ArmConstants.kFrontCubeL2Position;
-          case ONE: return ArmConstants.kFrontCubeL2Position;
+          case HIGH: return ArmConstants.kFrontCubeHighPosition;
+          case MIDDLE: return ArmConstants.kFrontCubeMiddlePosition;
+          case LOW: return ArmConstants.kFrontCubeMiddlePosition;
           case INTAKE: return ArmConstants.kFrontIntakePosition;
         }
       }
@@ -102,17 +102,17 @@ public class ArmStateMachine {
           // when current is back
           case CONE: {
             switch (armScoreLevel) {
-              case THREE: return m_arm.BackToBack(ArmConstants.kBackConeL3Position);
-              case TWO: return m_arm.setForwardKinematicsCommand(ArmConstants.kBackConeL2Position);
-              case ONE: return m_arm.BackToBack(ArmConstants.kBackConeL1Position);
+              case HIGH: return m_arm.BackToBack(ArmConstants.kBackConeHighPosition);
+              case MIDDLE: return m_arm.setForwardKinematicsCommand(ArmConstants.kBackConeMiddlePosition);
+              case LOW: return m_arm.BackToBack(ArmConstants.kBackConeLowPosition);
               case INTAKE: return m_arm.setForwardKinematicsCommand(ArmConstants.kBackIntakePosition);
             }
           }
           case CUBE: {
             switch (armScoreLevel) {
-              case THREE: return m_arm.BackToBack(ArmConstants.kBackCubeL3Position);
-              case TWO: return m_arm.BackToBack(ArmConstants.kBackCubeL2Position);
-              case ONE: return m_arm.BackToBack(ArmConstants.kBackCubeL1Position);
+              case HIGH: return m_arm.BackToBack(ArmConstants.kBackCubeHighPosition);
+              case MIDDLE: return m_arm.BackToBack(ArmConstants.kBackCubeMiddlePosition);
+              case LOW: return m_arm.BackToBack(ArmConstants.kBackCubeLowPosition);
               case INTAKE: return m_arm.BackToBack(ArmConstants.kBackIntakePosition);
             }
           }

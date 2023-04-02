@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.CameraConstants;
+import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.align.AlignToNode;
@@ -60,17 +60,17 @@ public class RobotContainer {
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 	private final Limelight m_backLimelight = new Limelight(
 		"limelight-back", 
-		CameraConstants.kBackLimelightHeight, 
-		CameraConstants.kBackLimelightMountingAngle);
+		LimelightConstants.kBackLimelightHeight, 
+		LimelightConstants.kBackLimelightMountingAngle);
 	private final Limelight m_frontLimelight = new Limelight(
 		"limelight-front", 
-		CameraConstants.kFrontLimelightHeight, 
-		CameraConstants.kFrontLimelightMountingAngle);
+		LimelightConstants.kFrontLimelightHeight, 
+		LimelightConstants.kFrontLimelightMountingAngle);
 	private final Arm m_arm = new Arm();
 	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	private final Claw m_claw = new Claw();
 	
-	private final Superstructure m_superstructure = new Superstructure(m_arm, m_claw, m_shooter);
+	private final Superstructure m_superstructure = new Superstructure(m_arm, m_claw, m_shooter, m_frontLimelight);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -155,10 +155,10 @@ public class RobotContainer {
 		m_driverController.y()
 			.onTrue(m_shooter.kick());
 
-		// m_driverController.b()
-		// 	.onTrue(new InstantCommand(() -> m_shooter.setTunable()));
 		m_driverController.b()
-			.onTrue(m_shooter.shootSequnce());
+			.onTrue(new InstantCommand(() -> m_shooter.setTunable()));
+		// m_driverController.b()
+		// 	.onTrue(m_shooter.shootSequence());
 
 		//toggle claw intake on X
 		m_driverController.x()
@@ -182,32 +182,31 @@ public class RobotContainer {
 		m_operatorController.back()
 			.onTrue(m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER));
 
-		// TUCK on up
+		//TUCK on up
 		m_operatorController.povUp()
 			.onTrue(m_superstructure.setSubsystemState(DPAD.UP));
-		// TRANSFER on down
+		//TRANSFER on down
 		m_operatorController.povDown()
 			.onTrue(m_superstructure.setSubsystemState(DPAD.DOWN));
-		// FRONT on left
+		//FRONT on left
 		m_operatorController.povLeft()
 		.onTrue(m_superstructure.setSubsystemState(DPAD.LEFT));
-		// BACK on right
+		//BACK on right
 		m_operatorController.povRight()
 			.onTrue(m_superstructure.setSubsystemState(DPAD.RIGHT));
 
-		// level 3 on Y
+		//HIGH on Y
 		m_operatorController.y()
 			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.Y));
-		// level 2 on B
+		//MIDDLE on B
 		m_operatorController.b()
 			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.B));
-		// intake on A
+		//INTAKE on A
 		m_operatorController.a()
 			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.A));
-
-		//toggle claw intake on X
-		//m_operatorController.x()
-			//.onTrue(new InstantCommand(() -> m_arm.setTargetPosition(30.0, 28.0)));
+		//LOW on X
+		m_operatorController.x()
+			.onTrue(m_superstructure.setScoreLevelCommand(BUTTON.X));
 		
 		// cone mode on right bumper
 		m_operatorController.rightBumper()

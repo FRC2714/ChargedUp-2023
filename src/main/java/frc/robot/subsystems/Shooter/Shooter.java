@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
 import frc.robot.utils.InterpolatingTreeMap;
 import frc.robot.utils.TunableNumber;
 
@@ -84,7 +85,7 @@ public class Shooter extends SubsystemBase {
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(ShooterConstants.kPivotPositionConversionFactor);
     pivotEncoder.setInverted(false);
-    pivotEncoder.setZeroOffset(230);
+    pivotEncoder.setZeroOffset(150);
 
     topFlywheelMotor = new CANSparkMax(ShooterConstants.kTopFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor = new CANSparkMax(ShooterConstants.kBottomFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -123,17 +124,17 @@ public class Shooter extends SubsystemBase {
     this.isShooterEnabled = isShooterEnabled;
   }
 
-  public void setDynamicEnabled(boolean isDynamicEnabled, boolean isDynamicReversed) {
-    if (isDynamicReversed) {
-      //populate reverse shooter maps
-    } else {
-      //populate forward shooter maps
-    }
-    this.isDynamicEnabled = isDynamicEnabled;
-  }
-
-  public InstantCommand setDynamicEnabledCommand(boolean isDynamicEnabled, boolean isDynamicReversed) {
-    return new InstantCommand(() -> setDynamicEnabled(isDynamicEnabled, isDynamicReversed));
+  public Command setDynamicEnabledCommand(boolean isDynamicEnabled, ShooterScoreLevel shooterScoreLevel) {
+    return new InstantCommand(() -> {
+      if (shooterScoreLevel == ShooterScoreLevel.HIGH) {
+        //populate maps
+      } else if (shooterScoreLevel == ShooterScoreLevel.MIDDLE) {
+        //populate maps
+      } else if (shooterScoreLevel == ShooterScoreLevel.LOW) {
+        //populate maps
+      }
+      this.isDynamicEnabled = isDynamicEnabled;
+    });
   }
 
   //KICKER
@@ -141,14 +142,12 @@ public class Shooter extends SubsystemBase {
     return new SequentialCommandGroup(
       new InstantCommand(() -> kickerMotor.set(-0.6)),
       new WaitCommand(1),
-      new InstantCommand(() -> kickerMotor.set(0))
-    );
-    
+      new InstantCommand(() -> kickerMotor.set(0)));
   }
 
   //PIVOT
   public double getPivotAngleRadians() {
-    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(142);
+    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(124);
   }
 
   public void setTargetPivot(double targetAngleDegrees) {
@@ -207,14 +206,14 @@ public class Shooter extends SubsystemBase {
   //Dynamic
   private double getDynamicPivot() {
     return m_frontLimelight.isTargetVisible()
-        ? pivotMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
-        : ShooterConstants.kPivotHoldAngleDegrees;
+      ? pivotMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
+      : ShooterConstants.kPivotHoldAngleDegrees;
   }
 
   private double getDynamicVelocity() {
     return m_frontLimelight.isTargetVisible()
-        ? velocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
-        : 0;
+      ? velocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
+      : 0;
   }
 
   public void setDynamicShooter() {
@@ -308,8 +307,8 @@ public class Shooter extends SubsystemBase {
       outtakeCommand());
   }
 
-  public Command shootSequnce() {
-    return new ParallelCommandGroup(
+  public Command shootSequence() {
+    return new SequentialCommandGroup(
       new InstantCommand(() -> setTargetVelocity(-500)),
       pivotToShoot(),
       kick());
@@ -334,11 +333,11 @@ public class Shooter extends SubsystemBase {
     setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();
 
-    SmartDashboard.putNumber("front limelight distance to goal", m_frontLimelight.getDistanceToGoalMeters());
+    SmartDashboard.putNumber("front limelight distance to goal", m_frontLimelight.getDistanceToGoalInches());
+    SmartDashboard.putNumber("front limelight goal height", m_frontLimelight.getGoalHeight());
     
     SmartDashboard.putNumber("Shooter Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
     SmartDashboard.putNumber("Shooter Target Pivot", Units.radiansToDegrees(getPivotTarget()));
-
     SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
     SmartDashboard.putNumber("Flywheel Target", flywheelController.getSetpoint());
     // SmartDashboard.putNumber("interpolated velocity", getDynamicFlywheelVelocity());

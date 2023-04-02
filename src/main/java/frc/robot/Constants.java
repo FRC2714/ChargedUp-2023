@@ -224,12 +224,17 @@ public final class Constants {
     public static final double kGoalHeight = 24; //inches
   }
 
-  public static final class CameraConstants {
+  public static final class LimelightConstants {
     public static final double kBackLimelightMountingAngle = 35.0; //degrees
-    public static double kBackLimelightHeight = 9.14; //inches
+    public static final double kBackLimelightHeight = 9.14; //inches
 
     public static final double kFrontLimelightMountingAngle = 0.0; //degrees
-    public static double kFrontLimelightHeight = 21.5; //inches
+    public static final double kFrontLimelightHeight = 26.75; //inches
+
+    public static final double kMiddleRetroTapeHeight = 24.5; // inches
+    public static final double kCubeLowHeight = -18; // inches
+    public static final double kCubeMiddleHeight = 5.5; // inches
+    public static final double kCubeHighHeight = 17; // inches
   }
 
   public static final class ArmConstants {
@@ -334,29 +339,29 @@ public final class Constants {
       new ArmForwardKinematicPosition(82,135);
 
     //Back Cone Score positions
-    public static final ArmForwardKinematicPosition kBackConeL1Position =
+    public static final ArmForwardKinematicPosition kBackConeLowPosition =
       new ArmForwardKinematicPosition(130, -120);
-    public static final ArmForwardKinematicPosition kBackConeL2Position = 
+    public static final ArmForwardKinematicPosition kBackConeMiddlePosition = 
       new ArmForwardKinematicPosition(101, -90);
-    public static final ArmForwardKinematicPosition kBackConeL3Position = 
+    public static final ArmForwardKinematicPosition kBackConeHighPosition = 
       new ArmForwardKinematicPosition(55, -20);
 
     //Back Cube Score positions
-    public static final ArmForwardKinematicPosition kBackCubeL1Position = 
+    public static final ArmForwardKinematicPosition kBackCubeLowPosition = 
       new ArmForwardKinematicPosition(130, -120);//130, 124
-    public static final ArmForwardKinematicPosition kBackCubeL2Position = 
+    public static final ArmForwardKinematicPosition kBackCubeMiddlePosition = 
       new ArmForwardKinematicPosition(108, -112);
-    public static final ArmForwardKinematicPosition kBackCubeL3Position = 
+    public static final ArmForwardKinematicPosition kBackCubeHighPosition = 
       new ArmForwardKinematicPosition(68, -45);
 
     //Front Cone Score positions
-    public static final ArmForwardKinematicPosition kFrontConeL2Position = 
+    public static final ArmForwardKinematicPosition kFrontConeMiddlePosition = 
       new ArmForwardKinematicPosition(120, 42);
 
     //Front Cube Score positions
-    public static final ArmForwardKinematicPosition kFrontCubeL2Position = 
+    public static final ArmForwardKinematicPosition kFrontCubeMiddlePosition = 
       new ArmForwardKinematicPosition(110, 81);
-    public static final ArmForwardKinematicPosition kFrontCubeL3Position = 
+    public static final ArmForwardKinematicPosition kFrontCubeHighPosition = 
       new ArmForwardKinematicPosition(120, 15);
     
 

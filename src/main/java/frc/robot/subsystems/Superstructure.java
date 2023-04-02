@@ -28,7 +28,9 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 public class Superstructure {
   Arm m_arm;
   Claw m_claw;
+
   Shooter m_shooter;
+  Limelight m_frontLimelight;
 
   LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
   LED m_baseLED = new LED(LEDConstants.kBaseBlinkinPort);
@@ -60,13 +62,14 @@ public class Superstructure {
   public CargoType cargoType = CargoType.CONE; //default to cone
 
   /** Creates a new Superstructure. */
-  public Superstructure(Arm m_arm, Claw m_claw, Shooter m_shooter) {
+  public Superstructure(Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_frontLimelight) {
     this.m_arm = m_arm;
     this.m_claw = m_claw;
     this.m_shooter = m_shooter;
+    this.m_frontLimelight = m_frontLimelight;
 
     m_armStateMachine = new ArmStateMachine(m_arm);
-	  m_shooterStateMachine = new ShooterStateMachine(m_shooter);
+	  m_shooterStateMachine = new ShooterStateMachine(m_shooter, m_frontLimelight);
   }
 
   private Command armToShooter() {
@@ -81,7 +84,6 @@ public class Superstructure {
   private Command shooterToArm() {
     return new SequentialCommandGroup(
       setSubsystemState(DPAD.DOWN),
-      new WaitUntilCommand(() -> m_shooter.atPivotSetpoint()),
       new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
       new InstantCommand(() -> this.scoreMode = ScoreMode.ARM)
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
@@ -122,7 +124,7 @@ public class Superstructure {
         Map.entry(DPAD.UP, m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD)),
         Map.entry(DPAD.DOWN, m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT)),
         Map.entry(DPAD.LEFT, m_shooterStateMachine.setShooterStateCommand(ShooterState.FRONT)),
-        Map.entry(DPAD.RIGHT, m_shooterStateMachine.setShooterStateCommand(ShooterState.BACK))),
+        Map.entry(DPAD.RIGHT, m_shooterStateMachine.setShooterStateCommand(ShooterState.DYNAMIC))),
       () -> dPadInput); 
     
     return new SelectCommand(
@@ -136,19 +138,19 @@ public class Superstructure {
   public Command setScoreLevelCommand(BUTTON buttonInput) {
     final SelectCommand armSelectCommand = new SelectCommand(
         Map.ofEntries(
-          Map.entry(BUTTON.Y, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.THREE)),
-          Map.entry(BUTTON.B, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.TWO)),
+          Map.entry(BUTTON.Y, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.HIGH)),
+          Map.entry(BUTTON.B, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.MIDDLE)),
           Map.entry(BUTTON.A, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.INTAKE)),
-          Map.entry(BUTTON.X, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.ONE))
+          Map.entry(BUTTON.X, m_armStateMachine.setArmScoreLevelCommand(ArmScoreLevel.LOW))
           ), 
         () -> buttonInput);
 
     final SelectCommand shooterSelectCommand = new SelectCommand(
       Map.ofEntries(
-        Map.entry(BUTTON.Y, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.DYNAMIC)),
-        Map.entry(BUTTON.B, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.OUTTAKE)),
+        Map.entry(BUTTON.Y, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.HIGH)),
+        Map.entry(BUTTON.B, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.MIDDLE)),
         Map.entry(BUTTON.A, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.INTAKE)),
-        Map.entry(BUTTON.X, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.DYNAMIC))
+        Map.entry(BUTTON.X, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.LOW))
         ),
       () -> buttonInput);
 
@@ -207,6 +209,16 @@ public class Superstructure {
     return new ConditionalCommand(
       new InstantCommand(), 
       new SequentialCommandGroup(
+        setScoreLevelCommand(BUTTON.X),
+        setSubsystemState(DPAD.LEFT)), 
+      () -> getScoreMode() != ScoreMode.SHOOTER
+    );
+  }
+
+  public Command manualShoot() {
+    return new ConditionalCommand(
+      new InstantCommand(), 
+      new SequentialCommandGroup(
         setScoreLevelCommand(BUTTON.B),
         setSubsystemState(DPAD.LEFT)), 
       () -> getScoreMode() != ScoreMode.SHOOTER
@@ -214,9 +226,9 @@ public class Superstructure {
   }
 
   public void updateTelemetry() {
-    if(m_shooter.isCubeDetected() && scoreMode == ScoreMode.SHOOTER) {
-      setSubsystemState(DPAD.UP).schedule();
-    }
+    // if(m_shooter.isCubeDetected() && scoreMode == ScoreMode.SHOOTER && m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE) {
+    //   setSubsystemState(DPAD.UP).schedule();
+    // }
 
     SmartDashboard.putString("Score Mode", scoreMode.toString());
     SmartDashboard.putString("Cargo Type", cargoType.toString());
