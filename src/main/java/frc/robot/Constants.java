@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.utils.ArmForwardKinematicPosition;
+import frc.robot.utils.ShooterPreset;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -198,11 +199,25 @@ public final class Constants {
     public static final double kShootMotorSpeed = 1.0;
 
     //Preset Angles
-    public static final double kPivotIntakeAngleDegrees = 116.5;
+    public static final double kPivotIntakeAngleDegrees = 118;
     public static final double kPivotHoldAngleDegrees = -40;
-    public static final double kPivotRetractAngleDegrees = -100;
-    public static final double kPivotShootAngleDegrees = 45;
+    public static final double kPivotRetractAngleDegrees = -95;
     public static final double kPivotOuttakeAngleDegrees = 90;
+
+    //Shooter Presets
+    public static final ShooterPreset kLaunchCube = 
+      new ShooterPreset(45, -500);
+
+    public static final ShooterPreset kCloseHighCube = 
+      new ShooterPreset(45, 0);
+    public static final ShooterPreset kFarHighCube = 
+      new ShooterPreset(45, 0);
+
+    public static final ShooterPreset kCloseMiddleCube = 
+      new ShooterPreset(45, 0);
+    public static final ShooterPreset kFarMiddleCube = 
+      new ShooterPreset(45, 0);
+
   }
 
   public static final class LEDConstants {
@@ -225,16 +240,20 @@ public final class Constants {
   }
 
   public static final class LimelightConstants {
+    // 20 degrees, 31.5 inches from the ground
     public static final double kBackLimelightMountingAngle = 35.0; //degrees
     public static final double kBackLimelightHeight = 9.14; //inches
 
-    public static final double kFrontLimelightMountingAngle = 0.0; //degrees
-    public static final double kFrontLimelightHeight = 26.75; //inches
+    public static final double kFrontLimelightMountingAngle = -20; //degrees
+    public static final double kFrontLimelightHeight = 31.5; //inches
 
     public static final double kMiddleRetroTapeHeight = 24.5; // inches
     public static final double kCubeLowHeight = -18; // inches
-    public static final double kCubeMiddleHeight = 5.5; // inches
-    public static final double kCubeHighHeight = 17; // inches
+    // public static final double kCubeMiddleHeight = 5.5; // inches
+    // public static final double kCubeHighHeight = 17; // inches
+
+    public static final double kCubeMiddleHeight = -18;
+    public static final double kCubeHighHeight = -18;
   }
 
   public static final class ArmConstants {

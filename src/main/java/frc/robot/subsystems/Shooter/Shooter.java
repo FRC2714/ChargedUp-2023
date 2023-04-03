@@ -27,6 +27,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
 import frc.robot.utils.InterpolatingTreeMap;
+import frc.robot.utils.ShooterPreset;
 import frc.robot.utils.TunableNumber;
 
 public class Shooter extends SubsystemBase {
@@ -43,7 +44,16 @@ public class Shooter extends SubsystemBase {
   private AbsoluteEncoder pivotEncoder;
 
   private InterpolatingTreeMap velocityMap = new InterpolatingTreeMap();
+
+  private InterpolatingTreeMap highVelocityMap = new InterpolatingTreeMap();
+  private InterpolatingTreeMap middleVelocityMap = new InterpolatingTreeMap();
+  private InterpolatingTreeMap lowVelocityMap = new InterpolatingTreeMap();
+
   private InterpolatingTreeMap pivotMap = new InterpolatingTreeMap();
+
+  private InterpolatingTreeMap highPivotMap = new InterpolatingTreeMap();
+  private InterpolatingTreeMap middlePivotMap = new InterpolatingTreeMap();
+  private InterpolatingTreeMap lowPivotMap = new InterpolatingTreeMap();
 
   private PIDController pivotController = new PIDController(0, 0, 0);
   private PIDController flywheelController = new PIDController(0.5, 0, 0);
@@ -85,12 +95,12 @@ public class Shooter extends SubsystemBase {
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(ShooterConstants.kPivotPositionConversionFactor);
     pivotEncoder.setInverted(false);
-    pivotEncoder.setZeroOffset(150);
+    pivotEncoder.setZeroOffset(100);
 
     topFlywheelMotor = new CANSparkMax(ShooterConstants.kTopFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor = new CANSparkMax(ShooterConstants.kBottomFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor.follow(topFlywheelMotor, true);
-    topFlywheelMotor.setInverted(false);
+    topFlywheelMotor.setInverted(true);
 
     topFlywheelMotor.setIdleMode(IdleMode.kCoast);
     bottomFlywheelMotor.setIdleMode(IdleMode.kCoast);
@@ -109,14 +119,38 @@ public class Shooter extends SubsystemBase {
   }
 
   //Populate Maps
-  private void populateVelocityMap() {
-    velocityMap.put(0.0, 0.0);
-    velocityMap.put(5.0, 1000.0);
+  private void populatePivotMap() {
+    highPivotMap.put(100.0, 15.0);
+    highPivotMap.put(180.0, 30.0);
+    highPivotMap.put(300.0, 30.0);
+    highPivotMap.put(450.0, 30.0);
+
+    middlePivotMap.put(50.0, 20.0);
+    middlePivotMap.put(110.0, 30.0);
+    middlePivotMap.put(180.0, 30.0);
+    middlePivotMap.put(290.0, 30.0);
+
+    lowPivotMap.put(30.0, 100.0);
+    lowPivotMap.put(80.0, 100.0);
+    lowPivotMap.put(180.0, 90.0);
+    lowPivotMap.put(280.0, 80.0);
   }
 
-  private void populatePivotMap() {
-    pivotMap.put(0.0, 0.0);
-    pivotMap.put(10.0, 120.0);
+  private void populateVelocityMap() {
+    highVelocityMap.put(100.0, 70.0);
+    highVelocityMap.put(180.0, 90.0);
+    highVelocityMap.put(300.0, 110.0);
+    highVelocityMap.put(450.0, 145.0);
+
+    middlePivotMap.put(50.0, 40.0);
+    middlePivotMap.put(110.0, 60.0);
+    middlePivotMap.put(180.0, 80.0);
+    middlePivotMap.put(290.0, 120.0);
+
+    lowPivotMap.put(30.0, 20.0);
+    lowPivotMap.put(80.0, 50.0);
+    lowPivotMap.put(180.0, 90.0);
+    lowPivotMap.put(280.0, 120.0);
   }
 
   //enable funtions
@@ -127,11 +161,14 @@ public class Shooter extends SubsystemBase {
   public Command setDynamicEnabledCommand(boolean isDynamicEnabled, ShooterScoreLevel shooterScoreLevel) {
     return new InstantCommand(() -> {
       if (shooterScoreLevel == ShooterScoreLevel.HIGH) {
-        //populate maps
+        pivotMap = highPivotMap;
+        velocityMap = highVelocityMap;
       } else if (shooterScoreLevel == ShooterScoreLevel.MIDDLE) {
-        //populate maps
+        pivotMap = middlePivotMap;
+        velocityMap = middleVelocityMap;
       } else if (shooterScoreLevel == ShooterScoreLevel.LOW) {
-        //populate maps
+        pivotMap = lowPivotMap;
+        velocityMap = lowVelocityMap;
       }
       this.isDynamicEnabled = isDynamicEnabled;
     });
@@ -140,14 +177,13 @@ public class Shooter extends SubsystemBase {
   //KICKER
   public Command kick() {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> kickerMotor.set(-0.6)),
-      new WaitCommand(1),
-      new InstantCommand(() -> kickerMotor.set(0)));
+      new InstantCommand(() -> kickerMotor.set(-0.4))
+    );
   }
 
   //PIVOT
   public double getPivotAngleRadians() {
-    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(124);
+    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(178);
   }
 
   public void setTargetPivot(double targetAngleDegrees) {
@@ -206,14 +242,16 @@ public class Shooter extends SubsystemBase {
   //Dynamic
   private double getDynamicPivot() {
     return m_frontLimelight.isTargetVisible()
-      ? pivotMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
+      ? highVelocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
       : ShooterConstants.kPivotHoldAngleDegrees;
+    //return tunablePivot.get();
   }
 
   private double getDynamicVelocity() {
     return m_frontLimelight.isTargetVisible()
-      ? velocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
+      ? highVelocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
       : 0;
+    //return tunableVelocity.get();
   }
 
   public void setDynamicShooter() {
@@ -224,7 +262,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void intake() {
-    setTargetVelocity(100);
+    setTargetVelocity(-100);
     //topFlywheelMotor.set(0.4);
     kickerMotor.setVoltage(ShooterConstants.kIntakeMotorSpeed*ShooterConstants.kNominalVoltage);
     if (shooterState != IntakeState.INTAKING) {
@@ -235,7 +273,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void outtake(double power) {
-    setTargetVelocity(-100);
+    setTargetVelocity(100);
     //topFlywheelMotor.set(-0.4);
     kickerMotor.setVoltage(-power*ShooterConstants.kNominalVoltage);
     if (shooterState != IntakeState.OUTTAKING) {
@@ -289,9 +327,9 @@ public class Shooter extends SubsystemBase {
       new WaitUntilCommand(() -> atPivotSetpoint()));
   }
 
-  public Command pivotToShoot() {
+  public Command pivotToShoot(double pivotAngleDegrees) {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotShootAngleDegrees)),
+      new InstantCommand(() -> setTargetPivot(pivotAngleDegrees)),
       new WaitUntilCommand(() -> atPivotSetpoint()));
   }
 
@@ -307,10 +345,10 @@ public class Shooter extends SubsystemBase {
       outtakeCommand());
   }
 
-  public Command shootSequence() {
+  public Command shootSequence(ShooterPreset shooterPreset) {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetVelocity(-500)),
-      pivotToShoot(),
+      new InstantCommand(() -> setTargetVelocity(shooterPreset.getVelocityRPM())),
+      pivotToShoot(shooterPreset.getPivotAngleDegrees()),
       kick());
   }
 

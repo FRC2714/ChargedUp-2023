@@ -9,9 +9,11 @@ import java.util.Map;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight;
 
 public class ShooterStateMachine {
@@ -69,11 +71,13 @@ public class ShooterStateMachine {
 
   private Command toDynamic(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
+      new PrintCommand("to dynamic"),
+      new InstantCommand(() -> m_frontLimelight.setLED(true)),
       new SelectCommand(
         Map.ofEntries(
           Map.entry(ShooterScoreLevel.HIGH, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
-          Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
-          Map.entry(ShooterScoreLevel.LOW, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
+          Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand(() -> m_frontLimelight.setMiddleCubePipeline())),
+          Map.entry(ShooterScoreLevel.LOW, new InstantCommand(() -> m_frontLimelight.setLowCubePipeline())),
           Map.entry(ShooterScoreLevel.INTAKE, new InstantCommand())
         ), () -> shooterScorelevel),
       m_shooter.setDynamicEnabledCommand(true, shooterScorelevel));
@@ -84,7 +88,7 @@ public class ShooterStateMachine {
       m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       new SelectCommand(
         Map.ofEntries(
-          Map.entry(ShooterScoreLevel.HIGH, m_shooter.shootSequence()),
+          Map.entry(ShooterScoreLevel.HIGH, m_shooter.shootSequence(ShooterConstants.kLaunchCube)),
           Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand()),
           Map.entry(ShooterScoreLevel.LOW, m_shooter.outtakeSequence()),
           Map.entry(ShooterScoreLevel.INTAKE, m_shooter.intakeSequence())

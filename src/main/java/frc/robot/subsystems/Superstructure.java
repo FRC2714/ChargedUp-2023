@@ -149,8 +149,8 @@ public class Superstructure {
       Map.ofEntries(
         Map.entry(BUTTON.Y, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.HIGH)),
         Map.entry(BUTTON.B, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.MIDDLE)),
-        Map.entry(BUTTON.A, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.INTAKE)),
-        Map.entry(BUTTON.X, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.LOW))
+        Map.entry(BUTTON.A, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.LOW)),
+        Map.entry(BUTTON.X, m_shooterStateMachine.setShooterScoreLevelCommand(ShooterScoreLevel.INTAKE))
         ),
       () -> buttonInput);
 
@@ -199,7 +199,7 @@ public class Superstructure {
     return new ConditionalCommand(
       new InstantCommand(), 
       new SequentialCommandGroup(
-        setScoreLevelCommand(BUTTON.A),
+        setScoreLevelCommand(BUTTON.X),
         setSubsystemState(DPAD.LEFT)), 
       () -> getScoreMode() != ScoreMode.SHOOTER
     );
@@ -209,7 +209,7 @@ public class Superstructure {
     return new ConditionalCommand(
       new InstantCommand(), 
       new SequentialCommandGroup(
-        setScoreLevelCommand(BUTTON.X),
+        setScoreLevelCommand(BUTTON.A),
         setSubsystemState(DPAD.LEFT)), 
       () -> getScoreMode() != ScoreMode.SHOOTER
     );
