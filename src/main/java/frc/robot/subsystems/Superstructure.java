@@ -8,28 +8,35 @@ import java.util.Map;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.commands.align.AlignToCone;
+import frc.robot.commands.align.AlignToCube;
+import frc.robot.commands.align.TurnToTarget;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
-import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmScoreLevel;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
+import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterStateMachine;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterState;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 
 public class Superstructure {
+  DriveSubsystem m_robotDrive;
+
   Arm m_arm;
   Claw m_claw;
 
   Shooter m_shooter;
+
+  Limelight m_backLimelight;
   Limelight m_frontLimelight;
 
   LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
@@ -62,10 +69,15 @@ public class Superstructure {
   public CargoType cargoType = CargoType.CONE; //default to cone
 
   /** Creates a new Superstructure. */
-  public Superstructure(Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_frontLimelight) {
+  public Superstructure(DriveSubsystem m_robotDrive, Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_backLimelight, Limelight m_frontLimelight) {
+    this.m_robotDrive = m_robotDrive;
+
     this.m_arm = m_arm;
     this.m_claw = m_claw;
+
     this.m_shooter = m_shooter;
+
+    this.m_backLimelight = m_backLimelight;
     this.m_frontLimelight = m_frontLimelight;
 
     m_armStateMachine = new ArmStateMachine(m_arm);
@@ -244,25 +256,16 @@ public class Superstructure {
   public Command getAlign() {
     final SelectCommand armAlign = new SelectCommand(
       Map.ofEntries(
-        Map.entry(CargoType.CONE, new InstantCommand()), // align to cone
-        Map.entry(CargoType.CUBE, new InstantCommand()) //align to cube
+        Map.entry(CargoType.CONE, new AlignToCone(m_robotDrive, m_backLimelight)), // align to cone
+        Map.entry(CargoType.CUBE, new AlignToCube(m_robotDrive, m_backLimelight)) //align to cube
       ), 
       () -> getCargoType()
-    );
-
-    final SelectCommand shooterAlign = new SelectCommand(
-      Map.ofEntries(
-        Map.entry(ShooterScoreLevel.HIGH, new InstantCommand()), // align to high
-        Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand()), //align to mid
-        Map.entry(ShooterScoreLevel.LOW, new InstantCommand()) //align to low
-      ), 
-      () -> m_shooterStateMachine.getShooterScoreLevel()
     );
 
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armAlign),
-        Map.entry(ScoreMode.SHOOTER, shooterAlign) //TODO SHOOTER ALIGN
+        Map.entry(ScoreMode.SHOOTER, new TurnToTarget(m_robotDrive, m_frontLimelight))
       ), 
       () -> getScoreMode()
     );

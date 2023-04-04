@@ -245,19 +245,15 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public String getDirectionToZero() {
-    if(getHeading() > 0) {
-      return "SPIN RIGHT";
-    } else {
-      return "SPIN LEFT";
-    }
+    return getHeading() > 0 ? "SPIN RIGHT" : "SPIN LEFT";
   }
 
   public double getHeadingRadians() {
     return Units.degreesToRadians(getHeading());
   }
 
-  public double getPitchDegrees() {
-    return m_gyro.getXComplementaryAngle();
+  public double getPitchRadians() {
+    return Units.degreesToRadians(m_gyro.getXComplementaryAngle());
   }
 
   public double getRollDegrees() {

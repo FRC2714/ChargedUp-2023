@@ -4,28 +4,28 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.utils.controller.AsymmetricProfiledPIDCommand;
+import frc.robot.utils.controller.AsymmetricProfiledPIDController;
+import frc.robot.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TurnToAngle extends ProfiledPIDCommand {
+public class TurnToAngle extends AsymmetricProfiledPIDCommand {
   
   /** Creates a new Autoalign. */
   public TurnToAngle(DriveSubsystem drivetrain, double targetAngleDegrees) {
     super(
         // The ProfiledPIDController used by the command
-        new ProfiledPIDController(
+        new AsymmetricProfiledPIDController(
             // The PID gains
-            AutoConstants.kPThetaController,
+            1,
             0,
             0,
             // The motion profile constraints
-            AutoConstants.kThetaControllerConstraints),
+            new Constraints(3.14, 3.14, 3.14)), //rad/s, rad/s^2
         // This should return the measurement
         drivetrain::getHeadingRadians,
         // This should return the goal (can also be a constant)

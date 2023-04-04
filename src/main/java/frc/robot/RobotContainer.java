@@ -6,8 +6,6 @@ package frc.robot;
 
 import java.util.List;
 
-import javax.management.InstanceNotFoundException;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -17,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -70,7 +67,7 @@ public class RobotContainer {
 	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	private final Claw m_claw = new Claw();
 	
-	private final Superstructure m_superstructure = new Superstructure(m_arm, m_claw, m_shooter, m_frontLimelight);
+	private final Superstructure m_superstructure = new Superstructure(m_robotDrive, m_arm, m_claw, m_shooter, m_backLimelight, m_frontLimelight);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);

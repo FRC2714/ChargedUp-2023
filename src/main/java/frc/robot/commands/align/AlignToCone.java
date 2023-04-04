@@ -10,13 +10,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.Superstructure.CargoType;
 
-public class AlignToNode extends CommandBase {
+public class AlignToCone extends CommandBase {
   private DriveSubsystem m_robotDrive;
   private Limelight m_limelight;
-  private Superstructure m_superstructure;
 
   private ProfiledPIDController xController;
   private ProfiledPIDController yController;
@@ -25,21 +22,16 @@ public class AlignToNode extends CommandBase {
   private double kPXControllerCone = 0.8;
   private double kPYControllerCone = 1.1;
 
-  private double kPXControllerCube = 0.65;
-  private double kPYControllerCube = 1.1;
-
   private double kPThetaController = 1;
 
   private double xControllerGoalCone = 0.37;
-  private double xControllerGoalCube = 0.40;
 
   //private double thetaControllerkP
 
   /** Creates a new SmoothAlign. */
-  public AlignToNode(DriveSubsystem m_robotDrive, Limelight m_limelight, Superstructure m_superstructure) {
+  public AlignToCone(DriveSubsystem m_robotDrive, Limelight m_limelight) {
     this.m_robotDrive = m_robotDrive;
     this.m_limelight = m_limelight;
-    this.m_superstructure = m_superstructure;
 
     // Use addRequirements() here to declare subsystem dependencies.
     xController = new ProfiledPIDController(kPXControllerCone, 0, 0, AutoConstants.kAutoControllerConstraints);
@@ -62,17 +54,7 @@ public class AlignToNode extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (m_superstructure.getCargoType() == CargoType.CONE) {
-      m_limelight.setRetroPipeline();
-      xController.setGoal(xControllerGoalCone);
-      xController.setP(kPXControllerCone);
-      yController.setP(kPYControllerCone);
-    } else {
-      m_limelight.setAprilTagPipeline();
-      xController.setGoal(xControllerGoalCube);
-      xController.setP(kPXControllerCube);
-      yController.setP(kPYControllerCube);
-    }
+    m_limelight.setRetroPipeline();
     m_limelight.setLED(true);
   }
 
@@ -90,7 +72,6 @@ public class AlignToNode extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_limelight.setAprilTagPipeline();
     m_limelight.setLED(false);
     m_robotDrive.drive(0, 0, 0, true, false);
   }

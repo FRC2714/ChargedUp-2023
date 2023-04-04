@@ -242,10 +242,6 @@ public final class Constants {
     public static final double kFreeSpeedRpm = 5676;
   }
 
-  public static final class FieldConstants {
-    public static final double kGoalHeight = 24; //inches
-  }
-
   public static final class LimelightConstants {
     // 20 degrees, 31.5 inches from the ground
     public static final double kBackLimelightMountingAngle = 35.0; //degrees
