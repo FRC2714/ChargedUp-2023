@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight;
@@ -95,7 +94,7 @@ public class Shooter extends SubsystemBase {
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(ShooterConstants.kPivotPositionConversionFactor);
     pivotEncoder.setInverted(false);
-    pivotEncoder.setZeroOffset(100);
+    pivotEncoder.setZeroOffset(0);
 
     topFlywheelMotor = new CANSparkMax(ShooterConstants.kTopFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor = new CANSparkMax(ShooterConstants.kBottomFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -175,15 +174,13 @@ public class Shooter extends SubsystemBase {
   }
 
   //KICKER
-  public Command kick() {
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> kickerMotor.set(-0.4))
-    );
+  public Command setKicker(double power) {
+    return new InstantCommand(() -> kickerMotor.set(power));
   }
 
   //PIVOT
   public double getPivotAngleRadians() {
-    return pivotEncoder.getPosition() / ShooterConstants.kPivotGearRatio - Units.degreesToRadians(178);
+    return (pivotEncoder.getPosition() -  (86.4 + 21)) / ShooterConstants.kPivotGearRatio;
   }
 
   public void setTargetPivot(double targetAngleDegrees) {
@@ -261,9 +258,7 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  private void intake() {
-    setTargetVelocity(-100);
-    //topFlywheelMotor.set(0.4);
+  private void kickerIntake() {
     kickerMotor.setVoltage(ShooterConstants.kIntakeMotorSpeed*ShooterConstants.kNominalVoltage);
     if (shooterState != IntakeState.INTAKING) {
       shooterRunningTimer.reset();
@@ -272,10 +267,8 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  private void outtake(double power) {
-    setTargetVelocity(100);
-    //topFlywheelMotor.set(-0.4);
-    kickerMotor.setVoltage(-power*ShooterConstants.kNominalVoltage);
+  private void kickerOuttake() {
+    kickerMotor.setVoltage(ShooterConstants.kOuttakeMotorSpeed*ShooterConstants.kNominalVoltage);
     if (shooterState != IntakeState.OUTTAKING) {
       shooterRunningTimer.reset();
       shooterRunningTimer.start();
@@ -290,66 +283,28 @@ public class Shooter extends SubsystemBase {
     kickerMotor.set(0);
   }
 
-  public Command intakeCommand() {
-    return new InstantCommand(() -> intake());
-  }
-
-  public Command outtakeCommand() {
-    return new InstantCommand(() -> outtake(ShooterConstants.kOuttakeMotorSpeed));
-  }
-
   public Command stopCommand() {
     return new InstantCommand(() -> stop());
   }
 
-  public Command pivotToIntake() {
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotIntakeAngleDegrees)),
-      new WaitUntilCommand(() -> atPivotSetpoint()));
-  }
-
-  public Command pivotToOuttake() {
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotOuttakeAngleDegrees)),
-      new WaitUntilCommand(() -> atPivotSetpoint()));
-  }
-
-  public Command pivotToRetract() {
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotRetractAngleDegrees)),
-      new WaitUntilCommand(() -> atPivotSetpoint()));
-  }
-
-  public Command pivotToHold() {
-    flywheelController.setSetpoint(0);
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetPivot(ShooterConstants.kPivotHoldAngleDegrees)),
-      new WaitUntilCommand(() -> atPivotSetpoint()));
-  }
-
-  public Command pivotToShoot(double pivotAngleDegrees) {
-    return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetPivot(pivotAngleDegrees)),
-      new WaitUntilCommand(() -> atPivotSetpoint()));
-  }
-
   public Command intakeSequence() {
     return new ParallelCommandGroup(
-      intakeCommand(),
-      pivotToIntake());
+      new InstantCommand(() -> kickerIntake()),
+      toPreset(ShooterConstants.kIntakePreset));
   }
 
   public Command outtakeSequence() {
     return new SequentialCommandGroup(
-      pivotToOuttake(),
-      outtakeCommand());
+      toPreset(ShooterConstants.kOuttakePreset),
+      new InstantCommand(() -> kickerOuttake()));
   }
 
-  public Command shootSequence(ShooterPreset shooterPreset) {
+  public Command toPreset(ShooterPreset shooterPreset) {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetVelocity(shooterPreset.getVelocityRPM())),
-      pivotToShoot(shooterPreset.getPivotAngleDegrees()),
-      kick());
+      new InstantCommand(() -> setTargetVelocity(shooterPreset.FlywheelRPM)),
+      new InstantCommand(() -> setTargetPivot(shooterPreset.PivotDegrees)),
+      new WaitUntilCommand(() -> atPivotSetpoint())
+    );
   }
 
   public boolean isCurrentSpikeDetected() {
@@ -367,7 +322,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    setDynamicShooter();
+    //setDynamicShooter();
     setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();
 

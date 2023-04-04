@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight;
+import frc.robot.utils.ShooterPreset;
 
 public class ShooterStateMachine {
   Shooter m_shooter;
@@ -56,31 +57,49 @@ public class ShooterStateMachine {
     return this.scoreLevel;
   }
 
+  public ShooterState getShooterState() {
+    return this.shooterState;
+  }
+
   private Command toRetract(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       m_shooter.stopCommand(),
-      m_shooter.pivotToRetract());
+      m_shooter.toPreset(ShooterConstants.kRetractPreset));
   }
 
   private Command toHold(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
-      m_shooter.pivotToHold());
+      m_shooter.toPreset(ShooterConstants.kHoldPreset));
   }
+
+  // private Command toDynamic(ShooterScoreLevel shooterScorelevel) {
+  //   return new SequentialCommandGroup(
+  //     new PrintCommand("to dynamic"),
+  //     new InstantCommand(() -> m_frontLimelight.setLED(true)),
+  //     new SelectCommand(
+  //       Map.ofEntries(
+  //         Map.entry(ShooterScoreLevel.HIGH, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
+  //         Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand(() -> m_frontLimelight.setMiddleCubePipeline())),
+  //         Map.entry(ShooterScoreLevel.LOW, new InstantCommand(() -> m_frontLimelight.setLowCubePipeline())),
+  //         Map.entry(ShooterScoreLevel.INTAKE, new InstantCommand())
+  //       ), () -> shooterScorelevel),
+  //     m_shooter.setDynamicEnabledCommand(true, shooterScorelevel));
+  // }
 
   private Command toDynamic(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
-      new PrintCommand("to dynamic"),
-      new InstantCommand(() -> m_frontLimelight.setLED(true)),
+      m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
+      //new InstantCommand(() -> m_frontLimelight.setLED(true)),
       new SelectCommand(
         Map.ofEntries(
-          Map.entry(ShooterScoreLevel.HIGH, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
-          Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand(() -> m_frontLimelight.setMiddleCubePipeline())),
-          Map.entry(ShooterScoreLevel.LOW, new InstantCommand(() -> m_frontLimelight.setLowCubePipeline())),
-          Map.entry(ShooterScoreLevel.INTAKE, new InstantCommand())
-        ), () -> shooterScorelevel),
-      m_shooter.setDynamicEnabledCommand(true, shooterScorelevel));
+          Map.entry(ShooterScoreLevel.HIGH, m_shooter.toPreset(ShooterConstants.kCloseHighCubePreset)),
+          Map.entry(ShooterScoreLevel.MIDDLE, m_shooter.toPreset(ShooterConstants.kCloseMiddleCubePreset)),
+          Map.entry(ShooterScoreLevel.LOW, m_shooter.toPreset(ShooterConstants.kLaunchCubePreset)),
+          Map.entry(ShooterScoreLevel.INTAKE, m_shooter.toPreset(ShooterConstants.kLaunchCubePreset))
+        ), () -> shooterScorelevel));
+      //m_shooter.setDynamicEnabledCommand(true, shooterScorelevel));
   }
 
   private Command toFront(ShooterScoreLevel shooterScorelevel) {
@@ -88,8 +107,8 @@ public class ShooterStateMachine {
       m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       new SelectCommand(
         Map.ofEntries(
-          Map.entry(ShooterScoreLevel.HIGH, m_shooter.shootSequence(ShooterConstants.kLaunchCube)),
-          Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand()),
+          Map.entry(ShooterScoreLevel.HIGH, m_shooter.toPreset(ShooterConstants.kLaunchCubePreset)),
+          Map.entry(ShooterScoreLevel.MIDDLE, m_shooter.toPreset(ShooterConstants.kLaunchCubePreset)),
           Map.entry(ShooterScoreLevel.LOW, m_shooter.outtakeSequence()),
           Map.entry(ShooterScoreLevel.INTAKE, m_shooter.intakeSequence())
         ), () -> shooterScorelevel));

@@ -191,31 +191,38 @@ public final class Constants {
     public static final int kTopFlywheelMotorCurrentLimit = 30;
     public static final int kBottomFlywheelMotorCurrentLimit = 30;
 
-    public static final double kNominalVoltage = 12.8;
+    public static final double kNominalVoltage = 12;
 
     //Kicker motor speeds
-    public static final double kIntakeMotorSpeed = 0.5;
-    public static final double kOuttakeMotorSpeed = 0.7;
+    public static final double kIntakeMotorSpeed = 0.3;
+    public static final double kOuttakeMotorSpeed = -0.7;
     public static final double kShootMotorSpeed = 1.0;
 
     //Preset Angles
-    public static final double kPivotIntakeAngleDegrees = 118;
     public static final double kPivotHoldAngleDegrees = -40;
-    public static final double kPivotRetractAngleDegrees = -95;
-    public static final double kPivotOuttakeAngleDegrees = 90;
 
     //Shooter Presets
-    public static final ShooterPreset kLaunchCube = 
-      new ShooterPreset(45, -500);
+    public static final ShooterPreset kIntakePreset = 
+      new ShooterPreset(118, -100);
+    public static final ShooterPreset kOuttakePreset = 
+      new ShooterPreset(90, 100);
 
-    public static final ShooterPreset kCloseHighCube = 
-      new ShooterPreset(45, 0);
-    public static final ShooterPreset kFarHighCube = 
+    public static final ShooterPreset kRetractPreset = 
+      new ShooterPreset(-95, 0);
+    public static final ShooterPreset kHoldPreset = 
+      new ShooterPreset(kPivotHoldAngleDegrees, 0);
+
+    public static final ShooterPreset kLaunchCubePreset = 
+      new ShooterPreset(45, 300);
+
+    public static final ShooterPreset kCloseHighCubePreset = 
+      new ShooterPreset(15, 70);
+    public static final ShooterPreset kFarHighCubePreset = 
       new ShooterPreset(45, 0);
 
-    public static final ShooterPreset kCloseMiddleCube = 
-      new ShooterPreset(45, 0);
-    public static final ShooterPreset kFarMiddleCube = 
+    public static final ShooterPreset kCloseMiddleCubePreset = 
+      new ShooterPreset(20, 40);
+    public static final ShooterPreset kFarMiddleCubePreset = 
       new ShooterPreset(45, 0);
 
   }

@@ -111,12 +111,20 @@ public class Superstructure {
 
   //Subsystem State
   public Command setSubsystemState(DPAD dPadInput) {
-    final SelectCommand armSelectCommand = new SelectCommand(
+    final SelectCommand coneArmSelectCommand = new SelectCommand(
       Map.ofEntries(
-        Map.entry(DPAD.UP, m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, cargoType)),
-        Map.entry(DPAD.DOWN, m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER, cargoType)),
-        Map.entry(DPAD.LEFT, m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT, cargoType)),
-        Map.entry(DPAD.RIGHT, m_armStateMachine.setTargetArmStateCommand(ArmState.BACK, cargoType))), 
+        Map.entry(DPAD.UP, m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, CargoType.CONE)),
+        Map.entry(DPAD.DOWN, m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER, CargoType.CONE)),
+        Map.entry(DPAD.LEFT, m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT, CargoType.CONE)),
+        Map.entry(DPAD.RIGHT, m_armStateMachine.setTargetArmStateCommand(ArmState.BACK, CargoType.CONE))), 
+      () -> dPadInput);
+
+    final SelectCommand cubeArmSelectCommand = new SelectCommand(
+      Map.ofEntries(
+        Map.entry(DPAD.UP, m_armStateMachine.setTargetArmStateCommand(ArmState.STOW, CargoType.CUBE)),
+        Map.entry(DPAD.DOWN, m_armStateMachine.setTargetArmStateCommand(ArmState.TRANSFER, CargoType.CUBE)),
+        Map.entry(DPAD.LEFT, m_armStateMachine.setTargetArmStateCommand(ArmState.FRONT, CargoType.CUBE)),
+        Map.entry(DPAD.RIGHT, m_armStateMachine.setTargetArmStateCommand(ArmState.BACK, CargoType.CUBE))), 
       () -> dPadInput);
 
     final SelectCommand shooterSelectCommand = new SelectCommand(
@@ -126,6 +134,14 @@ public class Superstructure {
         Map.entry(DPAD.LEFT, m_shooterStateMachine.setShooterStateCommand(ShooterState.FRONT)),
         Map.entry(DPAD.RIGHT, m_shooterStateMachine.setShooterStateCommand(ShooterState.DYNAMIC))),
       () -> dPadInput); 
+
+    final SelectCommand armSelectCommand = new SelectCommand(
+        Map.ofEntries(
+          Map.entry(CargoType.CONE, coneArmSelectCommand),
+          Map.entry(CargoType.CUBE, cubeArmSelectCommand)
+        ), 
+        () -> getCargoType()
+    );
     
     return new SelectCommand(
       Map.ofEntries(
@@ -187,7 +203,7 @@ public class Superstructure {
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armScore),
-        Map.entry(ScoreMode.SHOOTER, m_shooter.kick())
+        Map.entry(ScoreMode.SHOOTER, new InstantCommand()) //TODO SHOOTER SCORE
       ), 
       () -> getScoreMode()
     );
@@ -225,10 +241,41 @@ public class Superstructure {
     );
   }
 
+  public Command getAlign() {
+    final SelectCommand armAlign = new SelectCommand(
+      Map.ofEntries(
+        Map.entry(CargoType.CONE, new InstantCommand()), // align to cone
+        Map.entry(CargoType.CUBE, new InstantCommand()) //align to cube
+      ), 
+      () -> getCargoType()
+    );
+
+    final SelectCommand shooterAlign = new SelectCommand(
+      Map.ofEntries(
+        Map.entry(ShooterScoreLevel.HIGH, new InstantCommand()), // align to high
+        Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand()), //align to mid
+        Map.entry(ShooterScoreLevel.LOW, new InstantCommand()) //align to low
+      ), 
+      () -> m_shooterStateMachine.getShooterScoreLevel()
+    );
+
+    return new SelectCommand(
+      Map.ofEntries(
+        Map.entry(ScoreMode.ARM, armAlign),
+        Map.entry(ScoreMode.SHOOTER, shooterAlign) //TODO SHOOTER ALIGN
+      ), 
+      () -> getScoreMode()
+    );
+  }
+
   public void updateTelemetry() {
-    // if(m_shooter.isCubeDetected() && scoreMode == ScoreMode.SHOOTER && m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE) {
-    //   setSubsystemState(DPAD.UP).schedule();
-    // }
+    //auto intake
+    if(m_shooter.isCubeDetected() 
+      && scoreMode == ScoreMode.SHOOTER 
+      && m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE
+      && m_shooterStateMachine.getShooterState() == ShooterState.FRONT) {
+      setSubsystemState(DPAD.UP).schedule();
+    }
 
     SmartDashboard.putString("Score Mode", scoreMode.toString());
     SmartDashboard.putString("Cargo Type", cargoType.toString());

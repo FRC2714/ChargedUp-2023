@@ -6,19 +6,11 @@ package frc.robot.utils;
 
 /** Add your docs here. */
 public class ShooterPreset {
-    private final double pivotAngleDegrees;
-    private final double VelocityRPM;
+    public final double PivotDegrees;
+    public final double FlywheelRPM;
 
-    public ShooterPreset(double pivotAngleDegrees, double VelocityRPM) {
-      this.pivotAngleDegrees = pivotAngleDegrees;
-      this.VelocityRPM = VelocityRPM;
-    }
-
-    public double getPivotAngleDegrees() {
-        return pivotAngleDegrees;
-    }
-
-    public double getVelocityRPM() {
-        return VelocityRPM;
+    public ShooterPreset(double PivotDegrees, double FlywheelRPM) {
+      this.PivotDegrees = PivotDegrees;
+      this.FlywheelRPM = FlywheelRPM;
     }
 }

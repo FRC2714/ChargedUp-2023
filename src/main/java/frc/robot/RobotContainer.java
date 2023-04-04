@@ -104,7 +104,7 @@ public class RobotContainer {
 			m_superstructure.setSubsystemState(DPAD.DOWN),
 			m_backLimelight.setLEDCommand(false),
 			m_frontLimelight.setLEDCommand(false),
-			new InstantCommand(() -> m_claw.open())
+			new InstantCommand(() -> m_claw.close())
 		).schedule();
 		}
 
@@ -153,10 +153,11 @@ public class RobotContainer {
 
 		//release cube on y
 		m_driverController.y()
-			.onTrue(m_shooter.kick());
+			.onTrue(m_shooter.setKicker(-0.4))
+			.onFalse(m_shooter.setKicker(0));
 
-		m_driverController.b()
-			.onTrue(new InstantCommand(() -> m_shooter.setTunable()));
+		// m_driverController.b()
+		// 	.onTrue(new InstantCommand(() -> m_shooter.setTunable()));
 		// m_driverController.b()
 		// 	.onTrue(m_shooter.shootSequence());
 
