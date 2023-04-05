@@ -50,9 +50,8 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 			m_superstructure.setScoreLevelCommand(BUTTON.Y),
 			m_superstructure.setSubsystemState(DPAD.RIGHT),
 			new WaitCommand(3).raceWith(new AlignToNode(m_robotDrive, m_backLimelight, m_superstructure)),
-
-			//Score First Cone
-			m_claw.scoreCone(),
+			m_claw.scoreCube(),
+			
             new WaitCommand(0.5),
       		m_superstructure.setSubsystemState(DPAD.DOWN),
 

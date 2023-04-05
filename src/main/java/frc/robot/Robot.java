@@ -35,12 +35,9 @@ public class Robot extends TimedRobot {
     autoChooser = new SendableChooser<>();
 
     autoChooser.setDefaultOption("Nothing Auto", m_robotContainer.getNothingAuto());
-    // autoChooser.addOption("Test Auto", m_robotContainer.getTestAuto());
-    // autoChooser.addOption("Complex Path", m_robotContainer.getComplexAuto());
-
-    // autoChooser.addOption("1 Cube Balance Middle", m_robotContainer.getOneCubeBalanceMiddleAuto());
-    // autoChooser.addOption("1 Cone Balance Middle", m_robotContainer.getOneConeBalanceMiddleAuto());
-    // autoChooser.addOption("2 Cargo Open", m_robotContainer.getTwoCargoOpenAuto());
+    autoChooser.addOption("1 Cone Balance Middle", m_robotContainer.getOneConeBalanceMiddleAuto());
+    autoChooser.addOption("2 Cargo Balance Open", m_robotContainer.getTwoCargoBalanceOpenAuto());
+    autoChooser.addOption("3 Cargo Open", m_robotContainer.getTwoCargoBalanceOpenAuto());
 
     SmartDashboard.putData("Auton Selection", autoChooser);
 

@@ -24,15 +24,15 @@
     },
     {
       "anchorPoint": {
-        "x": 7.024551273301836,
+        "x": 7.1,
         "y": 4.602453048322467
       },
       "prevControl": {
-        "x": 6.001416976156911,
+        "x": 6.076865702855074,
         "y": 5.625587345467392
       },
       "nextControl": {
-        "x": 6.001416976156911,
+        "x": 6.076865702855074,
         "y": 5.625587345467392
       },
       "holonomicAngle": -30.0,
@@ -64,11 +64,10 @@
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "shoot cube",
-          "retract shooter"
+          "shoot cube"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",
@@ -77,18 +76,18 @@
     },
     {
       "anchorPoint": {
-        "x": 6.938968468684271,
-        "y": 3.470858187267976
+        "x": 7.0,
+        "y": 3.5
       },
       "prevControl": {
-        "x": 5.645590320216714,
-        "y": 4.556131314619856
+        "x": 5.791672732477122,
+        "y": 4.940028362099935
       },
       "nextControl": {
-        "x": 5.645590320216714,
-        "y": 4.556131314619856
+        "x": 5.791672732477122,
+        "y": 4.940028362099935
       },
-      "holonomicAngle": -40.0,
+      "holonomicAngle": -50.0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -116,8 +115,10 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "shoot cube"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -126,5 +127,30 @@
   "maxVelocity": 3.0,
   "maxAcceleration": null,
   "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 0.4,
+      "names": [
+        "intake cube"
+      ]
+    },
+    {
+      "position": 1.2000000000000002,
+      "names": [
+        "set shooter high"
+      ]
+    },
+    {
+      "position": 2.4,
+      "names": [
+        "intake cube"
+      ]
+    },
+    {
+      "position": 3.2,
+      "names": [
+        "set shooter mid"
+      ]
+    }
+  ]
 }

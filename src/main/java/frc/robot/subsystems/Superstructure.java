@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.commands.align.AlignToCone;
@@ -268,6 +269,18 @@ public class Superstructure {
         Map.entry(ScoreMode.SHOOTER, new TurnToTarget(m_robotDrive, m_frontLimelight))
       ), 
       () -> getScoreMode()
+    );
+  }
+
+  public Command scorePreloadedCone() { // for auto use only
+    return new SequentialCommandGroup(
+      m_claw.intakeCone(),
+			setScoreModeCommand(ScoreMode.ARM),
+			setCargoTypeCommand(CargoType.CONE),
+			setScoreLevelCommand(BUTTON.Y),
+			setSubsystemState(DPAD.RIGHT),
+			new WaitCommand(3).raceWith(new AlignToCone(m_robotDrive, m_backLimelight)),
+			m_claw.scoreCone()
     );
   }
 

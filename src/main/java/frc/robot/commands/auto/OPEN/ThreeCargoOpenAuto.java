@@ -31,15 +31,15 @@ import frc.robot.subsystems.Superstructure;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class TwoCargoBalanceOpenAuto extends AutoBase {
+public class ThreeCargoOpenAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"2CargoBalanceOPEN",
+			"3CargoOPEN",
 			new PathConstraints(
-			2.5,
+			3.0,
 			3.0));
 
-	public TwoCargoBalanceOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
+	public ThreeCargoOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
 		super(m_robotDrive);
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
@@ -49,6 +49,10 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 		AutoConstants.AutoEventMap.put("set shooter high", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.Y),
+				m_superstructure.setSubsystemState(DPAD.RIGHT)));
+        AutoConstants.AutoEventMap.put("set shooter mid", 
+			new SequentialCommandGroup(
+				m_superstructure.setScoreLevelCommand(BUTTON.B),
 				m_superstructure.setSubsystemState(DPAD.RIGHT)));
 		AutoConstants.AutoEventMap.put("shoot cube", 
 			new SequentialCommandGroup(

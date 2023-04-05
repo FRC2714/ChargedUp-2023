@@ -98,20 +98,20 @@
       }
     }
   ],
-  "maxVelocity": 3.0,
+  "maxVelocity": 2.5,
   "maxAcceleration": 3.0,
   "isReversed": null,
   "markers": [
     {
-      "position": 0.5,
+      "position": 0.4,
       "names": [
         "intake cube"
       ]
     },
     {
-      "position": 1.3,
+      "position": 1.2,
       "names": [
-        "set shooter preset"
+        "set shooter high"
       ]
     },
     {

@@ -23,7 +23,7 @@ public class PathTestAuto extends AutoBase {
 
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"ComplexAuto",
+			"TestPath",
 			new PathConstraints(
 			AutoConstants.kMaxSpeedMetersPerSecond,
 			AutoConstants.kMaxAccelerationMetersPerSecondSquared));

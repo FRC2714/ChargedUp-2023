@@ -18,7 +18,9 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.NothingAuto;
-import frc.robot.commands.auto.PathTestAuto;
+import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
+import frc.robot.commands.auto.OPEN.ThreeCargoOpenAuto;
+import frc.robot.commands.auto.OPEN.TwoCargoBalanceOpenAuto;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Infrastructure;
 import frc.robot.subsystems.Limelight;
@@ -208,19 +210,15 @@ public class RobotContainer {
 		return new NothingAuto();
 	}
 
-	public Command getComplexAuto() {
-		return new PathTestAuto(m_robotDrive);
+	public Command getOneConeBalanceMiddleAuto() {
+		return new OneConeBalanceMiddleAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
 	}
 
-	// public Command getOneCubeBalanceMiddleAuto() {
-	// 	return new OneCubeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
-	// }
+	public Command getTwoCargoBalanceOpenAuto() {
+		return new TwoCargoBalanceOpenAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+	}
 
-	// public Command getOneConeBalanceMiddleAuto() {
-	// 	return new OneConeBalanceMiddleAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
-	// }
-
-	// public Command getTwoCargoOpenAuto() {
-	// 	return new TwoCargoOpenAuto(m_robotDrive, m_armStateMachine, m_shooter, m_arm, m_claw, m_backLimelight);
-	// }
+	public Command getThreeCargoBalanceOpenAuto() {
+		return new ThreeCargoOpenAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+	}
 }

@@ -13,14 +13,10 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.align.AlignToNode;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Superstructure.BUTTON;
-import frc.robot.subsystems.Superstructure.CargoType;
 import frc.robot.subsystems.Superstructure.DPAD;
-import frc.robot.subsystems.Superstructure.ScoreMode;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
@@ -44,15 +40,8 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
 		addCommands(
-			m_claw.intakeCone(),
-			m_superstructure.setScoreModeCommand(ScoreMode.ARM),
-			m_superstructure.setCargoTypeCommand(CargoType.CONE),
-			m_superstructure.setScoreLevelCommand(BUTTON.Y),
-			m_superstructure.setSubsystemState(DPAD.RIGHT),
-			new WaitCommand(3).raceWith(new AlignToNode(m_robotDrive, m_backLimelight, m_superstructure)),
+			m_superstructure.scorePreloadedCone(),
 
-			//Score First Cone
-			m_claw.scoreCone(),
             new WaitCommand(0.5),
       		m_superstructure.setSubsystemState(DPAD.DOWN),
 
