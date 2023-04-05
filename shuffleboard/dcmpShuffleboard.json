@@ -55,14 +55,14 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Elbow Selected Constraint",
-                  "_title": "SmartDashboard/Elbow Selected Constraint",
+                  "_title": "/SmartDashboard/Elbow Selected Constraint",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Shoulder Selected Constraint",
-                  "_title": "SmartDashboard/Shoulder Selected Constraint",
+                  "_title": "/SmartDashboard/Shoulder Selected Constraint",
                   "_glyph": 148,
                   "_showGlyph": false
                 }
@@ -188,14 +188,14 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Elbow Target Angle",
-                  "_title": "SmartDashboard/Elbow Target Angle",
+                  "_title": "/SmartDashboard/Elbow Target Angle",
                   "_glyph": 148,
                   "_showGlyph": false
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Shoulder Target Angle",
-                  "_title": "SmartDashboard/Shoulder Target Angle",
+                  "_title": "/SmartDashboard/Shoulder Target Angle",
                   "_glyph": 148,
                   "_showGlyph": false
                 }
@@ -215,7 +215,133 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "titleType": 0,
-        "tiles": {}
+        "tiles": {
+          "2,2": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/limelight-front_PipelineName",
+              "_title": "SmartDashboard/limelight-front_PipelineName",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "10,0": {
+            "size": [
+              10,
+              8
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight-front",
+              "_title": "limelight-front",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": false,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "6,0": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Shooter Pivot",
+              "_title": "SmartDashboard/Shooter Pivot",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,2": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Shooter Target Pivot",
+              "_title": "SmartDashboard/Shooter Target Pivot",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "2,0": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Shooter State",
+              "_title": "SmartDashboard/Shooter State",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,6": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Flywheel Target",
+              "_title": "SmartDashboard/Flywheel Target",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "6,4": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Flywheel RPM",
+              "_title": "SmartDashboard/Flywheel RPM",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/TunableNumbers/PIVOT TUNEABLE",
+              "_title": "SmartDashboard/TunableNumbers/PIVOT TUNEABLE",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "3,6": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/TunableNumbers/VELOCITY TUNEABLE",
+              "_title": "SmartDashboard/TunableNumbers/VELOCITY TUNEABLE",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          }
+        }
       }
     },
     {
@@ -229,36 +355,20 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "0,0": {
+          "15,6": {
             "size": [
               5,
-              3
+              2
             ],
             "content": {
               "_type": "ComboBox Chooser",
               "_source0": "network_table:///SmartDashboard/Auton Selection",
-              "_title": "AUTO SELECT",
+              "_title": "SmartDashboard/Auton Selection",
               "_glyph": 148,
               "_showGlyph": false
             }
           },
-          "0,3": {
-            "size": [
-              5,
-              3
-            ],
-            "content": {
-              "_type": "Field",
-              "_source0": "network_table:///SmartDashboard/Field Position",
-              "_title": "SmartDashboard/Field Position",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Game/Game": "A2023_Charged_Up",
-              "Visuals/Robot Icon Size": 50.0,
-              "Visuals/Show Outside Circles": false
-            }
-          },
-          "14,0": {
+          "15,0": {
             "size": [
               5,
               6
@@ -279,7 +389,7 @@
                   "Visuals/Major tick spacing": 45.0,
                   "Visuals/Starting angle": 180.0,
                   "Visuals/Show tick mark ring": true,
-                  "Visuals/Counter clockwise": false
+                  "Visuals/Counter clockwise": true
                 },
                 {
                   "_type": "Text View",
@@ -287,8 +397,57 @@
                   "_title": "SmartDashboard/DIRECTION TO ZERO",
                   "_glyph": 148,
                   "_showGlyph": false
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Robot Heading",
+                  "_title": "SmartDashboard/Robot Heading",
+                  "_glyph": 148,
+                  "_showGlyph": false
                 }
               ]
+            }
+          },
+          "7,0": {
+            "size": [
+              8,
+              7
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight-front",
+              "_title": "limelight-front",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": false,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "0,0": {
+            "size": [
+              7,
+              7
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight-back",
+              "_title": "limelight-back",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": false,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
             }
           }
         }

@@ -22,8 +22,8 @@ public class AutoBase extends SequentialCommandGroup {
   private DriveSubsystem m_robotDrive;
 
   /** Creates a new AutoBase. */
-  public AutoBase(DriveSubsystem m_DriveSubsystem) {
-    m_robotDrive = m_DriveSubsystem;
+  public AutoBase(DriveSubsystem m_robotDrive) {
+    this.m_robotDrive = m_robotDrive;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands();
