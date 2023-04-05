@@ -32,7 +32,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 4.8;
+    public static final double kMaxSpeedMetersPerSecond = 5.2; //4.8
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
 
     public static final double kDirectionSlewRate = 1.2; // radians per second
@@ -144,7 +144,7 @@ public final class Constants {
     public static final TrapezoidProfile.Constraints kAutoControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
     
-    public static final HashMap<String, Command> EventMap = new HashMap<>();
+    public static final HashMap<String, Command> AutoEventMap = new HashMap<>();
   }
 
   public static final class TuningConstants {
@@ -196,7 +196,7 @@ public final class Constants {
     //Kicker motor speeds
     public static final double kIntakeMotorSpeed = 0.3;
     public static final double kOuttakeMotorSpeed = -0.7;
-    public static final double kShootMotorSpeed = 1.0;
+    public static final double kKickSpeed = -0.4;
 
     //Preset Angles
     public static final double kPivotHoldAngleDegrees = -40;
@@ -278,9 +278,9 @@ public final class Constants {
     public static final double kShoulderPositionConversionFactor = (2*Math.PI) * kShoulderGearRatio; //Radians * Gear ratio
     public static final double kElbowPositionConversionFactor = (2*Math.PI) * kElbowGearRatio;
 
-    public static final double kShoulderEncoderZeroOffset = 313.4707425;
-    public static final double kElbowEncoderZeroOffset = 41.4360188;
-    public static final double kShoulderKinematicOffset = 162; //difference from kinematic 0 to sparkmax 0 approx 45 deg
+    public static final double kShoulderEncoderZeroOffset = 180.9295889;
+    public static final double kElbowEncoderZeroOffset = 1422;
+    public static final double kShoulderKinematicOffset = 42.6; //difference from kinematic 0 to sparkmax 0 approx 45 deg
     public static final double kElbowKinematicOffset = 762.0; //difference from kinematic 0 to sparkmax 0 approx 160 deg
 
     public static final boolean kShoulderMotorInverted = true; //base joint encoder inverted
@@ -366,7 +366,7 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kBackConeMiddlePosition = 
       new ArmForwardKinematicPosition(101, -90);
     public static final ArmForwardKinematicPosition kBackConeHighPosition = 
-      new ArmForwardKinematicPosition(55, -20);
+      new ArmForwardKinematicPosition(60, -30);
 
     //Back Cube Score positions
     public static final ArmForwardKinematicPosition kBackCubeLowPosition = 
@@ -389,7 +389,7 @@ public final class Constants {
 
     //Arm Intake positions
     public static final ArmForwardKinematicPosition kBackIntakePosition = 
-      new ArmForwardKinematicPosition(90, -83);
+      new ArmForwardKinematicPosition(90, -86);
     public static final ArmForwardKinematicPosition kFrontIntakePosition = 
       new ArmForwardKinematicPosition(104, 68);
     

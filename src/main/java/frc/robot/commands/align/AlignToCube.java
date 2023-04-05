@@ -13,7 +13,7 @@ import frc.robot.subsystems.Limelight;
 
 public class AlignToCube extends CommandBase {
   private DriveSubsystem m_robotDrive;
-  private Limelight m_limelight;
+  private Limelight m_backLimelight;
 
   private ProfiledPIDController xController;
   private ProfiledPIDController yController;
@@ -29,9 +29,9 @@ public class AlignToCube extends CommandBase {
   //private double thetaControllerkP
 
   /** Creates a new SmoothAlign. */
-  public AlignToCube(DriveSubsystem m_robotDrive, Limelight m_limelight) {
+  public AlignToCube(DriveSubsystem m_robotDrive, Limelight m_backLimelight) {
     this.m_robotDrive = m_robotDrive;
-    this.m_limelight = m_limelight;
+    this.m_backLimelight = m_backLimelight;
 
     // Use addRequirements() here to declare subsystem dependencies.
     xController = new ProfiledPIDController(kPXControllerCube, 0, 0, AutoConstants.kAutoControllerConstraints);
@@ -54,16 +54,16 @@ public class AlignToCube extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_limelight.setAprilTagPipeline();
-    m_limelight.setLED(true);
+    m_backLimelight.setAprilTagPipeline();
+    m_backLimelight.setLED(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     m_robotDrive.drive(
-        xController.calculate(m_limelight.getDistanceToGoalMeters()), 
-        yController.calculate(m_limelight.getXOffsetRadians()), 
+        xController.calculate(m_backLimelight.getDistanceToGoalMeters()), 
+        yController.calculate(m_backLimelight.getXOffsetRadians()), 
         thetaController.calculate(m_robotDrive.getHeadingRadians()), 
         true,
         false);
@@ -72,7 +72,7 @@ public class AlignToCube extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_limelight.setLED(false);
+    m_backLimelight.setLED(false);
     m_robotDrive.drive(0, 0, 0, true, false);
   }
 

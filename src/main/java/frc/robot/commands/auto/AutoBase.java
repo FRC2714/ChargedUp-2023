@@ -37,7 +37,7 @@ public class AutoBase extends SequentialCommandGroup {
         new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // x y controller
         new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // theta controller
         m_robotDrive::setModuleStates,
-        AutoConstants.EventMap,
+        AutoConstants.AutoEventMap,
         true,
         m_robotDrive);
   }

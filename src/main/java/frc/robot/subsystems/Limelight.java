@@ -11,7 +11,7 @@ import frc.robot.utils.LimelightHelpers;
 
 
 public class Limelight extends SubsystemBase {
-	private Field2d m_field = new Field2d();
+	//private Field2d m_field = new Field2d();
 
 	private String limelightName = "limelight";
 	private double kCameraHeight, kMountingAngle, GoalHeight = 0;

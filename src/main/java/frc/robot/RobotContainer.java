@@ -4,32 +4,19 @@
 
 package frc.robot;
 
-import java.util.List;
-
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.LimelightConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.align.AlignToNode;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.subsystems.DriveSubsystem;
@@ -89,7 +76,7 @@ public class RobotContainer {
 				() -> m_robotDrive.drive(
 					-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
 					-MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-					-MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+					-0.8*MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
 					true, false),
 				m_robotDrive));
 	}
@@ -130,9 +117,9 @@ public class RobotContainer {
 
 		/////////////////////////////DRIVER CONTROLS/////////////////////////////////////////////////////////////
 			
-		//zero heading then autoalign on right bumper
+		//autoalign on right bumper
 		m_driverController.rightBumper()
-			.whileTrue(new AlignToNode(m_robotDrive, m_backLimelight, m_superstructure));
+			.whileTrue(m_superstructure.getAlign());
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
@@ -151,24 +138,26 @@ public class RobotContainer {
 		//release cube on y
 		m_driverController.y()
 			.onTrue(m_shooter.setKicker(-0.4))
-			.onFalse(m_shooter.setKicker(0));
+			.onFalse(m_shooter.stopCommand());
 
 		// m_driverController.b()
 		// 	.onTrue(new InstantCommand(() -> m_shooter.setTunable()));
-		// m_driverController.b()
-		// 	.onTrue(m_shooter.shootSequence());
 
 		//toggle claw intake on X
 		m_driverController.x()
 			.onTrue(m_claw.intakeAndToggleCommand());
 
-		//reset gyro on left
+		//reset gyro on back
 		m_driverController.back()
 			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
 
-		//align to hp on up
+		//lock wheels on right
 		m_driverController.povRight()
 			.whileTrue(new InstantCommand(() -> m_robotDrive.setX()));
+
+		//AutoBalance on down
+		m_driverController.povDown()
+			.whileTrue(new AutoBalance(m_robotDrive));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
@@ -213,51 +202,6 @@ public class RobotContainer {
 		// cube mode on left bumper
 		m_operatorController.leftBumper()
 			.onTrue(m_superstructure.setCargoTypeCommand(CargoType.CUBE));
-	}
-
-	/**
-	 * Use this to pass the autonomous command to the main {@link Robot} class.
-	 *
-	 * @return the command to run in autonomous
-	 */
-	public Command getTestAuto() {
-		// Create config for trajectory
-		TrajectoryConfig config = new TrajectoryConfig(
-				AutoConstants.kMaxSpeedMetersPerSecond,
-				AutoConstants.kMaxAccelerationMetersPerSecondSquared)
-			// Add kinematics to ensure max speed is actually obeyed
-			.setKinematics(DriveConstants.kDriveKinematics);
-
-		// An example trajectory to follow. All units in meters.
-		Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-			// Start at the origin facing the +X direction
-			new Pose2d(0, 0, new Rotation2d(0)),
-			// Pass through these two interior waypoints, making an 's' curve path
-			List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-			// End 3 meters straight ahead of where we started, facing forward
-			new Pose2d(3, 0, new Rotation2d(0)),
-			config);
-
-		var thetaController = new ProfiledPIDController(
-			AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
-		thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-		SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-			exampleTrajectory,
-			m_robotDrive::getPose, // Functional interface to feed supplier
-			DriveConstants.kDriveKinematics,
-			// Position controllers
-			new PIDController(AutoConstants.kPXController, 0, 0),
-			new PIDController(AutoConstants.kPYController, 0, 0),
-			thetaController,
-			m_robotDrive::setModuleStates,
-			m_robotDrive);
-
-		// Reset odometry to the starting pose of the trajectory.
-		m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-
-		// Run path following command, then stop at the end.
-		return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
 	}
 
 	public Command getNothingAuto() {

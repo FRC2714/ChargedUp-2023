@@ -15,7 +15,7 @@ import frc.robot.subsystems.Superstructure.CargoType;
 
 public class AlignToNode extends CommandBase {
   private DriveSubsystem m_robotDrive;
-  private Limelight m_limelight;
+  private Limelight m_backLimelight;
   private Superstructure m_superstructure;
 
   private ProfiledPIDController xController;
@@ -36,9 +36,9 @@ public class AlignToNode extends CommandBase {
   //private double thetaControllerkP
 
   /** Creates a new SmoothAlign. */
-  public AlignToNode(DriveSubsystem m_robotDrive, Limelight m_limelight, Superstructure m_superstructure) {
+  public AlignToNode(DriveSubsystem m_robotDrive, Limelight m_backLimelight, Superstructure m_superstructure) {
     this.m_robotDrive = m_robotDrive;
-    this.m_limelight = m_limelight;
+    this.m_backLimelight = m_backLimelight;
     this.m_superstructure = m_superstructure;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -63,25 +63,25 @@ public class AlignToNode extends CommandBase {
   @Override
   public void initialize() {
     if (m_superstructure.getCargoType() == CargoType.CONE) {
-      m_limelight.setRetroPipeline();
+      m_backLimelight.setRetroPipeline();
       xController.setGoal(xControllerGoalCone);
       xController.setP(kPXControllerCone);
       yController.setP(kPYControllerCone);
     } else {
-      m_limelight.setAprilTagPipeline();
+      m_backLimelight.setAprilTagPipeline();
       xController.setGoal(xControllerGoalCube);
       xController.setP(kPXControllerCube);
       yController.setP(kPYControllerCube);
     }
-    m_limelight.setLED(true);
+    m_backLimelight.setLED(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     m_robotDrive.drive(
-        xController.calculate(m_limelight.getDistanceToGoalMeters()), 
-        yController.calculate(m_limelight.getXOffsetRadians()), 
+        xController.calculate(m_backLimelight.getDistanceToGoalMeters()), 
+        yController.calculate(m_backLimelight.getXOffsetRadians()), 
         thetaController.calculate(m_robotDrive.getHeadingRadians()), 
         true,
         false);
@@ -90,8 +90,8 @@ public class AlignToNode extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_limelight.setAprilTagPipeline();
-    m_limelight.setLED(false);
+    m_backLimelight.setAprilTagPipeline();
+    m_backLimelight.setLED(false);
     m_robotDrive.drive(0, 0, 0, true, false);
   }
 

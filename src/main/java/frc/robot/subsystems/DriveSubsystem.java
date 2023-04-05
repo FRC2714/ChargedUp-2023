@@ -252,8 +252,8 @@ public class DriveSubsystem extends SubsystemBase {
     return Units.degreesToRadians(getHeading());
   }
 
-  public double getPitchRadians() {
-    return Units.degreesToRadians(m_gyro.getXComplementaryAngle());
+  public double getPitchDegrees() {
+    return m_gyro.getXComplementaryAngle();
   }
 
   public double getRollDegrees() {

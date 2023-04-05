@@ -27,7 +27,7 @@ public class TurnToTarget extends AsymmetricProfiledPIDCommand {
             0,
             0,
             // The motion profile constraints
-            new Constraints(1, 1, 1)), //rad/s, rad/s^2
+            new Constraints(3.14, 3.14, 3.14)), //rad/s, rad/s^2
         // This should return the measurement
         m_limelight::getXOffsetRadians,
         // This should return the goal (can also be a constant)

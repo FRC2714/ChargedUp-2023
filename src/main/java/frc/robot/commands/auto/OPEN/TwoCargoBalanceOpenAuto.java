@@ -11,8 +11,10 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.align.AlignToNode;
 import frc.robot.commands.auto.AutoBase;
@@ -39,20 +41,28 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 			3.0,
 			3.0));
 
-	public TwoCargoBalanceOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_intake, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
+	public TwoCargoBalanceOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
 		super(m_robotDrive);
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
-    	AutoConstants.EventMap.put("intake cube", m_superstructure.intakeRightTrigger());
-		AutoConstants.EventMap.put("hold intake", m_superstructure.setSubsystemState(DPAD.UP));
-
-		AutoConstants.EventMap.put("score cube", m_superstructure.manualShoot());
-
-		AutoConstants.EventMap.put("tuck shooter", m_superstructure.setSubsystemState(DPAD.DOWN));
+    	AutoConstants.AutoEventMap.put("intake cube", 
+			m_superstructure.intakeRightTrigger());
+		AutoConstants.AutoEventMap.put("set shooter preset", 
+			new SequentialCommandGroup(
+				m_superstructure.setScoreLevelCommand(BUTTON.Y),
+				m_superstructure.setSubsystemState(DPAD.RIGHT)));
+		AutoConstants.AutoEventMap.put("shoot cube", 
+			new SequentialCommandGroup(
+				m_shooter.setKicker(ShooterConstants.kKickSpeed),
+				new WaitCommand(0.2),
+				m_shooter.stopCommand()
+			));
+		AutoConstants.AutoEventMap.put("retract shooter", 
+			m_superstructure.setSubsystemState(DPAD.DOWN));
 
 		addCommands(
-			m_claw.intakeAndToggleCommand(),
+			m_claw.intakeCone(),
 			m_superstructure.setScoreModeCommand(ScoreMode.ARM),
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
 			m_superstructure.setScoreLevelCommand(BUTTON.Y),
