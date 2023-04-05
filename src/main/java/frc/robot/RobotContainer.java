@@ -95,7 +95,7 @@ public class RobotContainer {
 		}
 
 	public void setAutoDefaultStates() {
-		new InstantCommand(() -> m_robotDrive.zeroHeading()).schedule();
+		Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive).schedule();
 		m_backLimelight.setLEDCommand(false).schedule();
 		//m_intake.pivotToHold().schedule();
 	}
@@ -155,7 +155,7 @@ public class RobotContainer {
 
 		//lock wheels on right
 		m_driverController.povRight()
-			.whileTrue(new InstantCommand(() -> m_robotDrive.setX()));
+			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
 		//AutoBalance on down
 		m_driverController.povDown()
@@ -179,7 +179,7 @@ public class RobotContainer {
 			.onTrue(m_superstructure.setSubsystemState(DPAD.DOWN));
 		//FRONT on left
 		m_operatorController.povLeft()
-		.onTrue(m_superstructure.setSubsystemState(DPAD.LEFT));
+			.onTrue(m_superstructure.setSubsystemState(DPAD.LEFT));
 		//BACK on right
 		m_operatorController.povRight()
 			.onTrue(m_superstructure.setSubsystemState(DPAD.RIGHT));
