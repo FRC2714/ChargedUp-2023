@@ -159,11 +159,11 @@ public class RobotContainer {
 			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
 		//AutoBalance on down
-		m_driverController.povDown()
+		m_driverController.povLeft()
 			.whileTrue(new AutoBalance(m_robotDrive));
 
-		// m_driverController.povDown() 
-		// 	.whileTrue(new TurnToAngle(m_robotDrive, 180));
+		m_driverController.povDown() 
+			.whileTrue(new TurnToAngle(m_robotDrive, 180));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 

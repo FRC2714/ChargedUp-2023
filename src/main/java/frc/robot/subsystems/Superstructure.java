@@ -272,14 +272,14 @@ public class Superstructure {
     );
   }
 
-  public Command scorePreloadedCone() { // for auto use only
+  public Command scorePreloadedCone(double waitTime) { // for auto use only 3.5 good
     return new SequentialCommandGroup(
       m_claw.intakeCone(),
 			setScoreModeCommand(ScoreMode.ARM),
 			setCargoTypeCommand(CargoType.CONE),
 			setScoreLevelCommand(BUTTON.Y),
 			setSubsystemState(DPAD.RIGHT),
-			new WaitCommand(3).raceWith(new AlignToCone(m_robotDrive, m_backLimelight)),
+			new WaitCommand(waitTime).raceWith(new AlignToCone(m_robotDrive, m_backLimelight)),
 			m_claw.scoreCone()
     );
   }

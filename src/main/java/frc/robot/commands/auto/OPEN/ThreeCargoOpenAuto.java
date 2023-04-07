@@ -36,8 +36,8 @@ public class ThreeCargoOpenAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"3CargoOPEN",
 			new PathConstraints(
-			3.0,
-			3.0));
+			3.5,
+			3.5));
 
 	public ThreeCargoOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
 		super(m_robotDrive);
@@ -64,10 +64,10 @@ public class ThreeCargoOpenAuto extends AutoBase {
 			m_superstructure.setSubsystemState(DPAD.DOWN));
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(), //Score First Cone
+			m_superstructure.scorePreloadedCone(3.5), //Score First Cone
 
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
-			new WaitCommand(1),
+			new WaitCommand(0.5),
 
 			//Follow Path
 			autoBuilder.fullAuto(autoPathGroup),

@@ -40,10 +40,10 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(),
+			m_superstructure.scorePreloadedCone(4.0),
 
-            new WaitCommand(0.5),
       		m_superstructure.setSubsystemState(DPAD.DOWN),
+			new WaitCommand(1),
 
 			//Follow Path
 			autoBuilder.fullAuto(autoPathGroup),

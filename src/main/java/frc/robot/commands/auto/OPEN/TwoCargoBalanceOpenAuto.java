@@ -36,7 +36,7 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"2CargoBalanceOPEN",
 			new PathConstraints(
-			2.5,
+			3.0,
 			3.0));
 
 	public TwoCargoBalanceOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
@@ -60,10 +60,9 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 			m_superstructure.setSubsystemState(DPAD.DOWN));
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(), //Score First Cone
+			m_superstructure.scorePreloadedCone(3.5), //Score First Cone
 
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
-			new WaitCommand(1),
 
 			//Follow Path
 			autoBuilder.fullAuto(autoPathGroup),

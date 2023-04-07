@@ -21,11 +21,11 @@ public class AutoBalance extends AsymmetricProfiledPIDCommand {
         // The ProfiledPIDController used by the command
         new AsymmetricProfiledPIDController(
             // The PID gains
+            0.006,
+            0,
             0.005,
-            0,
-            0,
             // The motion profile constraints
-            new Constraints(3, 3, 2)), //deg/s, deg/s^2
+            new Constraints(1, 1, 1)), //deg/s, deg/s^2
         // This should return the measurement
         drivetrain::getPitchDegrees, //gyro X angle
         // This should return the goal (can also be a constant)
