@@ -63,6 +63,7 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 			m_superstructure.scorePreloadedCone(3.5), //Score First Cone
 
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
+			new WaitCommand(0.5),
 
 			//Follow Path
 			autoBuilder.fullAuto(autoPathGroup),

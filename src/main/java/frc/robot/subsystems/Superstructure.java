@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.commands.align.AlignToCone;
 import frc.robot.commands.align.AlignToCube;
+import frc.robot.commands.align.ShooterAlignToCube;
 import frc.robot.commands.align.TurnToTarget;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
@@ -266,7 +267,7 @@ public class Superstructure {
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armAlign),
-        Map.entry(ScoreMode.SHOOTER, new TurnToTarget(m_robotDrive, m_frontLimelight))
+        Map.entry(ScoreMode.SHOOTER, new ShooterAlignToCube(m_robotDrive, m_frontLimelight))
       ), 
       () -> getScoreMode()
     );
