@@ -408,10 +408,10 @@
               ]
             }
           },
-          "7,0": {
+          "7,2": {
             "size": [
               8,
-              7
+              6
             ],
             "content": {
               "_type": "Camera Stream",
@@ -432,7 +432,7 @@
           "0,0": {
             "size": [
               7,
-              7
+              6
             ],
             "content": {
               "_type": "Camera Stream",
@@ -448,6 +448,32 @@
               "fps": -1,
               "imageWidth": 0,
               "imageHeight": 0
+            }
+          },
+          "7,0": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Cargo Type",
+              "_title": "SmartDashboard/Cargo Type",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "11,0": {
+            "size": [
+              4,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Score Mode",
+              "_title": "SmartDashboard/Score Mode",
+              "_glyph": 148,
+              "_showGlyph": false
             }
           }
         }

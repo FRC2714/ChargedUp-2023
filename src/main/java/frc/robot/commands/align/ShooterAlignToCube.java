@@ -17,14 +17,11 @@ public class ShooterAlignToCube extends CommandBase {
 
   private ProfiledPIDController xController;
   private ProfiledPIDController yController;
-  private ProfiledPIDController thetaController;
 
-  private double kPXControllerCube = 0.65;
-  private double kPYControllerCube = 1.1;
+  private double kPXControllerCube = 0.4;
+  private double kPYControllerCube = 0.8;
 
-  private double kPThetaController = 1;
-
-  private double xControllerGoalCube = 0.80;
+  private double xControllerGoalCube = Units.inchesToMeters(30+5);
 
   //private double thetaControllerkP
 
@@ -36,7 +33,6 @@ public class ShooterAlignToCube extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     xController = new ProfiledPIDController(kPXControllerCube, 0, 0, AutoConstants.kAutoControllerConstraints);
     yController = new ProfiledPIDController(kPYControllerCube, 0, 0, AutoConstants.kAutoControllerConstraints);
-    thetaController = new ProfiledPIDController(kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     
     addRequirements(m_robotDrive);
 
@@ -45,16 +41,12 @@ public class ShooterAlignToCube extends CommandBase {
 
     yController.setGoal(0);
     yController.setTolerance(Units.degreesToRadians(0),0);
-
-    thetaController.setGoal(Units.degreesToRadians(180));
-    thetaController.setTolerance(Units.degreesToRadians(0),0);
-    thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_frontLimelight.setAprilTagPipeline();
+    m_frontLimelight.setLowCubePipeline();
     m_frontLimelight.setLED(true);
   }
 
@@ -63,8 +55,8 @@ public class ShooterAlignToCube extends CommandBase {
   public void execute() {
     m_robotDrive.drive(
         xController.calculate(m_frontLimelight.getDistanceToGoalMeters()), 
-        yController.calculate(m_frontLimelight.getXOffsetRadians()), 
-        thetaController.calculate(m_robotDrive.getHeadingRadians()), 
+        yController.calculate(m_frontLimelight.getXOffsetRadians()),
+        0,
         true,
         false);
   }
@@ -79,6 +71,6 @@ public class ShooterAlignToCube extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return xController.atSetpoint() && yController.atSetpoint() && thetaController.atSetpoint();
+    return xController.atGoal() && yController.atGoal();
   }
 }

@@ -260,6 +260,10 @@ public class DriveSubsystem extends SubsystemBase {
     return m_gyro.getYComplementaryAngle();
   }
 
+  public boolean isBalanced() {
+    return Math.abs(getPitchDegrees() - (-2)) < Units.degreesToRadians(2);
+  }
+
   /**
    * Returns the turn rate of the robot.
    *

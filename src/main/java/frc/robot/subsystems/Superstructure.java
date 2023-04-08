@@ -16,10 +16,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.commands.AutoBalance;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToCone;
 import frc.robot.commands.align.AlignToCube;
-import frc.robot.commands.align.ShooterAlignToCube;
-import frc.robot.commands.align.TurnToTarget;
+import frc.robot.commands.align.ShooterTurnAndAlign;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmScoreLevel;
@@ -267,7 +268,7 @@ public class Superstructure {
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armAlign),
-        Map.entry(ScoreMode.SHOOTER, new ShooterAlignToCube(m_robotDrive, m_frontLimelight))
+        Map.entry(ScoreMode.SHOOTER, new TurnToAngle(m_robotDrive, 180))
       ), 
       () -> getScoreMode()
     );
@@ -283,6 +284,13 @@ public class Superstructure {
 			new WaitCommand(waitTime).raceWith(new AlignToCone(m_robotDrive, m_backLimelight)),
 			m_claw.scoreCone()
     );
+  }
+
+  public Command checkBalance() {
+    return new ConditionalCommand(
+			new InstantCommand(() -> m_robotDrive.setX()), 
+			new AutoBalance(m_robotDrive), 
+			() -> m_robotDrive.isBalanced());
   }
 
   public void updateTelemetry() {

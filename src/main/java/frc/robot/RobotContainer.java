@@ -91,14 +91,14 @@ public class RobotContainer {
 			m_superstructure.setSubsystemState(DPAD.DOWN),
 			m_backLimelight.setLEDCommand(false),
 			m_frontLimelight.setLEDCommand(false),
-			new InstantCommand(() -> m_claw.close())
+			new InstantCommand(() -> m_claw.close()),
+			new InstantCommand(() -> m_robotDrive.resetModules())
 		).schedule();
 		}
 
 	public void setAutoDefaultStates() {
 		Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive).schedule();
 		m_backLimelight.setLEDCommand(false).schedule();
-		//m_intake.pivotToHold().schedule();
 	}
 
 	public void updateTelemetry() {
@@ -158,7 +158,7 @@ public class RobotContainer {
 		m_driverController.povRight()
 			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
 
-		//AutoBalance on down
+		//AutoBalance on left
 		m_driverController.povLeft()
 			.whileTrue(new AutoBalance(m_robotDrive));
 

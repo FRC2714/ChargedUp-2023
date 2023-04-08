@@ -202,7 +202,7 @@ public final class Constants {
 
     //Shooter Presets
     public static final ShooterPreset kIntakePreset = 
-      new ShooterPreset(118, -100);
+      new ShooterPreset(115, -100);
     public static final ShooterPreset kOuttakePreset = 
       new ShooterPreset(90, 100);
 

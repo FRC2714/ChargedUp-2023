@@ -23,13 +23,13 @@ public class AutoBalance extends AsymmetricProfiledPIDCommand {
             // The PID gains
             0.006,
             0,
-            0.005,
+            0.001,
             // The motion profile constraints
             new Constraints(1, 1, 1)), //deg/s, deg/s^2
         // This should return the measurement
         drivetrain::getPitchDegrees, //gyro X angle
         // This should return the goal (can also be a constant)
-        new State(-2, 0),
+        new State(0, 0), //TODO
         // This uses the output
         (output, setpoint) -> {
           // Use the output (and setpoint, if desired) here
@@ -53,6 +53,7 @@ public class AutoBalance extends AsymmetricProfiledPIDCommand {
   }
 
   public void end() {
+    drivetrain.drive(0, 0, 0, true, false);
     drivetrain.setX();
   }
 }

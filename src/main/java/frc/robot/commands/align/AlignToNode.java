@@ -98,6 +98,6 @@ public class AlignToNode extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return xController.atSetpoint() && yController.atSetpoint() && thetaController.atSetpoint();
+    return xController.atGoal() && yController.atGoal() && thetaController.atGoal();
   }
 }

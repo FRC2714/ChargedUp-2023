@@ -94,7 +94,7 @@ public class Shooter extends SubsystemBase {
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(ShooterConstants.kPivotPositionConversionFactor);
     pivotEncoder.setInverted(false);
-    pivotEncoder.setZeroOffset(0);
+    pivotEncoder.setZeroOffset(50);
 
     topFlywheelMotor = new CANSparkMax(ShooterConstants.kTopFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     bottomFlywheelMotor = new CANSparkMax(ShooterConstants.kBottomFlywheelMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -180,7 +180,7 @@ public class Shooter extends SubsystemBase {
 
   //PIVOT
   public double getPivotAngleRadians() {
-    return (pivotEncoder.getPosition() -  (86.4 + 21)) / ShooterConstants.kPivotGearRatio;
+    return (pivotEncoder.getPosition() - (115.8)) / ShooterConstants.kPivotGearRatio;
   }
 
   public void setTargetPivot(double targetAngleDegrees) {

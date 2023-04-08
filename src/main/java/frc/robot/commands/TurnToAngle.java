@@ -44,7 +44,7 @@ public class TurnToAngle extends AsymmetricProfiledPIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return getController().atSetpoint();
+    return getController().atGoal();
   }
 
   @Override

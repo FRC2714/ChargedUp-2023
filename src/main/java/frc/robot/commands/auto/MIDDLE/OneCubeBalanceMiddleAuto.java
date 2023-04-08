@@ -11,6 +11,8 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.align.AlignToNode;
@@ -35,8 +37,8 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"1CubeBalanceMIDDLE",
 			new PathConstraints(
-			1.5,
-			2.0));
+			1.2,
+			1.7));
 
 	public OneCubeBalanceMiddleAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
 		super(m_robotDrive);
@@ -49,7 +51,7 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 			m_superstructure.setCargoTypeCommand(CargoType.CUBE),
 			m_superstructure.setScoreLevelCommand(BUTTON.Y),
 			m_superstructure.setSubsystemState(DPAD.RIGHT),
-			new WaitCommand(3).raceWith(new AlignToNode(m_robotDrive, m_backLimelight, m_superstructure)),
+			new WaitCommand(4.5).raceWith(new AlignToNode(m_robotDrive, m_backLimelight, m_superstructure)),
 			m_claw.scoreCube(),
 			
             new WaitCommand(0.5),
@@ -59,7 +61,10 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
 			//Autobalance
-			new AutoBalance(m_robotDrive)
+			new AutoBalance(m_robotDrive),
+
+			new WaitCommand(2),
+			m_superstructure.checkBalance()
 		);
 
 	}

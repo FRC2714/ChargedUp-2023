@@ -11,7 +11,11 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Arm.Arm;
@@ -31,8 +35,8 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"1ConeBalanceMIDDLE",
 			new PathConstraints(
-			1.5,
-			2.0));
+			1.2,
+			1.7));
 
 	public OneConeBalanceMiddleAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
 		super(m_robotDrive);
@@ -40,7 +44,7 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(4.0),
+			m_superstructure.scorePreloadedCone(4.5),
 
       		m_superstructure.setSubsystemState(DPAD.DOWN),
 			new WaitCommand(1),
