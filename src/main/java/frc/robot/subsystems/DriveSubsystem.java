@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.utils.SwerveUtils;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -262,6 +264,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public boolean isBalanced() {
     return Math.abs(getPitchDegrees() - (-2)) < Units.degreesToRadians(2);
+  }
+
+  public Command stopModules() {
+    return new InstantCommand(() -> drive(0, 0, 0, true, false));
   }
 
   /**

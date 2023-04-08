@@ -70,13 +70,7 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 
 			//Autobalance
 			new AutoBalance(m_robotDrive),
-
-			new WaitCommand(2),
-			m_superstructure.checkBalance(),
-			
-			new WaitCommand(2),
-			m_superstructure.checkBalance()
-
+			m_robotDrive.stopModules()
 		);
 	}
 }

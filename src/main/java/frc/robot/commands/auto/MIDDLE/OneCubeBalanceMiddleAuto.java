@@ -11,8 +11,6 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.align.AlignToNode;
@@ -62,9 +60,7 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 
 			//Autobalance
 			new AutoBalance(m_robotDrive),
-
-			new WaitCommand(2),
-			m_superstructure.checkBalance()
+			m_robotDrive.stopModules()
 		);
 
 	}
