@@ -365,7 +365,7 @@ public final class Constants {
     public static final ArmForwardKinematicPosition kBackConeMiddlePosition = 
       new ArmForwardKinematicPosition(101, -90);
     public static final ArmForwardKinematicPosition kBackConeHighPosition = 
-      new ArmForwardKinematicPosition(60, -30);
+      new ArmForwardKinematicPosition(57, -30);
 
     //Back Cube Score positions
     public static final ArmForwardKinematicPosition kBackCubeLowPosition = 

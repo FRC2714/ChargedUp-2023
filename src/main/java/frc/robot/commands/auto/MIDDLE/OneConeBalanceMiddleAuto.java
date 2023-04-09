@@ -50,6 +50,10 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 
 			//Autobalance
 			new AutoBalance(m_robotDrive),
+			m_robotDrive.stopModules(),
+			new WaitCommand(1),
+			m_robotDrive.stopModules(),
+			new WaitCommand(1),
 			m_robotDrive.stopModules()
 		);
 

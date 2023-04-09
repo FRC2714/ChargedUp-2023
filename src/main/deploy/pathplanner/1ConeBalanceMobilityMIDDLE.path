@@ -57,11 +57,11 @@
         "y": 2.1793351825715357
       },
       "nextControl": {
-        "x": 6.208338648406816,
-        "y": 2.178005547714606
+        "x": 5.391661351593184,
+        "y": 2.1793351825715357
       },
       "holonomicAngle": 0,
-      "isReversal": false,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
