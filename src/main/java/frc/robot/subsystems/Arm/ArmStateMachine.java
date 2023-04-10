@@ -24,7 +24,7 @@ public class ArmStateMachine {
   }
 
   public ArmState currentArmState = ArmState.BACK; //will default to TRANSFER 
-  public ArmState targetArmState = ArmState.BACK; // default to TRANSFER 
+  public ArmState targetArmState = ArmState.TRANSFER; // default to TRANSFER 
   public ArmScoreLevel armScoreLevel = ArmScoreLevel.INTAKE;
 
   /** Creates a new StateMachine. */

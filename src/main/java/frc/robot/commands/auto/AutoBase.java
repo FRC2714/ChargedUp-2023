@@ -34,7 +34,7 @@ public class AutoBase extends SequentialCommandGroup {
       m_robotDrive::getPose, // pose2d supplier
       m_robotDrive::resetOdometry, // reset odometry at the beginning of auto
         DriveConstants.kDriveKinematics, // swerve kinematics
-        new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // x y controller
+        new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // x y controller TODO add D
         new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // theta controller
         m_robotDrive::setModuleStates,
         AutoConstants.AutoEventMap,

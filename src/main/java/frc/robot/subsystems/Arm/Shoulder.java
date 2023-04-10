@@ -25,7 +25,7 @@ public class Shoulder extends SubsystemBase {
   private CANSparkMax LeftShoulderMotor;
   private AbsoluteEncoder ShoulderEncoder;
 
-  private Constraints FarConstraints = new Constraints(10, 8, 6);
+  private Constraints FarConstraints = new Constraints(10, 10, 8);
   private Constraints CloseConstraints = new Constraints(18, 18, 15);
 
   private AsymmetricProfiledPIDController ShoulderController = new AsymmetricProfiledPIDController(0,0,0, FarConstraints);

@@ -38,8 +38,8 @@ public class Arm {
   }
 
   private void setForwardKinematics(ArmForwardKinematicPosition forwardKinematicsPosition) {
-    m_shoulder.setTargetKinematicAngleRadians(forwardKinematicsPosition.getBaseAngleRadians());
-    m_elbow.setTargetKinematicAngleRadians(forwardKinematicsPosition.getSecondAngleRadians());
+    m_shoulder.setTargetKinematicAngleRadians(forwardKinematicsPosition.ShoulderAngleRadians);
+    m_elbow.setTargetKinematicAngleRadians(forwardKinematicsPosition.ElbowAngleRadians);
   }
 
   public InstantCommand setForwardKinematicsCommand(ArmForwardKinematicPosition forwardKinematicsPosition) {
@@ -111,10 +111,12 @@ public class Arm {
   
   //Back to Back
   public Command BackToBack(ArmForwardKinematicPosition backScoreLevelPosition) {
-    return new SequentialCommandGroup(
+    CommandBase sequence = new SequentialCommandGroup(
       new WaitUntilCommand(() -> m_elbow.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kBackToBackIntermediatePosition)),
       new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
       //new WaitUntilCommand(() -> shoulder.atSetpoint() && elbow.atSetpoint()));
+    sequence.addRequirements(m_shoulder, m_elbow);
+    return sequence;
   }
 
   //Back to Transfer
@@ -141,30 +143,24 @@ public class Arm {
   //Transfer to Back
   public Command TransferToBack(ArmForwardKinematicPosition backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToBackIntermediatePosition)),
-      //new WaitUntilCommand(() -> shoulder.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToBackIntermediate2Position)),
       new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(backScoreLevelPosition)));
   }
 
   //Transfer to Front
   public Command TransferToFront(ArmForwardKinematicPosition frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToFrontIntermediatePosition)),
       new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(frontScoreLevelPosition)));
   }
 
   //Transfer to Transfer
   public Command TransferToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      //new WaitUntilCommand(() -> shoulder.nearSetpoint() && elbow.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToTransferIntermediatePosition)),
       new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
   }
 
   //Transfer to stow
   public Command TransferToStow() {
     return new SequentialCommandGroup(
-      //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToStowIntermediatePosition)),
-      //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kTransferToStowIntermediate2Position)),
       new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowPosition)));
   }
 
@@ -177,8 +173,6 @@ public class Arm {
   //Front to Transfer
   public Command FrontToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      //new WaitUntilCommand(() -> shoulder.atSetpoint() && elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kFrontToTransferIntermediatePosition)),
-      //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kFrontToTransferIntermediate2Position)),
       new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
   }
 
@@ -203,8 +197,6 @@ public class Arm {
   //Stow to transfer
   public Command StowToTransfer(ArmForwardKinematicPosition transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowToTransferIntermediatePosition)),
-      //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kStowToTransferIntermediate2Position)),
       new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setForwardKinematicsCommand(transferScoreLevelPosition)));
   }
 

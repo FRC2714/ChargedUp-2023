@@ -21,7 +21,6 @@ import frc.robot.commands.AutoBalance;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToCone;
 import frc.robot.commands.align.AlignToCube;
-import frc.robot.commands.align.ShooterTurnAndAlign;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmScoreLevel;
@@ -147,7 +146,7 @@ public class Superstructure {
       Map.ofEntries(
         Map.entry(DPAD.UP, m_shooterStateMachine.setShooterStateCommand(ShooterState.HOLD)),
         Map.entry(DPAD.DOWN, m_shooterStateMachine.setShooterStateCommand(ShooterState.RETRACT)),
-        Map.entry(DPAD.LEFT, m_shooterStateMachine.setShooterStateCommand(ShooterState.FRONT)),
+        Map.entry(DPAD.LEFT, m_shooterStateMachine.setShooterStateCommand(ShooterState.MANUAL)),
         Map.entry(DPAD.RIGHT, m_shooterStateMachine.setShooterStateCommand(ShooterState.DYNAMIC))),
       () -> dPadInput); 
 
@@ -299,7 +298,7 @@ public class Superstructure {
     if(m_shooter.isCubeDetected() 
       && scoreMode == ScoreMode.SHOOTER 
       && m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE
-      && m_shooterStateMachine.getShooterState() == ShooterState.FRONT) {
+      && m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) {
       setSubsystemState(DPAD.UP).schedule();
     }
 
