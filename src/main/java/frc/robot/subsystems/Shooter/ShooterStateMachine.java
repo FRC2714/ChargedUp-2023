@@ -20,7 +20,7 @@ public class ShooterStateMachine {
   Limelight m_frontLimelight;
 
   public enum ShooterState {
-    RETRACT, HOLD, FRONT, DYNAMIC
+    RETRACT, HOLD, MANUAL, DYNAMIC
   }
 
   public enum ShooterScoreLevel {
@@ -107,7 +107,7 @@ public class ShooterStateMachine {
       //m_shooter.setDynamicEnabledCommand(true, shooterScorelevel));
   }
 
-  private Command toFront(ShooterScoreLevel shooterScorelevel) {
+  private Command toManual(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       new SelectCommand(
@@ -121,11 +121,11 @@ public class ShooterStateMachine {
 
   private Command getShooterCommand(ShooterScoreLevel shooterScorelevel) {
     System.out.println("get shooter command");
-    switch(shooterState) { //TODO UPDATE THIS VARIABLE
+    switch(shooterState) {
       case RETRACT: return toRetract(shooterScorelevel);
       case HOLD: return toHold(shooterScorelevel);
       case DYNAMIC: return toDynamic(shooterScorelevel);
-      case FRONT: return toFront(shooterScorelevel);
+      case MANUAL: return toManual(shooterScorelevel);
     };
     return new InstantCommand();
   }

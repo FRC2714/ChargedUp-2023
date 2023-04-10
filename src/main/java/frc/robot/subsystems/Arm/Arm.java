@@ -38,8 +38,8 @@ public class Arm {
   }
 
   private void setForwardKinematics(ArmForwardKinematicPosition forwardKinematicsPosition) {
-    m_shoulder.setTargetKinematicAngleRadians(forwardKinematicsPosition.getBaseAngleRadians());
-    m_elbow.setTargetKinematicAngleRadians(forwardKinematicsPosition.getSecondAngleRadians());
+    m_shoulder.setTargetKinematicAngleRadians(forwardKinematicsPosition.ShoulderAngleRadians);
+    m_elbow.setTargetKinematicAngleRadians(forwardKinematicsPosition.ElbowAngleRadians);
   }
 
   public InstantCommand setForwardKinematicsCommand(ArmForwardKinematicPosition forwardKinematicsPosition) {

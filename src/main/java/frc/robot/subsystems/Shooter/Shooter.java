@@ -14,6 +14,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.util.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
-import frc.robot.utils.InterpolatingTreeMap;
 import frc.robot.utils.ShooterPreset;
 import frc.robot.utils.TunableNumber;
 
@@ -42,17 +42,9 @@ public class Shooter extends SubsystemBase {
 
   private AbsoluteEncoder pivotEncoder;
 
-  private InterpolatingTreeMap velocityMap = new InterpolatingTreeMap(); //TODO switch to wpilib treemap
-
-  private InterpolatingTreeMap highVelocityMap = new InterpolatingTreeMap();
-  private InterpolatingTreeMap middleVelocityMap = new InterpolatingTreeMap();
-  private InterpolatingTreeMap lowVelocityMap = new InterpolatingTreeMap();
-
-  private InterpolatingTreeMap pivotMap = new InterpolatingTreeMap();
-
-  private InterpolatingTreeMap highPivotMap = new InterpolatingTreeMap();
-  private InterpolatingTreeMap middlePivotMap = new InterpolatingTreeMap();
-  private InterpolatingTreeMap lowPivotMap = new InterpolatingTreeMap();
+  
+  private InterpolatingTreeMap<Double, Double> pivotMap = new InterpolatingTreeMap();
+  private InterpolatingTreeMap<Double, Double> velocityMap = new InterpolatingTreeMap();
 
   private PIDController pivotController = new PIDController(0, 0, 0);
   private PIDController flywheelController = new PIDController(0.5, 0, 0);
@@ -110,46 +102,8 @@ public class Shooter extends SubsystemBase {
     pivotController.disableContinuousInput();
     pivotController.setTolerance(Units.degreesToRadians(4));
 
-    populateVelocityMap();
-    populatePivotMap();
-
     tunablePivot.setDefault(ShooterConstants.kPivotHoldAngleDegrees);
     tunableVelocity.setDefault(0);
-  }
-
-  //Populate Maps
-  private void populatePivotMap() {
-    highPivotMap.put(100.0, 15.0);
-    highPivotMap.put(180.0, 30.0);
-    highPivotMap.put(300.0, 30.0);
-    highPivotMap.put(450.0, 30.0);
-
-    middlePivotMap.put(50.0, 20.0);
-    middlePivotMap.put(110.0, 30.0);
-    middlePivotMap.put(180.0, 30.0);
-    middlePivotMap.put(290.0, 30.0);
-
-    lowPivotMap.put(30.0, 100.0);
-    lowPivotMap.put(80.0, 100.0);
-    lowPivotMap.put(180.0, 90.0);
-    lowPivotMap.put(280.0, 80.0);
-  }
-
-  private void populateVelocityMap() {
-    highVelocityMap.put(100.0, 70.0);
-    highVelocityMap.put(180.0, 90.0);
-    highVelocityMap.put(300.0, 110.0);
-    highVelocityMap.put(450.0, 145.0);
-
-    middlePivotMap.put(50.0, 40.0);
-    middlePivotMap.put(110.0, 60.0);
-    middlePivotMap.put(180.0, 80.0);
-    middlePivotMap.put(290.0, 120.0);
-
-    lowPivotMap.put(30.0, 20.0);
-    lowPivotMap.put(80.0, 50.0);
-    lowPivotMap.put(180.0, 90.0);
-    lowPivotMap.put(280.0, 120.0);
   }
 
   //enable funtions
@@ -160,14 +114,42 @@ public class Shooter extends SubsystemBase {
   public Command setDynamicEnabledCommand(boolean isDynamicEnabled, ShooterScoreLevel shooterScoreLevel) {
     return new InstantCommand(() -> {
       if (shooterScoreLevel == ShooterScoreLevel.HIGH) {
-        pivotMap = highPivotMap;
-        velocityMap = highVelocityMap;
+        pivotMap.clear();
+        pivotMap.put(100.0, 15.0);
+        pivotMap.put(180.0, 30.0);
+        pivotMap.put(300.0, 30.0);
+        pivotMap.put(450.0, 30.0);
+
+        velocityMap.clear();
+        velocityMap.put(100.0, 70.0);
+        velocityMap.put(180.0, 90.0);
+        velocityMap.put(300.0, 110.0);
+        velocityMap.put(450.0, 145.0);
+
       } else if (shooterScoreLevel == ShooterScoreLevel.MIDDLE) {
-        pivotMap = middlePivotMap;
-        velocityMap = middleVelocityMap;
+        pivotMap.clear();
+        pivotMap.put(50.0, 20.0);
+        pivotMap.put(110.0, 30.0);
+        pivotMap.put(180.0, 30.0);
+        pivotMap.put(290.0, 30.0);
+        
+        velocityMap.clear();
+        velocityMap.put(50.0, 40.0);
+        velocityMap.put(110.0, 60.0);
+        velocityMap.put(180.0, 80.0);
+        velocityMap.put(290.0, 120.0);
       } else if (shooterScoreLevel == ShooterScoreLevel.LOW) {
-        pivotMap = lowPivotMap;
-        velocityMap = lowVelocityMap;
+        pivotMap.clear();
+        pivotMap.put(30.0, 100.0);
+        pivotMap.put(80.0, 100.0);
+        pivotMap.put(180.0, 90.0);
+        pivotMap.put(280.0, 80.0);
+
+        velocityMap.clear();
+        velocityMap.put(30.0, 20.0);
+        velocityMap.put(80.0, 50.0);
+        velocityMap.put(180.0, 90.0);
+        velocityMap.put(280.0, 120.0);
       }
       this.isDynamicEnabled = isDynamicEnabled;
     });
@@ -243,14 +225,14 @@ public class Shooter extends SubsystemBase {
   //Dynamic
   private double getDynamicPivot() {
     return m_frontLimelight.isTargetVisible()
-      ? highVelocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
+      ? pivotMap.get(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
       : ShooterConstants.kPivotHoldAngleDegrees;
     //return tunablePivot.get();
   }
 
   private double getDynamicVelocity() {
     return m_frontLimelight.isTargetVisible()
-      ? highVelocityMap.getInterpolated(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
+      ? velocityMap.get(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
       : 0;
     //return tunableVelocity.get();
   }

@@ -13,7 +13,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.align.AlignToNode;
+import frc.robot.commands.align.AlignToCube;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Shooter.Shooter;
@@ -49,7 +49,7 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 			m_superstructure.setCargoTypeCommand(CargoType.CUBE),
 			m_superstructure.setScoreLevelCommand(BUTTON.Y),
 			m_superstructure.setSubsystemState(DPAD.RIGHT),
-			new WaitCommand(4.5).raceWith(new AlignToNode(m_robotDrive, m_backLimelight, m_superstructure)),
+			new WaitCommand(4.5).raceWith(new AlignToCube(m_robotDrive, m_backLimelight)),
 			m_claw.scoreCube(),
 			
             new WaitCommand(0.5),

@@ -8,27 +8,11 @@ import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
 public class ArmForwardKinematicPosition {
-    private final double baseAngleRadians;
-    private final double secondAngleRadians;
+    public final double ShoulderAngleRadians;
+    public final double ElbowAngleRadians;
 
-    public ArmForwardKinematicPosition(double baseAngleDegrees, double secondAngleDegrees) {
-      this.baseAngleRadians = Units.degreesToRadians(baseAngleDegrees);
-      this.secondAngleRadians = Units.degreesToRadians(secondAngleDegrees);
-    }
-
-    public double getBaseAngleDegrees() {
-        return Units.radiansToDegrees(baseAngleRadians);
-    }
-
-    public double getSecondAngleDegrees() {
-        return Units.radiansToDegrees(secondAngleRadians);
-    }
-
-    public double getBaseAngleRadians() {
-        return baseAngleRadians;
-    }
-
-    public double getSecondAngleRadians() {
-        return secondAngleRadians;
+    public ArmForwardKinematicPosition(double ShoulderAngleDegrees, double ElbowAngleDegrees) {
+      this.ShoulderAngleRadians = Units.degreesToRadians(ShoulderAngleDegrees);
+      this.ElbowAngleRadians = Units.degreesToRadians(ElbowAngleDegrees);
     }
 }
