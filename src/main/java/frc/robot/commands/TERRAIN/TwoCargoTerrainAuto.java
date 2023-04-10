@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Shooter.Shooter;
@@ -61,7 +60,7 @@ public class TwoCargoTerrainAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
             //shoot final cube
-			m_shooter.setKicker(ShooterConstants.kKickSpeed),
+			m_shooter.setKickerCommand(ShooterConstants.kKickSpeed),
 				new WaitCommand(0.5),
 				m_shooter.stopCommand()
 		);

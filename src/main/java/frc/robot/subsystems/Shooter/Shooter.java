@@ -42,7 +42,7 @@ public class Shooter extends SubsystemBase {
 
   private AbsoluteEncoder pivotEncoder;
 
-  private InterpolatingTreeMap velocityMap = new InterpolatingTreeMap();
+  private InterpolatingTreeMap velocityMap = new InterpolatingTreeMap(); //TODO switch to wpilib treemap
 
   private InterpolatingTreeMap highVelocityMap = new InterpolatingTreeMap();
   private InterpolatingTreeMap middleVelocityMap = new InterpolatingTreeMap();
@@ -174,7 +174,11 @@ public class Shooter extends SubsystemBase {
   }
 
   //KICKER
-  public Command setKicker(double power) {
+  public void setKicker(double power) {
+    kickerMotor.set(power);
+  }
+
+  public Command setKickerCommand(double power) {
     return new InstantCommand(() -> kickerMotor.set(power));
   }
 

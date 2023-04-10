@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.LEDConstants;
@@ -218,7 +219,7 @@ public class Superstructure {
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armScore),
-        Map.entry(ScoreMode.SHOOTER, new InstantCommand()) //TODO SHOOTER SCORE
+        Map.entry(ScoreMode.SHOOTER, new StartEndCommand(() -> m_shooter.setKicker(-0.4),() -> m_shooter.setKicker(0), m_shooter)) //TODO SHOOTER SCORE
       ), 
       () -> getScoreMode()
     );
