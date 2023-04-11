@@ -22,7 +22,7 @@ import frc.robot.subsystems.Superstructure.CargoType;
 import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
 import frc.robot.subsystems.Arm.Claw;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 
@@ -60,7 +60,8 @@ public class OneCubeBalanceMiddleAuto extends AutoBase {
 
 			//Autobalance
 			new AutoBalance(m_robotDrive),
-			m_robotDrive.stopModules()
+			m_robotDrive.stopModulesCommand(),
+			new WaitCommand(5)
 		);
 
 	}

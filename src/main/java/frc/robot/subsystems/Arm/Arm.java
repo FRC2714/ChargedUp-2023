@@ -22,9 +22,6 @@ public class Arm {
   private double shoulderLength = ArmConstants.kShoulderLength;//meters
   private double elbowLength = ArmConstants.kElbowLength;
 
-  private double q1;
-  private double q2;
-
   //private Translation2d inverseTarget = new Translation2d();
 
   private Translation2d estimatedPosition = new Translation2d();
@@ -51,26 +48,20 @@ public class Arm {
     //setInverseKinematics();
   }
 
-  private void calculateQ2(Translation2d inverseTarget) {
-    q2 = -Math.acos((shoulderLength*shoulderLength + elbowLength*elbowLength - inverseTarget.getX()*inverseTarget.getX() - inverseTarget.getY()*inverseTarget.getY())/(-2*shoulderLength*elbowLength)) + 2*Math.PI;
+  private ArmForwardKinematicPosition calculateInverseKinematics(Translation2d inverseTarget) {
+    double q2 = -Math.acos((shoulderLength*shoulderLength + elbowLength*elbowLength - inverseTarget.getX()*inverseTarget.getX() - inverseTarget.getY()*inverseTarget.getY())/(-2*shoulderLength*elbowLength)) + 2*Math.PI;
 
     //other solution
     //q2 = Math.acos((-shoulderLength*shoulderLength - elbowLength*elbowLength + targetX*targetX + targetY*targetY)/(2*shoulderLength*elbowLength));
     SmartDashboard.putNumber("q2", Units.radiansToDegrees(q2));
-  }
 
-  private void calculateQ1(Translation2d inverseTarget) {
     // shoulderAngle = 
     //     Math.atan(targetX / targetY) -
     //     Math.atan((elbowLength * Math.sin(elbowAngle)) / (shoulderLength + elbowLength * Math.cos(elbowAngle)));
 
-    q1 = -Math.atan2(inverseTarget.getY(), inverseTarget.getX()) - Math.atan((elbowLength*Math.sin(q2))/(shoulderLength + elbowLength*Math.cos(q2))) + Math.PI/2.0;
+    double q1 = -Math.atan2(inverseTarget.getY(), inverseTarget.getX()) - Math.atan((elbowLength*Math.sin(q2))/(shoulderLength + elbowLength*Math.cos(q2))) + Math.PI/2.0;
     SmartDashboard.putNumber("q1", Units.radiansToDegrees(q1));
-  }
 
-  private ArmForwardKinematicPosition calculateInverseKinematics(Translation2d inverseTarget) {
-    calculateQ2(inverseTarget);
-    calculateQ1(inverseTarget);
     return new ArmForwardKinematicPosition(q1, q2);
   }
 

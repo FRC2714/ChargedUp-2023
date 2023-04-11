@@ -13,7 +13,6 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
@@ -23,7 +22,7 @@ import frc.robot.subsystems.Superstructure.BUTTON;
 import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
 import frc.robot.subsystems.Arm.Claw;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 
@@ -44,30 +43,29 @@ public class ThreeCargoOpenAuto extends AutoBase {
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
-    	AutoConstants.AutoEventMap.put("intake cube", 
+    	AutoEventMap.put("intake cube", 
 			m_superstructure.intakeRightTrigger());
-		AutoConstants.AutoEventMap.put("set shooter high", 
+		AutoEventMap.put("set shooter high", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.Y),
 				m_superstructure.setSubsystemState(DPAD.RIGHT)));
-        AutoConstants.AutoEventMap.put("set shooter mid", 
+        AutoEventMap.put("set shooter mid", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.B),
 				m_superstructure.setSubsystemState(DPAD.RIGHT)));
-		AutoConstants.AutoEventMap.put("shoot cube", 
+		AutoEventMap.put("shoot cube", 
 			new SequentialCommandGroup(
 				m_shooter.setKickerCommand(ShooterConstants.kKickSpeed),
 				new WaitCommand(0.2),
 				m_shooter.stopCommand()
 			));
-		AutoConstants.AutoEventMap.put("retract shooter", 
+		AutoEventMap.put("retract shooter", 
 			m_superstructure.setSubsystemState(DPAD.DOWN));
 
 		addCommands(
 			m_superstructure.scorePreloadedCone(3.5), //Score First Cone
 
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
-			new WaitCommand(0.5),
 
 			//Follow Path
 			autoBuilder.fullAuto(autoPathGroup),

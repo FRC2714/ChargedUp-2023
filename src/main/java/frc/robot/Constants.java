@@ -4,15 +4,14 @@
 
 package frc.robot;
 
-import java.util.HashMap;
-
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.utils.ArmForwardKinematicPosition;
 import frc.robot.utils.ShooterPreset;
 
@@ -142,8 +141,6 @@ public final class Constants {
     
     public static final TrapezoidProfile.Constraints kAutoControllerConstraints = new TrapezoidProfile.Constraints(
         kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
-    
-    public static final HashMap<String, Command> AutoEventMap = new HashMap<>();
   }
 
   public static final class TuningConstants {
@@ -154,8 +151,8 @@ public final class Constants {
     public static final int kPowerDistributionHubCanId = 1;
     
     public static final int kPneumaticHubCanId = 1;
-    public static final double kCompressorMinPressure = 90;
-    public static final double kCompressorMaxPressure = 120;
+    public static final double kCompressorMinPressure = 90; //psi
+    public static final double kCompressorMaxPressure = 120; //psi
   }
 
   public static final class ClawConstants {
@@ -245,11 +242,19 @@ public final class Constants {
     // 20 degrees, 31.5 inches from the ground
     public static final double kBackLimelightMountingAngle = 35.0; //degrees
     public static final double kBackLimelightHeight = 9.14; //inches
+    public static final Pose2d kBackLimelightPose = 
+      new Pose2d(
+        new Translation2d(0, kBackLimelightHeight), 
+        new Rotation2d(kBackLimelightMountingAngle));
 
     public static final double kFrontLimelightMountingAngle = -20; //degrees
     public static final double kFrontLimelightHeight = 31.5; //inches
+    public static final Pose2d kFrontLimelightPose = 
+      new Pose2d(
+        new Translation2d(0, kFrontLimelightHeight), 
+        new Rotation2d(kFrontLimelightMountingAngle));
 
-    public static final double kMiddleRetroTapeHeight = 24.5; // inches
+    public static final double kMiddleRetroTapeHeight = 24.5; // inches TODO convert to translation 2d
     public static final double kCubeLowHeight = -18; // inches
     // public static final double kCubeMiddleHeight = 5.5; // inches
     // public static final double kCubeHighHeight = 17; // inches

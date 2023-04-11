@@ -13,7 +13,6 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Arm.Arm;
@@ -22,7 +21,7 @@ import frc.robot.subsystems.Superstructure.BUTTON;
 import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
 import frc.robot.subsystems.Arm.Claw;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 
@@ -43,10 +42,10 @@ public class TwoCargoTerrainAuto extends AutoBase {
 
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
-    	AutoConstants.AutoEventMap.put("intake cube", 
+    	AutoEventMap.put("intake cube", 
 			m_superstructure.intakeRightTrigger());
-        AutoConstants.AutoEventMap.put("hold cube", m_superstructure.setSubsystemState(DPAD.UP));
-		AutoConstants.AutoEventMap.put("set shooter high", 
+        AutoEventMap.put("hold cube", m_superstructure.setSubsystemState(DPAD.UP));
+		AutoEventMap.put("set shooter high", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.Y),
 				m_superstructure.setSubsystemState(DPAD.RIGHT)));

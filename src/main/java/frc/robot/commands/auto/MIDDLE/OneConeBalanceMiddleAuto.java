@@ -18,7 +18,7 @@ import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Arm.Claw;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 
@@ -50,11 +50,8 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 
 			//Autobalance
 			new AutoBalance(m_robotDrive),
-			m_robotDrive.stopModules(),
-			new WaitCommand(1),
-			m_robotDrive.stopModules(),
-			new WaitCommand(1),
-			m_robotDrive.stopModules()
+			m_robotDrive.stopModulesCommand(),
+			new WaitCommand(5)
 		);
 
 	}

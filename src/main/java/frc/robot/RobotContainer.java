@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoBalance;
@@ -24,12 +26,13 @@ import frc.robot.commands.auto.MIDDLE.OneConeBalanceMobilityMiddleAuto;
 import frc.robot.commands.auto.OPEN.ThreeCargoOpenAuto;
 import frc.robot.commands.auto.OPEN.TwoCargoBalanceOpenAuto;
 import frc.robot.commands.auto.TERRAIN.TwoCargoTerrainAuto;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Infrastructure;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.Claw;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Superstructure.BUTTON;
 import frc.robot.subsystems.Superstructure.CargoType;
@@ -47,19 +50,14 @@ public class RobotContainer {
 	// The robot's subsystems
 	private final Infrastructure m_infrastructure = new Infrastructure();
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-	private final Limelight m_backLimelight = new Limelight(
-		"limelight-back", 
-		LimelightConstants.kBackLimelightHeight, 
-		LimelightConstants.kBackLimelightMountingAngle);
-	private final Limelight m_frontLimelight = new Limelight(
-		"limelight-front", 
-		LimelightConstants.kFrontLimelightHeight, 
-		LimelightConstants.kFrontLimelightMountingAngle);
+	private final Limelight m_backLimelight = new Limelight("limelight-back", LimelightConstants.kBackLimelightPose);
+	private final Limelight m_frontLimelight = new Limelight("limelight-front", LimelightConstants.kFrontLimelightPose);
 	private final Arm m_arm = new Arm();
 	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	private final Claw m_claw = new Claw();
+	private final LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
 	
-	private final Superstructure m_superstructure = new Superstructure(m_robotDrive, m_arm, m_claw, m_shooter, m_backLimelight, m_frontLimelight);
+	private final Superstructure m_superstructure = new Superstructure(m_robotDrive, m_arm, m_claw, m_shooter, m_backLimelight, m_frontLimelight, m_armLED);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -70,6 +68,14 @@ public class RobotContainer {
 	 */
 
 	public RobotContainer() {
+		CommandScheduler.getInstance().registerSubsystem(m_infrastructure);
+		CommandScheduler.getInstance().registerSubsystem(m_robotDrive);
+		CommandScheduler.getInstance().registerSubsystem(m_backLimelight);
+		CommandScheduler.getInstance().registerSubsystem(m_frontLimelight);
+		CommandScheduler.getInstance().registerSubsystem(m_shooter);
+		CommandScheduler.getInstance().registerSubsystem(m_claw);
+		CommandScheduler.getInstance().registerSubsystem(m_armLED);
+
 		// Configure the button bindings
 		configureButtonBindings();
 

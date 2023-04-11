@@ -4,22 +4,26 @@
 
 package frc.robot.commands.auto;
 
+import java.util.HashMap;
+
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AutoBase extends SequentialCommandGroup {
   private DriveSubsystem m_robotDrive;
+  public static final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
   /** Creates a new AutoBase. */
   public AutoBase(DriveSubsystem m_robotDrive) {
@@ -37,7 +41,7 @@ public class AutoBase extends SequentialCommandGroup {
         new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // x y controller TODO add D
         new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // theta controller
         m_robotDrive::setModuleStates,
-        AutoConstants.AutoEventMap,
+        AutoEventMap,
         true,
         m_robotDrive);
   }

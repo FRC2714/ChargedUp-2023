@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.Constants.LEDConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToCone;
@@ -25,6 +24,7 @@ import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmScoreLevel;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterStateMachine;
@@ -42,8 +42,7 @@ public class Superstructure {
   Limelight m_backLimelight;
   Limelight m_frontLimelight;
 
-  LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
-  LED m_baseLED = new LED(LEDConstants.kBaseBlinkinPort);
+  LED m_armLED;
 
   ArmStateMachine m_armStateMachine;
   ShooterStateMachine m_shooterStateMachine;
@@ -72,7 +71,7 @@ public class Superstructure {
   public CargoType cargoType = CargoType.CONE; //default to cone
 
   /** Creates a new Superstructure. */
-  public Superstructure(DriveSubsystem m_robotDrive, Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_backLimelight, Limelight m_frontLimelight) {
+  public Superstructure(DriveSubsystem m_robotDrive, Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_backLimelight, Limelight m_frontLimelight, LED m_armLED) {
     this.m_robotDrive = m_robotDrive;
 
     this.m_arm = m_arm;
@@ -82,6 +81,8 @@ public class Superstructure {
 
     this.m_backLimelight = m_backLimelight;
     this.m_frontLimelight = m_frontLimelight;
+
+    this.m_armLED = m_armLED;
 
     m_armStateMachine = new ArmStateMachine(m_arm);
 	  m_shooterStateMachine = new ShooterStateMachine(m_shooter, m_frontLimelight);
@@ -195,8 +196,8 @@ public class Superstructure {
   //Cargo type
   public Command setCargoTypeCommand(CargoType targetCargoType) {
     return new InstantCommand(() -> {
-      if(targetCargoType == CargoType.CONE) { m_baseLED.setYellow();} 
-      else { m_baseLED.setPurple();}
+      if(targetCargoType == CargoType.CONE) { m_armLED.setYellow();} 
+      else { m_armLED.setPurple();}
       this.cargoType = targetCargoType;
     });
   }

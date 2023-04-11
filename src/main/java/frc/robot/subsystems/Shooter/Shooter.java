@@ -43,8 +43,8 @@ public class Shooter extends SubsystemBase {
   private AbsoluteEncoder pivotEncoder;
 
   
-  private InterpolatingTreeMap<Double, Double> pivotMap = new InterpolatingTreeMap();
-  private InterpolatingTreeMap<Double, Double> velocityMap = new InterpolatingTreeMap();
+  private InterpolatingTreeMap<Double, Double> pivotMap = new InterpolatingTreeMap<Double, Double>();
+  private InterpolatingTreeMap<Double, Double> velocityMap = new InterpolatingTreeMap<Double, Double>();
 
   private PIDController pivotController = new PIDController(0, 0, 0);
   private PIDController flywheelController = new PIDController(0.5, 0, 0);

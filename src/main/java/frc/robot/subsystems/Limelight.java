@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -11,16 +10,14 @@ import frc.robot.utils.LimelightHelpers;
 
 
 public class Limelight extends SubsystemBase {
-	//private Field2d m_field = new Field2d();
 
 	private String limelightName = "limelight";
-	private double kCameraHeight, kMountingAngle, GoalHeight = 0;
+	private double kCameraHeight, kMountingAngle, GoalHeight = 0; //inches, deg
 
-	public Limelight(String limelightName, double kCameraHeight, double kMountingAngle) {
+	public Limelight(String limelightName, Pose2d limelightPose) {
 		this.limelightName = limelightName;
-		this.kCameraHeight = kCameraHeight;
-		this.kMountingAngle = kMountingAngle;
-		//SmartDashboard.putData("Field Position", m_field);
+		this.kCameraHeight = limelightPose.getY();
+		this.kMountingAngle = limelightPose.getRotation().getDegrees();
 	}
 
 	public double getDistanceToGoalInches() {
@@ -102,6 +99,5 @@ public class Limelight extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		//m_field.setRobotPose(getBotPose2d());
 	}
 }
