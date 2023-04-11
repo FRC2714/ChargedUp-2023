@@ -19,8 +19,6 @@ public class Infrastructure extends SubsystemBase {
   public Infrastructure() {
     m_pneumaticHub = new PneumaticHub(InfrastructureConstants.kPneumaticHubCanId);
     m_powerDistributionHub = new PowerDistribution(InfrastructureConstants.kPowerDistributionHubCanId, ModuleType.kRev);
-
-    enableCompressor();
   }
 
   public void enableCompressor() {

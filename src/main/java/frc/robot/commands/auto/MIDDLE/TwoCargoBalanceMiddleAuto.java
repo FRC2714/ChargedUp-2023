@@ -44,7 +44,7 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
         AutoEventMap.put("intake cube", 
 			m_superstructure.intakeRightTrigger());
 		AutoEventMap.put("set shooter", 
-            new InstantCommand(() -> m_shooter.toPreset(new ShooterPreset(50, 100))));
+            new InstantCommand(() -> m_shooter.setPreset(new ShooterPreset(50, 100))));
 
 		addCommands(
 			m_superstructure.scorePreloadedCone(4.2),

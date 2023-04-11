@@ -12,7 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.robot.utils.ArmForwardKinematicPosition;
+import frc.robot.utils.ArmPreset;
 import frc.robot.utils.ShooterPreset;
 
 /**
@@ -263,84 +263,76 @@ public final class Constants {
     public static final double kCubeHighHeight = -18;
   }
 
-  public static final class ArmConstants {
-    //Spark IDs
+  public static final class ShoulderConstants {
     public static final int kRightShoulderMotorCanId = 10;
     public static final int kLeftShoulderMotorCanId = 9;
 
+    public static final double kShoulderGearRatio = 240;
+    public static final double kShoulderLength = Units.inchesToMeters(28);
+    public static final double kShoulderPositionConversionFactor = (2*Math.PI) * kShoulderGearRatio; //Radians * Gear ratio
+    public static final double kShoulderEncoderZeroOffset = 180.9295889;
+    public static final double kShoulderKinematicOffset = 42.6;
+    public static final boolean kShoulderMotorInverted = true;
+    public static final boolean kShoulderEncoderInverted = true;
+    public static final double kShoulderP = 8;
+    public static final int kShoulderMotorCurrentLimit = 40; //amps
+  }
+
+  public static final class ElbowConstants {
     public static final int kRightElbowMotorCanId = 11;
     public static final int kLeftElbowMotorCanId = 12;
 
-    //Physical constants
-    public static final double kShoulderGearRatio = 240;
     public static final double kElbowGearRatio = 225;
-
-    public static final double kShoulderLength = Units.inchesToMeters(28);
     public static final double kElbowLength = Units.inchesToMeters(25);
-
-    //Encoder Conversion
-    public static final double kShoulderPositionConversionFactor = (2*Math.PI) * kShoulderGearRatio; //Radians * Gear ratio
     public static final double kElbowPositionConversionFactor = (2*Math.PI) * kElbowGearRatio;
-
-    public static final double kShoulderEncoderZeroOffset = 180.9295889;
     public static final double kElbowEncoderZeroOffset = 1422;
-    public static final double kShoulderKinematicOffset = 42.6; //difference from kinematic 0 to sparkmax 0 approx 45 deg
-    public static final double kElbowKinematicOffset = 762.0; //difference from kinematic 0 to sparkmax 0 approx 160 deg
-
-    public static final boolean kShoulderMotorInverted = true; //base joint encoder inverted
-    public static final boolean kShoulderEncoderInverted = true; //base joint motor inverted
-
-    public static final boolean kElbowMotorInverted = false; //second joint encoder inverted
-    public static final boolean kElbowEncoderInverted = true; //second joint motor and encoder are NOT inverted
-
-    //Controller Constants
-    public static final double kShoulderP = 8;
-
+    public static final double kElbowKinematicOffset = 762.0;
+    public static final boolean kElbowMotorInverted = false;
+    public static final boolean kElbowEncoderInverted = true;
     public static final double kElbowP = 7;
-
-    //Current Limits
-    public static final int kShoulderMotorCurrentLimit = 40; //amps
     public static final int kElbowMotorCurrentLimit = 30; //amps
+  }
 
+  public static final class ArmConstants {
     //Back to back transition
-    public static final ArmForwardKinematicPosition kBackToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(90, -60);
+    public static final ArmPreset kBackToBackIntermediatePosition = 
+      new ArmPreset(90, -60);
 
     //Back to Transfer transition
-    public static final ArmForwardKinematicPosition kBackToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(50,150);
+    public static final ArmPreset kBackToTransferIntermediatePosition = 
+      new ArmPreset(50,150);
 
     //Back to front transition
 
     //Back to stow transition
     
     //Transfer to back transition
-    public static final ArmForwardKinematicPosition kTransferToBackIntermediatePosition = 
-      new ArmForwardKinematicPosition(60, 150);
-    public static final ArmForwardKinematicPosition kTransferToBackIntermediate2Position = 
-      new ArmForwardKinematicPosition(60, 90);
+    public static final ArmPreset kTransferToBackIntermediatePosition = 
+      new ArmPreset(60, 150);
+    public static final ArmPreset kTransferToBackIntermediate2Position = 
+      new ArmPreset(60, 90);
 
     //Transfer to transfer transition
-    public static final ArmForwardKinematicPosition kTransferToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(75, 130);
+    public static final ArmPreset kTransferToTransferIntermediatePosition = 
+      new ArmPreset(75, 130);
 
     //Transfer to front transition
-    public static final ArmForwardKinematicPosition kTransferToFrontIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 90);
+    public static final ArmPreset kTransferToFrontIntermediatePosition = 
+      new ArmPreset(50, 90);
 
     //Transfer to stow transition
-    public static final ArmForwardKinematicPosition kTransferToStowIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 150);
-    public static final ArmForwardKinematicPosition kTransferToStowIntermediate2Position = 
-      new ArmForwardKinematicPosition(50, 90);
+    public static final ArmPreset kTransferToStowIntermediatePosition = 
+      new ArmPreset(50, 150);
+    public static final ArmPreset kTransferToStowIntermediate2Position = 
+      new ArmPreset(50, 90);
 
     //Front to back transition
 
     //Front to transfer transition
-    public static final ArmForwardKinematicPosition kFrontToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 100);
-    public static final ArmForwardKinematicPosition kFrontToTransferIntermediate2Position = 
-      new ArmForwardKinematicPosition(50, 150);
+    public static final ArmPreset kFrontToTransferIntermediatePosition = 
+      new ArmPreset(50, 100);
+    public static final ArmPreset kFrontToTransferIntermediate2Position = 
+      new ArmPreset(50, 150);
 
     //Front to front transition
 
@@ -349,53 +341,53 @@ public final class Constants {
     //Stow to back transition
 
     //Stow to transfer transition
-    public static final ArmForwardKinematicPosition kStowToTransferIntermediatePosition = 
-      new ArmForwardKinematicPosition(50, 120);
-    public static final ArmForwardKinematicPosition kStowToTransferIntermediate2Position = 
-      new ArmForwardKinematicPosition(50, 150);
+    public static final ArmPreset kStowToTransferIntermediatePosition = 
+      new ArmPreset(50, 120);
+    public static final ArmPreset kStowToTransferIntermediate2Position = 
+      new ArmPreset(50, 150);
 
     //Stow to front transition
 
     //Stow position 
-    public static final ArmForwardKinematicPosition kStowPosition = 
-      new ArmForwardKinematicPosition(126, -58); //123, -63
+    public static final ArmPreset kStowPosition = 
+      new ArmPreset(126, -58); //123, -63
 
     //Transfer position
-    public static final ArmForwardKinematicPosition kTransferPosition = 
-      new ArmForwardKinematicPosition(82,135);
+    public static final ArmPreset kTransferPosition = 
+      new ArmPreset(82,135);
 
     //Back Cone Score positions
-    public static final ArmForwardKinematicPosition kBackConeLowPosition =
-      new ArmForwardKinematicPosition(130, -120);
-    public static final ArmForwardKinematicPosition kBackConeMiddlePosition = 
-      new ArmForwardKinematicPosition(101, -90);
-    public static final ArmForwardKinematicPosition kBackConeHighPosition = 
-      new ArmForwardKinematicPosition(57, -30);
+    public static final ArmPreset kBackConeLowPosition =
+      new ArmPreset(130, -120);
+    public static final ArmPreset kBackConeMiddlePosition = 
+      new ArmPreset(101, -90);
+    public static final ArmPreset kBackConeHighPosition = 
+      new ArmPreset(57, -30);
 
     //Back Cube Score positions
-    public static final ArmForwardKinematicPosition kBackCubeLowPosition = 
-      new ArmForwardKinematicPosition(130, -120);//130, 124
-    public static final ArmForwardKinematicPosition kBackCubeMiddlePosition = 
-      new ArmForwardKinematicPosition(108, -112);
-    public static final ArmForwardKinematicPosition kBackCubeHighPosition = 
-      new ArmForwardKinematicPosition(68, -45);
+    public static final ArmPreset kBackCubeLowPosition = 
+      new ArmPreset(130, -120);//130, 124
+    public static final ArmPreset kBackCubeMiddlePosition = 
+      new ArmPreset(108, -112);
+    public static final ArmPreset kBackCubeHighPosition = 
+      new ArmPreset(68, -45);
 
     //Front Cone Score positions
-    public static final ArmForwardKinematicPosition kFrontConeMiddlePosition = 
-      new ArmForwardKinematicPosition(120, 42);
+    public static final ArmPreset kFrontConeMiddlePosition = 
+      new ArmPreset(120, 42);
 
     //Front Cube Score positions
-    public static final ArmForwardKinematicPosition kFrontCubeMiddlePosition = 
-      new ArmForwardKinematicPosition(110, 81);
-    public static final ArmForwardKinematicPosition kFrontCubeHighPosition = 
-      new ArmForwardKinematicPosition(120, 15);
+    public static final ArmPreset kFrontCubeMiddlePosition = 
+      new ArmPreset(110, 81);
+    public static final ArmPreset kFrontCubeHighPosition = 
+      new ArmPreset(120, 15);
     
 
     //Arm Intake positions
-    public static final ArmForwardKinematicPosition kBackIntakePosition = 
-      new ArmForwardKinematicPosition(90, -86);
-    public static final ArmForwardKinematicPosition kFrontIntakePosition = 
-      new ArmForwardKinematicPosition(104, 68);
+    public static final ArmPreset kBackIntakePosition = 
+      new ArmPreset(90, -86);
+    public static final ArmPreset kFrontIntakePosition = 
+      new ArmPreset(104, 68);
     
   }
 }

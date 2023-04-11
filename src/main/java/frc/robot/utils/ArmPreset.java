@@ -7,11 +7,11 @@ package frc.robot.utils;
 import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
-public class ArmForwardKinematicPosition {
+public class ArmPreset {
     public final double ShoulderAngleRadians;
     public final double ElbowAngleRadians;
 
-    public ArmForwardKinematicPosition(double ShoulderAngleDegrees, double ElbowAngleDegrees) {
+    public ArmPreset(double ShoulderAngleDegrees, double ElbowAngleDegrees) {
       this.ShoulderAngleRadians = Units.degreesToRadians(ShoulderAngleDegrees);
       this.ElbowAngleRadians = Units.degreesToRadians(ElbowAngleDegrees);
     }

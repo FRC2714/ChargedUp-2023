@@ -63,13 +63,13 @@ public class ShooterStateMachine {
     return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       m_shooter.stopCommand(),
-      m_shooter.toPreset(ShooterConstants.kRetractPreset));
+      m_shooter.setPreset(ShooterConstants.kRetractPreset));
   }
 
   private Command toHold(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
       m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
-      m_shooter.toPreset(ShooterConstants.kHoldPreset));
+      m_shooter.setPreset(ShooterConstants.kHoldPreset));
   }
 
   // private Command toDynamic(ShooterScoreLevel shooterScorelevel) {
@@ -99,10 +99,10 @@ public class ShooterStateMachine {
         ), () -> shooterScorelevel),
       new SelectCommand(
         Map.ofEntries(
-          Map.entry(ShooterScoreLevel.HIGH, m_shooter.toPreset(ShooterConstants.kCloseHighCubePreset)),
-          Map.entry(ShooterScoreLevel.MIDDLE, m_shooter.toPreset(ShooterConstants.kCloseMiddleCubePreset)),
-          Map.entry(ShooterScoreLevel.LOW, m_shooter.toPreset(ShooterConstants.kLaunchCubePreset)),
-          Map.entry(ShooterScoreLevel.INTAKE, m_shooter.toPreset(ShooterConstants.kLaunchCubePreset))
+          Map.entry(ShooterScoreLevel.HIGH, m_shooter.setPreset(ShooterConstants.kCloseHighCubePreset)),
+          Map.entry(ShooterScoreLevel.MIDDLE, m_shooter.setPreset(ShooterConstants.kCloseMiddleCubePreset)),
+          Map.entry(ShooterScoreLevel.LOW, m_shooter.setPreset(ShooterConstants.kLaunchCubePreset)),
+          Map.entry(ShooterScoreLevel.INTAKE, m_shooter.setPreset(ShooterConstants.kLaunchCubePreset))
         ), () -> shooterScorelevel));
       //m_shooter.setDynamicEnabledCommand(true, shooterScorelevel));
   }
@@ -112,8 +112,8 @@ public class ShooterStateMachine {
       m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       new SelectCommand(
         Map.ofEntries(
-          Map.entry(ShooterScoreLevel.HIGH, m_shooter.toPreset(ShooterConstants.kLaunchCubePreset)),
-          Map.entry(ShooterScoreLevel.MIDDLE, m_shooter.toPreset(ShooterConstants.kLaunchCubePreset)),
+          Map.entry(ShooterScoreLevel.HIGH, m_shooter.setPreset(ShooterConstants.kLaunchCubePreset)),
+          Map.entry(ShooterScoreLevel.MIDDLE, m_shooter.setPreset(ShooterConstants.kLaunchCubePreset)),
           Map.entry(ShooterScoreLevel.LOW, m_shooter.outtakeSequence()),
           Map.entry(ShooterScoreLevel.INTAKE, m_shooter.intakeSequence())
         ), () -> shooterScorelevel));

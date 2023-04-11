@@ -14,7 +14,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ShoulderConstants;
 import frc.robot.utils.controller.AsymmetricProfiledPIDController;
 import frc.robot.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 import frc.robot.utils.controller.AsymmetricTrapezoidProfile.State;
@@ -34,21 +34,21 @@ public class Shoulder extends SubsystemBase {
   
   /** Creates a new Shoulder. */
   public Shoulder() {
-    LeftShoulderMotor = new CANSparkMax(ArmConstants.kLeftShoulderMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
-    RightShoulderMotor = new CANSparkMax(ArmConstants.kRightShoulderMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    LeftShoulderMotor = new CANSparkMax(ShoulderConstants.kLeftShoulderMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    RightShoulderMotor = new CANSparkMax(ShoulderConstants.kRightShoulderMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     LeftShoulderMotor.follow(RightShoulderMotor, true);
 
-    RightShoulderMotor.setSmartCurrentLimit(ArmConstants.kShoulderMotorCurrentLimit);
-    LeftShoulderMotor.setSmartCurrentLimit(ArmConstants.kShoulderMotorCurrentLimit);
+    RightShoulderMotor.setSmartCurrentLimit(ShoulderConstants.kShoulderMotorCurrentLimit);
+    LeftShoulderMotor.setSmartCurrentLimit(ShoulderConstants.kShoulderMotorCurrentLimit);
 
-    RightShoulderMotor.setInverted(ArmConstants.kShoulderEncoderInverted); //must be inverted
+    RightShoulderMotor.setInverted(ShoulderConstants.kShoulderEncoderInverted); //must be inverted
     RightShoulderMotor.setIdleMode(IdleMode.kBrake);
     LeftShoulderMotor.setIdleMode(IdleMode.kBrake);
 
     ShoulderEncoder = RightShoulderMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    ShoulderEncoder.setPositionConversionFactor(ArmConstants.kShoulderPositionConversionFactor);
-    ShoulderEncoder.setInverted(ArmConstants.kShoulderEncoderInverted); //must be inverted
-    ShoulderEncoder.setZeroOffset(ArmConstants.kShoulderEncoderZeroOffset);
+    ShoulderEncoder.setPositionConversionFactor(ShoulderConstants.kShoulderPositionConversionFactor);
+    ShoulderEncoder.setInverted(ShoulderConstants.kShoulderEncoderInverted); //must be inverted
+    ShoulderEncoder.setZeroOffset(ShoulderConstants.kShoulderEncoderZeroOffset);
     //todo set velocity conversion factor
 
     RightShoulderMotor.burnFlash();
@@ -60,8 +60,8 @@ public class Shoulder extends SubsystemBase {
   private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
     double kinematicAngle = sparkAngle;
 
-    kinematicAngle -= ArmConstants.kShoulderKinematicOffset; //subtract kinematic offset
-    kinematicAngle /= ArmConstants.kShoulderGearRatio; //divide by gear ratio
+    kinematicAngle -= ShoulderConstants.kShoulderKinematicOffset; //subtract kinematic offset
+    kinematicAngle /= ShoulderConstants.kShoulderGearRatio; //divide by gear ratio
 
     return kinematicAngle;
   }
@@ -72,7 +72,7 @@ public class Shoulder extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Shoulder Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    if(ShoulderController.getP() == 0) {ShoulderController.setP(ArmConstants.kShoulderP);}
+    if(ShoulderController.getP() == 0) {ShoulderController.setP(ShoulderConstants.kShoulderP);}
     Constraints selectedConstraint = 
       (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(20)) ? 
       CloseConstraints : FarConstraints;

@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.Superstructure.CargoType;
-import frc.robot.utils.ArmForwardKinematicPosition;
+import frc.robot.utils.ArmPreset;
 
 public class ArmStateMachine {
   private Arm m_arm;
@@ -51,7 +51,7 @@ public class ArmStateMachine {
     });
   }
 
-  private ArmForwardKinematicPosition getBackScoreLevelPosition(ArmScoreLevel armScoreLevel, CargoType cargoType) {
+  private ArmPreset getBackScoreLevelPosition(ArmScoreLevel armScoreLevel, CargoType cargoType) {
     switch (cargoType) { 
       case CONE: {
         switch (armScoreLevel) {
@@ -73,7 +73,7 @@ public class ArmStateMachine {
     return ArmConstants.kBackIntakePosition;
   }
 
-  private ArmForwardKinematicPosition getFrontScoreLevelPosition(ArmScoreLevel armScoreLevel, CargoType cargoType) {
+  private ArmPreset getFrontScoreLevelPosition(ArmScoreLevel armScoreLevel, CargoType cargoType) {
     switch (cargoType) { 
       case CONE: {
         switch (armScoreLevel) {
@@ -103,9 +103,9 @@ public class ArmStateMachine {
           case CONE: {
             switch (armScoreLevel) {
               case HIGH: return m_arm.BackToBack(ArmConstants.kBackConeHighPosition);
-              case MIDDLE: return m_arm.setForwardKinematicsCommand(ArmConstants.kBackConeMiddlePosition);
+              case MIDDLE: return m_arm.setPresetCommand(ArmConstants.kBackConeMiddlePosition);
               case LOW: return m_arm.BackToBack(ArmConstants.kBackConeLowPosition);
-              case INTAKE: return m_arm.setForwardKinematicsCommand(ArmConstants.kBackIntakePosition);
+              case INTAKE: return m_arm.setPresetCommand(ArmConstants.kBackIntakePosition);
             }
           }
           case CUBE: {

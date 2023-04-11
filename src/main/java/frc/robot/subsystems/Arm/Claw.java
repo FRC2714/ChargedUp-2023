@@ -35,7 +35,7 @@ public class Claw extends SubsystemBase {
     clawMotor.setVoltage(ClawConstants.kIntakeMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
-  public void shoot() {
+  public void outtake() {
     clawMotor.setVoltage(ClawConstants.kShootMotorSpeed*ClawConstants.kNominalVoltage);
   }
 
@@ -89,7 +89,7 @@ public class Claw extends SubsystemBase {
 
   public Command scoreCube() {
     return new InstantCommand(() -> {
-      shoot();
+      outtake();
       open();
     });
   }

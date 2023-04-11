@@ -14,7 +14,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ElbowConstants;
 import frc.robot.utils.controller.AsymmetricProfiledPIDController;
 import frc.robot.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 import frc.robot.utils.controller.AsymmetricTrapezoidProfile.State;
@@ -32,17 +32,17 @@ public class Elbow extends SubsystemBase {
   
   /** Creates a new Elbow. */
   public Elbow() {
-    ElbowMotor = new CANSparkMax(ArmConstants.kRightElbowMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    ElbowMotor = new CANSparkMax(ElbowConstants.kRightElbowMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    ElbowMotor.setSmartCurrentLimit(ArmConstants.kElbowMotorCurrentLimit);
+    ElbowMotor.setSmartCurrentLimit(ElbowConstants.kElbowMotorCurrentLimit);
 
-    ElbowMotor.setInverted(ArmConstants.kElbowMotorInverted);
+    ElbowMotor.setInverted(ElbowConstants.kElbowMotorInverted);
     ElbowMotor.setIdleMode(IdleMode.kBrake);
     
     ElbowEncoder = ElbowMotor.getAbsoluteEncoder(Type.kDutyCycle);
-    ElbowEncoder.setPositionConversionFactor(ArmConstants.kElbowPositionConversionFactor);
-    ElbowEncoder.setInverted(ArmConstants.kElbowEncoderInverted);
-    ElbowEncoder.setZeroOffset(ArmConstants.kElbowEncoderZeroOffset);
+    ElbowEncoder.setPositionConversionFactor(ElbowConstants.kElbowPositionConversionFactor);
+    ElbowEncoder.setInverted(ElbowConstants.kElbowEncoderInverted);
+    ElbowEncoder.setZeroOffset(ElbowConstants.kElbowEncoderZeroOffset);
     //todo set velocity conversion factor
 
     // RightElbowMotor.setSoftLimit(SoftLimitDirection.kReverse, 20);
@@ -58,8 +58,8 @@ public class Elbow extends SubsystemBase {
   private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
     double kinematicAngle = sparkAngle;
 
-    kinematicAngle -= ArmConstants.kElbowKinematicOffset; //subtract kinematic offset 762.0
-    kinematicAngle /= ArmConstants.kElbowGearRatio; //divide by gear ratio
+    kinematicAngle -= ElbowConstants.kElbowKinematicOffset; //subtract kinematic offset 762.0
+    kinematicAngle /= ElbowConstants.kElbowGearRatio; //divide by gear ratio
 
     return kinematicAngle;
   }
@@ -70,7 +70,7 @@ public class Elbow extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Elbow Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    if(ElbowController.getP() == 0) {ElbowController.setP(ArmConstants.kElbowP);}
+    if(ElbowController.getP() == 0) {ElbowController.setP(ElbowConstants.kElbowP);}
     Constraints selectedConstraint = 
       (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(45)) ? 
       CloseConstraints : FarConstraints;

@@ -90,6 +90,8 @@ public class RobotContainer {
 					-0.8*MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
 					true, false),
 				m_robotDrive));
+
+		m_infrastructure.enableCompressor();
 	}
 
 	public void setTeleopDefaultStates() {

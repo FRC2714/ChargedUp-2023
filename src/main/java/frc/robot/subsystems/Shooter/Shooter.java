@@ -33,23 +33,21 @@ public class Shooter extends SubsystemBase {
   private Limelight m_frontLimelight;
 
   private CANSparkMax kickerMotor;
+
   private CANSparkMax pivotMotor;
+  private AbsoluteEncoder pivotEncoder;
 
   private CANSparkMax topFlywheelMotor;
   private CANSparkMax bottomFlywheelMotor;
-
   private RelativeEncoder flywheelEncoder;
 
-  private AbsoluteEncoder pivotEncoder;
-
-  
   private InterpolatingTreeMap<Double, Double> pivotMap = new InterpolatingTreeMap<Double, Double>();
   private InterpolatingTreeMap<Double, Double> velocityMap = new InterpolatingTreeMap<Double, Double>();
 
   private PIDController pivotController = new PIDController(0, 0, 0);
-  private PIDController flywheelController = new PIDController(0.5, 0, 0);
-
   private ArmFeedforward pivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
+
+  private PIDController flywheelController = new PIDController(0.5, 0, 0);
 
   public enum IntakeState {
     INTAKING, OUTTAKING, STOPPED
@@ -57,7 +55,7 @@ public class Shooter extends SubsystemBase {
 
   private static IntakeState shooterState = IntakeState.STOPPED;
 
-  private Timer shooterRunningTimer = new Timer();
+  private Timer kickerRunningTimer = new Timer();
 
   private boolean isShooterEnabled = false;
   private boolean isDynamicEnabled = false;
@@ -183,13 +181,9 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setCalculatedPivotVoltage() {
-    if (isShooterEnabled) {
-      pivotMotor.setVoltage(
-        pivotController.calculate(getPivotAngleRadians())
-        + pivotFeedforward.calculate(pivotController.getSetpoint(), 0));
-    } else {
-      pivotMotor.setVoltage(0);
-    }
+    pivotMotor.setVoltage(isShooterEnabled ? 
+      pivotController.calculate(getPivotAngleRadians())
+      + pivotFeedforward.calculate(pivotController.getSetpoint(), 0) : 0 );
   }
 
   //FLYWHEEL
@@ -210,11 +204,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void setCalculatedFlywheelVoltage() {
-    if (isShooterEnabled) {
-      topFlywheelMotor.setVoltage(flywheelController.calculate(getFlywheelVelocity()));
-    } else {
-      topFlywheelMotor.setVoltage(0);
-    }
+    topFlywheelMotor.setVoltage(isShooterEnabled ? flywheelController.calculate(getFlywheelVelocity()) : 0);
   }
 
   public void setTunable() {
@@ -247,8 +237,8 @@ public class Shooter extends SubsystemBase {
   private void kickerIntake() {
     kickerMotor.setVoltage(ShooterConstants.kIntakeMotorSpeed*ShooterConstants.kNominalVoltage);
     if (shooterState != IntakeState.INTAKING) {
-      shooterRunningTimer.reset();
-      shooterRunningTimer.start();
+      kickerRunningTimer.reset();
+      kickerRunningTimer.start();
       shooterState = IntakeState.INTAKING;
     }
   }
@@ -256,8 +246,8 @@ public class Shooter extends SubsystemBase {
   private void kickerOuttake() {
     kickerMotor.setVoltage(ShooterConstants.kOuttakeMotorSpeed*ShooterConstants.kNominalVoltage);
     if (shooterState != IntakeState.OUTTAKING) {
-      shooterRunningTimer.reset();
-      shooterRunningTimer.start();
+      kickerRunningTimer.reset();
+      kickerRunningTimer.start();
       shooterState = IntakeState.OUTTAKING;
     }
   }
@@ -276,25 +266,27 @@ public class Shooter extends SubsystemBase {
   public Command intakeSequence() {
     return new ParallelCommandGroup(
       new InstantCommand(() -> kickerIntake()),
-      toPreset(ShooterConstants.kIntakePreset));
+      setPreset(ShooterConstants.kIntakePreset));
   }
 
   public Command outtakeSequence() {
     return new SequentialCommandGroup(
-      toPreset(ShooterConstants.kOuttakePreset),
+      setPreset(ShooterConstants.kOuttakePreset),
       new InstantCommand(() -> kickerOuttake()));
   }
 
-  public Command toPreset(ShooterPreset shooterPreset) {
+  public Command setPreset(ShooterPreset shooterPreset) {
     return new SequentialCommandGroup(
-      new InstantCommand(() -> setTargetVelocity(shooterPreset.FlywheelRPM)),
-      new InstantCommand(() -> setTargetPivot(shooterPreset.PivotDegrees)),
+      new InstantCommand(() -> {
+        setTargetVelocity(shooterPreset.FlywheelRPM);
+        setTargetPivot(shooterPreset.PivotDegrees);
+      }),
       new WaitUntilCommand(() -> atPivotSetpoint())
     );
   }
 
   public boolean isCurrentSpikeDetected() {
-    return (shooterRunningTimer.get() > 0.15) && //excludes current spike when motor first starts
+    return (kickerRunningTimer.get() > 0.15) && //excludes current spike when motor first starts
       (kickerMotor.getOutputCurrent() > 25) && //cube intake current threshold
       (shooterState == IntakeState.INTAKING);
   }
