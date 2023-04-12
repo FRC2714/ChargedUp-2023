@@ -2,6 +2,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -94,7 +97,15 @@ public class Limelight extends SubsystemBase {
 	}
 
 	public Pose2d getBotPose2d() {
-		return LimelightHelpers.getBotPose2d(limelightName);
+		if(isTargetVisible() && LimelightHelpers.getCurrentPipelineIndex(limelightName) != 0) {
+			return DriverStation.getAlliance() == Alliance.Blue ? 
+				LimelightHelpers.getBotPose2d_wpiBlue(limelightName) : LimelightHelpers.getBotPose2d_wpiRed(limelightName);
+		}
+		return new Pose2d(); //TODO
+	}
+
+	public double getVisionLatency() {
+		return Timer.getFPGATimestamp() - LimelightHelpers.getLatency_Capture(limelightName)/1000.0 - LimelightHelpers.getLatency_Pipeline(limelightName)/1000.0;
 	}
 
 	@Override

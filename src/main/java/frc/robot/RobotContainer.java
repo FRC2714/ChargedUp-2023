@@ -21,6 +21,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.auto.NothingAuto;
+import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
 import frc.robot.commands.auto.MIDDLE.OneConeBalanceMobilityMiddleAuto;
 import frc.robot.commands.auto.OPEN.ThreeCargoOpenAuto;
@@ -49,9 +50,10 @@ import frc.robot.subsystems.Superstructure.ScoreMode;
 public class RobotContainer {
 	// The robot's subsystems
 	private final Infrastructure m_infrastructure = new Infrastructure();
-	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 	private final Limelight m_backLimelight = new Limelight("limelight-back", LimelightConstants.kBackLimelightPose);
 	private final Limelight m_frontLimelight = new Limelight("limelight-front", LimelightConstants.kFrontLimelightPose);
+
+	private final DriveSubsystem m_robotDrive = new DriveSubsystem(m_backLimelight);
 	private final Arm m_arm = new Arm();
 	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	private final Claw m_claw = new Claw();
@@ -222,6 +224,10 @@ public class RobotContainer {
 
 	public Command getNothingAuto() {
 		return new NothingAuto();
+	}
+
+	public Command getPathTestAuto() {
+		return new PathTestAuto(m_robotDrive);
 	}
 
 	public Command getOneConeBalanceMiddleAuto() {
