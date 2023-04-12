@@ -67,8 +67,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "shoot cube",
-          "retract shooter"
+          "shoot cube"
         ],
         "executionBehavior": "sequential",
         "waitBehavior": "none",

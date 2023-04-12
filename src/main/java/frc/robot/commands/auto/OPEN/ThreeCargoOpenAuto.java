@@ -68,10 +68,7 @@ public class ThreeCargoOpenAuto extends AutoBase {
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 
 			//Follow Path
-			autoBuilder.fullAuto(autoPathGroup),
-
-			//Autobalance
-			new AutoBalance(m_robotDrive)
+			autoBuilder.fullAuto(autoPathGroup)
 		);
 	}
 }

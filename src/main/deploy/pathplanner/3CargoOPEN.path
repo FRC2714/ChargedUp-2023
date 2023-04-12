@@ -28,14 +28,14 @@
         "y": 4.602453048322467
       },
       "prevControl": {
-        "x": 6.076865702855074,
-        "y": 5.625587345467392
+        "x": 5.411121403100116,
+        "y": 4.9002479120969715
       },
       "nextControl": {
-        "x": 6.076865702855074,
-        "y": 5.625587345467392
+        "x": 5.411121403100116,
+        "y": 4.9002479120969715
       },
-      "holonomicAngle": -30.0,
+      "holonomicAngle": -5.0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -53,15 +53,15 @@
         "y": 4.4
       },
       "prevControl": {
-        "x": 1.6402329964681344,
-        "y": 4.269055519443258
+        "x": 3.401707483200298,
+        "y": 5.090824492919111
       },
       "nextControl": {
-        "x": 4.807617725506699,
-        "y": 5.421889281282615
+        "x": 3.401707483200298,
+        "y": 5.090824492919111
       },
       "holonomicAngle": 180.0,
-      "isReversal": false,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": true,
@@ -76,18 +76,18 @@
     },
     {
       "anchorPoint": {
-        "x": 7.0,
-        "y": 3.5
+        "x": 7.0728372583757695,
+        "y": 3.4273438135427265
       },
       "prevControl": {
-        "x": 5.791672732477122,
-        "y": 4.940028362099935
+        "x": 6.362543215479773,
+        "y": 4.950574304129904
       },
       "nextControl": {
-        "x": 5.791672732477122,
-        "y": 4.940028362099935
+        "x": 6.362543215479773,
+        "y": 4.950574304129904
       },
-      "holonomicAngle": -50.0,
+      "holonomicAngle": -65.0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -105,8 +105,8 @@
         "y": 4.4
       },
       "prevControl": {
-        "x": 4.832919096286973,
-        "y": 5.431098227132768
+        "x": 3.387367132516019,
+        "y": 5.11950519428767
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -124,8 +124,8 @@
       }
     }
   ],
-  "maxVelocity": 3.5,
-  "maxAcceleration": 3.5,
+  "maxVelocity": 3.0,
+  "maxAcceleration": 3.0,
   "isReversed": null,
   "markers": [
     {
@@ -135,7 +135,7 @@
       ]
     },
     {
-      "position": 1.2000000000000002,
+      "position": 1.1,
       "names": [
         "set shooter high"
       ]
@@ -147,7 +147,7 @@
       ]
     },
     {
-      "position": 3.2,
+      "position": 3.1,
       "names": [
         "set shooter mid"
       ]

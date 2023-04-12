@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5292739483008218,
-        "y": 0.5938183410827156
+        "x": 2.455799353109312,
+        "y": 0.5
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -25,17 +25,17 @@
     {
       "anchorPoint": {
         "x": 3.2,
-        "y": 0.93
+        "y": 0.9
       },
       "prevControl": {
-        "x": 2.156271768833699,
-        "y": 0.93
+        "x": 2.785058126826228,
+        "y": 0.9
       },
       "nextControl": {
-        "x": 4.421819342058145,
-        "y": 0.93
+        "x": 4.421819342058146,
+        "y": 0.9
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -50,15 +50,15 @@
     {
       "anchorPoint": {
         "x": 7.0728372583757695,
-        "y": 0.9034420931095897
+        "y": 0.9177824437938686
       },
       "prevControl": {
-        "x": 5.169866122767092,
-        "y": 0.9034420931095897
+        "x": 6.513379761247866,
+        "y": 0.9177824437938686
       },
       "nextControl": {
-        "x": 5.169866122767092,
-        "y": 0.9034420931095897
+        "x": 6.513379761247866,
+        "y": 0.9177824437938686
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -74,26 +74,24 @@
     },
     {
       "anchorPoint": {
-        "x": 4.435508107657436,
-        "y": 0.9
+        "x": 4.721019746153983,
+        "y": 0.9464631451624268
       },
       "prevControl": {
-        "x": 4.9353533183554985,
-        "y": 0.8999999999999971
+        "x": 5.962304758536868,
+        "y": 0.4946723484143023
       },
       "nextControl": {
-        "x": 4.07971762808658,
-        "y": 0.8999999999999971
+        "x": 5.962304758536868,
+        "y": 0.4946723484143023
       },
-      "holonomicAngle": -90.0,
-      "isReversal": false,
+      "holonomicAngle": 177.0,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
-        "names": [
-          "set shooter high"
-        ],
+        "names": [],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -101,19 +99,19 @@
     },
     {
       "anchorPoint": {
-        "x": 3.354435411160899,
-        "y": 0.9
+        "x": 7.101517959744328,
+        "y": 2.0936911999047623
       },
       "prevControl": {
-        "x": 3.72642943010004,
-        "y": 0.9
+        "x": 6.728668841953068,
+        "y": 0.9321227944781477
       },
       "nextControl": {
-        "x": 2.9824413922217583,
-        "y": 0.9
+        "x": 6.728668841953068,
+        "y": 0.9321227944781477
       },
-      "holonomicAngle": -90.0,
-      "isReversal": false,
+      "holonomicAngle": 70.0,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
@@ -126,49 +124,35 @@
     },
     {
       "anchorPoint": {
-        "x": 1.95,
-        "y": 1.03
+        "x": 4.749700447522541,
+        "y": 0.6309754301082856
       },
       "prevControl": {
-        "x": 2.6370088167983394,
-        "y": 1.03
+        "x": 5.729997422248517,
+        "y": 0.6309754301082857
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": -175.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "shoot cube"
-        ],
-        "executionBehavior": "sequential",
+        "names": [],
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
-  "maxVelocity": 1.7,
+  "maxVelocity": 2.0,
   "maxAcceleration": 2.0,
   "isReversed": null,
   "markers": [
     {
-      "position": 1.25,
+      "position": 1.15,
       "names": [
         "intake cube"
-      ]
-    },
-    {
-      "position": 2.1,
-      "names": [
-        "hold cube"
-      ]
-    },
-    {
-      "position": 4.2,
-      "names": [
-        "set shooter high"
       ]
     }
   ]
