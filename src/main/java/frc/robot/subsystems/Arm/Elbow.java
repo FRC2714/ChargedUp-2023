@@ -22,7 +22,8 @@ public class Elbow extends SubsystemBase {
   private CANSparkMax ElbowMotor;
   private AbsoluteEncoder ElbowEncoder;
 
-  private AsymmetricProfiledPIDController ElbowController = new AsymmetricProfiledPIDController(0,0,0, ElbowConstants.kFarConstraints);
+  private AsymmetricProfiledPIDController ElbowController = 
+    new AsymmetricProfiledPIDController(0,0,0, ElbowConstants.kFarConstraints); //MUST START AT 0 P
   
   /** Creates a new Elbow. */
   public Elbow() {
@@ -57,7 +58,7 @@ public class Elbow extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Elbow Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    ElbowController.setP(ElbowController.getP() == 0 ? ElbowConstants.kElbowP : 0);
+    ElbowController.setP(ElbowConstants.kElbowP);
     Constraints selectedConstraint = 
       (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(45)) ? 
       ElbowConstants.kCloseConstraints : ElbowConstants.kFarConstraints;

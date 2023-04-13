@@ -277,8 +277,8 @@ public final class Constants {
     public static final double kShoulderP = 8;
     public static final int kShoulderMotorCurrentLimit = 40; //amps
 
-    public static final Constraints kFarConstraints = new Constraints(10, 10, 8);
-    public static final Constraints kCloseConstraints = new Constraints(18, 18, 15);
+    public static final Constraints kFarConstraints = new Constraints(12, 16, 12);
+    public static final Constraints kCloseConstraints = new Constraints(20, 30, 24);
 
     public static final ArmFeedforward kShoulderFeedForward = new ArmFeedforward(0, 0.47, 4.68, 0.04);
   }
@@ -294,11 +294,11 @@ public final class Constants {
     public static final double kElbowKinematicOffset = 762.0;
     public static final boolean kElbowMotorInverted = false;
     public static final boolean kElbowEncoderInverted = true;
-    public static final double kElbowP = 7;
+    public static final double kElbowP = 7.5;
     public static final int kElbowMotorCurrentLimit = 30; //amps
 
-    public static final Constraints kFarConstraints = new Constraints(12, 12, 9);
-    public static final Constraints kCloseConstraints = new Constraints(36, 36, 24);
+    public static final Constraints kFarConstraints = new Constraints(16, 20, 16);
+    public static final Constraints kCloseConstraints = new Constraints(20, 30, 24);
 
     public static final ArmFeedforward kElbowFeedForward = new ArmFeedforward(0, 0.35, 4.38, 0.03);
   }

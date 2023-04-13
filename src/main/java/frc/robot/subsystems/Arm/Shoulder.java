@@ -24,7 +24,8 @@ public class Shoulder extends SubsystemBase {
   private CANSparkMax LeftShoulderMotor;
   private AbsoluteEncoder ShoulderEncoder;
 
-  private AsymmetricProfiledPIDController ShoulderController = new AsymmetricProfiledPIDController(0,0,0, ShoulderConstants.kFarConstraints);
+  private AsymmetricProfiledPIDController ShoulderController = 
+    new AsymmetricProfiledPIDController(0,0,0, ShoulderConstants.kFarConstraints); //MUST START AT 0 P
   
   /** Creates a new Shoulder. */
   public Shoulder() {
@@ -64,7 +65,7 @@ public class Shoulder extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Shoulder Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    ShoulderController.setP(ShoulderController.getP() == 0 ? ShoulderConstants.kShoulderP: 0);
+    ShoulderController.setP(ShoulderConstants.kShoulderP);
     Constraints selectedConstraint = 
       (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(20)) ? 
       ShoulderConstants.kCloseConstraints : ShoulderConstants.kFarConstraints;
