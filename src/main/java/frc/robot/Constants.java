@@ -6,6 +6,7 @@ package frc.robot;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,6 +15,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.utils.ArmPreset;
 import frc.robot.utils.ShooterPreset;
+import frc.robot.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -163,7 +165,7 @@ public final class Constants {
 
     public static final int kClawMotorCurrentLimit = 10; //amps 
 
-    public static final double kNominalVoltage = 11;
+    public static final double kNominalVoltage = 11.0;
 
     public static final double kIntakeMotorSpeed = 1;
     public static final double kOuttakeMotorSpeed = -0.1;
@@ -171,28 +173,27 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    //Spark IDs
+    //Kicker
     public static final int kKickerMotorCanId = 13;
+    public static final int kKickerMotorCurrentLimit = 30;
+    public static final double kKickerNominalVoltage = 12.0;
+    public static final double kKickerIntakeMotorSpeed = 0.3;
+    public static final double kKickerOuttakeMotorSpeed = -0.7;
+    public static final double kKickSpeed = -0.4;
+
+    //Pivot
     public static final int kPivotMotorCanId = 15;
-
-    public static final int kTopFlywheelMotorCanId = 16;
-    public static final int kBottomFlywheelMotorCanId = 17;
-
     public static final double kPivotGearRatio = 50;
     public static final double kPivotPositionConversionFactor = (2*Math.PI) * kPivotGearRatio;
-
-    //Current Limits
-    public static final int kKickerMotorCurrentLimit = 30;
     public static final int kPivotMotorCurrentLimit = 30;
+    public static final double kPivotP = 2.5;
+    public static final ArmFeedforward kPivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
+    
+    //Flywheels
+    public static final int kTopFlywheelMotorCanId = 16;
+    public static final int kBottomFlywheelMotorCanId = 17;
     public static final int kTopFlywheelMotorCurrentLimit = 30;
     public static final int kBottomFlywheelMotorCurrentLimit = 30;
-
-    public static final double kNominalVoltage = 12;
-
-    //Kicker motor speeds
-    public static final double kIntakeMotorSpeed = 0.3;
-    public static final double kOuttakeMotorSpeed = -0.7;
-    public static final double kKickSpeed = -0.4;
 
     //Preset Angles
     public static final double kPivotHoldAngleDegrees = -40;
@@ -220,18 +221,17 @@ public final class Constants {
       new ShooterPreset(20, 40);
     public static final ShooterPreset kFarMiddleCubePreset = 
       new ShooterPreset(45, 0);
-
   }
 
   public static final class LEDConstants {
     public static final int kArmBlinkinPort = 0;
     public static final int kBaseBlinkinPort = 1;
 
-    public static final double kPurpleWave = 0.29;
-    public static final double kYellowWave = 0.09;
-
     public static final double kPurple = 0.91;
     public static final double kYellow = 0.69;
+
+    public static final double kGreen = 0.77;
+    public static final double kRed = 0.61;
   }
 
   public static final class NeoMotorConstants {
@@ -276,6 +276,11 @@ public final class Constants {
     public static final boolean kShoulderEncoderInverted = true;
     public static final double kShoulderP = 8;
     public static final int kShoulderMotorCurrentLimit = 40; //amps
+
+    public static final Constraints kFarConstraints = new Constraints(10, 10, 8);
+    public static final Constraints kCloseConstraints = new Constraints(18, 18, 15);
+
+    public static final ArmFeedforward kShoulderFeedForward = new ArmFeedforward(0, 0.47, 4.68, 0.04);
   }
 
   public static final class ElbowConstants {
@@ -291,6 +296,11 @@ public final class Constants {
     public static final boolean kElbowEncoderInverted = true;
     public static final double kElbowP = 7;
     public static final int kElbowMotorCurrentLimit = 30; //amps
+
+    public static final Constraints kFarConstraints = new Constraints(12, 12, 9);
+    public static final Constraints kCloseConstraints = new Constraints(36, 36, 24);
+
+    public static final ArmFeedforward kElbowFeedForward = new ArmFeedforward(0, 0.35, 4.38, 0.03);
   }
 
   public static final class ArmConstants {
@@ -381,7 +391,6 @@ public final class Constants {
       new ArmPreset(110, 81);
     public static final ArmPreset kFrontCubeHighPosition = 
       new ArmPreset(120, 15);
-    
 
     //Arm Intake positions
     public static final ArmPreset kBackIntakePosition = 

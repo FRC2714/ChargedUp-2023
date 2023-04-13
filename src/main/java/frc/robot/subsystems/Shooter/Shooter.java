@@ -11,7 +11,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.InterpolatingTreeMap;
@@ -45,8 +44,6 @@ public class Shooter extends SubsystemBase {
   private InterpolatingTreeMap<Double, Double> velocityMap = new InterpolatingTreeMap<Double, Double>();
 
   private PIDController pivotController = new PIDController(0, 0, 0);
-  private ArmFeedforward pivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
-
   private PIDController flywheelController = new PIDController(0.5, 0, 0);
 
   public enum IntakeState {
@@ -54,7 +51,6 @@ public class Shooter extends SubsystemBase {
   }
 
   private static IntakeState shooterState = IntakeState.STOPPED;
-
   private Timer kickerRunningTimer = new Timer();
 
   private boolean isShooterEnabled = false;
@@ -63,7 +59,6 @@ public class Shooter extends SubsystemBase {
   public TunableNumber tunableVelocity = new TunableNumber("VELOCITY TUNEABLE");
   public TunableNumber tunablePivot = new TunableNumber("PIVOT TUNEABLE");
   
-
   /** Creates a new Shooter. */
   public Shooter(Limelight m_frontLimelight) {
     this.m_frontLimelight = m_frontLimelight;
@@ -78,8 +73,8 @@ public class Shooter extends SubsystemBase {
     kickerMotor.setSmartCurrentLimit(ShooterConstants.kKickerMotorCurrentLimit);
     pivotMotor.setSmartCurrentLimit(ShooterConstants.kPivotMotorCurrentLimit);
 
-    kickerMotor.enableVoltageCompensation(ShooterConstants.kNominalVoltage);
-    pivotMotor.enableVoltageCompensation(ShooterConstants.kNominalVoltage);
+    kickerMotor.enableVoltageCompensation(ShooterConstants.kKickerNominalVoltage);
+    pivotMotor.enableVoltageCompensation(ShooterConstants.kKickerNominalVoltage);
 
     pivotEncoder = pivotMotor.getAbsoluteEncoder(Type.kDutyCycle);
     pivotEncoder.setPositionConversionFactor(ShooterConstants.kPivotPositionConversionFactor);
@@ -167,7 +162,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setTargetPivot(double targetAngleDegrees) {
-    if (pivotController.getP() == 0) { pivotController.setP(2.5);} //prevent jumping on enable 2.5
+    pivotController.setP(pivotController.getP() == 0 ? 2.5 : 0); //prevent jumping on enable p = 2.5
     pivotController.setSetpoint(Units.degreesToRadians(targetAngleDegrees));
   }
 
@@ -182,7 +177,7 @@ public class Shooter extends SubsystemBase {
   public void setCalculatedPivotVoltage() {
     pivotMotor.setVoltage(isShooterEnabled ? 
       pivotController.calculate(getPivotAngleRadians())
-      + pivotFeedforward.calculate(pivotController.getSetpoint(), 0) : 0 );
+      + ShooterConstants.kPivotFeedforward.calculate(pivotController.getSetpoint(), 0) : 0 );
   }
 
   //FLYWHEEL
@@ -234,7 +229,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void kickerIntake() {
-    kickerMotor.setVoltage(ShooterConstants.kIntakeMotorSpeed*ShooterConstants.kNominalVoltage);
+    kickerMotor.setVoltage(ShooterConstants.kKickerIntakeMotorSpeed*ShooterConstants.kKickerNominalVoltage);
     if (shooterState != IntakeState.INTAKING) {
       kickerRunningTimer.reset();
       kickerRunningTimer.start();
@@ -243,7 +238,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void kickerOuttake() {
-    kickerMotor.setVoltage(ShooterConstants.kOuttakeMotorSpeed*ShooterConstants.kNominalVoltage);
+    kickerMotor.setVoltage(ShooterConstants.kKickerOuttakeMotorSpeed*ShooterConstants.kKickerNominalVoltage);
     if (shooterState != IntakeState.OUTTAKING) {
       kickerRunningTimer.reset();
       kickerRunningTimer.start();

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants.LEDConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToCone;
@@ -103,8 +104,7 @@ public class Superstructure {
       setSubsystemState(DPAD.DOWN),
       new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
       new InstantCommand(() -> this.scoreMode = ScoreMode.ARM),
-      new InstantCommand(() -> {
-        if(getCargoType() == CargoType.CONE) m_armLED.setYellow(); else m_armLED.setPurple();})
+      new InstantCommand(() -> m_armLED.set(getCargoType() == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple))
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
@@ -116,9 +116,7 @@ public class Superstructure {
         Map.entry(ScoreModeTransition.TO_SHOOTER, armToShooter()),
         Map.entry(ScoreModeTransition.DO_NOTHING, new InstantCommand())),
       () -> {
-        if(getScoreMode() == targetScoreMode) {
-          return ScoreModeTransition.DO_NOTHING;
-        } 
+        if(getScoreMode() == targetScoreMode) { return ScoreModeTransition.DO_NOTHING;} 
         return targetScoreMode == ScoreMode.ARM ? ScoreModeTransition.TO_ARM : ScoreModeTransition.TO_SHOOTER;
       }
     );
@@ -199,7 +197,7 @@ public class Superstructure {
   //Cargo type
   public Command setCargoTypeCommand(CargoType targetCargoType) {
     return new InstantCommand(() -> {
-      if(targetCargoType == CargoType.CONE) m_armLED.setYellow(); else m_armLED.setPurple();
+      m_armLED.set(targetCargoType == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
       this.cargoType = targetCargoType;
     });
   }

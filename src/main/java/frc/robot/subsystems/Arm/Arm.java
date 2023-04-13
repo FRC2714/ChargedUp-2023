@@ -61,10 +61,10 @@ public class Arm {
     return new ArmPreset(q1, q2);
   }
 
-  private void calculateForwardKinematics() {
+  private void calculateForwardKinematics(ArmPreset armPreset) {
     estimatedPosition = new Translation2d(
-      shoulderLength*Math.sin(m_shoulder.getKinematicAngle()) + elbowLength*Math.sin(m_shoulder.getKinematicAngle()+m_elbow.getKinematicAngle()),
-      shoulderLength*Math.cos(m_elbow.getKinematicAngle()) + elbowLength*Math.cos(m_shoulder.getKinematicAngle()+m_elbow.getKinematicAngle())
+      shoulderLength*Math.sin(armPreset.ShoulderAngleRadians) + elbowLength*Math.sin(armPreset.ShoulderAngleRadians + armPreset.ElbowAngleRadians),
+      shoulderLength*Math.cos(armPreset.ElbowAngleRadians) + elbowLength*Math.cos(armPreset.ShoulderAngleRadians + armPreset.ElbowAngleRadians)
     );
     SmartDashboard.putNumber("Arm Estimated X", Units.metersToInches(estimatedPosition.getX()));
     SmartDashboard.putNumber("Arm Estimated Y", Units.metersToInches(estimatedPosition.getY()));
@@ -175,7 +175,6 @@ public class Arm {
 
   public void updateTelemetry() {
     // This method will be called once per scheduler run
-    // estimateCurrentXY();
-    // calculateInverseKinematics(estimatedX, estimatedY);
+    calculateForwardKinematics(new ArmPreset(m_shoulder.getKinematicAngle(), m_elbow.getKinematicAngle()));
   }
 }

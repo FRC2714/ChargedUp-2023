@@ -24,19 +24,21 @@ public class Claw extends SubsystemBase {
     clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     clawMotor.setSmartCurrentLimit(ClawConstants.kClawMotorCurrentLimit);
     clawMotor.setInverted(true);
+    clawMotor.enableVoltageCompensation(ClawConstants.kNominalVoltage);
     clawMotor.burnFlash();
 
-    clawMotor.enableVoltageCompensation(ClawConstants.kNominalVoltage);
-
-    clawSolenoid = new DoubleSolenoid(PneumaticsModuleType.REVPH, ClawConstants.kClawSolenoidForwardChannel, ClawConstants.kClawSolenoidReverseChannel);
+    clawSolenoid = new DoubleSolenoid(
+      PneumaticsModuleType.REVPH, 
+      ClawConstants.kClawSolenoidForwardChannel, 
+      ClawConstants.kClawSolenoidReverseChannel);
   }
 
   public void intake() {
-    clawMotor.setVoltage(ClawConstants.kIntakeMotorSpeed*ClawConstants.kNominalVoltage);
+    clawMotor.set(ClawConstants.kIntakeMotorSpeed * ClawConstants.kNominalVoltage);
   }
 
   public void outtake() {
-    clawMotor.setVoltage(ClawConstants.kShootMotorSpeed*ClawConstants.kNominalVoltage);
+    clawMotor.set(ClawConstants.kShootMotorSpeed * ClawConstants.kNominalVoltage);
   }
 
   public void stop() {
@@ -51,17 +53,9 @@ public class Claw extends SubsystemBase {
     clawSolenoid.set(Value.kReverse);
   }
 
-  public void toggle() {
-    clawSolenoid.toggle();
-  }
-  
-  public boolean isOpen() {
-    return clawSolenoid.get() == Value.kForward;
-  }
-
   public Command intakeAndToggleCommand() {
     return new InstantCommand(() -> {
-      toggle();
+      clawSolenoid.toggle();
       intake();
     });
   }

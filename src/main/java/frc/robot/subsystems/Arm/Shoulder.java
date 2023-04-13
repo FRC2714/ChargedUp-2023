@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,25 +24,18 @@ public class Shoulder extends SubsystemBase {
   private CANSparkMax LeftShoulderMotor;
   private AbsoluteEncoder ShoulderEncoder;
 
-  private Constraints FarConstraints = new Constraints(10, 10, 8);
-  private Constraints CloseConstraints = new Constraints(18, 18, 15);
-
-  private AsymmetricProfiledPIDController ShoulderController = new AsymmetricProfiledPIDController(0,0,0, FarConstraints);
-
-  private ArmFeedforward ShoulderFeedForward = new ArmFeedforward(0, 0.47, 4.68, 0.04);
+  private AsymmetricProfiledPIDController ShoulderController = new AsymmetricProfiledPIDController(0,0,0, ShoulderConstants.kFarConstraints);
   
   /** Creates a new Shoulder. */
   public Shoulder() {
     LeftShoulderMotor = new CANSparkMax(ShoulderConstants.kLeftShoulderMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     RightShoulderMotor = new CANSparkMax(ShoulderConstants.kRightShoulderMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     LeftShoulderMotor.follow(RightShoulderMotor, true);
-
-    RightShoulderMotor.setSmartCurrentLimit(ShoulderConstants.kShoulderMotorCurrentLimit);
-    LeftShoulderMotor.setSmartCurrentLimit(ShoulderConstants.kShoulderMotorCurrentLimit);
-
     RightShoulderMotor.setInverted(ShoulderConstants.kShoulderEncoderInverted); //must be inverted
     RightShoulderMotor.setIdleMode(IdleMode.kBrake);
     LeftShoulderMotor.setIdleMode(IdleMode.kBrake);
+    RightShoulderMotor.setSmartCurrentLimit(ShoulderConstants.kShoulderMotorCurrentLimit);
+    LeftShoulderMotor.setSmartCurrentLimit(ShoulderConstants.kShoulderMotorCurrentLimit);
 
     ShoulderEncoder = RightShoulderMotor.getAbsoluteEncoder(Type.kDutyCycle);
     ShoulderEncoder.setPositionConversionFactor(ShoulderConstants.kShoulderPositionConversionFactor);
@@ -72,12 +64,12 @@ public class Shoulder extends SubsystemBase {
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
     SmartDashboard.putNumber("Shoulder Target Angle", Units.radiansToDegrees(targetAngleRadians));
-    if(ShoulderController.getP() == 0) {ShoulderController.setP(ShoulderConstants.kShoulderP);}
+    ShoulderController.setP(ShoulderController.getP() == 0 ? ShoulderConstants.kShoulderP: 0);
     Constraints selectedConstraint = 
       (Math.abs(targetAngleRadians - getKinematicAngle()) < Units.degreesToRadians(20)) ? 
-      CloseConstraints : FarConstraints;
+      ShoulderConstants.kCloseConstraints : ShoulderConstants.kFarConstraints;
     ShoulderController.setConstraints(selectedConstraint);
-    SmartDashboard.putString("Shoulder Selected Constraint", selectedConstraint.equals(FarConstraints) ? "FAR" : "CLOSE");
+    SmartDashboard.putString("Shoulder Selected Constraint", selectedConstraint.equals(ShoulderConstants.kFarConstraints) ? "FAR" : "CLOSE");
 
     ShoulderController.setGoal(new State(targetAngleRadians, 0));
   }
@@ -93,7 +85,7 @@ public class Shoulder extends SubsystemBase {
   private void setCalculatedVoltage() {
     double voltage =
       ShoulderController.calculate(getKinematicAngle())
-      + ShoulderFeedForward.calculate(ShoulderController.getSetpoint().position, 0);
+      + ShoulderConstants.kShoulderFeedForward.calculate(ShoulderController.getSetpoint().position, 0);
     SmartDashboard.putNumber("Shoulder Voltage", voltage);
 
     RightShoulderMotor.setVoltage(voltage);

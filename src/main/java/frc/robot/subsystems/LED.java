@@ -16,7 +16,7 @@ public class LED extends SubsystemBase {
     blinkin = new Spark(BlinkinPort);
   }
 
-  private void set(double val) {
+  public void set(double val) {
     blinkin.set(val);
   }
 
@@ -29,11 +29,11 @@ public class LED extends SubsystemBase {
   }
 
   public void setGreen() {
-    set(0.77);
+    set(LEDConstants.kGreen);
   }
 
   public void setRed() {
-    set(0.61);
+    set(LEDConstants.kRed);
   }
 
   @Override
