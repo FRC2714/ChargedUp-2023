@@ -55,7 +55,7 @@ public class Elbow extends SubsystemBase {
     //ElbowController.setTolerance(Units.degreesToRadians(2), 0);
   }
 
-  private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
+  private double convertEncoderTicksToKinematicAngle(double sparkAngle) {
     double kinematicAngle = sparkAngle;
 
     kinematicAngle -= ElbowConstants.kElbowKinematicOffset; //subtract kinematic offset 762.0
@@ -65,7 +65,7 @@ public class Elbow extends SubsystemBase {
   }
 
   public double getKinematicAngle() {
-    return convertAngleFromSparkMaxToKinematic(ElbowEncoder.getPosition());
+    return convertEncoderTicksToKinematicAngle(ElbowEncoder.getPosition());
   }
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
@@ -80,7 +80,7 @@ public class Elbow extends SubsystemBase {
     ElbowController.setGoal(new State(targetAngleRadians, 0));
   }
 
-  public boolean nearSetpoint() {
+  public boolean nearGoal() {
     return Math.abs(getKinematicAngle() - ElbowController.getGoal().position) < Units.degreesToRadians(8);
   }
 
@@ -104,7 +104,7 @@ public class Elbow extends SubsystemBase {
     // SmartDashboard.putNumber("Elbow Encoder Position", ElbowEncoder.getPosition());
     // SmartDashboard.putNumber("Elbow Encoder Velocity", ElbowEncoder.getVelocity());
     
-    SmartDashboard.putBoolean("Elbow nearSetpoint", nearSetpoint());
+    SmartDashboard.putBoolean("Elbow nearSetpoint", nearGoal());
     SmartDashboard.putNumber("Elbow Kinematic Angle", Units.radiansToDegrees(getKinematicAngle()));
   }
 }

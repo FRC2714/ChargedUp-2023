@@ -79,8 +79,8 @@ public class Arm {
   //Back to Back
   public Command BackToBack(ArmPreset backScoreLevelPosition) {
     CommandBase sequence = new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_elbow.nearSetpoint()).deadlineWith(setPresetCommand(ArmConstants.kBackToBackIntermediatePosition)),
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(backScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_elbow.nearGoal()).deadlineWith(setPresetCommand(ArmConstants.kBackToBackIntermediatePosition)),
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(backScoreLevelPosition)));
       //new WaitUntilCommand(() -> shoulder.atSetpoint() && elbow.atSetpoint()));
     sequence.addRequirements(m_shoulder, m_elbow);
     return sequence;
@@ -90,7 +90,7 @@ public class Arm {
   public Command BackToTransfer(ArmPreset transferScoreLevelPosition) {
     CommandBase sequence = new SequentialCommandGroup(
       //new WaitUntilCommand(() -> elbow.atSetpoint()).deadlineWith(setForwardKinematicsCommand(ArmConstants.kBackToTransferIntermediatePosition)),
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(transferScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(transferScoreLevelPosition)));
     sequence.addRequirements(m_shoulder, m_elbow);
     return sequence;
   }
@@ -98,79 +98,79 @@ public class Arm {
   //Back to Front
   public Command BackToFront(ArmPreset frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(frontScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(frontScoreLevelPosition)));
   }
 
   //Back to Stow
   public Command BackToStow() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(ArmConstants.kStowPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(ArmConstants.kStowPosition)));
   }
 
   //Transfer to Back
   public Command TransferToBack(ArmPreset backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(backScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(backScoreLevelPosition)));
   }
 
   //Transfer to Front
   public Command TransferToFront(ArmPreset frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(frontScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(frontScoreLevelPosition)));
   }
 
   //Transfer to Transfer
   public Command TransferToTransfer(ArmPreset transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(transferScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(transferScoreLevelPosition)));
   }
 
   //Transfer to stow
   public Command TransferToStow() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(ArmConstants.kStowPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(ArmConstants.kStowPosition)));
   }
 
   //Front to Back
   public Command FrontToBack(ArmPreset backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(backScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(backScoreLevelPosition)));
   }
 
   //Front to Transfer
   public Command FrontToTransfer(ArmPreset transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(transferScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(transferScoreLevelPosition)));
   }
 
   //Front to Front
   public Command FrontToFront(ArmPreset frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(frontScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(frontScoreLevelPosition)));
   }
 
   //Front to Stow
   public Command FrontToStow() {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(ArmConstants.kStowPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(ArmConstants.kStowPosition)));
   }
 
   //Stow to Back
   public Command StowToBack(ArmPreset backScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(backScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(backScoreLevelPosition)));
   }
 
   //Stow to transfer
   public Command StowToTransfer(ArmPreset transferScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(transferScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(transferScoreLevelPosition)));
   }
 
   //stow to front
   public Command StowToFront(ArmPreset frontScoreLevelPosition) {
     return new SequentialCommandGroup(
-      new WaitUntilCommand(() -> m_shoulder.nearSetpoint()).deadlineWith(setPresetCommand(frontScoreLevelPosition)));
+      new WaitUntilCommand(() -> m_shoulder.nearGoal()).deadlineWith(setPresetCommand(frontScoreLevelPosition)));
   }
 
   public void updateTelemetry() {

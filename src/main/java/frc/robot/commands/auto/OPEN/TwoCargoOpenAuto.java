@@ -42,7 +42,7 @@ public class TwoCargoOpenAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
     	AutoEventMap.put("intake cube", 
-			m_superstructure.intakeRightTrigger());
+			m_superstructure.shooterIntakeSequence());
 		AutoEventMap.put("set shooter high", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.Y),

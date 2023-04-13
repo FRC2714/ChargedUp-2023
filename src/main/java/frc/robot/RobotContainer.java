@@ -140,12 +140,12 @@ public class RobotContainer {
 
 		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.25)
-			.onTrue(m_superstructure.intakeRightTrigger()) //intake sequence
+			.onTrue(m_superstructure.shooterIntakeSequence()) //intake sequence
 			.onFalse(m_superstructure.setSubsystemState(DPAD.UP)); //shooter to hold
 
 		//outtake on left trigger while held
 		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.25)
-			.whileTrue(m_superstructure.outtakeLeftTrigger())
+			.whileTrue(m_superstructure.shooterOuttakeSequence())
 			.whileFalse(m_superstructure.setSubsystemState(DPAD.UP).alongWith(m_shooter.stopCommand()));
 
 		//release cube on y

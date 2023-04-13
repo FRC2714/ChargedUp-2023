@@ -43,7 +43,7 @@ public class TwoCargoTerrainAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
     	AutoEventMap.put("intake cube", 
-			m_superstructure.intakeRightTrigger());
+			m_superstructure.shooterIntakeSequence());
         AutoEventMap.put("hold cube", m_superstructure.setSubsystemState(DPAD.UP));
 		AutoEventMap.put("set shooter high", 
 			new SequentialCommandGroup(

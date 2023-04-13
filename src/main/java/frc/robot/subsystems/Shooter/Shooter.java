@@ -123,7 +123,6 @@ public class Shooter extends SubsystemBase {
         velocityMap.put(180.0, 90.0);
         velocityMap.put(300.0, 110.0);
         velocityMap.put(450.0, 145.0);
-
       } else if (shooterScoreLevel == ShooterScoreLevel.MIDDLE) {
         pivotMap.clear();
         pivotMap.put(50.0, 20.0);

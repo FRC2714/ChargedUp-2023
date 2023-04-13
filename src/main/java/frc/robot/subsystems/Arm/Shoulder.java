@@ -57,7 +57,7 @@ public class Shoulder extends SubsystemBase {
     ShoulderController.disableContinuousInput();
   }
 
-  private double convertAngleFromSparkMaxToKinematic(double sparkAngle) {
+  private double convertEncoderTicksToKinematicAngle(double sparkAngle) {
     double kinematicAngle = sparkAngle;
 
     kinematicAngle -= ShoulderConstants.kShoulderKinematicOffset; //subtract kinematic offset
@@ -67,7 +67,7 @@ public class Shoulder extends SubsystemBase {
   }
 
   public double getKinematicAngle() {
-    return convertAngleFromSparkMaxToKinematic(ShoulderEncoder.getPosition());
+    return convertEncoderTicksToKinematicAngle(ShoulderEncoder.getPosition());
   }
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {
@@ -82,7 +82,7 @@ public class Shoulder extends SubsystemBase {
     ShoulderController.setGoal(new State(targetAngleRadians, 0));
   }
   
-  public boolean nearSetpoint() {
+  public boolean nearGoal() {
     return Math.abs(getKinematicAngle() - ShoulderController.getGoal().position) < Units.degreesToRadians(4);
   }
 
@@ -106,7 +106,7 @@ public class Shoulder extends SubsystemBase {
     // SmartDashboard.putNumber("Shoulder Encoder Position", ShoulderEncoder.getPosition());
     // SmartDashboard.putNumber("Shoulder Encoder Velocity", ShoulderEncoder.getVelocity());
     
-    SmartDashboard.putBoolean("Shoulder nearSetpoint", nearSetpoint());
+    SmartDashboard.putBoolean("Shoulder nearSetpoint", nearGoal());
     SmartDashboard.putNumber("Shoulder Kinematic Angle", Units.radiansToDegrees(getKinematicAngle()));
   }
 }

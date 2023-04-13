@@ -51,7 +51,7 @@ public class Superstructure {
     ARM, SHOOTER
   }
 
-  public enum ScoreModeAction {
+  private enum ScoreModeTransition {
     TO_ARM, TO_SHOOTER, DO_NOTHING
   }
 
@@ -93,6 +93,7 @@ public class Superstructure {
       setSubsystemState(DPAD.UP),
       new WaitUntilCommand(() -> m_arm.isShoulderAtGoal()),
       new InstantCommand(() -> this.scoreMode = ScoreMode.SHOOTER),
+      new InstantCommand(() -> m_armLED.setGreen()),
       new InstantCommand(() -> m_shooter.setShooterEnabled(true))
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
@@ -101,7 +102,9 @@ public class Superstructure {
     return new SequentialCommandGroup(
       setSubsystemState(DPAD.DOWN),
       new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
-      new InstantCommand(() -> this.scoreMode = ScoreMode.ARM)
+      new InstantCommand(() -> this.scoreMode = ScoreMode.ARM),
+      new InstantCommand(() -> {
+        if(getCargoType() == CargoType.CONE) m_armLED.setYellow(); else m_armLED.setPurple();})
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
@@ -109,14 +112,14 @@ public class Superstructure {
   public Command setScoreModeCommand(ScoreMode targetScoreMode) {
     return new SelectCommand(
       Map.ofEntries(
-        Map.entry(ScoreModeAction.TO_ARM, shooterToArm()),
-        Map.entry(ScoreModeAction.TO_SHOOTER, armToShooter()),
-        Map.entry(ScoreModeAction.DO_NOTHING, new InstantCommand())),
+        Map.entry(ScoreModeTransition.TO_ARM, shooterToArm()),
+        Map.entry(ScoreModeTransition.TO_SHOOTER, armToShooter()),
+        Map.entry(ScoreModeTransition.DO_NOTHING, new InstantCommand())),
       () -> {
         if(getScoreMode() == targetScoreMode) {
-          return ScoreModeAction.DO_NOTHING;
+          return ScoreModeTransition.DO_NOTHING;
         } 
-        return targetScoreMode == ScoreMode.ARM ? ScoreModeAction.TO_ARM : ScoreModeAction.TO_SHOOTER;
+        return targetScoreMode == ScoreMode.ARM ? ScoreModeTransition.TO_ARM : ScoreModeTransition.TO_SHOOTER;
       }
     );
   }
@@ -196,8 +199,7 @@ public class Superstructure {
   //Cargo type
   public Command setCargoTypeCommand(CargoType targetCargoType) {
     return new InstantCommand(() -> {
-      if(targetCargoType == CargoType.CONE) { m_armLED.setYellow();} 
-      else { m_armLED.setPurple();}
+      if(targetCargoType == CargoType.CONE) m_armLED.setYellow(); else m_armLED.setPurple();
       this.cargoType = targetCargoType;
     });
   }
@@ -209,11 +211,11 @@ public class Superstructure {
   //Score Command
   public Command ScoreCommand() {
     final SelectCommand armScore = new SelectCommand(
-        Map.ofEntries(
-          Map.entry(CargoType.CONE, m_claw.scoreCone()),
-          Map.entry(CargoType.CUBE, m_claw.scoreCube())
-        ), 
-        () -> getCargoType()
+      Map.ofEntries(
+        Map.entry(CargoType.CONE, m_claw.scoreCone()),
+        Map.entry(CargoType.CUBE, m_claw.scoreCube())
+      ), 
+      () -> getCargoType()
     );
 
     return new SelectCommand(
@@ -227,7 +229,7 @@ public class Superstructure {
 
 
   //INTAKE BINDINGS
-  public Command intakeRightTrigger() {
+  public Command shooterIntakeSequence() {
     return new ConditionalCommand(
       new InstantCommand(), 
       new SequentialCommandGroup(
@@ -237,21 +239,11 @@ public class Superstructure {
     );
   }
 
-  public Command outtakeLeftTrigger() {
+  public Command shooterOuttakeSequence() {
     return new ConditionalCommand(
       new InstantCommand(), 
       new SequentialCommandGroup(
         setScoreLevelCommand(BUTTON.A),
-        setSubsystemState(DPAD.LEFT)), 
-      () -> getScoreMode() != ScoreMode.SHOOTER
-    );
-  }
-
-  public Command manualShoot() {
-    return new ConditionalCommand(
-      new InstantCommand(), 
-      new SequentialCommandGroup(
-        setScoreLevelCommand(BUTTON.B),
         setSubsystemState(DPAD.LEFT)), 
       () -> getScoreMode() != ScoreMode.SHOOTER
     );

@@ -23,9 +23,9 @@ public class ArmStateMachine {
     HIGH, MIDDLE, LOW, INTAKE
   }
 
-  public ArmState currentArmState = ArmState.BACK; //will default to TRANSFER 
-  public ArmState targetArmState = ArmState.TRANSFER; // default to TRANSFER 
-  public ArmScoreLevel armScoreLevel = ArmScoreLevel.INTAKE;
+  private ArmState currentArmState = ArmState.BACK; //will default to TRANSFER 
+  private ArmState targetArmState = ArmState.TRANSFER; // default to TRANSFER 
+  private ArmScoreLevel armScoreLevel = ArmScoreLevel.INTAKE;
 
   /** Creates a new StateMachine. */
   public ArmStateMachine(Arm m_arm) {

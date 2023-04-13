@@ -42,9 +42,10 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
         AutoEventMap.put("intake cube", 
-			m_superstructure.intakeRightTrigger());
+			m_superstructure.shooterIntakeSequence());
 		AutoEventMap.put("set shooter", 
-            new InstantCommand(() -> m_shooter.setPreset(new ShooterPreset(50, 100))));
+            new InstantCommand(() -> 
+				m_shooter.setPreset(new ShooterPreset(50, 100))));
 
 		addCommands(
 			m_superstructure.scorePreloadedCone(4.2),

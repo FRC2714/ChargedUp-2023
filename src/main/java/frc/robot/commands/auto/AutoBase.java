@@ -37,24 +37,24 @@ public class AutoBase extends SequentialCommandGroup {
     return new SwerveAutoBuilder(
       m_robotDrive::getPose, // pose2d supplier
       m_robotDrive::resetOdometry, // reset odometry at the beginning of auto
-        DriveConstants.kDriveKinematics, // swerve kinematics
-        new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // x y controller TODO add D
-        new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // theta controller
-        m_robotDrive::setModuleStates,
-        AutoEventMap,
-        true,
-        m_robotDrive);
+      DriveConstants.kDriveKinematics, // swerve kinematics
+      new PIDConstants(AutoConstants.kPXController, 0.0, 0.0), // x y controller TODO add D
+      new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.0), // theta controller
+      m_robotDrive::setModuleStates,
+      AutoEventMap,
+      true,
+      m_robotDrive);
   }
 
   public PPSwerveControllerCommand CustomPathControllerCommand(PathPlannerTrajectory trajectory) {
     return new PPSwerveControllerCommand(
-        trajectory, 
-        m_robotDrive::getPose, 
-        DriveConstants.kDriveKinematics, 
-        new PIDController(AutoConstants.kPXController, 0, 0), 
-        new PIDController(AutoConstants.kPYController, 0, 0), 
-        new PIDController(AutoConstants.kPThetaController, 0, 0), 
-        m_robotDrive::setModuleStates, 
-        m_robotDrive);
+      trajectory, 
+      m_robotDrive::getPose, 
+      DriveConstants.kDriveKinematics, 
+      new PIDController(AutoConstants.kPXController, 0, 0), 
+      new PIDController(AutoConstants.kPYController, 0, 0), 
+      new PIDController(AutoConstants.kPThetaController, 0, 0), 
+      m_robotDrive::setModuleStates, 
+      m_robotDrive);
   }
 }
