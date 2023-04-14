@@ -53,13 +53,12 @@ public class RobotContainer {
 	private final Infrastructure m_infrastructure = new Infrastructure();
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
 	private final Limelight m_backLimelight = new Limelight("limelight-back", LimelightConstants.kBackLimelightPose);
-	private final Limelight m_frontLimelight = new Limelight("limelight-front", LimelightConstants.kFrontLimelightPose);
 	private final Arm m_arm = new Arm();
 	private final Claw m_claw = new Claw();
 	private final LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
-	private final Shooter m_shooter = new Shooter(m_frontLimelight);
+	private final Shooter m_shooter = new Shooter();
 	
-	private final Superstructure m_superstructure = new Superstructure(m_robotDrive, m_arm, m_claw, m_shooter, m_backLimelight, m_frontLimelight, m_armLED);
+	private final Superstructure m_superstructure = new Superstructure(m_robotDrive, m_arm, m_claw, m_shooter, m_backLimelight, m_armLED);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -73,7 +72,6 @@ public class RobotContainer {
 		CommandScheduler.getInstance().registerSubsystem(m_infrastructure);
 		CommandScheduler.getInstance().registerSubsystem(m_robotDrive);
 		CommandScheduler.getInstance().registerSubsystem(m_backLimelight);
-		CommandScheduler.getInstance().registerSubsystem(m_frontLimelight);
 		CommandScheduler.getInstance().registerSubsystem(m_shooter);
 		CommandScheduler.getInstance().registerSubsystem(m_claw);
 		CommandScheduler.getInstance().registerSubsystem(m_armLED);
@@ -102,7 +100,6 @@ public class RobotContainer {
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
 			m_superstructure.setSubsystemState(DPAD.DOWN),
 			m_backLimelight.setLEDCommand(false),
-			m_frontLimelight.setLEDCommand(false),
 			new InstantCommand(() -> m_claw.close()),
 			new InstantCommand(() -> m_robotDrive.resetModules())
 		).schedule();

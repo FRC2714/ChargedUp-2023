@@ -31,9 +31,8 @@ public class ShooterStateMachine {
   public ShooterScoreLevel scoreLevel = ShooterScoreLevel.INTAKE;
 
   /** Creates a new ShooterStateMachine. */
-  public ShooterStateMachine(Shooter m_shooter, Limelight m_frontLimelight) {
+  public ShooterStateMachine(Shooter m_shooter) {
     this.m_shooter = m_shooter;
-    this.m_frontLimelight = m_frontLimelight;
   }
 
   public Command setShooterStateCommand(ShooterState shooterState) {
@@ -61,14 +60,12 @@ public class ShooterStateMachine {
 
   private Command toRetract(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       m_shooter.stopCommand(),
       m_shooter.setPreset(ShooterConstants.kRetractPreset));
   }
 
   private Command toHold(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       m_shooter.setPreset(ShooterConstants.kHoldPreset));
   }
 
@@ -88,7 +85,6 @@ public class ShooterStateMachine {
 
   private Command toDynamic(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       //new InstantCommand(() -> m_frontLimelight.setLED(true)),
       new SelectCommand(
         Map.ofEntries(
@@ -109,7 +105,6 @@ public class ShooterStateMachine {
 
   private Command toManual(ShooterScoreLevel shooterScorelevel) {
     return new SequentialCommandGroup(
-      m_shooter.setDynamicEnabledCommand(false, shooterScorelevel),
       new SelectCommand(
         Map.ofEntries(
           Map.entry(ShooterScoreLevel.HIGH, m_shooter.setPreset(ShooterConstants.kLaunchCubePreset)),

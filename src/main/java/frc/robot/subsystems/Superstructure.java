@@ -40,7 +40,6 @@ public class Superstructure {
   Shooter m_shooter;
 
   Limelight m_backLimelight;
-  Limelight m_frontLimelight;
 
   LED m_armLED;
 
@@ -71,7 +70,7 @@ public class Superstructure {
   public CargoType cargoType = CargoType.CONE; //default to cone
 
   /** Creates a new Superstructure. */
-  public Superstructure(DriveSubsystem m_robotDrive, Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_backLimelight, Limelight m_frontLimelight, LED m_armLED) {
+  public Superstructure(DriveSubsystem m_robotDrive, Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_backLimelight, LED m_armLED) {
     this.m_robotDrive = m_robotDrive;
 
     this.m_arm = m_arm;
@@ -80,12 +79,11 @@ public class Superstructure {
     this.m_shooter = m_shooter;
 
     this.m_backLimelight = m_backLimelight;
-    this.m_frontLimelight = m_frontLimelight;
 
     this.m_armLED = m_armLED;
 
     m_armStateMachine = new ArmStateMachine(m_arm);
-	  m_shooterStateMachine = new ShooterStateMachine(m_shooter, m_frontLimelight);
+	  m_shooterStateMachine = new ShooterStateMachine(m_shooter);
   }
 
   private Command armToShooter() {

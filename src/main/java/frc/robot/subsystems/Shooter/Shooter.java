@@ -13,7 +13,6 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,14 +22,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
 import frc.robot.utils.ShooterPreset;
 import frc.robot.utils.TunableNumber;
 
 public class Shooter extends SubsystemBase {
-  private Limelight m_frontLimelight;
-
   private CANSparkMax kickerMotor;
 
   private CANSparkMax pivotMotor;
@@ -40,8 +35,6 @@ public class Shooter extends SubsystemBase {
   private CANSparkMax bottomFlywheelMotor;
   private RelativeEncoder flywheelEncoder;
 
-  private InterpolatingTreeMap<Double, Double> pivotMap = new InterpolatingTreeMap<Double, Double>();
-  private InterpolatingTreeMap<Double, Double> velocityMap = new InterpolatingTreeMap<Double, Double>();
 
   private PIDController pivotController = new PIDController(0, 0, 0);
   private PIDController flywheelController = new PIDController(0.5, 0, 0);
@@ -54,14 +47,12 @@ public class Shooter extends SubsystemBase {
   private Timer kickerRunningTimer = new Timer();
 
   private boolean isShooterEnabled = false;
-  private boolean isDynamicEnabled = false;
 
   public TunableNumber tunableVelocity = new TunableNumber("VELOCITY TUNEABLE");
   public TunableNumber tunablePivot = new TunableNumber("PIVOT TUNEABLE");
   
   /** Creates a new Shooter. */
-  public Shooter(Limelight m_frontLimelight) {
-    this.m_frontLimelight = m_frontLimelight;
+  public Shooter() {
     
     kickerMotor = new CANSparkMax(ShooterConstants.kKickerMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     pivotMotor = new CANSparkMax(ShooterConstants.kPivotMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -102,49 +93,6 @@ public class Shooter extends SubsystemBase {
   //enable funtions
   public void setShooterEnabled(boolean isShooterEnabled) {
     this.isShooterEnabled = isShooterEnabled;
-  }
-
-  public Command setDynamicEnabledCommand(boolean isDynamicEnabled, ShooterScoreLevel shooterScoreLevel) {
-    return new InstantCommand(() -> {
-      if (shooterScoreLevel == ShooterScoreLevel.HIGH) {
-        pivotMap.clear();
-        pivotMap.put(100.0, 15.0);
-        pivotMap.put(180.0, 30.0);
-        pivotMap.put(300.0, 30.0);
-        pivotMap.put(450.0, 30.0);
-
-        velocityMap.clear();
-        velocityMap.put(100.0, 70.0);
-        velocityMap.put(180.0, 90.0);
-        velocityMap.put(300.0, 110.0);
-        velocityMap.put(450.0, 145.0);
-      } else if (shooterScoreLevel == ShooterScoreLevel.MIDDLE) {
-        pivotMap.clear();
-        pivotMap.put(50.0, 20.0);
-        pivotMap.put(110.0, 30.0);
-        pivotMap.put(180.0, 30.0);
-        pivotMap.put(290.0, 30.0);
-        
-        velocityMap.clear();
-        velocityMap.put(50.0, 40.0);
-        velocityMap.put(110.0, 60.0);
-        velocityMap.put(180.0, 80.0);
-        velocityMap.put(290.0, 120.0);
-      } else if (shooterScoreLevel == ShooterScoreLevel.LOW) {
-        pivotMap.clear();
-        pivotMap.put(30.0, 100.0);
-        pivotMap.put(80.0, 100.0);
-        pivotMap.put(180.0, 90.0);
-        pivotMap.put(280.0, 80.0);
-
-        velocityMap.clear();
-        velocityMap.put(30.0, 20.0);
-        velocityMap.put(80.0, 50.0);
-        velocityMap.put(180.0, 90.0);
-        velocityMap.put(280.0, 120.0);
-      }
-      this.isDynamicEnabled = isDynamicEnabled;
-    });
   }
 
   //KICKER
@@ -204,28 +152,6 @@ public class Shooter extends SubsystemBase {
   public void setTunable() {
     setTargetVelocity(tunableVelocity.get());
     setTargetPivot(tunablePivot.get());
-  }
-
-  //Dynamic
-  private double getDynamicPivot() {
-    return m_frontLimelight.isTargetVisible()
-      ? pivotMap.get(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()))
-      : ShooterConstants.kPivotHoldAngleDegrees;
-    //return tunablePivot.get();
-  }
-
-  private double getDynamicVelocity() {
-    return m_frontLimelight.isTargetVisible()
-      ? velocityMap.get(Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()) + 0)
-      : 0;
-    //return tunableVelocity.get();
-  }
-
-  public void setDynamicShooter() {
-    if(isDynamicEnabled) {
-      setTargetVelocity(getDynamicVelocity());
-      setTargetPivot(getDynamicPivot());
-    }
   }
 
   private void kickerIntake() {
@@ -292,20 +218,12 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //setDynamicShooter();
     setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();
-
-    // SmartDashboard.putNumber("front limelight distance to goal", m_frontLimelight.getDistanceToGoalInches());
-    // SmartDashboard.putNumber("front limelight goal height", m_frontLimelight.getGoalHeight());
     
     SmartDashboard.putNumber("Shooter Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
     SmartDashboard.putNumber("Shooter Target Pivot", Units.radiansToDegrees(getPivotTarget()));
     SmartDashboard.putNumber("Flywheel RPM", Units.radiansPerSecondToRotationsPerMinute(getFlywheelVelocity()));
     SmartDashboard.putNumber("Flywheel Target", flywheelController.getSetpoint());
-    // SmartDashboard.putNumber("interpolated velocity", getDynamicFlywheelVelocity());
-    // SmartDashboard.putNumber("interpolated pivot", getDynamicPivot());
-    // SmartDashboard.putNumber("front distance from goal", Units.metersToFeet(m_frontLimelight.getDistanceToGoalMeters()));
-    // SmartDashboard.putBoolean("target visible", m_frontLimelight.isTargetVisible());
   }
 }
