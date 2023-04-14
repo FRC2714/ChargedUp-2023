@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
 import frc.robot.utils.ShooterPreset;
@@ -31,7 +30,6 @@ import frc.robot.utils.TunableNumber;
 
 public class Shooter extends SubsystemBase {
   private Limelight m_frontLimelight;
-  private LED m_armLED;
 
   private CANSparkMax kickerMotor;
 
@@ -62,9 +60,8 @@ public class Shooter extends SubsystemBase {
   public TunableNumber tunablePivot = new TunableNumber("PIVOT TUNEABLE");
   
   /** Creates a new Shooter. */
-  public Shooter(Limelight m_frontLimelight, LED m_armLED) {
+  public Shooter(Limelight m_frontLimelight) {
     this.m_frontLimelight = m_frontLimelight;
-    this.m_armLED = m_armLED;
     
     kickerMotor = new CANSparkMax(ShooterConstants.kKickerMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
     pivotMotor = new CANSparkMax(ShooterConstants.kPivotMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -156,12 +153,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setKickerCommand(double power) {
-    return new InstantCommand(() -> {
-      if (power < 0) {
-        m_armLED.setRed();
-      }
-      kickerMotor.set(power);
-    });
+    return new InstantCommand(() -> kickerMotor.set(power));
   }
 
   //PIVOT

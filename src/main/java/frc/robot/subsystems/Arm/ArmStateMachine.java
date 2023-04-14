@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.Arm;
 
+import java.util.Map;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -26,6 +28,34 @@ public class ArmStateMachine {
   private ArmState currentArmState = ArmState.BACK; //will default to TRANSFER 
   private ArmState targetArmState = ArmState.BACK; // default to TRANSFER 
   private ArmScoreLevel armScoreLevel = ArmScoreLevel.INTAKE;
+
+  Map<ArmScoreLevel, ArmPreset> BackConeMap = Map.ofEntries(
+      Map.entry(ArmScoreLevel.HIGH, ArmConstants.kBackConeHighPosition),
+      Map.entry(ArmScoreLevel.MIDDLE, ArmConstants.kBackConeMiddlePosition),
+      Map.entry(ArmScoreLevel.LOW, ArmConstants.kBackConeLowPosition),
+      Map.entry(ArmScoreLevel.INTAKE, ArmConstants.kBackIntakePosition)
+  );
+
+  Map<ArmScoreLevel, ArmPreset> BackCubeMap = Map.ofEntries(
+      Map.entry(ArmScoreLevel.HIGH, ArmConstants.kBackCubeHighPosition),
+      Map.entry(ArmScoreLevel.MIDDLE, ArmConstants.kBackCubeMiddlePosition),
+      Map.entry(ArmScoreLevel.LOW, ArmConstants.kBackCubeLowPosition),
+      Map.entry(ArmScoreLevel.INTAKE, ArmConstants.kBackIntakePosition)
+  );
+
+  Map<ArmScoreLevel, ArmPreset> FrontConeMap = Map.ofEntries(
+      Map.entry(ArmScoreLevel.HIGH, ArmConstants.kFrontConeMiddlePosition),
+      Map.entry(ArmScoreLevel.MIDDLE, ArmConstants.kFrontConeMiddlePosition),
+      Map.entry(ArmScoreLevel.LOW, ArmConstants.kFrontConeMiddlePosition),
+      Map.entry(ArmScoreLevel.INTAKE, ArmConstants.kFrontIntakePosition)
+  );
+
+  Map<ArmScoreLevel, ArmPreset> FrontCubeMap = Map.ofEntries(
+      Map.entry(ArmScoreLevel.HIGH, ArmConstants.kFrontCubeHighPosition),
+      Map.entry(ArmScoreLevel.MIDDLE, ArmConstants.kFrontCubeMiddlePosition),
+      Map.entry(ArmScoreLevel.LOW, ArmConstants.kFrontCubeMiddlePosition),
+      Map.entry(ArmScoreLevel.INTAKE, ArmConstants.kFrontIntakePosition)
+  );
 
   /** Creates a new StateMachine. */
   public ArmStateMachine(Arm m_arm) {
@@ -52,47 +82,17 @@ public class ArmStateMachine {
   }
 
   private ArmPreset getBackScoreLevelPosition(ArmScoreLevel armScoreLevel, CargoType cargoType) {
-    switch (cargoType) { 
-      case CONE: {
-        switch (armScoreLevel) {
-          case HIGH: return ArmConstants.kBackConeHighPosition;
-          case MIDDLE: return ArmConstants.kBackConeMiddlePosition;
-          case LOW: return ArmConstants.kBackConeLowPosition;
-          case INTAKE: return ArmConstants.kBackIntakePosition;
-        }
-      }
-      case CUBE: {
-        switch (armScoreLevel) {
-          case HIGH: return ArmConstants.kBackCubeHighPosition;
-          case MIDDLE: return ArmConstants.kBackCubeMiddlePosition;
-          case LOW: return ArmConstants.kBackCubeLowPosition;
-          case INTAKE: return ArmConstants.kBackIntakePosition;
-        }
-      }
-    }
-    return ArmConstants.kBackIntakePosition;
+    return Map.ofEntries(
+      Map.entry(CargoType.CONE, BackConeMap.get(armScoreLevel)),
+      Map.entry(CargoType.CUBE, BackCubeMap.get(armScoreLevel))
+    ).get(cargoType);
   }
 
   private ArmPreset getFrontScoreLevelPosition(ArmScoreLevel armScoreLevel, CargoType cargoType) {
-    switch (cargoType) { 
-      case CONE: {
-        switch (armScoreLevel) {
-          case HIGH: return ArmConstants.kFrontConeMiddlePosition;
-          case MIDDLE: return ArmConstants.kFrontConeMiddlePosition;
-          case LOW: return ArmConstants.kFrontConeMiddlePosition;
-          case INTAKE: return ArmConstants.kFrontIntakePosition;
-        }
-      }
-      case CUBE: {
-        switch (armScoreLevel) {
-          case HIGH: return ArmConstants.kFrontCubeHighPosition;
-          case MIDDLE: return ArmConstants.kFrontCubeMiddlePosition;
-          case LOW: return ArmConstants.kFrontCubeMiddlePosition;
-          case INTAKE: return ArmConstants.kFrontIntakePosition;
-        }
-      }
-    }
-    return ArmConstants.kFrontIntakePosition;
+    return Map.ofEntries(
+      Map.entry(CargoType.CONE, FrontConeMap.get(armScoreLevel)),
+      Map.entry(CargoType.CUBE, FrontCubeMap.get(armScoreLevel))
+    ).get(cargoType);
   }
 
   public Command getArmCommand(ArmScoreLevel armScoreLevel, CargoType cargoType) {

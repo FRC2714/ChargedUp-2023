@@ -218,7 +218,13 @@ public class Superstructure {
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armScore),
-        Map.entry(ScoreMode.SHOOTER, new StartEndCommand(() -> m_shooter.setKicker(-0.4),() -> m_shooter.setKicker(0), m_shooter)) //TODO SHOOTER SCORE
+        Map.entry(ScoreMode.SHOOTER, 
+          new StartEndCommand(() -> {
+            m_shooter.setKicker(-0.4);
+            m_armLED.setRed();
+          },
+          () -> m_shooter.setKicker(0), 
+          m_shooter)) //TODO SHOOTER SCORE
       ), 
       () -> getScoreMode()
     );
@@ -278,10 +284,10 @@ public class Superstructure {
 
   public void updateTelemetry() {
     //auto intake
-    if(m_shooter.isCubeDetected() 
-      && scoreMode == ScoreMode.SHOOTER 
-      && m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE
-      && m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) {
+    if (m_shooter.isCubeDetected() &&
+      scoreMode == ScoreMode.SHOOTER &&
+      m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE &&
+      m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) {
       setSubsystemState(DPAD.UP).schedule();
       m_armLED.setGreen();
     }

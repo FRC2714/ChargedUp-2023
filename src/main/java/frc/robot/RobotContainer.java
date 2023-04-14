@@ -57,7 +57,7 @@ public class RobotContainer {
 	private final Arm m_arm = new Arm();
 	private final Claw m_claw = new Claw();
 	private final LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
-	private final Shooter m_shooter = new Shooter(m_frontLimelight, m_armLED);
+	private final Shooter m_shooter = new Shooter(m_frontLimelight);
 	
 	private final Superstructure m_superstructure = new Superstructure(m_robotDrive, m_arm, m_claw, m_shooter, m_backLimelight, m_frontLimelight, m_armLED);
 
@@ -151,9 +151,9 @@ public class RobotContainer {
 			.whileFalse(m_superstructure.setSubsystemState(DPAD.UP).alongWith(m_shooter.stopCommand()));
 
 		//release cube on y
-		m_driverController.y()
-			.onTrue(m_shooter.setKickerCommand(-0.4))
-			.onFalse(m_shooter.stopCommand());
+		// m_driverController.y()
+		// 	.onTrue(m_shooter.setKickerCommand(-0.4))
+		// 	.onFalse(m_shooter.stopCommand());
 
 		// m_driverController.b()
 		// 	.onTrue(new InstantCommand(() -> m_shooter.setTunable()));
@@ -168,7 +168,9 @@ public class RobotContainer {
 
 		//lock wheels on right
 		m_driverController.povRight()
-			.onTrue(new InstantCommand(() -> m_robotDrive.setX()));
+			.whileTrue(new RunCommand(
+            	() -> m_robotDrive.setX(),
+            	m_robotDrive));
 
 		//AutoBalance on left
 		m_driverController.povLeft()

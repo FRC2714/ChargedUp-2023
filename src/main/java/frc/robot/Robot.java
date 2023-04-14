@@ -35,13 +35,14 @@ public class Robot extends TimedRobot {
     autoChooser = new SendableChooser<>();
 
     autoChooser.setDefaultOption("Do Nothing", m_robotContainer.getNothingAuto());
-    autoChooser.addOption("1 + Balance Middle", m_robotContainer.getOneConeBalanceMiddleAuto());
-    autoChooser.addOption("1 + Balance + Mobility Middle ", m_robotContainer.getOneConeBalanceMobilityMiddleAuto());
-    autoChooser.addOption("2 + Balance Middle", m_robotContainer.getTwoCargoBalanceMiddleAuto());
-
-    //autoChooser.addOption("2 Cargo Balance Open", m_robotContainer.getTwoCargoBalanceOpenAuto());
-    //autoChooser.addOption("3 Cargo Open", m_robotContainer.getTwoCargoBalanceOpenAuto());
-    autoChooser.addOption("2 Terrain", m_robotContainer.getTwoCargoTerrainAuto());
+    //Middle
+    autoChooser.addOption("1 + Balance MIDDLE", m_robotContainer.getOneConeBalanceMiddleAuto());
+    autoChooser.addOption("1 + Balance + Mobility MIDDLE ", m_robotContainer.getOneConeBalanceMobilityMiddleAuto());
+    autoChooser.addOption("2 + Balance MIDDLE", m_robotContainer.getTwoCargoBalanceMiddleAuto());
+    //Open
+    autoChooser.addOption("2 + Balance OPEN", m_robotContainer.getTwoCargoBalanceOpenAuto());
+    //Terrain
+    autoChooser.addOption("2 TERRAIN", m_robotContainer.getTwoCargoTerrainAuto());
 
     autoChooser.addOption("Path Test", m_robotContainer.getPathTestAuto());
 
