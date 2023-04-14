@@ -44,7 +44,7 @@ public class Infrastructure extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Pneumatic Pressure", getPressure());
-    SmartDashboard.putBoolean("Compressor Running?", isCompressorRunning());
+    // SmartDashboard.putNumber("Pneumatic Pressure", getPressure());
+    // SmartDashboard.putBoolean("Compressor Running?", isCompressorRunning());
   }
 }

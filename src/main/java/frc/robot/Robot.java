@@ -40,6 +40,7 @@ public class Robot extends TimedRobot {
     //autoChooser.addOption("2 Cargo Balance Open", m_robotContainer.getTwoCargoBalanceOpenAuto());
     //autoChooser.addOption("3 Cargo Open", m_robotContainer.getTwoCargoBalanceOpenAuto());
     autoChooser.addOption("2 Cargo Terrain", m_robotContainer.getTwoCargoTerrainAuto());
+    autoChooser.addOption("Path Test", m_robotContainer.getPathTestAuto());
 
     SmartDashboard.putData("Auton Selection", autoChooser);
 

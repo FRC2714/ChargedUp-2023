@@ -186,7 +186,7 @@ public final class Constants {
     public static final double kPivotGearRatio = 50;
     public static final double kPivotPositionConversionFactor = (2*Math.PI) * kPivotGearRatio;
     public static final int kPivotMotorCurrentLimit = 30;
-    public static final double kPivotP = 2.5;
+    public static final double kPivotP = 2.9;
     public static final ArmFeedforward kPivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
     
     //Flywheels

@@ -94,7 +94,7 @@ public class Superstructure {
       setSubsystemState(DPAD.UP),
       new WaitUntilCommand(() -> m_arm.isShoulderAtGoal()),
       new InstantCommand(() -> this.scoreMode = ScoreMode.SHOOTER),
-      new InstantCommand(() -> m_armLED.setGreen()),
+      new InstantCommand(() -> m_armLED.setRed()),
       new InstantCommand(() -> m_shooter.setShooterEnabled(true))
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
@@ -291,6 +291,7 @@ public class Superstructure {
       && m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE
       && m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) {
       setSubsystemState(DPAD.UP).schedule();
+      m_armLED.setGreen();
     }
 
     SmartDashboard.putString("Score Mode", scoreMode.toString());

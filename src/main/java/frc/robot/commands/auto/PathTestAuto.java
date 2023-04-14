@@ -23,10 +23,10 @@ public class PathTestAuto extends AutoBase {
 
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"TestPath",
+			"StarTuner",
 			new PathConstraints(
-			AutoConstants.kMaxSpeedMetersPerSecond,
-			AutoConstants.kMaxAccelerationMetersPerSecondSquared));
+			3.0,
+			3.0));
 
 	public PathTestAuto(DriveSubsystem m_robotDrive) {
 		super(m_robotDrive);
