@@ -24,6 +24,7 @@ import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
 import frc.robot.commands.auto.MIDDLE.OneConeBalanceMobilityMiddleAuto;
+import frc.robot.commands.auto.MIDDLE.TwoCargoBalanceMiddleAuto;
 import frc.robot.commands.auto.OPEN.ThreeCargoOpenAuto;
 import frc.robot.commands.auto.OPEN.TwoCargoBalanceOpenAuto;
 import frc.robot.commands.auto.TERRAIN.TwoCargoTerrainAuto;
@@ -235,6 +236,10 @@ public class RobotContainer {
 
 	public Command getOneConeBalanceMobilityMiddleAuto() {
 		return new OneConeBalanceMobilityMiddleAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+	}
+
+	public Command getTwoCargoBalanceMiddleAuto() {
+		return new TwoCargoBalanceMiddleAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
 	}
 
 	public Command getTwoCargoBalanceOpenAuto() {

@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.commands.AutoBalance;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToCone;
 import frc.robot.commands.align.AlignToCube;
@@ -275,13 +274,6 @@ public class Superstructure {
 			new WaitCommand(waitTime).raceWith(new AlignToCone(m_robotDrive, m_backLimelight)),
 			m_claw.scoreCone()
     );
-  }
-
-  public Command checkBalance() {
-    return new ConditionalCommand(
-			new InstantCommand(() -> m_robotDrive.setX()), 
-			new AutoBalance(m_robotDrive), 
-			() -> m_robotDrive.isBalanced());
   }
 
   public void updateTelemetry() {

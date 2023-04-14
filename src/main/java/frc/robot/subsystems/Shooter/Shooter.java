@@ -255,8 +255,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public void stop() {
-    //setFlywheelTargetVelocity(0);
-    //topFlywheelMotor.set(0);
     setTargetVelocity(0);
     kickerMotor.set(0);
   }
@@ -306,8 +304,8 @@ public class Shooter extends SubsystemBase {
     setCalculatedPivotVoltage();
     setCalculatedFlywheelVoltage();
 
-    SmartDashboard.putNumber("front limelight distance to goal", m_frontLimelight.getDistanceToGoalInches());
-    SmartDashboard.putNumber("front limelight goal height", m_frontLimelight.getGoalHeight());
+    // SmartDashboard.putNumber("front limelight distance to goal", m_frontLimelight.getDistanceToGoalInches());
+    // SmartDashboard.putNumber("front limelight goal height", m_frontLimelight.getGoalHeight());
     
     SmartDashboard.putNumber("Shooter Pivot", Units.radiansToDegrees(getPivotAngleRadians()));
     SmartDashboard.putNumber("Shooter Target Pivot", Units.radiansToDegrees(getPivotTarget()));
