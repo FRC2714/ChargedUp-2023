@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.Map;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
@@ -292,6 +293,8 @@ public class Superstructure {
 
     SmartDashboard.putString("Score Mode", scoreMode.toString());
     SmartDashboard.putString("Cargo Type", cargoType.toString());
+
+    SmartDashboard.putNumber("REMAINING MATCH TIME", Timer.getMatchTime());
 
     m_arm.updateTelemetry();
     m_armStateMachine.updateTelemetry();

@@ -43,17 +43,8 @@ public class Elbow extends SubsystemBase {
     ElbowController.disableContinuousInput();
   }
 
-  private double convertEncoderTicksToKinematicAngle(double sparkAngle) {
-    double kinematicAngle = sparkAngle;
-
-    kinematicAngle -= ElbowConstants.kElbowKinematicOffset; //subtract kinematic offset 762.0
-    kinematicAngle /= ElbowConstants.kElbowGearRatio; //divide by gear ratio
-
-    return kinematicAngle;
-  }
-
   public double getKinematicAngle() {
-    return convertEncoderTicksToKinematicAngle(ElbowEncoder.getPosition());
+    return (ElbowEncoder.getPosition() - ElbowConstants.kElbowKinematicOffset) / ElbowConstants.kElbowGearRatio;
   }
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {

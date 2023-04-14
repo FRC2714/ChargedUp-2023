@@ -50,17 +50,8 @@ public class Shoulder extends SubsystemBase {
     ShoulderController.disableContinuousInput();
   }
 
-  private double convertEncoderTicksToKinematicAngle(double sparkAngle) {
-    double kinematicAngle = sparkAngle;
-
-    kinematicAngle -= ShoulderConstants.kShoulderKinematicOffset; //subtract kinematic offset
-    kinematicAngle /= ShoulderConstants.kShoulderGearRatio; //divide by gear ratio
-
-    return kinematicAngle;
-  }
-
   public double getKinematicAngle() {
-    return convertEncoderTicksToKinematicAngle(ShoulderEncoder.getPosition());
+    return (ShoulderEncoder.getPosition() - ShoulderConstants.kShoulderKinematicOffset) / ShoulderConstants.kShoulderGearRatio;
   }
 
   public void setTargetKinematicAngleRadians(double targetAngleRadians) {

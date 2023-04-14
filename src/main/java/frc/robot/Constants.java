@@ -185,6 +185,8 @@ public final class Constants {
     public static final int kPivotMotorCanId = 15;
     public static final double kPivotGearRatio = 50;
     public static final double kPivotPositionConversionFactor = (2*Math.PI) * kPivotGearRatio;
+    public static final double kPivotEncoderZeroOffset = 200.0;
+    public static final double kPivotKinematicOffset = 115.0;
     public static final int kPivotMotorCurrentLimit = 30;
     public static final double kPivotP = 2.9;
     public static final ArmFeedforward kPivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
@@ -192,6 +194,7 @@ public final class Constants {
     //Flywheels
     public static final int kTopFlywheelMotorCanId = 16;
     public static final int kBottomFlywheelMotorCanId = 17;
+    public static final double kFlywheelVelocityConversionFactor = (2*Math.PI) * 1.0;
     public static final int kTopFlywheelMotorCurrentLimit = 30;
     public static final int kBottomFlywheelMotorCurrentLimit = 30;
 
