@@ -19,7 +19,7 @@ public class AlignToCone extends CommandBase {
   private ProfiledPIDController yController;
   private ProfiledPIDController thetaController;
 
-  private double kPXControllerCone = 0.8;
+  private double kPXControllerCone = 0.7;
   private double kPYControllerCone = 1.1;
 
   private double kPThetaController = 1;

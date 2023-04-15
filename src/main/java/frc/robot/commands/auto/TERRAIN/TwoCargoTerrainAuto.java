@@ -51,7 +51,7 @@ public class TwoCargoTerrainAuto extends AutoBase {
 				m_superstructure.setSubsystemState(DPAD.RIGHT)));
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(3.8), //Score First Cone
+			m_superstructure.scorePreloadedCone(3.0), //Score First Cone
 
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 

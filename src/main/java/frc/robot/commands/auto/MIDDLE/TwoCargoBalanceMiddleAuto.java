@@ -12,11 +12,14 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Superstructure.BUTTON;
+import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
 import frc.robot.utils.ShooterPreset;
 import frc.robot.subsystems.Arm.Claw;
@@ -31,7 +34,7 @@ import frc.robot.subsystems.Superstructure;
 public class TwoCargoBalanceMiddleAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"1ConeBalanceMobilityMIDDLE",
+			"2CargoBalanceMIDDLE",
 			new PathConstraints(
 			1.2,
 			1.7));
@@ -43,12 +46,14 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 
         AutoEventMap.put("intake cube", 
 			m_superstructure.shooterIntakeSequence());
-		AutoEventMap.put("set shooter", 
-            new InstantCommand(() -> 
-				m_shooter.setPreset(new ShooterPreset(50, 100))));
+		AutoEventMap.put("set shooter",
+		new SequentialCommandGroup(
+			m_superstructure.setScoreLevelCommand(BUTTON.Y),
+			m_superstructure.setSubsystemState(DPAD.RIGHT))
+		);
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(4.2),
+			m_superstructure.scorePreloadedCone(3.0),
 
             m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 

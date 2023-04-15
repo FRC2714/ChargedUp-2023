@@ -17,7 +17,6 @@ import frc.robot.subsystems.Limelight;
 
 public class ShooterStateMachine {
   Shooter m_shooter;
-  Limelight m_frontLimelight;
 
   public enum ShooterState {
     RETRACT, HOLD, MANUAL, DYNAMIC
@@ -37,7 +36,6 @@ public class ShooterStateMachine {
 
   public Command setShooterStateCommand(ShooterState shooterState) {
     return new InstantCommand(() -> {
-      System.out.println("setting target armstate");
       if (this.shooterState != shooterState) {
         this.shooterState = shooterState;
       }
@@ -84,22 +82,13 @@ public class ShooterStateMachine {
   // }
 
   private Command toDynamic(ShooterScoreLevel shooterScorelevel) {
-    return new SequentialCommandGroup(
-      //new InstantCommand(() -> m_frontLimelight.setLED(true)),
-      new SelectCommand(
-        Map.ofEntries(
-          Map.entry(ShooterScoreLevel.HIGH, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
-          Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand(() -> m_frontLimelight.setMiddleCubePipeline())),
-          Map.entry(ShooterScoreLevel.LOW, new InstantCommand(() -> m_frontLimelight.setLowCubePipeline())),
-          Map.entry(ShooterScoreLevel.INTAKE, new InstantCommand())
-        ), () -> shooterScorelevel),
-      new SelectCommand(
+    return new SelectCommand(
         Map.ofEntries(
           Map.entry(ShooterScoreLevel.HIGH, m_shooter.setPreset(ShooterConstants.kCloseHighCubePreset)),
           Map.entry(ShooterScoreLevel.MIDDLE, m_shooter.setPreset(ShooterConstants.kCloseMiddleCubePreset)),
           Map.entry(ShooterScoreLevel.LOW, m_shooter.setPreset(ShooterConstants.kLaunchCubePreset)),
           Map.entry(ShooterScoreLevel.INTAKE, m_shooter.setPreset(ShooterConstants.kLaunchCubePreset))
-        ), () -> shooterScorelevel));
+        ), () -> shooterScorelevel);
       //m_shooter.setDynamicEnabledCommand(true, shooterScorelevel));
   }
 
@@ -115,7 +104,6 @@ public class ShooterStateMachine {
   }
 
   private Command getShooterCommand(ShooterScoreLevel shooterScorelevel) {
-    System.out.println("get shooter command");
     switch(shooterState) {
       case RETRACT: return toRetract(shooterScorelevel);
       case HOLD: return toHold(shooterScorelevel);

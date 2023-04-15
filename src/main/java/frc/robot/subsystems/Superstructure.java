@@ -287,8 +287,8 @@ public class Superstructure {
       scoreMode == ScoreMode.SHOOTER &&
       m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE &&
       m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) {
-      setSubsystemState(DPAD.UP).schedule();
       m_armLED.setGreen();
+      setSubsystemState(DPAD.UP).schedule();
     }
 
     SmartDashboard.putString("Score Mode", scoreMode.toString());

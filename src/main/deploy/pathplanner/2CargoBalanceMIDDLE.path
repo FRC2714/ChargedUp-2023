@@ -99,11 +99,11 @@
     },
     {
       "anchorPoint": {
-        "x": 3.7,
+        "x": 3.9,
         "y": 2.17
       },
       "prevControl": {
-        "x": 4.941529760172655,
+        "x": 5.141529760172654,
         "y": 2.143606940985013
       },
       "nextControl": null,
@@ -120,8 +120,8 @@
       }
     }
   ],
-  "maxVelocity": 1.3,
-  "maxAcceleration": 1.7,
+  "maxVelocity": 1.2,
+  "maxAcceleration": 1.5,
   "isReversed": null,
   "markers": [
     {
@@ -131,7 +131,7 @@
       ]
     },
     {
-      "position": 2.3,
+      "position": 2.1,
       "names": [
         "set shooter"
       ]

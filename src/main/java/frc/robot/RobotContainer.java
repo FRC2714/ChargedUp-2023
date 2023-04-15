@@ -135,7 +135,7 @@ public class RobotContainer {
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.onTrue(m_superstructure.ScoreCommand());
+			.whileTrue(m_superstructure.ScoreCommand());
 
 		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.25)
@@ -245,7 +245,7 @@ public class RobotContainer {
 		return new TwoCargoBalanceOpenAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
 	}
 
-	public Command getThreeCargoBalanceOpenAuto() {
+	public Command getThreeCargoOpenAuto() {
 		return new ThreeCargoOpenAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
 	}
 
