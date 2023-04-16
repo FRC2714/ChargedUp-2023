@@ -246,8 +246,8 @@
               "Controls/Rotation": "NONE",
               "compression": -1.0,
               "fps": -1,
-              "imageWidth": -1,
-              "imageHeight": -1
+              "imageWidth": 0,
+              "imageHeight": 0
             }
           },
           "6,0": {
@@ -408,31 +408,10 @@
               ]
             }
           },
-          "7,2": {
-            "size": [
-              8,
-              6
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://limelight-front",
-              "_title": "limelight-front",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": false,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
-            }
-          },
           "0,0": {
             "size": [
               7,
-              6
+              7
             ],
             "content": {
               "_type": "Camera Stream",
@@ -452,26 +431,80 @@
           },
           "7,0": {
             "size": [
-              4,
+              5,
               2
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Cargo Type",
-              "_title": "SmartDashboard/Cargo Type",
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/REMAINING MATCH TIME",
+              "_title": "SmartDashboard/REMAINING MATCH TIME",
               "_glyph": 148,
-              "_showGlyph": false
+              "_showGlyph": false,
+              "Range/Min": 0.0,
+              "Range/Max": 135.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 5,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "11,0": {
+          "12,0": {
             "size": [
-              4,
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Number Bar",
+              "_source0": "network_table:///SmartDashboard/Robot Voltage",
+              "_title": "SmartDashboard/Robot Voltage",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Range/Min": 10.0,
+              "Range/Max": 13.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 4,
+              "Visuals/Show text": true,
+              "Visuals/Orientation": "HORIZONTAL"
+            }
+          },
+          "12,3": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Simple Dial",
+              "_source0": "network_table:///SmartDashboard/Pneumatic Pressure",
+              "_title": "SmartDashboard/Pneumatic Pressure",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Range/Min": 0.0,
+              "Range/Max": 130.0,
+              "Visuals/Show value": true
+            }
+          },
+          "9,2": {
+            "size": [
+              3,
               2
             ],
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Score Mode",
-              "_title": "SmartDashboard/Score Mode",
+              "_title": "/SmartDashboard/Score Mode",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "9,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Cargo Type",
+              "_title": "/SmartDashboard/Cargo Type",
               "_glyph": 148,
               "_showGlyph": false
             }
