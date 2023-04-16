@@ -33,8 +33,8 @@ public class TwoCargoOpenAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"2CargoOPEN",
 			new PathConstraints(
-			2.0,
-			2.0));
+			1.7,
+			3.0));
 
 	public TwoCargoOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
 		super(m_robotDrive);
@@ -50,15 +50,13 @@ public class TwoCargoOpenAuto extends AutoBase {
 
 		addCommands(
             //Score preload
-			m_superstructure.scorePreloadedCone(3.5),
+			m_superstructure.scorePreloadedCone(3.4),
 
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 
 			//Follow Path
-			autoBuilder.fullAuto(autoPathGroup),
+			autoBuilder.fullAuto(autoPathGroup)
 
-			//shoot cube
-            m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed)
 		);
 	}
 }

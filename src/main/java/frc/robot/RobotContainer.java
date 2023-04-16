@@ -67,8 +67,6 @@ public class RobotContainer {
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
 	CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
 
-	Timer teleopTimer = new Timer();
-
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -101,8 +99,6 @@ public class RobotContainer {
 
 	public void setTeleopDefaultStates() {
 		System.out.println("setTeleopDefaultStates()");
-		teleopTimer.reset();
-		teleopTimer.start();
 		new SequentialCommandGroup(
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
 			m_superstructure.setSubsystemState(DPAD.DOWN),
@@ -119,7 +115,6 @@ public class RobotContainer {
 
 	public void updateTelemetry() {
 		m_superstructure.periodic();
-		SmartDashboard.putNumber("Remaining Match Time", 135.0 - teleopTimer.get());
 	}
 
 	/**

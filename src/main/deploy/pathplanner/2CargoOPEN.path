@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 1.8,
-        "y": 4.97
+        "y": 3.87
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.577145101632293,
-        "y": 4.480314389239872
+        "x": 2.1938774126658585,
+        "y": 4.859201462175167
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -24,18 +24,18 @@
     },
     {
       "anchorPoint": {
-        "x": 6.986514471249584,
-        "y": 4.364723035495893
+        "x": 7.0,
+        "y": 4.602453048322467
       },
       "prevControl": {
-        "x": 6.455105273312119,
-        "y": 4.810628297489433
+        "x": 5.094183569150058,
+        "y": 4.507361043191837
       },
       "nextControl": {
-        "x": 6.455105273312119,
-        "y": 4.810628297489433
+        "x": 5.094183569150058,
+        "y": 4.507361043191837
       },
-      "holonomicAngle": -20.0,
+      "holonomicAngle": 0.0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
@@ -50,18 +50,21 @@
     {
       "anchorPoint": {
         "x": 2.0,
-        "y": 4.4
+        "y": 4.1
       },
       "prevControl": {
-        "x": 3.419834751454158,
-        "y": 4.916777587106066
+        "x": 2.388122984706539,
+        "y": 4.488122984706539
       },
-      "nextControl": null,
+      "nextControl": {
+        "x": 2.388122984706539,
+        "y": 4.488122984706539
+      },
       "holonomicAngle": 180.0,
-      "isReversal": false,
+      "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [
           "shoot cube",
@@ -71,14 +74,36 @@
         "waitBehavior": "none",
         "waitTime": 0
       }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.6,
+        "y": 4.0
+      },
+      "prevControl": {
+        "x": 3.9530445084027543,
+        "y": 4.0
+      },
+      "nextControl": null,
+      "holonomicAngle": 1.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
     }
   ],
-  "maxVelocity": 1.8,
-  "maxAcceleration": 2.2,
+  "maxVelocity": 1.7,
+  "maxAcceleration": 3.0,
   "isReversed": null,
   "markers": [
     {
-      "position": 0.3,
+      "position": 0.2,
       "names": [
         "intake cube"
       ]

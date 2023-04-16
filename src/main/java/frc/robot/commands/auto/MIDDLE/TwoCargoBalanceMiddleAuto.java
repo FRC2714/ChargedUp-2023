@@ -48,7 +48,7 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 			m_superstructure.shooterIntakeSequence());
 		AutoEventMap.put("set shooter",
 		new SequentialCommandGroup(
-			m_shooter.setPreset(new ShooterPreset(45, 150)))
+			m_shooter.setPreset(new ShooterPreset(40, 150)))
 		);
 
 		addCommands(
@@ -66,7 +66,7 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
             //Shoot on station
             m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
 
-			new WaitCommand(2)
+			new AutoBalance(m_robotDrive, true)
 		);
 
 	}

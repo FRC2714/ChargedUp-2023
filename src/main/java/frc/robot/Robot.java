@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +22,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
   SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+  Timer teleopTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -110,13 +113,16 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
+    teleopTimer.reset();
+		teleopTimer.start();
     m_robotContainer.setTeleopDefaultStates();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    SmartDashboard.putNumber("Remaining TeleOp Time", 135.0 - teleopTimer.get());
+  }
 
   @Override
   public void testInit() {
