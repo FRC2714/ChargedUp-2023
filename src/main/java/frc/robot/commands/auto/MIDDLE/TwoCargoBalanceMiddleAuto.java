@@ -12,6 +12,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
@@ -20,6 +21,7 @@ import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Superstructure.BUTTON;
 import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
+import frc.robot.utils.ShooterPreset;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
@@ -34,8 +36,8 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"2CargoBalanceMIDDLE",
 			new PathConstraints(
-			1.2,
-			1.7));
+			1.5,
+			2.0));
 
 	public TwoCargoBalanceMiddleAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
 		super(m_robotDrive);
@@ -46,12 +48,11 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 			m_superstructure.shooterIntakeSequence());
 		AutoEventMap.put("set shooter",
 		new SequentialCommandGroup(
-			m_superstructure.setScoreLevelCommand(BUTTON.Y),
-			m_superstructure.setSubsystemState(DPAD.RIGHT))
+			m_shooter.setPreset(new ShooterPreset(45, 150)))
 		);
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(3.0),
+			m_superstructure.scorePreloadedCone(3.2),
 
             m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 
@@ -63,7 +64,9 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 			m_robotDrive.stopModulesCommand(),
 
             //Shoot on station
-            m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed)
+            m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
+
+			new WaitCommand(2)
 		);
 
 	}

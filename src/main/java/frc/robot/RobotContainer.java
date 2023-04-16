@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.auto.NothingAuto;
@@ -28,6 +29,7 @@ import frc.robot.commands.auto.MIDDLE.OneConeBalanceMobilityMiddleAuto;
 import frc.robot.commands.auto.MIDDLE.TwoCargoBalanceMiddleAuto;
 import frc.robot.commands.auto.OPEN.ThreeCargoOpenAuto;
 import frc.robot.commands.auto.OPEN.TwoCargoBalanceOpenAuto;
+import frc.robot.commands.auto.OPEN.TwoCargoOpenAuto;
 import frc.robot.commands.auto.TERRAIN.TwoCargoTerrainAuto;
 import frc.robot.subsystems.Infrastructure;
 import frc.robot.subsystems.LED;
@@ -156,7 +158,7 @@ public class RobotContainer {
 
 		//release cube on y
 		m_driverController.y()
-			.onTrue(m_shooter.setKicker(-0.4))
+			.onTrue(m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed))
 			.onFalse(m_shooter.stopCommand());
 
 		// m_driverController.b()
@@ -246,6 +248,10 @@ public class RobotContainer {
 
 	public Command getTwoCargoBalanceMiddleAuto() {
 		return new TwoCargoBalanceMiddleAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+	}
+
+	public Command getTwoCargoOpenAuto() {
+		return new TwoCargoOpenAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
 	}
 
 	public Command getTwoCargoBalanceOpenAuto() {

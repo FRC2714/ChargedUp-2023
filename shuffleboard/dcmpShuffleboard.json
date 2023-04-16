@@ -429,25 +429,6 @@
               "imageHeight": 0
             }
           },
-          "7,0": {
-            "size": [
-              5,
-              2
-            ],
-            "content": {
-              "_type": "Number Bar",
-              "_source0": "network_table:///SmartDashboard/REMAINING MATCH TIME",
-              "_title": "SmartDashboard/REMAINING MATCH TIME",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Range/Min": 0.0,
-              "Range/Max": 135.0,
-              "Range/Center": 0.0,
-              "Visuals/Num tick marks": 5,
-              "Visuals/Show text": true,
-              "Visuals/Orientation": "HORIZONTAL"
-            }
-          },
           "12,0": {
             "size": [
               3,
@@ -507,6 +488,23 @@
               "_title": "/SmartDashboard/Cargo Type",
               "_glyph": 148,
               "_showGlyph": false
+            }
+          },
+          "7,0": {
+            "size": [
+              5,
+              2
+            ],
+            "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/Remaining Match Time",
+              "_title": "SmartDashboard/Remaining Match Time",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Slider Settings/Min": 0.0,
+              "Slider Settings/Max": 135.0,
+              "Slider Settings/Block increment": 27.0,
+              "Visuals/Display value": true
             }
           }
         }

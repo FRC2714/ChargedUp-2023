@@ -148,8 +148,8 @@ public class Shooter extends SubsystemBase {
     if (kickerState != KickerState.INTAKING) {
       kickerRunningTimer.reset();
       kickerRunningTimer.start();
-      kickerState = KickerState.INTAKING;
     }
+    kickerState = KickerState.INTAKING;
   }
 
   public KickerState getKickerState() {
@@ -157,18 +157,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command kickerOuttakeCommand(double power) {
-    return new InstantCommand(() -> kickerOuttakeCommand(power));
-  }
-
-  public Command setKicker(double power) {
-    return new InstantCommand(() -> kickerMotor.set(power));
+    return new InstantCommand(() -> kickerOuttake(power));
   }
 
   private void kickerOuttake(double outtakeSpeed) {
     kickerMotor.set(outtakeSpeed);
-    if (kickerState != KickerState.OUTTAKING) {
-      kickerState = KickerState.OUTTAKING;
-    }
+    kickerState = KickerState.OUTTAKING;
   }
 
   public void stop() {

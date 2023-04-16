@@ -165,7 +165,7 @@ public final class Constants {
 
     public static final int kClawMotorCurrentLimit = 10; //amps 
 
-    public static final double kNominalVoltage = 11.0;
+    public static final double kNominalVoltage = 11.5;
 
     public static final double kIntakeMotorSpeed = 1;
     public static final double kOuttakeMotorSpeed = -0.1;
@@ -188,7 +188,7 @@ public final class Constants {
     public static final double kPivotEncoderZeroOffset = 200.0;
     public static final double kPivotKinematicOffset = 115.0;
     public static final int kPivotMotorCurrentLimit = 30;
-    public static final double kPivotP = 2.9;
+    public static final double kPivotP = 3.0;
     public static final ArmFeedforward kPivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
     
     //Flywheels
@@ -213,7 +213,7 @@ public final class Constants {
       new ShooterPreset(kPivotHoldAngleDegrees, 0);
 
     public static final ShooterPreset kLaunchCubePreset = 
-      new ShooterPreset(45, 300);
+      new ShooterPreset(45, 200);
 
     public static final ShooterPreset kCloseHighCubePreset = 
       new ShooterPreset(15, 70);
@@ -228,11 +228,9 @@ public final class Constants {
 
   public static final class LEDConstants {
     public static final int kArmBlinkinPort = 0;
-    public static final int kBaseBlinkinPort = 1;
 
     public static final double kPurple = 0.91;
     public static final double kYellow = 0.69;
-
     public static final double kGreen = 0.77;
     public static final double kRed = 0.61;
   }

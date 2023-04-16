@@ -50,7 +50,7 @@ public class TwoCargoOpenAuto extends AutoBase {
 
 		addCommands(
             //Score preload
-			m_superstructure.scorePreloadedCone(4),
+			m_superstructure.scorePreloadedCone(3.5),
 
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 
