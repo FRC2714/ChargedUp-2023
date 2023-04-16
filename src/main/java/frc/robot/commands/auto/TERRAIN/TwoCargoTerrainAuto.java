@@ -59,7 +59,7 @@ public class TwoCargoTerrainAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
             //shoot final cube
-			m_shooter.setKickerCommand(ShooterConstants.kKickSpeed),
+			m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
 				new WaitCommand(0.5),
 				m_shooter.stopCommand()
 		);

@@ -273,8 +273,8 @@ public final class Constants {
     public static final double kShoulderGearRatio = 240;
     public static final double kShoulderLength = Units.inchesToMeters(28);
     public static final double kShoulderPositionConversionFactor = (2*Math.PI) * kShoulderGearRatio; //Radians * Gear ratio
-    public static final double kShoulderEncoderZeroOffset = 180.9295889;
-    public static final double kShoulderKinematicOffset = 42.6;
+    public static final double kShoulderEncoderZeroOffset = 623.8;
+    public static final double kShoulderKinematicOffset = 105;
     public static final boolean kShoulderMotorInverted = true;
     public static final boolean kShoulderEncoderInverted = true;
     public static final double kShoulderP = 8;

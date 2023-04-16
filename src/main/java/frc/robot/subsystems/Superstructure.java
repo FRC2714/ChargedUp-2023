@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.LEDConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.align.AlignToCone;
 import frc.robot.commands.align.AlignToCube;
@@ -29,6 +30,7 @@ import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Shooter.ShooterStateMachine;
+import frc.robot.subsystems.Shooter.Shooter.KickerState;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterState;
 
@@ -195,7 +197,7 @@ public class Superstructure {
   //Cargo type
   public Command setCargoTypeCommand(CargoType targetCargoType) {
     return new InstantCommand(() -> {
-      m_armLED.set(targetCargoType == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
+      if (scoreMode == ScoreMode.ARM) m_armLED.set(targetCargoType == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
       this.cargoType = targetCargoType;
     });
   }
@@ -217,13 +219,7 @@ public class Superstructure {
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armScore),
-        Map.entry(ScoreMode.SHOOTER, 
-          new StartEndCommand(() -> {
-            m_shooter.setKicker(-0.4);
-            m_armLED.setRed();
-          },
-          () -> m_shooter.setKicker(0), 
-          m_shooter)) //TODO SHOOTER SCORE
+        Map.entry(ScoreMode.SHOOTER, m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed)) //TODO SHOOTER SCORE
       ), 
       () -> getScoreMode()
     );
@@ -281,20 +277,21 @@ public class Superstructure {
     );
   }
 
-  public void updateTelemetry() {
+  public void periodic() {
     //auto intake
-    if (m_shooter.isCubeDetected() &&
-      scoreMode == ScoreMode.SHOOTER &&
+    if (scoreMode == ScoreMode.SHOOTER &&
+      m_shooter.isCubeDetected() &&
       m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE &&
       m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) {
       m_armLED.setGreen();
       setSubsystemState(DPAD.UP).schedule();
     }
 
+    if (scoreMode == ScoreMode.SHOOTER && m_shooter.getKickerState() == KickerState.OUTTAKING) 
+      m_armLED.setRed();
+
     SmartDashboard.putString("Score Mode", scoreMode.toString());
     SmartDashboard.putString("Cargo Type", cargoType.toString());
-
-    SmartDashboard.putNumber("REMAINING MATCH TIME", Timer.getMatchTime());
 
     m_arm.updateTelemetry();
     m_armStateMachine.updateTelemetry();

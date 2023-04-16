@@ -16,7 +16,7 @@ import frc.robot.utils.controller.AsymmetricTrapezoidProfile.State;
 public class AutoBalance extends AsymmetricProfiledPIDCommand {
   /** Creates a new AutoBalance. */
   private DriveSubsystem drivetrain;
-  public AutoBalance(DriveSubsystem drivetrain) {
+  public AutoBalance(DriveSubsystem drivetrain, boolean isReversed) {
     super(
         // The ProfiledPIDController used by the command
         new AsymmetricProfiledPIDController(
@@ -33,7 +33,8 @@ public class AutoBalance extends AsymmetricProfiledPIDCommand {
         // This uses the output
         (output, setpoint) -> {
           // Use the output (and setpoint, if desired) here
-          drivetrain.drive(output, 0, 0, true, false);
+          drivetrain.drive( isReversed ? -output : output
+            , 0, 0, true, false);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.

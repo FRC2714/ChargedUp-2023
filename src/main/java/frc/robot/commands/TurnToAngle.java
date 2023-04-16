@@ -21,11 +21,11 @@ public class TurnToAngle extends AsymmetricProfiledPIDCommand {
         // The ProfiledPIDController used by the command
         new AsymmetricProfiledPIDController(
             // The PID gains
-            1,
+            2.0,
             0,
             0,
             // The motion profile constraints
-            new Constraints(3.14, 3.14, 3.14)), //rad/s, rad/s^2
+            new Constraints(5.0, 12.0, 7.0)), //rad/s, rad/s^2
         // This should return the measurement
         drivetrain::getHeadingRadians,
         // This should return the goal (can also be a constant)

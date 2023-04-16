@@ -6,8 +6,9 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -64,17 +65,19 @@ public class RobotContainer {
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
 	CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kOperatorControllerPort);
 
+	Timer teleopTimer = new Timer();
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 
 	public RobotContainer() {
-		CommandScheduler.getInstance().registerSubsystem(m_infrastructure);
-		CommandScheduler.getInstance().registerSubsystem(m_robotDrive);
-		CommandScheduler.getInstance().registerSubsystem(m_backLimelight);
-		CommandScheduler.getInstance().registerSubsystem(m_shooter);
-		CommandScheduler.getInstance().registerSubsystem(m_claw);
-		CommandScheduler.getInstance().registerSubsystem(m_armLED);
+		// CommandScheduler.getInstance().registerSubsystem(m_infrastructure);
+		// CommandScheduler.getInstance().registerSubsystem(m_robotDrive);
+		// CommandScheduler.getInstance().registerSubsystem(m_backLimelight);
+		// CommandScheduler.getInstance().registerSubsystem(m_shooter);
+		// CommandScheduler.getInstance().registerSubsystem(m_claw);
+		// CommandScheduler.getInstance().registerSubsystem(m_armLED);
 
 		// Configure the button bindings
 		configureButtonBindings();
@@ -96,6 +99,8 @@ public class RobotContainer {
 
 	public void setTeleopDefaultStates() {
 		System.out.println("setTeleopDefaultStates()");
+		teleopTimer.reset();
+		teleopTimer.start();
 		new SequentialCommandGroup(
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
 			m_superstructure.setSubsystemState(DPAD.DOWN),
@@ -111,7 +116,8 @@ public class RobotContainer {
 	}
 
 	public void updateTelemetry() {
-		m_superstructure.updateTelemetry();
+		m_superstructure.periodic();
+		SmartDashboard.putNumber("Remaining Match Time", 135.0 - teleopTimer.get());
 	}
 
 	/**
@@ -135,7 +141,8 @@ public class RobotContainer {
 		
 		//hold to score on left bumper
 		m_driverController.leftBumper()
-			.whileTrue(m_superstructure.ScoreCommand());
+			.onTrue(m_superstructure.ScoreCommand())
+			.onFalse(m_shooter.stopCommand());
 
 		//intake on right trigger while held 
 		new Trigger(() -> m_driverController.getRightTriggerAxis() > 0.25)
@@ -144,20 +151,20 @@ public class RobotContainer {
 
 		//outtake on left trigger while held
 		new Trigger(() -> m_driverController.getLeftTriggerAxis() > 0.25)
-			.whileTrue(m_superstructure.shooterOuttakeSequence())
-			.whileFalse(m_superstructure.setSubsystemState(DPAD.UP).alongWith(m_shooter.stopCommand()));
+			.onTrue(m_superstructure.shooterOuttakeSequence())
+			.onFalse(m_superstructure.setSubsystemState(DPAD.UP).alongWith(m_shooter.stopCommand()));
 
 		//release cube on y
-		// m_driverController.y()
-		// 	.onTrue(m_shooter.setKickerCommand(-0.4))
-		// 	.onFalse(m_shooter.stopCommand());
+		m_driverController.y()
+			.onTrue(m_shooter.setKicker(-0.4))
+			.onFalse(m_shooter.stopCommand());
 
 		// m_driverController.b()
 		// 	.onTrue(new InstantCommand(() -> m_shooter.setTunable()));
 
 		//toggle claw intake on X
 		m_driverController.x()
-			.onTrue(m_claw.intakeAndToggleCommand());
+			.onTrue(m_claw.intakeCone());
 
 		//reset gyro on back
 		m_driverController.back()
@@ -171,10 +178,10 @@ public class RobotContainer {
 
 		//AutoBalance on left
 		m_driverController.povLeft()
-			.whileTrue(new AutoBalance(m_robotDrive));
+			.whileTrue(new AutoBalance(m_robotDrive, false));
 
 		m_driverController.povDown() 
-			.whileTrue(new TurnToAngle(m_robotDrive, 180));
+			.whileTrue(new AutoBalance(m_robotDrive, true));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 

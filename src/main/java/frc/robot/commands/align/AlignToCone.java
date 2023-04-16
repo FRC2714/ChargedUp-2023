@@ -24,7 +24,7 @@ public class AlignToCone extends CommandBase {
 
   private double kPThetaController = 1;
 
-  private double xControllerGoalCone = 0.37;
+  private double xControllerGoalCone = 0.55;
 
   //private double thetaControllerkP
 

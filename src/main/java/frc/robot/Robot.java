@@ -48,15 +48,6 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Path Test", m_robotContainer.getPathTestAuto());
 
     SmartDashboard.putData("Auton Selection", autoChooser);
-
-    //TODO set lower resolution + decrease bandwidth
-    // UsbCamera camera = new UsbCamera("Fisheye", 0);
-    // camera.setResolution(640, 480);
-    // camera.setFPS(30);
-    // CameraServer.addCamera(camera);
-    // CameraServer.startAutomaticCapture(camera);
-
-    //CameraServer.startAutomaticCapture();
   }
 
   /**

@@ -24,7 +24,7 @@ public class AlignToCube extends CommandBase {
 
   private double kPThetaController = 1;
 
-  private double xControllerGoalCube = 0.40;
+  private double xControllerGoalCube = 0.63;
 
   //private double thetaControllerkP
 

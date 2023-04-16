@@ -49,7 +49,7 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
 			//Autobalance
-			new AutoBalance(m_robotDrive),
+			new AutoBalance(m_robotDrive, false),
 			m_robotDrive.stopModulesCommand(),
 			new WaitCommand(5)
 		);

@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.Limelight;
 
 public class ShooterStateMachine {
   Shooter m_shooter;

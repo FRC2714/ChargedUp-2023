@@ -51,7 +51,7 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 				m_superstructure.setSubsystemState(DPAD.RIGHT)));
 		AutoEventMap.put("shoot cube", 
 			new SequentialCommandGroup(
-				m_shooter.setKickerCommand(ShooterConstants.kKickSpeed),
+				m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
 				new WaitCommand(0.2),
 				m_shooter.stopCommand()
 			));
@@ -67,7 +67,7 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
 			//Autobalance
-			new AutoBalance(m_robotDrive),
+			new AutoBalance(m_robotDrive, false),
 			m_robotDrive.stopModulesCommand()
 		);
 	}

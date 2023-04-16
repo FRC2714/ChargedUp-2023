@@ -58,7 +58,7 @@ public class TwoCargoOpenAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
 			//shoot cube
-            m_shooter.setKickerCommand(ShooterConstants.kKickSpeed)
+            m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed)
 		);
 	}
 }

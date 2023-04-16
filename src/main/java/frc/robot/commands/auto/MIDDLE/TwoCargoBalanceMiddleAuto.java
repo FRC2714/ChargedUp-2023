@@ -11,7 +11,6 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
@@ -21,7 +20,6 @@ import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Superstructure.BUTTON;
 import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
-import frc.robot.utils.ShooterPreset;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Limelight;
@@ -61,11 +59,11 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
 			//Autobalance
-			new AutoBalance(m_robotDrive),
+			new AutoBalance(m_robotDrive, true),
 			m_robotDrive.stopModulesCommand(),
 
             //Shoot on station
-            m_shooter.setKickerCommand(ShooterConstants.kKickSpeed)
+            m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed)
 		);
 
 	}
