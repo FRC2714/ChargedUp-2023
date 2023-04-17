@@ -34,7 +34,7 @@ public class TwoCargoTerrainAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"2CargoTERRAIN",
 			new PathConstraints(
-			2.2,
+			1.7,
 			2.4));
 
 	public TwoCargoTerrainAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {

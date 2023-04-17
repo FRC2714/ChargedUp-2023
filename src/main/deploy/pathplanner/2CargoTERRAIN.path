@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.81,
-        "y": 0.5
+        "x": 1.8,
+        "y": 1.62
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5292739483008218,
-        "y": 0.5938183410827156
+        "x": 2.013202602917663,
+        "y": 0.8843556477148541
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -53,12 +53,12 @@
         "y": 0.9034420931095897
       },
       "prevControl": {
-        "x": 5.169866122767092,
-        "y": 0.9034420931095897
+        "x": 5.236821576846002,
+        "y": 0.6371164343752167
       },
       "nextControl": {
-        "x": 5.169866122767092,
-        "y": 0.9034420931095897
+        "x": 5.236821576846002,
+        "y": 0.6371164343752167
       },
       "holonomicAngle": 0,
       "isReversal": true,
@@ -74,22 +74,22 @@
     },
     {
       "anchorPoint": {
-        "x": 4.435508107657436,
-        "y": 0.9
+        "x": 4.7,
+        "y": 0.8
       },
       "prevControl": {
-        "x": 4.9353533183554985,
-        "y": 0.8999999999999971
+        "x": 5.199845210698062,
+        "y": 0.7999999999999972
       },
       "nextControl": {
-        "x": 4.07971762808658,
-        "y": 0.8999999999999971
+        "x": 4.3442095204291435,
+        "y": 0.7999999999999972
       },
       "holonomicAngle": -90.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [
           "set shooter high"
@@ -102,15 +102,15 @@
     {
       "anchorPoint": {
         "x": 3.354435411160899,
-        "y": 0.9
+        "y": 0.8
       },
       "prevControl": {
         "x": 3.72642943010004,
-        "y": 0.9
+        "y": 0.8
       },
       "nextControl": {
         "x": 2.9824413922217583,
-        "y": 0.9
+        "y": 0.8
       },
       "holonomicAngle": -90.0,
       "isReversal": false,
@@ -150,7 +150,7 @@
     }
   ],
   "maxVelocity": 1.7,
-  "maxAcceleration": 2.0,
+  "maxAcceleration": 2.4,
   "isReversed": null,
   "markers": [
     {
@@ -166,7 +166,7 @@
       ]
     },
     {
-      "position": 4.2,
+      "position": 4.1,
       "names": [
         "set shooter high"
       ]

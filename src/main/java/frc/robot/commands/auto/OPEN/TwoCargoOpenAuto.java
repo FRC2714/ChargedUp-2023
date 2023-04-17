@@ -12,7 +12,6 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Shooter.Shooter;
@@ -56,7 +55,6 @@ public class TwoCargoOpenAuto extends AutoBase {
 
 			//Follow Path
 			autoBuilder.fullAuto(autoPathGroup)
-
 		);
 	}
 }

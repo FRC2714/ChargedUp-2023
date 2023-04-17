@@ -6,8 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,7 +19,6 @@ import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;

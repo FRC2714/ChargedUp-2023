@@ -20,7 +20,7 @@ public class AlignToCube extends CommandBase {
   private ProfiledPIDController thetaController;
 
   private double kPXControllerCube = 0.6;
-  private double kPYControllerCube = 1.1;
+  private double kPYControllerCube = 1.0;
 
   private double kPThetaController = 1;
 
