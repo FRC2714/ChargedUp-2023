@@ -33,7 +33,7 @@ public class AutoBase extends SequentialCommandGroup {
     addCommands();
   }
 
-  public SwerveAutoBuilder CustomSwerveAutoBuilder() {
+  public SwerveAutoBuilder getSwerveAutoBuilder() {
     return new SwerveAutoBuilder(
       m_robotDrive::getPose, // pose2d supplier
       m_robotDrive::resetOdometry, // reset odometry at the beginning of auto
@@ -46,7 +46,7 @@ public class AutoBase extends SequentialCommandGroup {
       m_robotDrive);
   }
 
-  public PPSwerveControllerCommand CustomPathControllerCommand(PathPlannerTrajectory trajectory) {
+  public PPSwerveControllerCommand getPathControllerCommand(PathPlannerTrajectory trajectory) {
     return new PPSwerveControllerCommand(
       trajectory, 
       m_robotDrive::getPose, 

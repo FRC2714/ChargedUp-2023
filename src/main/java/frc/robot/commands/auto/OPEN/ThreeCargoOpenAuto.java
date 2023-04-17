@@ -15,15 +15,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.auto.AutoBase;
-import frc.robot.subsystems.Arm.Arm;
-import frc.robot.subsystems.Shooter.Shooter;
+import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.BUTTON;
 import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
-import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Drive.DriveSubsystem;
-import frc.robot.subsystems.Limelight;
-import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Shooter.Shooter;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -37,13 +34,15 @@ public class ThreeCargoOpenAuto extends AutoBase {
 			3.0,
 			3.0));
 
-	public ThreeCargoOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
+	public ThreeCargoOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
 		super(m_robotDrive);
 
-		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
+		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder();
 
     	AutoEventMap.put("intake cube", 
-			m_superstructure.shooterIntakeSequence());
+			new SequentialCommandGroup(
+				m_superstructure.setScoreLevelCommand(BUTTON.X),
+				m_superstructure.setSubsystemState(DPAD.LEFT)));
 		AutoEventMap.put("set shooter high", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.Y),

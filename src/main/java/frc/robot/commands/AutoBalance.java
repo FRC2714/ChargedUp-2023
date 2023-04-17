@@ -29,7 +29,7 @@ public class AutoBalance extends AsymmetricProfiledPIDCommand {
         // This should return the measurement
         drivetrain::getPitchDegrees, //gyro X angle
         // This should return the goal (can also be a constant)
-        new State(0, 0), //TODO
+        new State(0, 0),
         // This uses the output
         (output, setpoint) -> {
           // Use the output (and setpoint, if desired) here

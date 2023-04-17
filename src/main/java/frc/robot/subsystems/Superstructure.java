@@ -24,11 +24,11 @@ import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmScoreLevel;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
-import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Arm.Claw;
+import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Shooter.Shooter;
-import frc.robot.subsystems.Shooter.ShooterStateMachine;
 import frc.robot.subsystems.Shooter.Shooter.KickerState;
+import frc.robot.subsystems.Shooter.ShooterStateMachine;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterState;
 
@@ -272,6 +272,14 @@ public class Superstructure {
 			setSubsystemState(DPAD.RIGHT),
 			new WaitCommand(waitTime).raceWith(new AlignToCone(m_robotDrive, m_backLimelight)),
 			m_claw.scoreCone()
+    );
+  }
+
+  public Command shootCube() {
+    return new SequentialCommandGroup(
+      m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
+      new WaitCommand(0.2),
+      m_shooter.stopCommand()
     );
   }
 

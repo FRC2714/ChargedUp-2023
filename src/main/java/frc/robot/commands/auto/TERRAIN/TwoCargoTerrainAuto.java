@@ -14,16 +14,12 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.auto.AutoBase;
-import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Superstructure.BUTTON;
 import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
-import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Drive.DriveSubsystem;
-import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -38,13 +34,15 @@ public class TwoCargoTerrainAuto extends AutoBase {
 			1.7,
 			2.4));
 
-	public TwoCargoTerrainAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
+	public TwoCargoTerrainAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
 		super(m_robotDrive);
 
-		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
+		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder();
 
     	AutoEventMap.put("intake cube", 
-			m_superstructure.shooterIntakeSequence());
+			new SequentialCommandGroup(
+				m_superstructure.setScoreLevelCommand(BUTTON.X),
+				m_superstructure.setSubsystemState(DPAD.LEFT)));
         AutoEventMap.put("hold cube", m_superstructure.setSubsystemState(DPAD.UP));
 		AutoEventMap.put("set shooter high", 
 			new SequentialCommandGroup(
@@ -62,12 +60,7 @@ public class TwoCargoTerrainAuto extends AutoBase {
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 
 			//Follow Path
-			autoBuilder.fullAuto(autoPathGroup),
-
-            //shoot final cube
-			m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
-				new WaitCommand(0.5),
-				m_shooter.stopCommand()
+			autoBuilder.fullAuto(autoPathGroup)
 		);
 	}
 }

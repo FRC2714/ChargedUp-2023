@@ -30,7 +30,7 @@ public class PathTestAuto extends AutoBase {
 	public PathTestAuto(DriveSubsystem m_robotDrive) {
 		super(m_robotDrive);
 
-		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder(); 
+		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder(); 
 
 		addCommands(
 			autoBuilder.fullAuto(autoPathGroup)

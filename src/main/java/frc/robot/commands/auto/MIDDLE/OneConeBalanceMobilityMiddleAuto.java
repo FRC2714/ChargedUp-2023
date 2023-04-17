@@ -14,12 +14,8 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
-import frc.robot.subsystems.Arm.Arm;
-import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Superstructure.DPAD;
-import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Drive.DriveSubsystem;
-import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Superstructure;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -34,10 +30,10 @@ public class OneConeBalanceMobilityMiddleAuto extends AutoBase {
 			1.2,
 			1.7));
 
-	public OneConeBalanceMobilityMiddleAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter, Arm m_arm, Claw m_claw, Limelight m_backLimelight) {
+	public OneConeBalanceMobilityMiddleAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure) {
 		super(m_robotDrive);
 
-		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
+		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder();
 
 		addCommands(
 			m_superstructure.scorePreloadedCone(3.5),

@@ -231,30 +231,30 @@ public class RobotContainer {
 	}
 
 	public Command getOneConeBalanceMiddleAuto() {
-		return new OneConeBalanceMiddleAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+		return new OneConeBalanceMiddleAuto(m_robotDrive, m_superstructure);
 	}
 
 	public Command getOneConeBalanceMobilityMiddleAuto() {
-		return new OneConeBalanceMobilityMiddleAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+		return new OneConeBalanceMobilityMiddleAuto(m_robotDrive, m_superstructure);
 	}
 
 	public Command getTwoCargoBalanceMiddleAuto() {
-		return new TwoCargoBalanceMiddleAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+		return new TwoCargoBalanceMiddleAuto(m_robotDrive, m_superstructure, m_shooter);
 	}
 
 	public Command getTwoCargoOpenAuto() {
-		return new TwoCargoOpenAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+		return new TwoCargoOpenAuto(m_robotDrive, m_superstructure, m_shooter);
 	}
 
 	public Command getTwoCargoBalanceOpenAuto() {
-		return new TwoCargoBalanceOpenAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+		return new TwoCargoBalanceOpenAuto(m_robotDrive, m_superstructure, m_shooter);
 	}
 
 	public Command getThreeCargoOpenAuto() {
-		return new ThreeCargoOpenAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+		return new ThreeCargoOpenAuto(m_robotDrive, m_superstructure, m_shooter);
 	}
 
 	public Command getTwoCargoTerrainAuto() {
-		return new TwoCargoTerrainAuto(m_robotDrive, m_superstructure, m_shooter, m_arm, m_claw, m_backLimelight);
+		return new TwoCargoTerrainAuto(m_robotDrive, m_superstructure, m_shooter);
 	}
 }
