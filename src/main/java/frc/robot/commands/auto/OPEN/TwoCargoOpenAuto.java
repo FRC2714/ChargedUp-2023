@@ -12,6 +12,8 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Shooter.Shooter;
@@ -41,11 +43,20 @@ public class TwoCargoOpenAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = CustomSwerveAutoBuilder();
 
     	AutoEventMap.put("intake cube", 
-			m_superstructure.shooterIntakeSequence());
+			new SequentialCommandGroup(
+				m_superstructure.setScoreLevelCommand(BUTTON.X),
+				m_superstructure.setSubsystemState(DPAD.LEFT)));
 		AutoEventMap.put("set shooter high", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.Y),
 				m_superstructure.setSubsystemState(DPAD.RIGHT)));
+		AutoEventMap.put("shoot cube", 
+			new SequentialCommandGroup(
+				m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
+				new WaitCommand(0.2),
+				m_shooter.stopCommand()));
+		AutoEventMap.put("retract shooter", 
+			m_superstructure.setSubsystemState(DPAD.DOWN));
 
 		addCommands(
             //Score preload

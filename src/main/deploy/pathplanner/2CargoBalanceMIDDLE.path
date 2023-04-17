@@ -50,15 +50,15 @@
     {
       "anchorPoint": {
         "x": 7.1,
-        "y": 2.15
+        "y": 2.13
       },
       "prevControl": {
         "x": 6.6916608103978765,
-        "y": 2.15
+        "y": 2.13
       },
       "nextControl": {
         "x": 7.508339189602123,
-        "y": 2.15
+        "y": 2.13
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -133,7 +133,7 @@
     {
       "position": 2.1,
       "names": [
-        "set shooter"
+        "set shooter custom"
       ]
     }
   ]

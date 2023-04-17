@@ -12,6 +12,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
@@ -43,7 +44,7 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 
         AutoEventMap.put("intake cube", 
 			m_superstructure.shooterIntakeSequence());
-		AutoEventMap.put("set shooter",
+		AutoEventMap.put("set shooter custom",
 		new SequentialCommandGroup(
 			m_shooter.setPreset(new ShooterPreset(40, 150)))
 		);
@@ -63,6 +64,8 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
             //Shoot on station
             m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
 
+			new AutoBalance(m_robotDrive, true),
+			new WaitCommand(1),
 			new AutoBalance(m_robotDrive, true)
 		);
 
