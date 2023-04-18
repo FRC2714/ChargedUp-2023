@@ -23,7 +23,6 @@ import frc.robot.subsystems.Drive.DriveSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AutoBase extends SequentialCommandGroup {
   private DriveSubsystem m_robotDrive;
-  public static final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
   /** Creates a new AutoBase. */
   public AutoBase(DriveSubsystem m_robotDrive) {
@@ -31,6 +30,19 @@ public class AutoBase extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands();
+  }
+
+  public SwerveAutoBuilder getSwerveAutoBuilder(HashMap<String, Command> AutoEventMap) {
+    return new SwerveAutoBuilder(
+      m_robotDrive::getPose, // pose2d supplier
+      m_robotDrive::resetOdometry, // reset odometry at the beginning of auto
+      DriveConstants.kDriveKinematics, // swerve kinematics
+      new PIDConstants(AutoConstants.kPXController, 0.0, 0.05), // x y controller TODO add D
+      new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.05), // theta controller
+      m_robotDrive::setModuleStates,
+      AutoEventMap,
+      true,
+      m_robotDrive);
   }
 
   public SwerveAutoBuilder getSwerveAutoBuilder() {
@@ -41,7 +53,7 @@ public class AutoBase extends SequentialCommandGroup {
       new PIDConstants(AutoConstants.kPXController, 0.0, 0.05), // x y controller TODO add D
       new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.05), // theta controller
       m_robotDrive::setModuleStates,
-      AutoEventMap,
+      new HashMap<>(),
       true,
       m_robotDrive);
   }

@@ -4,6 +4,7 @@
 
 package frc.robot.commands.auto.MIDDLE;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
@@ -11,6 +12,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -32,22 +34,22 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
 			"2CargoBalanceMIDDLE",
-			new PathConstraints(
-			1.5,
-			2.0));
+			new PathConstraints(1.5, 2.0));
+
+	private final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
 	public TwoCargoBalanceMiddleAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
 		super(m_robotDrive);
 
-		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder();
-
-        AutoEventMap.put("intake cube", 
+		AutoEventMap.put("intake cube", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.X),
 				m_superstructure.setSubsystemState(DPAD.LEFT)));
 		AutoEventMap.put("set shooter custom",
 			new SequentialCommandGroup(
 				m_shooter.setPreset(new ShooterPreset(40, 150))));
+
+		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder(AutoEventMap);
 
 		addCommands(
 			m_superstructure.scorePreloadedCone(3.2),

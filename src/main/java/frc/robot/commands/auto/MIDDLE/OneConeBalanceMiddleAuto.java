@@ -27,9 +27,7 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
 			"1ConeBalanceMIDDLE",
-			new PathConstraints(
-			1.2,
-			1.7));
+			new PathConstraints(1.2, 1.7));
 
 	public OneConeBalanceMiddleAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure) {
 		super(m_robotDrive);

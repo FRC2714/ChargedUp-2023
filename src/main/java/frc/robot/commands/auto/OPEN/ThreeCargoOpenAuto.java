@@ -4,6 +4,7 @@
 
 package frc.robot.commands.auto.OPEN;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
@@ -11,6 +12,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ShooterConstants;
@@ -30,16 +32,14 @@ public class ThreeCargoOpenAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
 			"3CargoOPEN",
-			new PathConstraints(
-			3.0,
-			3.0));
+			new PathConstraints(3.0, 3.0));
+
+	private final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
 	public ThreeCargoOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
 		super(m_robotDrive);
 
-		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder();
-
-    	AutoEventMap.put("intake cube", 
+		AutoEventMap.put("intake cube", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.X),
 				m_superstructure.setSubsystemState(DPAD.LEFT)));
@@ -58,6 +58,8 @@ public class ThreeCargoOpenAuto extends AutoBase {
 				m_shooter.stopCommand()));
 		AutoEventMap.put("retract shooter", 
 			m_superstructure.setSubsystemState(DPAD.DOWN));
+
+		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder(AutoEventMap);
 
 		addCommands(
 			m_superstructure.scorePreloadedCone(3.0), //Score First Cone
