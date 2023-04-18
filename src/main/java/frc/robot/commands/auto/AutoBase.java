@@ -7,7 +7,6 @@ package frc.robot.commands.auto;
 import java.util.HashMap;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 
@@ -37,8 +36,8 @@ public class AutoBase extends SequentialCommandGroup {
       m_robotDrive::getPose, // pose2d supplier
       m_robotDrive::resetOdometry, // reset odometry at the beginning of auto
       DriveConstants.kDriveKinematics, // swerve kinematics
-      new PIDConstants(AutoConstants.kPXController, 0.0, 0.05), // x y controller TODO add D
-      new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.05), // theta controller
+      AutoConstants.kTranslationControllerConstants, // x y controller
+      AutoConstants.kThetaControllerConstants, // theta controller
       m_robotDrive::setModuleStates,
       AutoEventMap,
       true,
@@ -50,8 +49,8 @@ public class AutoBase extends SequentialCommandGroup {
       m_robotDrive::getPose, // pose2d supplier
       m_robotDrive::resetOdometry, // reset odometry at the beginning of auto
       DriveConstants.kDriveKinematics, // swerve kinematics
-      new PIDConstants(AutoConstants.kPXController, 0.0, 0.05), // x y controller TODO add D
-      new PIDConstants(AutoConstants.kPThetaController, 0.0, 0.05), // theta controller
+      AutoConstants.kTranslationControllerConstants, // x y controller
+      AutoConstants.kThetaControllerConstants, // theta controller
       m_robotDrive::setModuleStates,
       new HashMap<>(),
       true,
@@ -63,9 +62,9 @@ public class AutoBase extends SequentialCommandGroup {
       trajectory, 
       m_robotDrive::getPose, 
       DriveConstants.kDriveKinematics, 
-      new PIDController(AutoConstants.kPXController, 0, 0), 
-      new PIDController(AutoConstants.kPYController, 0, 0), 
-      new PIDController(AutoConstants.kPThetaController, 0, 0), 
+      new PIDController(AutoConstants.kTranslationControllerP, 0, AutoConstants.kTranslationControllerD), 
+      new PIDController(AutoConstants.kTranslationControllerP, 0, AutoConstants.kTranslationControllerD), 
+      new PIDController(AutoConstants.kThetaControllerP, 0, AutoConstants.kThetaControllerD), 
       m_robotDrive::setModuleStates, 
       m_robotDrive);
   }

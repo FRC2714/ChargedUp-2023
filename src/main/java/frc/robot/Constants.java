@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.PIDConstants;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -12,7 +13,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.utils.ArmPreset;
 import frc.robot.utils.ShooterPreset;
@@ -129,21 +129,17 @@ public final class Constants {
   }
 
   public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 3.5;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 3.5;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
+    //x, y controller
+    public static final double kTranslationControllerP = 3.0;
+    public static final double kTranslationControllerD = 0.05;
+    public static final PIDConstants kTranslationControllerConstants = 
+      new PIDConstants(AutoConstants.kTranslationControllerP, 0.0, AutoConstants.kTranslationControllerD);
 
-    public static final double kPXController = 3.0;
-    public static final double kPYController = 3.0;
-    public static final double kPThetaController = 1.5;
-
-    // Constraint for the motion profiled robot angle controller
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints = new TrapezoidProfile.Constraints(
-        kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-    
-    public static final TrapezoidProfile.Constraints kAutoControllerConstraints = new TrapezoidProfile.Constraints(
-        kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared);
+    //theta controller
+    public static final double kThetaControllerP = 1.5;
+    public static final double kThetaControllerD = 0.05;
+    public static final PIDConstants kThetaControllerConstants = 
+      new PIDConstants(AutoConstants.kThetaControllerP, 0.0, AutoConstants.kThetaControllerD);
   }
 
   public static final class TuningConstants {
@@ -256,14 +252,14 @@ public final class Constants {
     public static final int kRightShoulderMotorCanId = 10;
     public static final int kLeftShoulderMotorCanId = 9;
 
-    public static final double kShoulderGearRatio = 240;
+    public static final double kShoulderGearRatio = 240.0;
     public static final double kShoulderLength = Units.inchesToMeters(28);
     public static final double kShoulderPositionConversionFactor = (2*Math.PI) * kShoulderGearRatio; //Radians * Gear ratio
     public static final double kShoulderEncoderZeroOffset = 623.8;
-    public static final double kShoulderKinematicOffset = 105;
+    public static final double kShoulderKinematicOffset = 105.0;
     public static final boolean kShoulderMotorInverted = true;
     public static final boolean kShoulderEncoderInverted = true;
-    public static final double kShoulderP = 8;
+    public static final double kShoulderP = 8.0;
     public static final int kShoulderMotorCurrentLimit = 40; //amps
 
     public static final Constraints kFarConstraints = new Constraints(16, 28, 24);
@@ -276,14 +272,14 @@ public final class Constants {
     public static final int kRightElbowMotorCanId = 11;
     public static final int kLeftElbowMotorCanId = 12;
 
-    public static final double kElbowGearRatio = 225;
+    public static final double kElbowGearRatio = 225.0;
     public static final double kElbowLength = Units.inchesToMeters(25);
     public static final double kElbowPositionConversionFactor = (2*Math.PI) * kElbowGearRatio;
-    public static final double kElbowEncoderZeroOffset = 1422;
+    public static final double kElbowEncoderZeroOffset = 1422.0;
     public static final double kElbowKinematicOffset = 762.0;
     public static final boolean kElbowMotorInverted = false;
     public static final boolean kElbowEncoderInverted = true;
-    public static final double kElbowP = 8;
+    public static final double kElbowP = 8.0;
     public static final int kElbowMotorCurrentLimit = 30; //amps
 
     public static final Constraints kFarConstraints = new Constraints(16, 28, 24);
