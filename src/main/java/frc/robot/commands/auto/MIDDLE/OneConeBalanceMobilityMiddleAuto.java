@@ -11,6 +11,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
@@ -46,8 +47,10 @@ public class OneConeBalanceMobilityMiddleAuto extends AutoBase {
 
 			//Autobalance
 			new AutoBalance(m_robotDrive, false),
-			m_robotDrive.stopModulesCommand(),
 			new WaitCommand(5)
+				.alongWith(new RunCommand(
+            		() -> m_robotDrive.setX(),
+            		m_robotDrive))
 		);
 
 	}

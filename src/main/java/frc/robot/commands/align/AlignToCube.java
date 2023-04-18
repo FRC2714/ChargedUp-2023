@@ -5,9 +5,9 @@
 package frc.robot.commands.align;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 
@@ -22,7 +22,7 @@ public class AlignToCube extends CommandBase {
   private double kPXControllerCube = 0.6;
   private double kPYControllerCube = 1.0;
 
-  private double kPThetaController = 1;
+  private double kPThetaController = 1.5;
 
   private double xControllerGoalCube = 0.63;
 
@@ -34,9 +34,9 @@ public class AlignToCube extends CommandBase {
     this.m_backLimelight = m_backLimelight;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    xController = new ProfiledPIDController(kPXControllerCube, 0, 0, AutoConstants.kAutoControllerConstraints);
-    yController = new ProfiledPIDController(kPYControllerCube, 0, 0, AutoConstants.kAutoControllerConstraints);
-    thetaController = new ProfiledPIDController(kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    xController = new ProfiledPIDController(kPXControllerCube, 0, 0, new Constraints(0.2, 0.2));
+    yController = new ProfiledPIDController(kPYControllerCube, 0, 0, new Constraints(3, 3));
+    thetaController = new ProfiledPIDController(kPThetaController, 0, 0, new Constraints(5, 10));
     
     addRequirements(m_robotDrive);
 

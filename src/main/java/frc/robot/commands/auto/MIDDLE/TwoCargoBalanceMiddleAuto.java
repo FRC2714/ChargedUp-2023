@@ -11,6 +11,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ShooterConstants;
@@ -60,14 +61,11 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 
 			//Autobalance
 			new AutoBalance(m_robotDrive, true),
-			m_robotDrive.stopModulesCommand(),
-
-            //Shoot on station
-            m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
-
-			new AutoBalance(m_robotDrive, true),
-			new WaitCommand(1),
-			new AutoBalance(m_robotDrive, true)
+			new WaitCommand(3).alongWith(
+				new RunCommand(
+					() -> m_robotDrive.setX(),
+					m_robotDrive), 
+				m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed))
 		);
 
 	}

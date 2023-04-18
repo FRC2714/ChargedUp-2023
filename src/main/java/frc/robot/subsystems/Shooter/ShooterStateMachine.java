@@ -65,21 +65,7 @@ public class ShooterStateMachine {
     return new SequentialCommandGroup(
       m_shooter.setPreset(ShooterConstants.kHoldPreset));
   }
-
-  // private Command toDynamic(ShooterScoreLevel shooterScorelevel) {
-  //   return new SequentialCommandGroup(
-  //     new PrintCommand("to dynamic"),
-  //     new InstantCommand(() -> m_frontLimelight.setLED(true)),
-  //     new SelectCommand(
-  //       Map.ofEntries(
-  //         Map.entry(ShooterScoreLevel.HIGH, new InstantCommand(() -> m_frontLimelight.setHighCubePipeline())),
-  //         Map.entry(ShooterScoreLevel.MIDDLE, new InstantCommand(() -> m_frontLimelight.setMiddleCubePipeline())),
-  //         Map.entry(ShooterScoreLevel.LOW, new InstantCommand(() -> m_frontLimelight.setLowCubePipeline())),
-  //         Map.entry(ShooterScoreLevel.INTAKE, new InstantCommand())
-  //       ), () -> shooterScorelevel),
-  //     m_shooter.setDynamicEnabledCommand(true, shooterScorelevel));
-  // }
-
+  
   private Command toDynamic(ShooterScoreLevel shooterScorelevel) {
     return new SelectCommand(
         Map.ofEntries(

@@ -460,7 +460,7 @@
               "_glyph": 148,
               "_showGlyph": false,
               "Range/Min": 0.0,
-              "Range/Max": 130.0,
+              "Range/Max": 120.0,
               "Visuals/Show value": true
             }
           },
@@ -497,13 +497,13 @@
             ],
             "content": {
               "_type": "Number Slider",
-              "_source0": "network_table:///SmartDashboard/Remaining Match Time",
-              "_title": "SmartDashboard/Remaining Match Time",
+              "_source0": "network_table:///SmartDashboard/Remaining TeleOp Time",
+              "_title": "SmartDashboard/Remaining TeleOp Time",
               "_glyph": 148,
               "_showGlyph": false,
               "Slider Settings/Min": 0.0,
               "Slider Settings/Max": 135.0,
-              "Slider Settings/Block increment": 27.0,
+              "Slider Settings/Block increment": 0.0625,
               "Visuals/Display value": true
             }
           }

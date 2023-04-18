@@ -178,7 +178,7 @@ public final class Constants {
     public static final int kKickerMotorCurrentLimit = 30;
     public static final double kKickerNominalVoltage = 12.0;
     public static final double kKickerIntakeMotorSpeed = 0.3;
-    public static final double kKickerOuttakeMotorSpeed = -0.7;
+    public static final double kKickerOuttakeMotorSpeed = -0.6;
     public static final double kKickSpeed = -0.4;
 
     //Pivot
@@ -205,7 +205,7 @@ public final class Constants {
     public static final ShooterPreset kIntakePreset = 
       new ShooterPreset(115, -100);
     public static final ShooterPreset kOuttakePreset = 
-      new ShooterPreset(90, 100);
+      new ShooterPreset(90, 50);
 
     public static final ShooterPreset kRetractPreset = 
       new ShooterPreset(-95, 0);

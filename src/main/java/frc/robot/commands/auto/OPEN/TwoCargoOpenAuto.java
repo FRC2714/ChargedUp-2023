@@ -31,7 +31,7 @@ public class TwoCargoOpenAuto extends AutoBase {
 		PathPlanner.loadPathGroup(
 			"2CargoOPEN",
 			new PathConstraints(
-			1.7,
+			1.8,
 			3.0));
 
 	public TwoCargoOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
