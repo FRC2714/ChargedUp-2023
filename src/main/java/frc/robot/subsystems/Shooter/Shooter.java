@@ -143,7 +143,7 @@ public class Shooter extends SubsystemBase {
     setTargetPivot(tunablePivot.get());
   }
 
-  public void kickerIntake(double power) {
+  public void setKickerIntake(double power) {
     kickerMotor.setVoltage(power*ShooterConstants.kKickerNominalVoltage);
     if (kickerState != KickerState.INTAKING) {
       kickerRunningTimer.reset();
@@ -156,11 +156,11 @@ public class Shooter extends SubsystemBase {
     return kickerState;
   }
 
-  public Command kickerOuttakeCommand(double power) {
-    return new InstantCommand(() -> kickerOuttake(power));
+  public Command setKickerOuttakeCommand(double power) {
+    return new InstantCommand(() -> setKickerOuttake(power));
   }
 
-  private void kickerOuttake(double outtakeSpeed) {
+  private void setKickerOuttake(double outtakeSpeed) {
     kickerMotor.set(outtakeSpeed);
     kickerState = KickerState.OUTTAKING;
   }
@@ -176,14 +176,14 @@ public class Shooter extends SubsystemBase {
 
   public Command intakeSequence() {
     return new ParallelCommandGroup(
-      new InstantCommand(() -> kickerIntake(ShooterConstants.kKickerIntakeMotorSpeed)),
+      new InstantCommand(() -> setKickerIntake(ShooterConstants.kKickerIntakeMotorSpeed)),
       setPreset(ShooterConstants.kIntakePreset));
   }
 
   public Command outtakeSequence() {
     return new SequentialCommandGroup(
       setPreset(ShooterConstants.kOuttakePreset),
-      new InstantCommand(() -> kickerOuttake(ShooterConstants.kKickerOuttakeMotorSpeed)));
+      new InstantCommand(() -> setKickerOuttake(ShooterConstants.kKickerOuttakeMotorSpeed)));
   }
 
   public Command setPreset(ShooterPreset shooterPreset) {

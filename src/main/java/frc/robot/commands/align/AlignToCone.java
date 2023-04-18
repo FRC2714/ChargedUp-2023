@@ -61,12 +61,13 @@ public class AlignToCone extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_robotDrive.drive(
-        xController.calculate(m_backLimelight.getDistanceToGoalMeters()), 
-        yController.calculate(m_backLimelight.getXOffsetRadians()), 
-        thetaController.calculate(m_robotDrive.getHeadingRadians()), 
-        true,
-        false);
+    if (m_backLimelight.isTargetVisible()) m_robotDrive.drive(
+      xController.calculate(
+        m_backLimelight.getDistanceToGoalMeters() < 1.0 ? m_backLimelight.getDistanceToGoalMeters() : 0), 
+      yController.calculate(m_backLimelight.getXOffsetRadians()), 
+      thetaController.calculate(m_robotDrive.getHeadingRadians()), 
+      true,
+      false);
   }
 
   // Called once the command ends or is interrupted.

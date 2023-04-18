@@ -7,9 +7,10 @@ package frc.robot;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -240,28 +241,15 @@ public final class Constants {
   }
 
   public static final class LimelightConstants {
-    // 20 degrees, 31.5 inches from the ground
-    public static final double kBackLimelightMountingAngle = 35.0; //degrees
-    public static final double kBackLimelightHeight = 9.14; //inches
-    public static final Pose2d kBackLimelightPose = 
-      new Pose2d(
-        new Translation2d(0, kBackLimelightHeight), 
-        new Rotation2d(kBackLimelightMountingAngle));
+    public static final Pose3d kBackLimelightPose = 
+      new Pose3d(
+        new Translation3d(15.75, 9.14, 0.0), //inches
+        new Rotation3d(0.0, 35.0, 0.0));//degrees
 
-    public static final double kFrontLimelightMountingAngle = -20; //degrees
-    public static final double kFrontLimelightHeight = 31.5; //inches
-    public static final Pose2d kFrontLimelightPose = 
-      new Pose2d(
-        new Translation2d(0, kFrontLimelightHeight), 
-        new Rotation2d(kFrontLimelightMountingAngle));
-
-    public static final double kMiddleRetroTapeHeight = 24.5; // inches TODO convert to translation 2d
+    public static final double kMiddleRetroTapeHeight = 24.5; // inches
     public static final double kCubeLowHeight = -18; // inches
-    // public static final double kCubeMiddleHeight = 5.5; // inches
-    // public static final double kCubeHighHeight = 17; // inches
-
-    public static final double kCubeMiddleHeight = -18;
-    public static final double kCubeHighHeight = -18;
+    public static final double kCubeMiddleHeight = 5.5; // inches
+    public static final double kCubeHighHeight = 17; // inches
   }
 
   public static final class ShoulderConstants {

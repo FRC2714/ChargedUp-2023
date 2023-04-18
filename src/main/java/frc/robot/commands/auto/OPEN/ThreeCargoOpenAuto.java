@@ -53,10 +53,9 @@ public class ThreeCargoOpenAuto extends AutoBase {
 				m_superstructure.setSubsystemState(DPAD.RIGHT)));
 		AutoEventMap.put("shoot cube", 
 			new SequentialCommandGroup(
-				m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
+				m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed),
 				new WaitCommand(0.2),
-				m_shooter.stopCommand()
-			));
+				m_shooter.stopCommand()));
 		AutoEventMap.put("retract shooter", 
 			m_superstructure.setSubsystemState(DPAD.DOWN));
 

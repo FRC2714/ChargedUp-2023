@@ -150,7 +150,7 @@ public class RobotContainer {
 
 		//release cube on y
 		m_driverController.y()
-			.onTrue(m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed))
+			.onTrue(m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed))
 			.onFalse(m_shooter.stopCommand());
 
 		// m_driverController.b()

@@ -48,9 +48,7 @@ public class OneConeBalanceMiddleAuto extends AutoBase {
 			//Autobalance
 			new AutoBalance(m_robotDrive, false),
 			new WaitCommand(5)
-				.alongWith(new RunCommand(
-            		() -> m_robotDrive.setX(),
-            		m_robotDrive))
+				.alongWith(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive))
 		);
 
 	}

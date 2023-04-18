@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,16 +16,14 @@ public class Limelight extends SubsystemBase {
 	private String limelightName = "limelight";
 	private double kCameraHeight, kMountingAngle, GoalHeight = 0; //inches, deg
 
-	public Limelight(String limelightName, Pose2d limelightPose) {
+	public Limelight(String limelightName, Pose3d limelightPose) {
 		this.limelightName = limelightName;
 		this.kCameraHeight = limelightPose.getY();
-		this.kMountingAngle = limelightPose.getRotation().getDegrees();
+		this.kMountingAngle = limelightPose.getRotation().getY();
 	}
 
 	public double getDistanceToGoalInches() {
-		return (GoalHeight - kCameraHeight) 
-			/ Math.tan(
-				Units.degreesToRadians(kMountingAngle + getYAngleOffsetDegrees()));
+		return (GoalHeight - kCameraHeight) / Math.tan(Units.degreesToRadians(kMountingAngle + getYAngleOffsetDegrees()));
 	}
 
 	public void setGoalHeight(double GoalHeight) {

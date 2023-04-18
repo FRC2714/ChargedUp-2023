@@ -14,7 +14,6 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Superstructure;
@@ -47,9 +46,8 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 				m_superstructure.setScoreLevelCommand(BUTTON.X),
 				m_superstructure.setSubsystemState(DPAD.LEFT)));
 		AutoEventMap.put("set shooter custom",
-		new SequentialCommandGroup(
-			m_shooter.setPreset(new ShooterPreset(40, 150)))
-		);
+			new SequentialCommandGroup(
+				m_shooter.setPreset(new ShooterPreset(40, 150))));
 
 		addCommands(
 			m_superstructure.scorePreloadedCone(3.2),
@@ -61,11 +59,8 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 
 			//Autobalance
 			new AutoBalance(m_robotDrive, true),
-			new WaitCommand(3).alongWith(
-				new RunCommand(
-					() -> m_robotDrive.setX(),
-					m_robotDrive), 
-				m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed))
+			new WaitCommand(5)
+				.alongWith(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive))
 		);
 
 	}

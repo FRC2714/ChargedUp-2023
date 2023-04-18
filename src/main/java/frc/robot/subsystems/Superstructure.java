@@ -217,7 +217,7 @@ public class Superstructure {
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armScore),
-        Map.entry(ScoreMode.SHOOTER, m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed)) //TODO SHOOTER SCORE
+        Map.entry(ScoreMode.SHOOTER, m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed)) //TODO SHOOTER SCORE
       ), 
       () -> getScoreMode()
     );
@@ -277,7 +277,7 @@ public class Superstructure {
 
   public Command shootCube() {
     return new SequentialCommandGroup(
-      m_shooter.kickerOuttakeCommand(ShooterConstants.kKickSpeed),
+      m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed),
       new WaitCommand(0.2),
       m_shooter.stopCommand()
     );
@@ -289,7 +289,7 @@ public class Superstructure {
       m_shooter.isCubeDetected() &&
       m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE &&
       m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) {
-      m_shooter.kickerIntake(0.1);
+      m_shooter.setKickerIntake(0.1);
       m_armLED.setGreen();
       setSubsystemState(DPAD.UP).schedule();
     }
