@@ -23,9 +23,7 @@ public class PathTestAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
 			"StarTuner",
-			new PathConstraints(
-			3.0,
-			3.0));
+			new PathConstraints(3.0,3.0));
 
 	public PathTestAuto(DriveSubsystem m_robotDrive) {
 		super(m_robotDrive);

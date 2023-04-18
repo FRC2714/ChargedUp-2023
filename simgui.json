@@ -20,7 +20,8 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auton Selection": "String Chooser",
-      "/SmartDashboard/Field Position": "Field2d"
+      "/SmartDashboard/Field Position": "Field2d",
+      "/SmartDashboard/Scheduler": "Scheduler"
     },
     "windows": {
       "/SmartDashboard/Auton Selection": {

@@ -4,6 +4,7 @@
 
 package frc.robot.commands.auto.TERRAIN;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.pathplanner.lib.PathConstraints;
@@ -11,6 +12,7 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ShooterConstants;
@@ -30,16 +32,14 @@ public class TwoCargoTerrainAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
 			"2CargoTERRAIN",
-			new PathConstraints(
-			1.7,
-			2.4));
+			new PathConstraints(1.7, 2.4));
+
+	public final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
 	public TwoCargoTerrainAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
 		super(m_robotDrive);
 
-		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder();
-
-    	AutoEventMap.put("intake cube", 
+		AutoEventMap.put("intake cube", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.X),
 				m_superstructure.setSubsystemState(DPAD.LEFT)));
@@ -54,8 +54,10 @@ public class TwoCargoTerrainAuto extends AutoBase {
 				new WaitCommand(0.2),
 				m_shooter.stopCommand()));
 
+		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder(AutoEventMap);
+
 		addCommands(
-			m_superstructure.scorePreloadedCone(3.0), //Score First Cone
+			m_superstructure.scorePreloadedCone(3.4), //Score First Cone
 
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 
