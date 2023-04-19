@@ -176,14 +176,15 @@ public final class Constants {
     public static final double kKickerNominalVoltage = 12.0;
     public static final double kKickerIntakeMotorSpeed = 0.3;
     public static final double kKickerOuttakeMotorSpeed = -0.6;
+    public static final double kKickerHoldMotorSpeed = 0.1;
     public static final double kKickSpeed = -0.4;
 
     //Pivot
     public static final int kPivotMotorCanId = 15;
     public static final double kPivotGearRatio = 50;
     public static final double kPivotPositionConversionFactor = (2*Math.PI) * kPivotGearRatio;
-    public static final double kPivotEncoderZeroOffset = 200.0;
-    public static final double kPivotKinematicOffset = 115.0;
+    public static final double kPivotEncoderZeroOffset = 290.0;
+    public static final double kPivotKinematicOffset = 106.0;
     public static final int kPivotMotorCurrentLimit = 30;
     public static final double kPivotP = 3.0;
     public static final ArmFeedforward kPivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);

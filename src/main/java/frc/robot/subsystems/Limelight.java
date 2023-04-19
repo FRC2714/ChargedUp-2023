@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,12 +13,12 @@ import frc.robot.utils.LimelightHelpers;
 public class Limelight extends SubsystemBase {
 
 	private String limelightName = "limelight";
-	private double kCameraHeight, kMountingAngle, GoalHeight = 0; //inches, deg
+	private double kCameraHeight = 9.14;
+	private double kMountingAngle = 35.0;
+	private double GoalHeight = 24.5; //inches, deg
 
-	public Limelight(String limelightName, Pose3d limelightPose) {
+	public Limelight(String limelightName) {
 		this.limelightName = limelightName;
-		this.kCameraHeight = limelightPose.getY();
-		this.kMountingAngle = limelightPose.getRotation().getY();
 	}
 
 	public double getDistanceToGoalInches() {
@@ -70,22 +69,6 @@ public class Limelight extends SubsystemBase {
 	}
 
 	public void setAprilTagFarPipeline() {
-		LimelightHelpers.setPipelineIndex(limelightName, 2);
-	}
-
-	//Front Limelight
-	public void setHighCubePipeline() {
-		setGoalHeight(LimelightConstants.kCubeHighHeight);
-		LimelightHelpers.setPipelineIndex(limelightName, 0);
-	}
-
-	public void setMiddleCubePipeline() {
-		setGoalHeight(LimelightConstants.kCubeMiddleHeight);
-		LimelightHelpers.setPipelineIndex(limelightName, 1);
-	}
-
-	public void setLowCubePipeline() {
-		setGoalHeight(LimelightConstants.kCubeLowHeight);
 		LimelightHelpers.setPipelineIndex(limelightName, 2);
 	}
 

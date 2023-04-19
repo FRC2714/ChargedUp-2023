@@ -48,6 +48,7 @@ public class Robot extends TimedRobot {
     //autoChooser.addOption("3 OPEN", m_robotContainer.getThreeCargoOpenAuto());
     //Terrain
     autoChooser.addOption("2 TERRAIN", m_robotContainer.getTwoCargoTerrainAuto());
+    autoChooser.addOption("3 TERRAIN", m_robotContainer.getThreeCargoTerrainAuto());
 
     //autoChooser.addOption("Path Test", m_robotContainer.getPathTestAuto());
 

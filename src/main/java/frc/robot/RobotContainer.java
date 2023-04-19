@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.LEDConstants;
-import frc.robot.Constants.LimelightConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
@@ -27,6 +26,7 @@ import frc.robot.commands.auto.MIDDLE.TwoCargoBalanceMiddleAuto;
 import frc.robot.commands.auto.OPEN.ThreeCargoOpenAuto;
 import frc.robot.commands.auto.OPEN.TwoCargoBalanceOpenAuto;
 import frc.robot.commands.auto.OPEN.TwoCargoOpenAuto;
+import frc.robot.commands.auto.TERRAIN.CubeThreeCargoTerrainAuto;
 import frc.robot.commands.auto.TERRAIN.TwoCargoTerrainAuto;
 import frc.robot.subsystems.Infrastructure;
 import frc.robot.subsystems.LED;
@@ -52,7 +52,7 @@ public class RobotContainer {
 	// The robot's subsystems
 	private final Infrastructure m_infrastructure = new Infrastructure();
 	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-	private final Limelight m_backLimelight = new Limelight("limelight-back", LimelightConstants.kBackLimelightPose);
+	private final Limelight m_backLimelight = new Limelight("limelight-back");
 	private final Arm m_arm = new Arm();
 	private final Claw m_claw = new Claw();
 	private final LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
@@ -256,5 +256,9 @@ public class RobotContainer {
 
 	public Command getTwoCargoTerrainAuto() {
 		return new TwoCargoTerrainAuto(m_robotDrive, m_superstructure, m_shooter);
+	}
+
+	public Command getThreeCargoTerrainAuto() {
+		return new CubeThreeCargoTerrainAuto(m_robotDrive, m_superstructure, m_shooter);
 	}
 }

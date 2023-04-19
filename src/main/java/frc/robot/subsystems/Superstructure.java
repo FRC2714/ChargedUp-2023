@@ -289,9 +289,9 @@ public class Superstructure {
       m_shooter.isCubeDetected() &&
       m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE &&
       m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) {
-      m_shooter.setKickerIntake(0.1);
       m_armLED.setGreen();
       setSubsystemState(DPAD.UP).schedule();
+      m_shooter.setKickerIntake(ShooterConstants.kKickerHoldMotorSpeed);
     }
 
     if (scoreMode == ScoreMode.SHOOTER && m_shooter.getKickerState() == KickerState.OUTTAKING) 

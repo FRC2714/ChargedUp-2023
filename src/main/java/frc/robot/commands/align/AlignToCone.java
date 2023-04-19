@@ -24,7 +24,7 @@ public class AlignToCone extends CommandBase {
 
   private double kPThetaController = 1.5;
 
-  private double xControllerGoalCone = 0.58;
+  private double xControllerGoalCone = 0.42;
 
   //private double thetaControllerkP
 
@@ -34,7 +34,7 @@ public class AlignToCone extends CommandBase {
     this.m_backLimelight = m_backLimelight;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    xController = new ProfiledPIDController(kPXControllerCone, 0, 0, new Constraints(0.2, 0.2));
+    xController = new ProfiledPIDController(kPXControllerCone, 0, 0, new Constraints(0.7, 0.2));
     yController = new ProfiledPIDController(kPYControllerCone, 0, 0, new Constraints(3, 3));
     thetaController = new ProfiledPIDController(kPThetaController, 0, 0, new Constraints(5, 10));
     
@@ -61,13 +61,14 @@ public class AlignToCone extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_backLimelight.isTargetVisible()) m_robotDrive.drive(
-      xController.calculate(
-        m_backLimelight.getDistanceToGoalMeters() < 1.0 ? m_backLimelight.getDistanceToGoalMeters() : 0), 
-      yController.calculate(m_backLimelight.getXOffsetRadians()), 
-      thetaController.calculate(m_robotDrive.getHeadingRadians()), 
-      true,
-      false);
+    if(m_backLimelight.isTargetVisible()) {
+      m_robotDrive.drive(
+        xController.calculate(m_backLimelight.getDistanceToGoalMeters()), 
+        yController.calculate(m_backLimelight.getXOffsetRadians()), 
+        thetaController.calculate(m_robotDrive.getHeadingRadians()), 
+        true,
+        false);
+    }
   }
 
   // Called once the command ends or is interrupted.

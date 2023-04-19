@@ -24,7 +24,7 @@ public class AlignToCube extends CommandBase {
 
   private double kPThetaController = 1.5;
 
-  private double xControllerGoalCube = 0.63;
+  private double xControllerGoalCube = 0.45;
 
   //private double thetaControllerkP
 
@@ -61,12 +61,14 @@ public class AlignToCube extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_robotDrive.drive(
+    if(m_backLimelight.isTargetVisible()) {
+      m_robotDrive.drive(
         xController.calculate(m_backLimelight.getDistanceToGoalMeters()), 
         yController.calculate(m_backLimelight.getXOffsetRadians()), 
         thetaController.calculate(m_robotDrive.getHeadingRadians()), 
         true,
         false);
+    }
   }
 
   // Called once the command ends or is interrupted.
