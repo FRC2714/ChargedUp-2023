@@ -36,7 +36,9 @@ fiducial_decoder_strictness:strict
 fiducial_denoise:0.000000
 fiducial_idfilters:
 fiducial_locfilters:
+fiducial_method:sqpnp
 fiducial_qualitythreshold:0.000000
+fiducial_refine:1
 fiducial_resdiv:1
 fiducial_size:200.000000
 fiducial_skip3d:1
@@ -57,7 +59,7 @@ multigroup_min:1
 multigroup_rejector:0
 pipeline_led_enabled:1
 pipeline_led_power:100
-pipeline_res:1
+pipeline_res:0
 pipeline_type:0
 red_balance:1500
 roi_x:0

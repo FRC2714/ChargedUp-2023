@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Superstructure;
@@ -61,8 +62,11 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 
 			//Autobalance
 			new AutoBalance(m_robotDrive, true),
+			m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed),
+			new AutoBalance(m_robotDrive, true),
 			new WaitCommand(5)
 				.alongWith(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive))
+				
 		);
 
 	}
