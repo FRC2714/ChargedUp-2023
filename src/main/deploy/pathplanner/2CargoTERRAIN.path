@@ -170,6 +170,12 @@
       "names": [
         "set shooter high"
       ]
+    },
+    {
+      "position": 2.3,
+      "names": [
+        "hold cube"
+      ]
     }
   ]
 }

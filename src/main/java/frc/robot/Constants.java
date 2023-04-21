@@ -183,8 +183,8 @@ public final class Constants {
     public static final int kPivotMotorCanId = 15;
     public static final double kPivotGearRatio = 50;
     public static final double kPivotPositionConversionFactor = (2*Math.PI) * kPivotGearRatio;
-    public static final double kPivotEncoderZeroOffset = 290.0;
-    public static final double kPivotKinematicOffset = 106.0;
+    public static final double kPivotEncoderZeroOffset = 220.0;
+    public static final double kPivotKinematicOffset = 115;
     public static final int kPivotMotorCurrentLimit = 30;
     public static final double kPivotP = 3.0;
     public static final ArmFeedforward kPivotFeedforward = new ArmFeedforward(0, 0.49, 0.97, 0.01);
@@ -271,7 +271,6 @@ public final class Constants {
 
   public static final class ElbowConstants {
     public static final int kRightElbowMotorCanId = 11;
-    public static final int kLeftElbowMotorCanId = 12;
 
     public static final double kElbowGearRatio = 225.0;
     public static final double kElbowLength = Units.inchesToMeters(25);

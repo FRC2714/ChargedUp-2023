@@ -35,7 +35,12 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
 			"2CargoBalanceMIDDLE",
-			new PathConstraints(1.5, 2.0));
+			new PathConstraints(1.22, 2.5),
+			new PathConstraints(1.22, 2.5),
+			new PathConstraints(2.02, 2.5),
+			new PathConstraints(2.02, 2.5),
+			new PathConstraints(1.22, 2.5)
+			);
 
 	private final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
@@ -53,7 +58,7 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder(AutoEventMap);
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(3.2),
+			m_superstructure.scorePreloadedCone(3.1),
 
             m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 

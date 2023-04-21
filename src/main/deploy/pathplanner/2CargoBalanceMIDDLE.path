@@ -12,7 +12,7 @@
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
-      "velOverride": null,
+      "velOverride": 1.2,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -37,9 +37,34 @@
       },
       "holonomicAngle": 0.0,
       "isReversal": false,
-      "velOverride": null,
+      "velOverride": 1.2,
       "isLocked": false,
       "isStopPoint": true,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 5.434990411965557,
+        "y": 2.18
+      },
+      "prevControl": {
+        "x": 5.343986198659421,
+        "y": 2.158330906432805
+      },
+      "nextControl": {
+        "x": 5.525994625271693,
+        "y": 2.201669093567195
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": 2.0,
+      "isLocked": false,
+      "isStopPoint": false,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -60,9 +85,9 @@
         "x": 7.508339189602123,
         "y": 2.13
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": -3.0,
       "isReversal": false,
-      "velOverride": null,
+      "velOverride": 2.0,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -87,7 +112,7 @@
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
-      "velOverride": null,
+      "velOverride": 1.2,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
@@ -99,11 +124,11 @@
     },
     {
       "anchorPoint": {
-        "x": 3.9,
+        "x": 4.15,
         "y": 2.7
       },
       "prevControl": {
-        "x": 5.141810266892062,
+        "x": 5.391810266892063,
         "y": 2.7
       },
       "nextControl": null,
@@ -120,18 +145,18 @@
       }
     }
   ],
-  "maxVelocity": 1.5,
-  "maxAcceleration": 2.0,
+  "maxVelocity": 1.22,
+  "maxAcceleration": 2.5,
   "isReversed": null,
   "markers": [
     {
-      "position": 1.2,
+      "position": 1.4,
       "names": [
         "intake cube"
       ]
     },
     {
-      "position": 2.1,
+      "position": 3.8,
       "names": [
         "set shooter custom"
       ]

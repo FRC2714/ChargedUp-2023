@@ -113,6 +113,18 @@
       "names": [
         "set shooter high"
       ]
+    },
+    {
+      "position": 1.4,
+      "names": [
+        "set shooter high"
+      ]
+    },
+    {
+      "position": 0.4,
+      "names": [
+        "intake cube"
+      ]
     }
   ]
 }
