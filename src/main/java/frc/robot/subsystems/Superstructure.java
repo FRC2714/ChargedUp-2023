@@ -24,6 +24,7 @@ import frc.robot.subsystems.Arm.Arm;
 import frc.robot.subsystems.Arm.ArmStateMachine;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmScoreLevel;
 import frc.robot.subsystems.Arm.ArmStateMachine.ArmState;
+import frc.robot.subsystems.Arm.Claw.ClawState;
 import frc.robot.subsystems.Arm.Claw;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Shooter.Shooter;
@@ -91,18 +92,24 @@ public class Superstructure {
     return new SequentialCommandGroup(
       setSubsystemState(DPAD.UP),
       new WaitUntilCommand(() -> m_arm.isShoulderAtGoal()),
-      new InstantCommand(() -> this.scoreMode = ScoreMode.SHOOTER),
-      new InstantCommand(() -> m_armLED.setRed()),
-      new InstantCommand(() -> m_shooter.setShooterEnabled(true))
+      new InstantCommand(() -> {
+        this.scoreMode = ScoreMode.SHOOTER;
+        m_shooter.setShooterEnabled(true);
+        m_armLED.setRed();
+      })
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
   private Command shooterToArm() {
     return new SequentialCommandGroup(
       setSubsystemState(DPAD.DOWN),
-      new InstantCommand(() -> m_shooter.setShooterEnabled(false)),
-      new InstantCommand(() -> this.scoreMode = ScoreMode.ARM),
-      new InstantCommand(() -> m_armLED.set(getCargoType() == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple))
+      new WaitUntilCommand(() -> m_shooter.atPivotSetpoint()),
+      new InstantCommand(() -> {
+        m_claw.setClawStop();
+        m_shooter.setShooterEnabled(false);
+        this.scoreMode = ScoreMode.ARM;
+        m_armLED.set(getCargoType() == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
+      })
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
 
@@ -223,7 +230,6 @@ public class Superstructure {
     );
   }
 
-
   //INTAKE BINDINGS
   public Command shooterIntakeSequence() {
     return new ConditionalCommand(
@@ -283,19 +289,30 @@ public class Superstructure {
     );
   }
 
-  public void periodic() {
-    //auto intake
-    if (scoreMode == ScoreMode.SHOOTER &&
-      m_shooter.isCubeDetected() &&
+  public void AutomationLogic() {
+    if (scoreMode == ScoreMode.ARM) {
+      if (m_claw.getClawState() == ClawState.OUTTAKING) {
+        m_armLED.set(getCargoType() == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
+      }
+      if (m_claw.isCurrentSpikeDetected()) {
+        m_armLED.setGreen();
+      }
+    } else if (scoreMode == ScoreMode.SHOOTER) {
+      if (m_shooter.isCubeDetected() &&
       m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE &&
-      m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) {
-      m_armLED.setGreen();
-      setSubsystemState(DPAD.UP).schedule();
-      m_shooter.setKickerIntake(ShooterConstants.kKickerHoldMotorSpeed);
+      m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) { //auto intake
+        m_armLED.setGreen();
+        setSubsystemState(DPAD.UP).schedule();
+        m_shooter.setKickerIntake(ShooterConstants.kKickerHoldMotorSpeed);
+      }
+      if (m_shooter.getKickerState() == KickerState.OUTTAKING) {
+        m_armLED.setRed();
+      }
     }
+  }
 
-    if (scoreMode == ScoreMode.SHOOTER && m_shooter.getKickerState() == KickerState.OUTTAKING) 
-      m_armLED.setRed();
+  public void periodic() {
+    AutomationLogic();
 
     SmartDashboard.putString("Score Mode", scoreMode.toString());
     SmartDashboard.putString("Cargo Type", cargoType.toString());

@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.utils.ShooterPreset;
-import frc.robot.utils.TunableNumber;
 
 public class Shooter extends SubsystemBase {
   private CANSparkMax kickerMotor;
@@ -46,9 +45,6 @@ public class Shooter extends SubsystemBase {
   private Timer kickerRunningTimer = new Timer();
 
   private boolean isShooterEnabled = false;
-
-  public TunableNumber tunableVelocity = new TunableNumber("VELOCITY TUNEABLE");
-  public TunableNumber tunablePivot = new TunableNumber("PIVOT TUNEABLE");
   
   /** Creates a new Shooter. */
   public Shooter() {
@@ -83,9 +79,6 @@ public class Shooter extends SubsystemBase {
 
     pivotController.disableContinuousInput();
     pivotController.setTolerance(Units.degreesToRadians(7));
-
-    tunablePivot.setDefault(ShooterConstants.kPivotHoldAngleDegrees);
-    tunableVelocity.setDefault(0);
   }
 
   //enable funtions
@@ -138,11 +131,6 @@ public class Shooter extends SubsystemBase {
     topFlywheelMotor.setVoltage(isShooterEnabled ? flywheelController.calculate(getFlywheelVelocity()) : 0);
   }
 
-  public void setTunable() {
-    setTargetVelocity(tunableVelocity.get());
-    setTargetPivot(tunablePivot.get());
-  }
-
   public void setKickerIntake(double power) {
     kickerMotor.setVoltage(power*ShooterConstants.kKickerNominalVoltage);
     if (kickerState != KickerState.INTAKING) {
@@ -152,10 +140,6 @@ public class Shooter extends SubsystemBase {
     kickerState = KickerState.INTAKING;
   }
 
-  public KickerState getKickerState() {
-    return kickerState;
-  }
-
   public Command setKickerOuttakeCommand(double power) {
     return new InstantCommand(() -> setKickerOuttake(power));
   }
@@ -163,6 +147,10 @@ public class Shooter extends SubsystemBase {
   private void setKickerOuttake(double outtakeSpeed) {
     kickerMotor.set(outtakeSpeed);
     kickerState = KickerState.OUTTAKING;
+  }
+
+  public KickerState getKickerState() {
+    return kickerState;
   }
 
   public void stop() {

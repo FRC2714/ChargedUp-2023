@@ -35,11 +35,11 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
 			"2CargoBalanceMIDDLE",
-			new PathConstraints(1.22, 2.5),
-			new PathConstraints(1.22, 2.5),
-			new PathConstraints(2.02, 2.5),
-			new PathConstraints(2.02, 2.5),
-			new PathConstraints(1.22, 2.5)
+			new PathConstraints(1.2, 2.5),
+			new PathConstraints(1.2, 2.5),
+			new PathConstraints(2.1, 2.5),
+			new PathConstraints(2.1, 2.5),
+			new PathConstraints(1.2, 2.5)
 			);
 
 	private final HashMap<String, Command> AutoEventMap = new HashMap<>();

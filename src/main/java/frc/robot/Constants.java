@@ -160,7 +160,7 @@ public final class Constants {
     public static final int kClawSolenoidForwardChannel = 7;
     public static final int kClawSolenoidReverseChannel = 6;
 
-    public static final int kClawMotorCurrentLimit = 10; //amps 
+    public static final int kClawMotorCurrentLimit = 12; //amps 
 
     public static final double kNominalVoltage = 11.5;
 

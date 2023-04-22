@@ -9,7 +9,9 @@ import com.revrobotics.CANSparkMaxLowLevel;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,6 +21,14 @@ public class Claw extends SubsystemBase {
   private CANSparkMax clawMotor;
 
   private DoubleSolenoid clawSolenoid;
+
+  public enum ClawState {
+    INTAKING, OUTTAKING, STOPPED
+  }
+
+  private static ClawState clawState = ClawState.STOPPED;
+  private Timer clawRunningTimer = new Timer();
+
   /** Creates a new Claw. */
   public Claw() {
     clawMotor = new CANSparkMax(ClawConstants.kClawMotorCanId, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -33,63 +43,75 @@ public class Claw extends SubsystemBase {
       ClawConstants.kClawSolenoidReverseChannel);
   }
 
-  public void intake() {
+  public void setClawIntake() {
     clawMotor.set(ClawConstants.kIntakeMotorSpeed * ClawConstants.kNominalVoltage);
+    if (clawState != ClawState.INTAKING) {
+      clawRunningTimer.reset();
+      clawRunningTimer.start();
+    }
+    clawState = ClawState.INTAKING;
   }
 
-  public void outtake() {
-    clawMotor.set(ClawConstants.kShootMotorSpeed * ClawConstants.kNominalVoltage);
+  private void setClawOuttake() {
+    clawMotor.set(ClawConstants.kOuttakeMotorSpeed);
+    clawState = ClawState.OUTTAKING;
   }
 
-  public void stop() {
+  public void setClawStop() {
     clawMotor.set(0);
   }
 
-  public void open() {
+  public void setClawOpen() {
     clawSolenoid.set(Value.kForward);
+    clawState = ClawState.OUTTAKING;
   }
 
-  public void close() {
+  public void setClawClose() {
     clawSolenoid.set(Value.kReverse);
   }
 
-  public Command intakeAndToggleCommand() {
-    return new InstantCommand(() -> {
-      clawSolenoid.toggle();
-      intake();
-    });
+  public ClawState getClawState() {
+    return clawState;
+  }
+
+  public boolean isCurrentSpikeDetected() {
+    return (clawRunningTimer.get() > 0.5) && //excludes current spike when motor first starts
+      (clawMotor.getOutputCurrent() > 20) && //cone intake current threshold
+      (clawState == ClawState.INTAKING);
   }
 
   public Command intakeCube() {
     return new InstantCommand(() -> {
-      open();
-      intake();
+      setClawOpen();
+      setClawIntake();
     });
   }
 
   public Command intakeCone() {
     return new InstantCommand(() -> {
-      close();
-      intake();
+      setClawClose();
+      setClawIntake();
     });
   }
 
   public Command scoreCone() {
     return new InstantCommand(() -> {
-      stop();
-      open();
+      setClawStop();
+      setClawOpen();
     });
   }
 
   public Command scoreCube() {
     return new InstantCommand(() -> {
-      outtake();
-      open();
+      setClawOuttake();
+      setClawOpen();
     });
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    SmartDashboard.putNumber("claw current", clawMotor.getOutputCurrent());
   }
 }

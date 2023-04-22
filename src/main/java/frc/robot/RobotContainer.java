@@ -18,6 +18,7 @@ import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AutoBalance;
+import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
@@ -100,7 +101,7 @@ public class RobotContainer {
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
 			m_superstructure.setSubsystemState(DPAD.DOWN),
 			m_backLimelight.setLEDCommand(false),
-			new InstantCommand(() -> m_claw.close()),
+			new InstantCommand(() -> m_claw.setClawClose()),
 			new InstantCommand(() -> m_robotDrive.resetModules())
 		).schedule();
 		}
@@ -171,11 +172,11 @@ public class RobotContainer {
             	m_robotDrive));
 
 		//AutoBalance on left
-		m_driverController.povLeft()
-			.whileTrue(new AutoBalance(m_robotDrive, false));
+		// m_driverController.povLeft()
+		// 	.whileTrue(new AutoBalance(m_robotDrive, false));
 
 		m_driverController.povDown() 
-			.whileTrue(new AutoBalance(m_robotDrive, true));
+			.whileTrue(new TurnToAngle(m_robotDrive, 180));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
