@@ -211,7 +211,7 @@ public final class Constants {
       new ShooterPreset(kPivotHoldAngleDegrees, 0);
 
     public static final ShooterPreset kLaunchCubePreset = 
-      new ShooterPreset(45, 200);
+      new ShooterPreset(45, 170);
 
     public static final ShooterPreset kCloseHighCubePreset = 
       new ShooterPreset(15, 70);

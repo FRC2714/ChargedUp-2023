@@ -17,13 +17,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.AutoBalance;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
 import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
 import frc.robot.commands.auto.MIDDLE.OneConeBalanceMobilityMiddleAuto;
 import frc.robot.commands.auto.MIDDLE.TwoCargoBalanceMiddleAuto;
+import frc.robot.commands.auto.MIDDLE.TwoCargoBalanceMiddleMirrorAuto;
 import frc.robot.commands.auto.OPEN.ThreeCargoOpenAuto;
 import frc.robot.commands.auto.OPEN.TwoCargoBalanceOpenAuto;
 import frc.robot.commands.auto.OPEN.TwoCargoOpenAuto;
@@ -241,6 +241,10 @@ public class RobotContainer {
 
 	public Command getTwoCargoBalanceMiddleAuto() {
 		return new TwoCargoBalanceMiddleAuto(m_robotDrive, m_superstructure, m_shooter);
+	}
+
+	public Command getTwoCargoBalanceMiddleMirrorAuto() {
+		return new TwoCargoBalanceMiddleMirrorAuto(m_robotDrive, m_superstructure, m_shooter);
 	}
 
 	public Command getTwoCargoOpenAuto() {

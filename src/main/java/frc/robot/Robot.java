@@ -42,6 +42,7 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("1 + Balance MIDDLE", m_robotContainer.getOneConeBalanceMiddleAuto());
     autoChooser.addOption("1 + Balance + Mobility MIDDLE ", m_robotContainer.getOneConeBalanceMobilityMiddleAuto());
     autoChooser.addOption("2 + Balance MIDDLE", m_robotContainer.getTwoCargoBalanceMiddleAuto());
+    autoChooser.addOption("2 + Balance MIDDLE mirror", m_robotContainer.getTwoCargoBalanceMiddleMirrorAuto());
     //Open
     //autoChooser.addOption("2 + Balance OPEN", m_robotContainer.getTwoCargoBalanceOpenAuto());
     autoChooser.addOption("2 OPEN", m_robotContainer.getTwoCargoOpenAuto());

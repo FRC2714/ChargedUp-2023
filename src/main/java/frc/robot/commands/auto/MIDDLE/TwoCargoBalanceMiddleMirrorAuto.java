@@ -31,10 +31,10 @@ import frc.robot.utils.ShooterPreset;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class TwoCargoBalanceMiddleAuto extends AutoBase {
+public class TwoCargoBalanceMiddleMirrorAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"2CargoBalanceMIDDLE",
+			"2CargoBalanceMIDDLEmirror",
 			new PathConstraints(1.2, 2.5),
 			new PathConstraints(1.2, 2.5),
 			new PathConstraints(2.1, 2.5),
@@ -44,7 +44,7 @@ public class TwoCargoBalanceMiddleAuto extends AutoBase {
 
 	private final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
-	public TwoCargoBalanceMiddleAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
+	public TwoCargoBalanceMiddleMirrorAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
 		super(m_robotDrive);
 
 		AutoEventMap.put("intake cube", 
