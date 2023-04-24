@@ -16,7 +16,7 @@ import frc.robot.utils.controller.AsymmetricTrapezoidProfile.Constraints;
 public class TurnToAngle extends AsymmetricProfiledPIDCommand {
   
   /** Creates a new Autoalign. */
-  public TurnToAngle(DriveSubsystem drivetrain, double targetAngleDegrees) {
+  public TurnToAngle(DriveSubsystem m_drivetrain, double targetAngleDegrees) {
     super(
         // The ProfiledPIDController used by the command
         new AsymmetricProfiledPIDController(
@@ -27,14 +27,14 @@ public class TurnToAngle extends AsymmetricProfiledPIDCommand {
             // The motion profile constraints
             new Constraints(5.0, 12.0, 7.0)), //rad/s, rad/s^2
         // This should return the measurement
-        drivetrain::getHeadingRadians,
+        m_drivetrain::getHeadingRadians,
         // This should return the goal (can also be a constant)
         Units.degreesToRadians(targetAngleDegrees),
         // This uses the output
-        (output, setpoint) -> drivetrain.drive(0, 0, output, true, false)
+        (output, setpoint) -> m_drivetrain.drive(0, 0, output, true, false)
           // Use the output (and setpoint, if desired) here
         );
-        addRequirements(drivetrain);
+        addRequirements(m_drivetrain);
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
     getController().enableContinuousInput(-Math.PI, Math.PI);

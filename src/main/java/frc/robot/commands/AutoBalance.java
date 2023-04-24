@@ -15,8 +15,8 @@ import frc.robot.utils.controller.AsymmetricTrapezoidProfile.State;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AutoBalance extends AsymmetricProfiledPIDCommand {
   /** Creates a new AutoBalance. */
-  private DriveSubsystem drivetrain;
-  public AutoBalance(DriveSubsystem drivetrain, boolean isReversed) {
+  private DriveSubsystem m_drivetrain;
+  public AutoBalance(DriveSubsystem m_drivetrain, boolean isReversed) {
     super(
         // The ProfiledPIDController used by the command
         new AsymmetricProfiledPIDController(
@@ -27,19 +27,19 @@ public class AutoBalance extends AsymmetricProfiledPIDCommand {
             // The motion profile constraints
             new Constraints(1, 1, 1)), //deg/s, deg/s^2
         // This should return the measurement
-        drivetrain::getPitchDegrees, //gyro X angle
+        m_drivetrain::getPitchDegrees, //gyro X angle
         // This should return the goal (can also be a constant)
         new State(0, 0),
         // This uses the output
         (output, setpoint) -> {
           // Use the output (and setpoint, if desired) here
-          drivetrain.drive( isReversed ? -output : output
+          m_drivetrain.drive( isReversed ? -output : output
             , 0, 0, true, false);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
-    addRequirements(drivetrain);
-    this.drivetrain = drivetrain;
+    addRequirements(m_drivetrain);
+    this.m_drivetrain = m_drivetrain;
     getController().setTolerance(2);
 
   }
@@ -54,7 +54,7 @@ public class AutoBalance extends AsymmetricProfiledPIDCommand {
   }
 
   public void end() {
-    drivetrain.drive(0, 0, 0, true, false);
-    drivetrain.setX();
+    m_drivetrain.drive(0, 0, 0, true, false);
+    m_drivetrain.setX();
   }
 }

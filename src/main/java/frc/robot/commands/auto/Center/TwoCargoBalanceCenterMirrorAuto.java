@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.auto.MIDDLE;
+package frc.robot.commands.auto.Center;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +31,10 @@ import frc.robot.utils.ShooterPreset;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class TwoCargoBalanceMiddleMirrorAuto extends AutoBase {
+public class TwoCargoBalanceCenterMirrorAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"2CargoBalanceMIDDLEmirror",
+			"2CargoBalanceCENTERmirror",
 			new PathConstraints(1.2, 2.5),
 			new PathConstraints(1.2, 2.5),
 			new PathConstraints(2.1, 2.5),
@@ -44,8 +44,8 @@ public class TwoCargoBalanceMiddleMirrorAuto extends AutoBase {
 
 	private final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
-	public TwoCargoBalanceMiddleMirrorAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
-		super(m_robotDrive);
+	public TwoCargoBalanceCenterMirrorAuto(DriveSubsystem m_drivetrain, Superstructure m_superstructure, Shooter m_shooter) {
+		super(m_drivetrain);
 
 		AutoEventMap.put("intake cube", 
 			new SequentialCommandGroup(
@@ -66,11 +66,11 @@ public class TwoCargoBalanceMiddleMirrorAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
 			//Autobalance
-			new AutoBalance(m_robotDrive, true),
+			new AutoBalance(m_drivetrain, true),
 			m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed),
-			new AutoBalance(m_robotDrive, true),
+			new AutoBalance(m_drivetrain, true),
 			new WaitCommand(5)
-				.alongWith(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive))
+				.alongWith(new RunCommand(() -> m_drivetrain.setX(), m_drivetrain))
 		);
 
 	}

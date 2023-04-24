@@ -38,18 +38,18 @@ public class Robot extends TimedRobot {
     autoChooser = new SendableChooser<>();
 
     autoChooser.setDefaultOption("Do Nothing", m_robotContainer.getNothingAuto());
-    //Middle
-    autoChooser.addOption("1 + Balance MIDDLE", m_robotContainer.getOneConeBalanceMiddleAuto());
-    autoChooser.addOption("1 + Balance + Mobility MIDDLE ", m_robotContainer.getOneConeBalanceMobilityMiddleAuto());
-    autoChooser.addOption("2 + Balance MIDDLE", m_robotContainer.getTwoCargoBalanceMiddleAuto());
-    autoChooser.addOption("2 + Balance MIDDLE mirror", m_robotContainer.getTwoCargoBalanceMiddleMirrorAuto());
+    //Center
+    autoChooser.addOption("1 + Balance CENTER", m_robotContainer.getOneConeBalanceCenterAuto());
+    autoChooser.addOption("1 + Balance + Mobility CENTER ", m_robotContainer.getOneConeBalanceMobilityCenterAuto());
+    autoChooser.addOption("2 + Balance CENTER", m_robotContainer.getTwoCargoBalanceCenterAuto());
+    autoChooser.addOption("2 + Balance CENTER mirror", m_robotContainer.getTwoCargoBalanceCenterMirrorAuto());
     //Open
     //autoChooser.addOption("2 + Balance OPEN", m_robotContainer.getTwoCargoBalanceOpenAuto());
     autoChooser.addOption("2 OPEN", m_robotContainer.getTwoCargoOpenAuto());
     //autoChooser.addOption("3 OPEN", m_robotContainer.getThreeCargoOpenAuto());
-    //Terrain
-    autoChooser.addOption("2 TERRAIN", m_robotContainer.getTwoCargoTerrainAuto());
-    autoChooser.addOption("3 TERRAIN", m_robotContainer.getThreeCargoTerrainAuto());
+    //Cable
+    autoChooser.addOption("2 CABLE", m_robotContainer.getTwoCargoCableAuto());
+    autoChooser.addOption("3 CABLE", m_robotContainer.getThreeCargoCableAuto());
 
     //autoChooser.addOption("Path Test", m_robotContainer.getPathTestAuto());
 

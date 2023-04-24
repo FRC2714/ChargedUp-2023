@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.auto.TERRAIN;
+package frc.robot.commands.auto.Cable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +21,7 @@ import frc.robot.subsystems.Shooter.Shooter;
 import frc.robot.subsystems.Superstructure.BUTTON;
 import frc.robot.subsystems.Superstructure.DPAD;
 import frc.robot.subsystems.Superstructure.ScoreMode;
+import frc.robot.utils.ShooterPreset;
 import frc.robot.subsystems.Drive.DriveSubsystem;
 import frc.robot.subsystems.Superstructure;
 
@@ -28,26 +29,24 @@ import frc.robot.subsystems.Superstructure;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class TwoCargoTerrainAuto extends AutoBase {
+public class CubeThreeCargoCableAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"2CargoTERRAIN",
-			new PathConstraints(1.7, 2.4));
+			"Cube3CargoCABLE",
+			new PathConstraints(1.31, 3.5));
 
 	public final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
-	public TwoCargoTerrainAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
-		super(m_robotDrive);
+	public CubeThreeCargoCableAuto(DriveSubsystem m_drivetrain, Superstructure m_superstructure, Shooter m_shooter) {
+		super(m_drivetrain);
 
 		AutoEventMap.put("intake cube", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.X),
 				m_superstructure.setSubsystemState(DPAD.LEFT)));
         AutoEventMap.put("hold cube", m_superstructure.setSubsystemState(DPAD.UP));
-		AutoEventMap.put("set shooter high", 
-			new SequentialCommandGroup(
-				m_superstructure.setScoreLevelCommand(BUTTON.Y),
-				m_superstructure.setSubsystemState(DPAD.RIGHT)));
+		AutoEventMap.put("set shooter custom", 
+			m_shooter.setPreset(new ShooterPreset(90, 100)));
 		AutoEventMap.put("shoot cube", 
 			new SequentialCommandGroup(
 				m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed),
@@ -57,12 +56,18 @@ public class TwoCargoTerrainAuto extends AutoBase {
 		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder(AutoEventMap);
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(3.4), //Score First Cone
-
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 
+			new WaitCommand(0.7).raceWith(m_shooter.setPreset(new ShooterPreset(45, 150))),
+			m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed),
+			new WaitCommand(0.2),
+			m_shooter.stopCommand(),
+
 			//Follow Path
-			autoBuilder.fullAuto(autoPathGroup)
+			autoBuilder.fullAuto(autoPathGroup),
+
+			m_shooter.setPreset(new ShooterPreset(90, 100)),
+			m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed)
 		);
 	}
 }

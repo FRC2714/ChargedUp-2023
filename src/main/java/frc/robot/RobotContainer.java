@@ -14,21 +14,20 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.TurnToAngle;
 import frc.robot.commands.auto.NothingAuto;
 import frc.robot.commands.auto.PathTestAuto;
-import frc.robot.commands.auto.MIDDLE.OneConeBalanceMiddleAuto;
-import frc.robot.commands.auto.MIDDLE.OneConeBalanceMobilityMiddleAuto;
-import frc.robot.commands.auto.MIDDLE.TwoCargoBalanceMiddleAuto;
-import frc.robot.commands.auto.MIDDLE.TwoCargoBalanceMiddleMirrorAuto;
-import frc.robot.commands.auto.OPEN.ThreeCargoOpenAuto;
-import frc.robot.commands.auto.OPEN.TwoCargoBalanceOpenAuto;
-import frc.robot.commands.auto.OPEN.TwoCargoOpenAuto;
-import frc.robot.commands.auto.TERRAIN.CubeThreeCargoTerrainAuto;
-import frc.robot.commands.auto.TERRAIN.TwoCargoTerrainAuto;
+import frc.robot.commands.auto.Cable.CubeThreeCargoCableAuto;
+import frc.robot.commands.auto.Cable.TwoCargoCableAuto;
+import frc.robot.commands.auto.Center.OneConeBalanceCenterAuto;
+import frc.robot.commands.auto.Center.OneConeBalanceMobilityCenterAuto;
+import frc.robot.commands.auto.Center.TwoCargoBalanceCenterAuto;
+import frc.robot.commands.auto.Center.TwoCargoBalanceCenterMirrorAuto;
+import frc.robot.commands.auto.Open.ThreeCargoOpenAuto;
+import frc.robot.commands.auto.Open.TwoCargoBalanceOpenAuto;
+import frc.robot.commands.auto.Open.TwoCargoOpenAuto;
 import frc.robot.subsystems.Infrastructure;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
@@ -52,14 +51,14 @@ import frc.robot.subsystems.Superstructure.ScoreMode;
 public class RobotContainer {
 	// The robot's subsystems
 	private final Infrastructure m_infrastructure = new Infrastructure();
-	private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-	private final Limelight m_backLimelight = new Limelight("limelight-back");
+	private final DriveSubsystem m_drivetrain = new DriveSubsystem();
+	private final Limelight m_limelight = new Limelight();
 	private final Arm m_arm = new Arm();
 	private final Claw m_claw = new Claw();
-	private final LED m_armLED = new LED(LEDConstants.kArmBlinkinPort);
+	private final LED m_led = new LED();
 	private final Shooter m_shooter = new Shooter();
 	
-	private final Superstructure m_superstructure = new Superstructure(m_robotDrive, m_arm, m_claw, m_shooter, m_backLimelight, m_armLED);
+	private final Superstructure m_superstructure = new Superstructure(m_drivetrain, m_arm, m_claw, m_shooter, m_limelight, m_led);
 
 	// The driver's controller
 	CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
@@ -70,27 +69,20 @@ public class RobotContainer {
 	 */
 
 	public RobotContainer() {
-		// CommandScheduler.getInstance().registerSubsystem(m_infrastructure);
-		// CommandScheduler.getInstance().registerSubsystem(m_robotDrive);
-		// CommandScheduler.getInstance().registerSubsystem(m_backLimelight);
-		// CommandScheduler.getInstance().registerSubsystem(m_shooter);
-		// CommandScheduler.getInstance().registerSubsystem(m_claw);
-		// CommandScheduler.getInstance().registerSubsystem(m_armLED);
-
 		// Configure the button bindings
 		configureButtonBindings();
 
 		// Configure default commands
-		m_robotDrive.setDefaultCommand(
+		m_drivetrain.setDefaultCommand(
 			// The left stick controls translation of the robot.
 			// Turning is controlled by the X axis of the right stick.
 			new RunCommand(
-				() -> m_robotDrive.drive(
+				() -> m_drivetrain.drive(
 					-MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
 					-MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
 					-0.8*MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
 					true, false),
-				m_robotDrive));
+				m_drivetrain));
 
 		m_infrastructure.enableCompressor();
 	}
@@ -100,15 +92,15 @@ public class RobotContainer {
 		new SequentialCommandGroup(
 			m_superstructure.setCargoTypeCommand(CargoType.CONE),
 			m_superstructure.setSubsystemState(DPAD.DOWN),
-			m_backLimelight.setLEDCommand(false),
+			m_limelight.setLEDCommand(false),
 			new InstantCommand(() -> m_claw.setClawClose()),
-			new InstantCommand(() -> m_robotDrive.resetModules())
+			new InstantCommand(() -> m_drivetrain.resetModules())
 		).schedule();
 		}
 
 	public void setAutoDefaultStates() {
-		Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive).schedule();
-		m_backLimelight.setLEDCommand(false).schedule();
+		Commands.runOnce(m_drivetrain::zeroHeading, m_drivetrain).schedule();
+		m_limelight.setLEDCommand(false).schedule();
 	}
 
 	public void updateTelemetry() {
@@ -134,7 +126,7 @@ public class RobotContainer {
 		m_driverController.rightBumper()
 			.whileTrue(m_superstructure.getAlign());
 		
-		//hold to score on left bumper
+		//press to score on left bumper
 		m_driverController.leftBumper()
 			.onTrue(m_superstructure.ScoreCommand())
 			.onFalse(m_shooter.stopCommand());
@@ -154,50 +146,44 @@ public class RobotContainer {
 			.onTrue(m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed))
 			.onFalse(m_shooter.stopCommand());
 
-		// m_driverController.b()
-		// 	.onTrue(new InstantCommand(() -> m_shooter.setTunable()));
-
-		//toggle claw intake on X
+		//claw cone intake on X
 		m_driverController.x()
 			.onTrue(m_claw.intakeCone());
 
 		//reset gyro on back
 		m_driverController.back()
-			.onTrue(Commands.runOnce(m_robotDrive::zeroHeading, m_robotDrive));
+			.onTrue(Commands.runOnce(m_drivetrain::zeroHeading, m_drivetrain));
 
 		//lock wheels on right
 		m_driverController.povRight()
 			.whileTrue(new RunCommand(
-            	() -> m_robotDrive.setX(),
-            	m_robotDrive));
+            	() -> m_drivetrain.setX(),
+            	m_drivetrain));
 
-		//AutoBalance on left
-		// m_driverController.povLeft()
-		// 	.whileTrue(new AutoBalance(m_robotDrive, false));
-
+		//turn to 180 on down
 		m_driverController.povDown() 
-			.whileTrue(new TurnToAngle(m_robotDrive, 180));
+			.whileTrue(new TurnToAngle(m_drivetrain, 180));
 
 		/////////////////////////////OPERATOR CONTROLS/////////////////////////////////////////////////////////////
 
-		//set arm on start
+		//set arm mode on start
 		m_operatorController.start()
 			.onTrue(m_superstructure.setScoreModeCommand(ScoreMode.ARM));
 
-		//set shooter on back
+		//set shooter mode on back
 		m_operatorController.back()
 			.onTrue(m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER));
 
-		//TUCK on up
+		//stow/hold on up
 		m_operatorController.povUp()
 			.onTrue(m_superstructure.setSubsystemState(DPAD.UP));
-		//TRANSFER on down
+		//transfer/retract on down
 		m_operatorController.povDown()
 			.onTrue(m_superstructure.setSubsystemState(DPAD.DOWN));
-		//FRONT on left
+		//front/manual on left
 		m_operatorController.povLeft()
 			.onTrue(m_superstructure.setSubsystemState(DPAD.LEFT));
-		//BACK on right
+		//back/dynamic on right
 		m_operatorController.povRight()
 			.onTrue(m_superstructure.setSubsystemState(DPAD.RIGHT));
 
@@ -228,42 +214,42 @@ public class RobotContainer {
 	}
 
 	public Command getPathTestAuto() {
-		return new PathTestAuto(m_robotDrive);
+		return new PathTestAuto(m_drivetrain);
 	}
 
-	public Command getOneConeBalanceMiddleAuto() {
-		return new OneConeBalanceMiddleAuto(m_robotDrive, m_superstructure);
+	public Command getOneConeBalanceCenterAuto() {
+		return new OneConeBalanceCenterAuto(m_drivetrain, m_superstructure);
 	}
 
-	public Command getOneConeBalanceMobilityMiddleAuto() {
-		return new OneConeBalanceMobilityMiddleAuto(m_robotDrive, m_superstructure);
+	public Command getOneConeBalanceMobilityCenterAuto() {
+		return new OneConeBalanceMobilityCenterAuto(m_drivetrain, m_superstructure);
 	}
 
-	public Command getTwoCargoBalanceMiddleAuto() {
-		return new TwoCargoBalanceMiddleAuto(m_robotDrive, m_superstructure, m_shooter);
+	public Command getTwoCargoBalanceCenterAuto() {
+		return new TwoCargoBalanceCenterAuto(m_drivetrain, m_superstructure, m_shooter);
 	}
 
-	public Command getTwoCargoBalanceMiddleMirrorAuto() {
-		return new TwoCargoBalanceMiddleMirrorAuto(m_robotDrive, m_superstructure, m_shooter);
+	public Command getTwoCargoBalanceCenterMirrorAuto() {
+		return new TwoCargoBalanceCenterMirrorAuto(m_drivetrain, m_superstructure, m_shooter);
 	}
 
 	public Command getTwoCargoOpenAuto() {
-		return new TwoCargoOpenAuto(m_robotDrive, m_superstructure, m_shooter);
+		return new TwoCargoOpenAuto(m_drivetrain, m_superstructure, m_shooter);
 	}
 
 	public Command getTwoCargoBalanceOpenAuto() {
-		return new TwoCargoBalanceOpenAuto(m_robotDrive, m_superstructure, m_shooter);
+		return new TwoCargoBalanceOpenAuto(m_drivetrain, m_superstructure, m_shooter);
 	}
 
 	public Command getThreeCargoOpenAuto() {
-		return new ThreeCargoOpenAuto(m_robotDrive, m_superstructure, m_shooter);
+		return new ThreeCargoOpenAuto(m_drivetrain, m_superstructure, m_shooter);
 	}
 
-	public Command getTwoCargoTerrainAuto() {
-		return new TwoCargoTerrainAuto(m_robotDrive, m_superstructure, m_shooter);
+	public Command getTwoCargoCableAuto() {
+		return new TwoCargoCableAuto(m_drivetrain, m_superstructure, m_shooter);
 	}
 
-	public Command getThreeCargoTerrainAuto() {
-		return new CubeThreeCargoTerrainAuto(m_robotDrive, m_superstructure, m_shooter);
+	public Command getThreeCargoCableAuto() {
+		return new CubeThreeCargoCableAuto(m_drivetrain, m_superstructure, m_shooter);
 	}
 }

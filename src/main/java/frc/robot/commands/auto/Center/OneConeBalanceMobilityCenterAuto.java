@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.auto.MIDDLE;
+package frc.robot.commands.auto.Center;
 
 import java.util.List;
 
@@ -23,14 +23,14 @@ import frc.robot.subsystems.Superstructure;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class OneConeBalanceMobilityMiddleAuto extends AutoBase {
+public class OneConeBalanceMobilityCenterAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"1ConeBalanceMobilityMIDDLE",
+			"1ConeBalanceMobilityCENTER",
 			new PathConstraints(1.2, 1.7));
 
-	public OneConeBalanceMobilityMiddleAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure) {
-		super(m_robotDrive);
+	public OneConeBalanceMobilityCenterAuto(DriveSubsystem m_drivetrain, Superstructure m_superstructure) {
+		super(m_drivetrain);
 
 		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder();
 
@@ -44,9 +44,9 @@ public class OneConeBalanceMobilityMiddleAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
 			//Autobalance
-			new AutoBalance(m_robotDrive, false),
+			new AutoBalance(m_drivetrain, false),
 			new WaitCommand(5)
-				.alongWith(new RunCommand(() -> m_robotDrive.setX(), m_robotDrive))
+				.alongWith(new RunCommand(() -> m_drivetrain.setX(), m_drivetrain))
 		);
 
 	}

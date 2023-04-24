@@ -9,15 +9,15 @@ import frc.robot.Constants.LEDConstants;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class LED extends SubsystemBase {
-  private Spark blinkin;
+  private Spark m_blinkin;
 
   /** Creates a new LEDs. */
-  public LED(int BlinkinPort) {
-    blinkin = new Spark(BlinkinPort);
+  public LED() {
+    m_blinkin = new Spark(LEDConstants.kArmBlinkinPort);
   }
 
   public void set(double val) {
-    blinkin.set(val);
+    m_blinkin.set(val);
   }
 
   public void setPurple() {

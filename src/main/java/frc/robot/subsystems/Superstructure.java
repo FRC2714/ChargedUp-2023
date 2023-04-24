@@ -34,16 +34,16 @@ import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterScoreLevel;
 import frc.robot.subsystems.Shooter.ShooterStateMachine.ShooterState;
 
 public class Superstructure {
-  DriveSubsystem m_robotDrive;
+  DriveSubsystem m_drivetrain;
 
   Arm m_arm;
   Claw m_claw;
 
   Shooter m_shooter;
 
-  Limelight m_backLimelight;
+  Limelight m_limelight;
 
-  LED m_armLED;
+  LED m_led;
 
   ArmStateMachine m_armStateMachine;
   ShooterStateMachine m_shooterStateMachine;
@@ -72,17 +72,17 @@ public class Superstructure {
   public CargoType cargoType = CargoType.CONE; //default to cone
 
   /** Creates a new Superstructure. */
-  public Superstructure(DriveSubsystem m_robotDrive, Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_backLimelight, LED m_armLED) {
-    this.m_robotDrive = m_robotDrive;
+  public Superstructure(DriveSubsystem m_drivetrain, Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_limelight, LED m_led) {
+    this.m_drivetrain = m_drivetrain;
 
     this.m_arm = m_arm;
     this.m_claw = m_claw;
 
     this.m_shooter = m_shooter;
 
-    this.m_backLimelight = m_backLimelight;
+    this.m_limelight = m_limelight;
 
-    this.m_armLED = m_armLED;
+    this.m_led = m_led;
 
     m_armStateMachine = new ArmStateMachine(m_arm);
 	  m_shooterStateMachine = new ShooterStateMachine(m_shooter);
@@ -95,7 +95,7 @@ public class Superstructure {
       new InstantCommand(() -> {
         this.scoreMode = ScoreMode.SHOOTER;
         m_shooter.setShooterEnabled(true);
-        m_armLED.setRed();
+        m_led.setRed();
       })
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
@@ -108,7 +108,7 @@ public class Superstructure {
         m_claw.setClawStop();
         m_shooter.setShooterEnabled(false);
         this.scoreMode = ScoreMode.ARM;
-        m_armLED.set(getCargoType() == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
+        m_led.set(getCargoType() == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
       })
     ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
   }
@@ -202,7 +202,7 @@ public class Superstructure {
   //Cargo type
   public Command setCargoTypeCommand(CargoType targetCargoType) {
     return new InstantCommand(() -> {
-      if (scoreMode == ScoreMode.ARM) m_armLED.set(targetCargoType == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
+      if (scoreMode == ScoreMode.ARM) m_led.set(targetCargoType == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
       this.cargoType = targetCargoType;
     });
   }
@@ -254,8 +254,8 @@ public class Superstructure {
   public Command getAlign() {
     final SelectCommand armAlign = new SelectCommand(
       Map.ofEntries(
-        Map.entry(CargoType.CONE, new AlignToCone(m_robotDrive, m_backLimelight)), // align to cone
-        Map.entry(CargoType.CUBE, new AlignToCube(m_robotDrive, m_backLimelight)) //align to cube
+        Map.entry(CargoType.CONE, new AlignToCone(m_drivetrain, m_limelight)), // align to cone
+        Map.entry(CargoType.CUBE, new AlignToCube(m_drivetrain, m_limelight)) //align to cube
       ), 
       () -> getCargoType()
     );
@@ -263,7 +263,7 @@ public class Superstructure {
     return new SelectCommand(
       Map.ofEntries(
         Map.entry(ScoreMode.ARM, armAlign),
-        Map.entry(ScoreMode.SHOOTER, new TurnToAngle(m_robotDrive, 180))
+        Map.entry(ScoreMode.SHOOTER, new TurnToAngle(m_drivetrain, 180))
       ), 
       () -> getScoreMode()
     );
@@ -276,7 +276,7 @@ public class Superstructure {
 			setCargoTypeCommand(CargoType.CONE),
 			setScoreLevelCommand(BUTTON.Y),
 			setSubsystemState(DPAD.RIGHT),
-			new WaitCommand(waitTime).raceWith(new AlignToCone(m_robotDrive, m_backLimelight)),
+			new WaitCommand(waitTime).raceWith(new AlignToCone(m_drivetrain, m_limelight)),
 			m_claw.scoreCone()
     );
   }
@@ -292,21 +292,21 @@ public class Superstructure {
   public void AutomationLogic() {
     if (scoreMode == ScoreMode.ARM) {
       if (m_claw.getClawState() == ClawState.OUTTAKING) {
-        m_armLED.set(getCargoType() == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
+        m_led.set(getCargoType() == CargoType.CONE ? LEDConstants.kYellow : LEDConstants.kPurple);
       }
       if (m_claw.isCurrentSpikeDetected()) {
-        m_armLED.setGreen();
+        m_led.setGreen();
       }
     } else if (scoreMode == ScoreMode.SHOOTER) {
       if (m_shooter.isCubeDetected() &&
       m_shooterStateMachine.getShooterScoreLevel() == ShooterScoreLevel.INTAKE &&
       m_shooterStateMachine.getShooterState() == ShooterState.MANUAL) { //auto intake
-        m_armLED.setGreen();
+        m_led.setGreen();
         setSubsystemState(DPAD.UP).schedule();
         m_shooter.setKickerIntake(ShooterConstants.kKickerHoldMotorSpeed);
       }
       if (m_shooter.getKickerState() == KickerState.OUTTAKING) {
-        m_armLED.setRed();
+        m_led.setRed();
       }
     }
   }

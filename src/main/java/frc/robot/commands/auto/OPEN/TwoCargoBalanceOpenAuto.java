@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.auto.OPEN;
+package frc.robot.commands.auto.Open;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +37,8 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 
 	private final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
-	public TwoCargoBalanceOpenAuto(DriveSubsystem m_robotDrive, Superstructure m_superstructure, Shooter m_shooter) {
-		super(m_robotDrive);
+	public TwoCargoBalanceOpenAuto(DriveSubsystem m_drivetrain, Superstructure m_superstructure, Shooter m_shooter) {
+		super(m_drivetrain);
 
     	AutoEventMap.put("intake cube", 
 			new SequentialCommandGroup(
@@ -68,8 +68,8 @@ public class TwoCargoBalanceOpenAuto extends AutoBase {
 			autoBuilder.fullAuto(autoPathGroup),
 
 			//Autobalance
-			new AutoBalance(m_robotDrive, false),
-			m_robotDrive.stopModulesCommand()
+			new AutoBalance(m_drivetrain, false),
+			m_drivetrain.stopModulesCommand()
 		);
 	}
 }

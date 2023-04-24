@@ -18,15 +18,15 @@ import frc.robot.subsystems.Drive.DriveSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
 public class PathTestAuto extends AutoBase {
-	DriveSubsystem m_robotDrive;
+	DriveSubsystem m_drivetrain;
 
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
 			"StarTuner",
 			new PathConstraints(3.0,3.0));
 
-	public PathTestAuto(DriveSubsystem m_robotDrive) {
-		super(m_robotDrive);
+	public PathTestAuto(DriveSubsystem m_drivetrain) {
+		super(m_drivetrain);
 
 		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder(); 
 
