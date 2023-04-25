@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.auto.AutoBase;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.Superstructure.BUTTON;
@@ -28,18 +29,18 @@ import frc.robot.subsystems.Shooter.Shooter;
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 
-public class ThreeCargoOpenAuto extends AutoBase {
+public class TwoCargoBalanceOpenAuto extends AutoBase {
 	List<PathPlannerTrajectory> autoPathGroup =
 		PathPlanner.loadPathGroup(
-			"3CargoOPEN",
+			"2CargoBalanceOPEN",
 			new PathConstraints(3.0, 3.0));
 
 	private final HashMap<String, Command> AutoEventMap = new HashMap<>();
 
-	public ThreeCargoOpenAuto(DriveSubsystem m_drivetrain, Superstructure m_superstructure, Shooter m_shooter) {
+	public TwoCargoBalanceOpenAuto(DriveSubsystem m_drivetrain, Superstructure m_superstructure, Shooter m_shooter) {
 		super(m_drivetrain);
 
-		AutoEventMap.put("intake cube", 
+    	AutoEventMap.put("intake cube", 
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.X),
 				m_superstructure.setSubsystemState(DPAD.LEFT)));
@@ -47,27 +48,28 @@ public class ThreeCargoOpenAuto extends AutoBase {
 			new SequentialCommandGroup(
 				m_superstructure.setScoreLevelCommand(BUTTON.Y),
 				m_superstructure.setSubsystemState(DPAD.RIGHT)));
-        AutoEventMap.put("set shooter mid", 
-			new SequentialCommandGroup(
-				m_superstructure.setScoreLevelCommand(BUTTON.B),
-				m_superstructure.setSubsystemState(DPAD.RIGHT)));
 		AutoEventMap.put("shoot cube", 
 			new SequentialCommandGroup(
 				m_shooter.setKickerOuttakeCommand(ShooterConstants.kKickSpeed),
 				new WaitCommand(0.2),
-				m_shooter.stopCommand()));
+				m_shooter.stopCommand()
+			));
 		AutoEventMap.put("retract shooter", 
 			m_superstructure.setSubsystemState(DPAD.DOWN));
 
 		SwerveAutoBuilder autoBuilder = getSwerveAutoBuilder(AutoEventMap);
 
 		addCommands(
-			m_superstructure.scorePreloadedCone(3.0), //Score First Cone
+			m_superstructure.scorePreloadedCone(3.5), //Score First Cone
 
       		m_superstructure.setScoreModeCommand(ScoreMode.SHOOTER),
 
 			//Follow Path
-			autoBuilder.fullAuto(autoPathGroup)
+			autoBuilder.fullAuto(autoPathGroup),
+
+			//Autobalance
+			new AutoBalance(m_drivetrain, false),
+			m_drivetrain.stopModulesCommand()
 		);
 	}
 }
