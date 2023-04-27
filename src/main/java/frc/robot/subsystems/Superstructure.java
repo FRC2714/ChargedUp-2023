@@ -74,14 +74,10 @@ public class Superstructure {
   /** Creates a new Superstructure. */
   public Superstructure(DriveSubsystem m_drivetrain, Arm m_arm, Claw m_claw, Shooter m_shooter, Limelight m_limelight, LED m_led) {
     this.m_drivetrain = m_drivetrain;
-
     this.m_arm = m_arm;
     this.m_claw = m_claw;
-
     this.m_shooter = m_shooter;
-
     this.m_limelight = m_limelight;
-
     this.m_led = m_led;
 
     m_armStateMachine = new ArmStateMachine(m_arm);
