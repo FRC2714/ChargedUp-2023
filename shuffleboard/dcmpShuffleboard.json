@@ -296,7 +296,7 @@
             ],
             "content": {
               "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Flywheel Target",
+              "_source0": "network_table:///SmartDashboard/front ll distance to goal",
               "_title": "SmartDashboard/Flywheel Target",
               "_glyph": 148,
               "_showGlyph": false
@@ -337,6 +337,45 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/TunableNumbers/VELOCITY TUNEABLE",
               "_title": "SmartDashboard/TunableNumbers/VELOCITY TUNEABLE",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,4": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/TunableNumbers/set pivot angle",
+              "_title": "/SmartDashboard/TunableNumbers/set pivot angle",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,6": {
+            "size": [
+              3,
+              2
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/TunableNumbers/set shooter velocity",
+              "_title": "/SmartDashboard/TunableNumbers/set shooter velocity",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "0,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/front ll distance to goal",
+              "_title": "/SmartDashboard/front ll distance to goal",
               "_glyph": 148,
               "_showGlyph": false
             }
@@ -512,9 +551,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -7.333333492279053,
-    "y": -7.333333492279053,
-    "width": 1294.6666259765625,
-    "height": 686.6666870117188
+    "x": -6.400000095367432,
+    "y": 0.0,
+    "width": 1295.199951171875,
+    "height": 687.2000122070312
   }
 }
